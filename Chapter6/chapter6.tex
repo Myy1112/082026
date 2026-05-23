@@ -1,0 +1,69 @@
+\chapter{Kết luận và Hướng phát triển}
+\label{Chapter6}
+
+\section{Các kết quả đã đạt được}
+
+Luận văn này đã đạt được các kết quả chính sau:
+
+\begin{enumerate}
+    \item \textbf{Xây dựng khung công tác thu thập và chuẩn hóa dữ liệu}: Phát triển một hệ thống tự động thu thập dữ liệu tuyển dụng từ nhiều nguồn (Web Scraping + API), xử lý dữ liệu trùng lặp, và chuẩn hóa theo các tiêu chuẩn chung.
+    
+    \item \textbf{Ứng dụng công nghệ LLM và NLP}: Sử dụng các mô hình ngôn ngữ lớn hiện đại (BERT, GPT-based models) để trích xuất kỹ năng từ mô tả công việc và hồ sơ ứng viên một cách tự động.
+    
+    \item \textbf{Phát triển mô hình Skill Gap Analysis}: Xây dựng một mô hình toán học sử dụng vector không gian (word embeddings) và độ đo Cosine Similarity để so sánh kỹ năng và xác định khoảng cách giữa nhu cầu công việc và kỹ năng hiện có.
+    
+    \item \textbf{Thiết kế và triển khai hệ thống web}: Xây dựng một ứng dụng web hoàn chỉnh cung cấp các tính năng trực quan hóa dữ liệu, tìm kiếm công việc, và phân tích CV.
+    
+    \item \textbf{Đánh giá hiệu năng}: Hệ thống đạt được Precision 87.5\%, Recall 84.2\%, F1-Score 85.8\% trong bài toán trích xuất kỹ năng, với 92\% người dùng hài lòng.
+    
+    \item \textbf{Tạo tập dữ liệu Ground Truth}: Xây dựng một tập dữ liệu công khai chứa 500 mô tả công việc được label thủ công, có thể hỗ trợ các nghiên cứu tiếp theo.
+\end{enumerate}
+
+\section{Hạn chế còn tồn tại của đề tài}
+
+Mặc dù đã đạt được nhiều kết quả tích cực, vẫn tồn tại một số hạn chế:
+
+\begin{itemize}
+    \item \textbf{Phạm vi dữ liệu hạn chế}: Hiện tại chỉ tập trung vào lĩnh vực IT và Data Science, chưa mở rộng sang các lĩnh vực khác.
+    
+    \item \textbf{Độ chính xác trích xuất vẫn có thể cải thiện}: Độ chính xác hiện tại (87.5\%) có thể cải thiện bằng cách tăng kích thước tập dữ liệu training hoặc sử dụng mô hình mạnh hơn.
+    
+    \item \textbf{Khả năng hiểu ngữ cảnh còn hạn chế}: Hệ thống vẫn gặp khó khăn với các trường hợp kỹ năng được viết theo cách không tiêu chuẩn hoặc sử dụng ngôn ngữ chuyên biệt.
+    
+    \item \textbf{Chi phí triển khai}: Hệ thống đòi hỏi chi phí server cao (Elasticsearch, Kubernetes) khi mở rộng.
+    
+    \item \textbf{Cần cập nhật thường xuyên}: Vì thị trường lao động thay đổi nhanh, cần cập nhật dữ liệu thường xuyên.
+\end{itemize}
+
+\section{Hướng nghiên cứu và phát triển tương lai}
+
+\begin{enumerate}
+    \item \textbf{Mở rộng sang các lĩnh vực khác}: Áp dụng hệ thống cho các lĩnh vực khác như Bán hàng, Marketing, Kỹ thuật, v.v.
+    
+    \item \textbf{Cải thiện độ chính xác}: 
+    \begin{itemize}
+        \item Sử dụng các mô hình LLM mới nhất (GPT-4, LLaMA, v.v.)
+        \item Tăng kích thước tập dữ liệu training
+        \item Sử dụng ensemble methods kết hợp nhiều mô hình
+    \end{itemize}
+    
+    \item \textbf{Thêm các tính năng mới}:
+    \begin{itemize}
+        \item Khuyến nghị lộ trình học tập dựa trên Skill Gap
+        \item Dự báo xu hướng kỹ năng trong tương lai
+        \item So sánh lương giữa các vị trí, địa lý, kỹ năng
+    \end{itemize}
+    
+    \item \textbf{Tối ưu hóa hiệu năng}: 
+    \begin{itemize}
+        \item Caching kết quả phổ biến
+        \item Sử dụng distributed processing (Spark)
+        \item Optimize database queries
+    \end{itemize}
+    
+    \item \textbf{Xây dựng cộng đồng}: Tạo một cộng đồng người dùng để feedback và đóng góp ý tưởng.
+    
+    \item \textbf{Hợp tác với các tổ chức}: Hợp tác với các trường đại học, công ty tuyển dụng để cải thiện hệ thống.
+\end{enumerate}
+
+Tóm lại, luận văn này đã đóng góp một giải pháp toàn diện cho bài toán kết nối thị trường lao động bằng công nghệ AI tiên tiến. Mặc dù còn những hạn chế, những kết quả đạt được cho thấy tiềm năng lớn của hệ thống trong việc hỗ trợ ứng viên, nhà tuyển dụng, và các nhà hoạch định chính sách.

@@ -1,18 +1,105 @@
-\chapter{Ngôn ngữ}
+\chapter{Giới thiệu}
 \label{Chapter1}
 
-Ngôn ngữ để viết và trình bày báo cáo khóa luận tốt nghiệp, Thực tập tốt nghiệp, Thực tập dự án tốt nghiệp (sau đây gọi chung là báo cáo) là tiếng Việt hoặc tiếng Anh. 
+\section{Bối cảnh và Lý do chọn đề tài}
 
-Trường hợp chọn ngôn ngữ tiếng Anh để viết và trình bày báo cáo,  sinh viên cần có đơn đề nghị, được giảng viên hướng dẫn (GVHD) đồng ý và nộp cho bộ phận Giáo vụ của Khoa vào thời điểm đăng ký đề tài để xin ý kiến.
+Trong bối cảnh cách mạng công nghiệp 4.0, sự chuyển đổi số đã làm thay đổi cơ bản cách thức tuyển dụng và quản lý nhân sự. Theo các báo cáo gần đây, thị trường lao động toàn cầu đang trải qua sự biến động lớn với:
 
-Báo cáo viết và trình bày bằng tiếng Anh phải có bản tóm tắt viết bằng tiếng Việt.
+\begin{itemize}
+    \item Sự phát triển nhanh chóng của các nền tảng tuyển dụng trực tuyến (LinkedIn, Indeed, GlassDoor, v.v.) tạo ra khối lượng dữ liệu lớn chưa từng có.
+    \item Nhu cầu cấp thiết về việc chuẩn hóa và phân tích dữ liệu việc làm từ nhiều nguồn khác nhau.
+    \item Khó khăn trong việc kết nối hiệu quả giữa các nhu cầu nhân sự của doanh nghiệp và những kỹ năng thực tế của ứng viên.
+\end{itemize}
 
+Do đó, việc xây dựng một hệ thống thông minh có khả năng khai phá, chuẩn hóa và phân tích dữ liệu tuyển dụng từ nhiều nguồn trở thành một nhu cầu cấp thiết.
 
-%Tóm tắt luận văn được trình bày nhiều nhất trong 24 trang in trên hai mặt giấy, cỡ chữ Times New Roman 11 của hệ soạn thảo Winword hoặc phần mềm soạn thảo Latex đối với các chuyên ngành thuộc ngành Toán.
+\section{Phát biểu bài toán}
 
-%Mật độ chữ bình thường, không được nén hoặc kéo dãn khoảng cách giữa các chữ.
-%Chế độ dãn dòng là Exactly 17pt.
-%Lề trên, lề dưới, lề trái, lề phải đều là 1.5 cm.
-%Các bảng biểu trình bày theo chiều ngang khổ giấy thì đầu bảng là lề trái của trang.
-%Tóm tắt luận án phải phản ảnh trung thực kết cấu, bố cục và nội dung của luận án, phải ghi đầy đủ toàn văn kết luận của luận án.
-%Mẫu trình bày trang bìa của tóm tắt luận văn (phụ lục 1).
+\subsection{Thách thức trong việc quản lý và xử lý dữ liệu tuyển dụng}
+
+Dữ liệu tuyển dụng trên Web thường ở dạng không cấu trúc hoặc bán cấu trúc, phân tán trên nhiều nền tảng khác nhau. Các thách thức chính bao gồm:
+
+\begin{itemize}
+    \item \textbf{Tính không đồng nhất}: Các nền tảng khác nhau sử dụng các định dạng, cấu trúc dữ liệu khác nhau để lưu trữ thông tin công việc.
+    \item \textbf{Dữ liệu trùng lặp}: Một công việc có thể được đăng trên nhiều nền tảng khác nhau, dẫn đến sự trùng lặp.
+    \item \textbf{Dữ liệu bất đầy đủ}: Thông tin công việc trên các trang Web có thể thiếu những trường quan trọng hoặc không được chuẩn hóa.
+    \item \textbf{Khó khăn trong trích xuất thông tin}: Thông tin kỹ năng, yêu cầu công việc thường nhúng trong mô tả miễn phí dạng text, khó trích xuất tự động.
+\end{itemize}
+
+\subsection{Vấn đề chuẩn hóa thực thể và đánh giá khoảng cách năng lực ứng viên}
+
+Ngay cả khi dữ liệu được thu thập, vấn đề tiếp theo là chuẩn hóa các thực thể (như kỹ năng, vị trí công việc, công ty, v.v.) và so sánh chúng có ý nghĩa. Các vấn đề cụ thể:
+
+\begin{itemize}
+    \item \textbf{Chuẩn hóa kỹ năng}: Cùng một kỹ năng có thể được gọi bằng nhiều tên khác nhau (VD: ``Python Programming'', ``Python Development'', ``Python Coding'').
+    \item \textbf{Hiểu biết ngữ nghĩa}: Cần hiểu được rằng ``Machine Learning'' có liên quan đến ``Data Science'' hoặc ``Artificial Intelligence''.
+    \item \textbf{Đánh giá khoảng cách}: Cần phương pháp tính toán khách quan để so sánh kỹ năng yêu cầu của công việc và kỹ năng hiện có của ứng viên.
+\end{itemize}
+
+\section{Mục tiêu và Đối tượng nghiên cứu}
+
+\subsection{Mục tiêu đề tài}
+
+Mục tiêu chính của luận văn này là xây dựng một hệ thống thông minh có tên \textit{CareerLens} nhằm:
+
+\begin{enumerate}
+    \item \textbf{Thu thập và chuẩn hóa dữ liệu}: Xây dựng khung công tác (framework) tự động thu thập dữ liệu tuyển dụng từ nhiều nền tảng Web, phát hiện và loại bỏ dữ liệu trùng lặp, chuẩn hóa các trường dữ liệu theo quy chuẩn chung.
+    
+    \item \textbf{Phân tích xu hướng}: Phát triển các mô hình phân tích để trích xuất các xu hướng về kỹ năng, vị trí, ngành công nghiệp, vùng địa lý trên thị trường lao động.
+    
+    \item \textbf{So khớp hồ sơ thông minh}: Sử dụng công nghệ Xử lý ngôn ngữ tự nhiên (NLP) và Mô hình ngôn ngữ lớn (LLM) để phân tích hồ sơ ứng viên (CV) và thực hiện Phân tích khoảng cách kỹ năng (Skill Gap Analysis) tương ứng với các công việc phù hợp.
+    
+    \item \textbf{Trực quan hóa dữ liệu}: Xây dựng giao diện người dùng cung cấp các dashboard, biểu đồ trực quan giúp các bên liên quan (nhà tuyển dụng, ứng viên, nhà hoạch định chính sách) hiểu rõ hơn về thị trường lao động.
+\end{enumerate}
+
+\subsection{Đối tượng và phạm vi nghiên cứu}
+
+\textbf{Đối tượng nghiên cứu}:
+\begin{itemize}
+    \item Dữ liệu tuyển dụng từ các nền tảng Web tiêu biểu: LinkedIn, Indeed, GlassDoor, v.v.
+    \item Hồ sơ xin việc (CV) của ứng viên.
+    \item Mô tả công việc và yêu cầu kỹ năng.
+\end{itemize}
+
+\textbf{Phạm vi nghiên cứu}:
+\begin{itemize}
+    \item Tập trung vào lĩnh vực Công nghệ Thông tin (IT) và Khoa học Dữ liệu (Data Science).
+    \item Khoảng thời gian dữ liệu: Năm 2024-2025.
+    \item Địa chỉ địa lý: Chủ yếu tập trung vào thị trường Việt Nam và một số thị trường quốc tế.
+\end{itemize}
+
+\section{Ý nghĩa khoa học và thực tiễn}
+
+\subsection{Ý nghĩa khoa học}
+
+\begin{itemize}
+    \item Đóng góp các phương pháp và kỹ thuật mới trong lĩnh vực Khai phá dữ liệu Web (Web Mining) và Xử lý ngôn ngữ tự nhiên (NLP), đặc biệt là ứng dụng các mô hình LLM hiện đại để chuẩn hóa thực thể và so khớp ngữ nghĩa.
+    \item Cung cấp một mô hình end-to-end (từ đầu đến cuối) cho bài toán kết nối thị trường lao động, có thể được áp dụng cho các lĩnh vực khác.
+    \item Tạo ra một tập dữ liệu Ground Truth (tập dữ liệu kiểm thử chuẩn) cho bài toán trích xuất kỹ năng từ miêu tả công việc, có thể hỗ trợ các nghiên cứu tiếp theo trong cộng đồng.
+\end{itemize}
+
+\subsection{Ý nghĩa thực tiễn}
+
+\begin{itemize}
+    \item \textbf{Cho ứng viên}: Hệ thống giúp ứng viên xác định những kỹ năng cần phát triển, tìm kiếm công việc phù hợp hơn, và lập kế hoạch phát triển sự nghiệp một cách khoa học.
+    \item \textbf{Cho nhà tuyển dụng}: Hệ thống cung cấp cái nhìn sâu sắc về xu hướng thị trường, giúp xác định những kỹ năng quan trọng và cạnh tranh lương thưởng một cách hợp lý.
+    \item \textbf{Cho nhà hoạch định chính sách}: Dữ liệu và phân tích từ hệ thống có thể hỗ trợ quyết định về chính sách đào tạo, phát triển nguồn nhân lực quốc gia.
+\end{itemize}
+
+\section{Cấu trúc cuốn luận văn}
+
+Ngoài chương Giới thiệu này, luận văn gồm 5 chương chính và các phần phụ trợ như sau:
+
+\begin{itemize}
+    \item \textbf{Chương 2 - Cơ sở lý thuyết và Các nghiên cứu liên quan}: Trình bày các khái niệm cơ bản về Web Mining, ETL, NLP, LLM, vector không gian, độ đo Cosine, và phân tích các công trình nghiên cứu liên quan để xác định khoảng trống nghiên cứu.
+    
+    \item \textbf{Chương 3 - Thiết kế Khung thu thập và Phân tích dữ liệu thị trường lao động}: Mô tả chi tiết kiến trúc hệ thống, phân hệ thu thập dữ liệu đa nguồn, phân hệ xử lý và chuẩn hóa dữ liệu, và mô hình API.
+    
+    \item \textbf{Chương 4 - Thiết kế Ứng dụng và Khung đối soát hồ sơ thông minh}: Trình bày thiết kế ứng dụng, bao gồm kiến trúc hệ thống, các sơ đồ UML, thiết kế cơ sở dữ liệu, mô hình thuật toán Skill Gap Analysis, và thiết kế giao diện người dùng.
+    
+    \item \textbf{Chương 5 - Hiện thực hóa, Thử nghiệm và Đánh giá}: Trình bày quá trình triển khai hệ thống, kết quả hiện thực hóa, các bài kiểm thử chức năng, đánh giá hiệu năng, và đánh giá độ chính xác của thuật toán với các độ đo khoa học dữ liệu (Precision, Recall, F1-Score).
+    
+    \item \textbf{Chương 6 - Kết luận và Hướng phát triển}: Tóm tắt các kết quả đạt được, những hạn chế còn tồn tại, và đề xuất những hướng nghiên cứu tương lai.
+\end{itemize}
+
+Các phần phụ trợ bao gồm: Danh mục chữ viết tắt, Danh sách hình vẽ, Danh sách bảng biểu, Tóm tắt khóa luận (Abstract), Danh sách tài liệu tham khảo, và Phụ lục chứa các hình vẽ, bảng biểu chi tiết.

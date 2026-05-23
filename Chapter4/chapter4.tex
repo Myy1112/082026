@@ -1,0 +1,65 @@
+\chapter{Thiết kế Ứng dụng và Khung đối soát hồ sơ thông minh}
+\label{Chapter4}
+
+\section{Kiến trúc hệ thống tổng thể}
+
+Hệ thống CareerLens được xây dựng dựa trên kiến trúc microservices với ba tầng chính: Presentation Layer (giao diện), Application Layer (logic ứng dụng), và Data Layer (dữ liệu).
+
+\section{Phân tích thiết kế hệ thống hướng đối tượng}
+
+\subsection{Sơ đồ ca sử dụng tổng quát (Use Case Diagram)}
+
+Các ca sử dụng chính của hệ thống bao gồm:
+\begin{itemize}
+    \item \textbf{Ứng viên}: Tìm kiếm công việc, Upload CV, Xem Skill Gap Analysis, Xem xu hướng thị trường
+    \item \textbf{Nhà tuyển dụng}: Đăng công việc, Phân tích CV, Xem kỹ năng xu hướng
+    \item \textbf{Admin}: Quản lý người dùng, Cập nhật dữ liệu, Giám sát hệ thống
+\end{itemize}
+
+\subsection{Sơ đồ tuần tự cho các tiến trình nghiệp vụ cốt lõi (Sequence Diagram)}
+
+Quy trình chính: Ứng viên upload CV $\rightarrow$ Hệ thống phân tích CV $\rightarrow$ Trích xuất kỹ năng $\rightarrow$ So khớp với công việc $\rightarrow$ Tính Skill Gap $\rightarrow$ Hiển thị kết quả.
+
+\section{Thiết kế cơ sở dữ liệu hệ thống}
+
+\subsection{Sơ đồ thực thể mối quan hệ (ERD)}
+
+Các bảng chính:
+\begin{itemize}
+    \item \textbf{Users}: ID, Email, Name, Role, Avatar
+    \item \textbf{Jobs}: ID, Title, Company, Location, Description, Salary
+    \item \textbf{Skills}: ID, Name, Category, Description
+    \item \textbf{CVs}: ID, UserID, FileName, UploadedDate
+    \item \textbf{SkillGapAnalysis}: ID, CVId, JobId, Score, MissingSkills
+\end{itemize}
+
+\subsection{Ánh xạ mô hình dữ liệu quan hệ logic sang cấu trúc lưu trữ}
+
+\begin{itemize}
+    \item Sử dụng PostgreSQL để lưu trữ dữ liệu có cấu trúc
+    \item Sử dụng MongoDB để lưu trữ dữ liệu công việc thô
+    \item Sử dụng Elasticsearch để index và tìm kiếm nhanh
+\end{itemize}
+
+\section{Mô hình thuật toán xử lý AI và phân tích khoảng cách năng lực (Skill Gap Analysis)}
+
+Mô hình Skill Gap Analysis:
+\begin{enumerate}
+    \item Trích xuất kỹ năng từ CV (sử dụng LLM)
+    \item Trích xuất kỹ năng từ mô tả công việc (sử dụng LLM)
+    \item Chuẩn hóa cả hai tập kỹ năng theo taxonomy tiêu chuẩn
+    \item Tính Cosine Similarity giữa các kỹ năng
+    \item Xác định kỹ năng thiếu (Skill Gap)
+    \item Tính điểm phù hợp tổng thể: $\text{Match Score} = \frac{\sum \text{skills có}}{|\text{skills yêu cầu}|} \times 100\%$
+\end{enumerate}
+
+\section{Thiết kế giao diện người dùng hệ thống}
+
+Giao diện chính:
+\begin{itemize}
+    \item \textbf{Dashboard}: Hiển thị xu hướng thị trường, top kỹ năng
+    \item \textbf{Job Search}: Tìm kiếm công việc với bộ lọc
+    \item \textbf{CV Analyzer}: Upload CV, xem kết quả phân tích
+    \item \textbf{Skill Gap Visualizer}: Hiển thị kỹ năng thiếu dưới dạng đồ thị
+    \item \textbf{Profile}: Quản lý hồ sơ người dùng
+\end{itemize}

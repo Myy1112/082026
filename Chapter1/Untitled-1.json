@@ -1,0 +1,7 @@
+{
+    "latex-workshop.view.pdf.viewer": "tab",
+    "latex-workshop.latex.autoBuild.run": "onFileChange",
+    "[latex]": {
+        "editor.defaultFormatter": "James-Yu.latex-workshop"
+    }
+}

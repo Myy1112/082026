@@ -1,120 +1,63 @@
-\chapter{Hướng dẫn sử dụng template}
+\chapter{Thiết kế Khung thu thập và Phân tích dữ liệu thị trường lao động}
 \label{Chapter3}
 
-\section{Trích dẫn tài liệu}
+\section{Kiến trúc tổng thể khung dữ liệu}
 
-Dùng lệnh $\textbackslash cite$ để trích dẫn một hoặc nhiều tài liệu tham khảo.
-Tài liệu tham khảo có thể là trang web~\cite{Listings,HDLVThS}, bài báo khoa học~\cite{1994-Cavnar}, sách~\cite{1984-TeX-Knuth,2006-DDien,2006-NPTV}, bài tạp chí~\cite{1989-TED} hoặc các nguồn tham khảo khác. 
-Lưu ý khi trích dẫn tài liệu tham khảo, cần viết câu sao cho bỏ phần trong cặp ngoặc vuông đi thì câu vẫn đầy đủ ý nghĩa.
-Ví dụ, thay vì viết ``Nghiên cứu~\cite{1989-TED} chỉ ra rằng ... '' thì nên viết ``Nghiên cứu của Zhang~\cite{1989-TED} chỉ ra rằng ...''.
-Một ví dụ khác, thay vì viết ``... như trong công trình nghiên cứu~\cite{1994-Cavnar}.'' thì nên viết ``... như trong công trình nghiên cứu của Cavnar và Trenkle~\cite{1994-Cavnar}.''
+Kiến trúc tổng thể khung dữ liệu CareerLens bao gồm ba phân hệ chính: (1) phân hệ thu thập dữ liệu, (2) phân hệ xử lý và chuẩn hóa, (3) phân hệ API và trực quan hóa. Các phân hệ này hoạt động theo quy trình ETL (Extract, Transform, Load) và được triển khai trên một kiến trúc microservices để đảm bảo tính mở rộng và độ tin cậy.
 
-\section{Chèn mã nguồn}
+\section{Phân hệ thu thập dữ liệu đa nguồn}
 
-Để chèn mã nguồn, cần dùng package listings~\cite{Listings}:
+\subsection{Luồng xử lý thu thập dữ liệu tuyển dụng không cấu trúc}
 
-\begin{lstlisting}
-\usepackage{listings}
-\end{lstlisting}
+Phân hệ thu thập sử dụng kỹ thuật Web Scraping kết hợp với API Integration:
 
-Mã nguồn có thể được chèn trực tiếp như sau:
+\begin{enumerate}
+    \item \textbf{Web Scraping}: Sử dụng Scrapy framework để crawl các trang web tuyển dụng.
+    \item \textbf{API Integration}: Kết nối với LinkedIn API, Indeed API để lấy dữ liệu có cấu trúc.
+    \item \textbf{Scheduling}: Sử dụng Apache Airflow để lập lịch chạy hàng ngày.
+    \item \textbf{Storage}: Lưu dữ liệu thô vào MongoDB (NoSQL) để xử lý sau.
+\end{enumerate}
 
-\begin{lstlisting}[language=Python]
-print "Hello, World!"
-\end{lstlisting}
+\subsection{Mô hình hóa cấu trúc dữ liệu việc làm tổng hợp}
 
-hoặc chèn thông qua tập tin chứa mã nguồn trong thư mục $SourceCode$ như sau:
+Dữ liệu công việc được mô hình hóa với các trường chính:
+\begin{itemize}
+    \item Job ID, Title, Company, Location
+    \item Description (text), Requirements, Skills
+    \item Salary, Contract Type, Seniority Level
+    \item Source, Posting Date, Crawl Date
+\end{itemize}
 
-\lstinputlisting[language=C++]{SourceCode/hello.cpp}
+\section{Phân hệ xử lý và chuẩn hóa dữ liệu}
 
-Để chèn mã giả, cần dùng package algorithm~\cite{Algorithm}:
+\subsection{Thuật toán nhận diện và khử trùng lặp thông tin việc làm}
 
-\begin{lstlisting}
-\usepackage{algorithm}
-\end{lstlisting}
+Để phát hiện công việc trùng lặp từ các nguồn khác nhau, sử dụng:
 
-Có thể chèn mã giả vào như sau:
+\begin{enumerate}
+    \item \textbf{Hashing}: Tính hash SHA-256 của title + company + location
+    \item \textbf{Fuzzy Matching}: Sử dụng Levenshtein distance để tìm các công việc gần giống nhau
+    \item \textbf{Similarity Threshold}: Công việc có độ tương đồng > 90\% được coi là trùng lặp
+\end{enumerate}
 
-\begin{algorithm}
-\caption{My algorithm}\label{euclid}
-\begin{algorithmic}[1]
-\Procedure{MyProcedure}{}
-\State $\textit{stringlen} \gets \text{length of }\textit{string}$
-\State $i \gets \textit{patlen}$
-\BState \emph{top}:
-\If {$i > \textit{stringlen}$} \Return false
-\EndIf
-\State $j \gets \textit{patlen}$
-\BState \emph{loop}:
-\If {$\textit{string}(i) = \textit{path}(j)$}
-\State $j \gets j-1$.
-\State $i \gets i-1$.
-\State \textbf{goto} \emph{loop}.
-\State \textbf{close};
-\EndIf
-\State $i \gets i+\max(\textit{delta}_1(\textit{string}(i)),\textit{delta}_2(j))$.
-\State \textbf{goto} \emph{top}.
-\EndProcedure
-\end{algorithmic}
-\end{algorithm}
+\subsection{Cơ chế chuẩn hóa thuộc tính và phân loại danh mục kỹ năng nghề nghiệp}
 
-\section{Hình ảnh}
+Sử dụng các kỹ thuật NLP:
 
-Để chèn hình ảnh, cần dùng package graphicx~\cite{Figures}:
+\begin{itemize}
+    \item \textbf{Text Cleaning}: Loại bỏ diacritics, ký tự đặc biệt, chuẩn hóa khoảng trắng
+    \item \textbf{Skill Extraction}: Sử dụng NER (Named Entity Recognition) để trích xuất các kỹ năng
+    \item \textbf{Skill Normalization}: Ánh xạ các tên kỹ năng khác nhau về cùng một tiêu chuẩn
+    \item \textbf{Skill Taxonomy}: Xây dựng bộ phân loại kỹ năng theo các danh mục (Backend, Frontend, DevOps, etc.)
+\end{itemize}
 
-\begin{lstlisting}
-\usepackage{graphicx}
-\end{lstlisting}
+\section{Mô hình API phục vụ trực quan hóa dữ liệu xu hướng}
 
-Hình \ref{fig:vd1}, hình \ref{fig:vd2} là một số ví dụ về chèn hình ảnh.
+API được thiết kế theo tiêu chuẩn RESTful:
 
-\begin{figure}[htp]
-\centering
-\includegraphics[width=9 cm]{images/logo.png}
-\caption{Hình ví dụ 1}
-\label{fig:vd1}
-\end{figure}
-
-\begin{figure*}[htp]
-\centering
-\includegraphics[width=60 mm]{images/logo.png}
-\caption{Hình ví dụ 2}
-\label{fig:vd2}
-\end{figure*}
-
-\section{Bảng biểu}
-
-Để tạo bảng biểu, tham khảo thêm tại sharelatex.com~\cite{Tables}.
-Bảng~\ref{tab:vd1} là một ví dụ về bảng.
-Ngoài ra, có một số tool online~\footnote{Như trang http://www.tablesgenerator.com/} có thể được dùng để tạo bảng biểu một cách trực quan.
-
-\begin{table}[ht]
-\caption{Bảng ví dụ 1}
-
-\label{tab:vd1}%
-\begin{center}
-\begin{tabular}{ |p{3cm}||p{3cm}|p{3cm}|p{3cm}|  }
- \hline
- \multicolumn{4}{|c|}{Country List} \\
- \hline
- Country Name     or Area Name& ISO ALPHA 2 Code &ISO ALPHA 3 Code&ISO numeric Code\\
- \hline
- Afghanistan   & AF    &AFG&   004\\
- Aland Islands&   AX  & ALA   &248\\
- Albania &AL & ALB&  008\\
- Algeria    &DZ & DZA&  012\\
- American Samoa&   AS  & ASM&016\\
- Andorra& AD  & AND   &020\\
- Angola& AO  & AGO&024\\
- \hline
-\end{tabular}
-\end{center}
-\end{table}
-
-\section{Công thức}
-
-Công thức có thể chèn vào trong cùng một dòng như $ \sqrt{a^2+b^2} $ hoặc nằm trên dòng riêng như công thức~\ref{eu_eqn}.
-
-\begin{equation} \label{eu_eqn}
-x = a_0 + \frac{1}{a_1 + \frac{1}{a_2 + \frac{1}{a_3 + a_4}}}
-\end{equation}
+\begin{itemize}
+    \item \texttt{GET /api/v1/jobs}: Lấy danh sách công việc với bộ lọc
+    \item \texttt{GET /api/v1/skills/trending}: Lấy top kỹ năng theo xu hướng
+    \item \texttt{GET /api/v1/salary-analysis}: Phân tích lương theo vị trí, ngành
+    \item \texttt{POST /api/v1/cv-analysis}: Phân tích CV và Skill Gap Analysis
+\end{itemize}
