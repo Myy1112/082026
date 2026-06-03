@@ -192,9 +192,9 @@ Thesis___HTTT07/
 ## 🎯 WORKFLOW HÀNG NGÀY
 
 ```
-1. Mở VS Code → main.tex
+1. Mở VS Code/IDE Google → main.tex
 2. Sửa/Viết → Nhất Ctrl+S (lưu)
-3. LaTeX Workshop tự compile → Xem PDF
+3. LaTeX Workshop tự compile → Xem PDF (main.pdf)
 4. Lặp lại 2-3
 5. Hài lòng? → git add . → git commit -m "..."
 6. Lặp lại từ 2
