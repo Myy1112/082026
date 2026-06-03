@@ -1,63 +1,239 @@
-\chapter{Thiết kế Khung thu thập và Phân tích dữ liệu thị trường lao động}
+\chapter{Phân tích và Thiết kế hệ thống}
 \label{Chapter3}
 
-\section{Kiến trúc tổng thể khung dữ liệu}
+\section{Phân tích yêu cầu hệ thống}
 
-Kiến trúc tổng thể khung dữ liệu CareerLens bao gồm ba phân hệ chính: (1) phân hệ thu thập dữ liệu, (2) phân hệ xử lý và chuẩn hóa, (3) phân hệ API và trực quan hóa. Các phân hệ này hoạt động theo quy trình ETL (Extract, Transform, Load) và được triển khai trên một kiến trúc microservices để đảm bảo tính mở rộng và độ tin cậy.
+\subsection{Yêu cầu nghiệp vụ}
 
-\section{Phân hệ thu thập dữ liệu đa nguồn}
+Hệ thống CareerLens được thiết kế nhằm giải quyết các yêu cầu nghiệp vụ chính của thị trường tuyển dụng hiện đại:
+\begin{itemize}
+    \item \textbf{Đối với ứng viên (Sinh viên/Người tìm việc)}: Hỗ trợ tự đánh giá năng lực cá nhân, nhận diện khoảng cách kỹ năng (Skill Gap) so với yêu cầu thực tế của thị trường, và nhận gợi ý công việc phù hợp để định hướng học tập và phát triển sự nghiệp.
+    \item \textbf{Đối với nhà tuyển dụng}: Cung cấp công cụ lọc và đối soát hồ sơ ứng viên nhanh chóng dựa trên độ tương đồng ngữ nghĩa, đồng thời phân tích xu hướng biến động kỹ năng và mức lương trên thị trường lao động để tối ưu hóa chiến lược tuyển dụng.
+    \item \textbf{Đối với nhà trường và nhà quản lý}: Cung cấp các thống kê trực quan về xu hướng kỹ năng cần thiết để điều chỉnh chương trình đào tạo sát với nhu cầu thực tiễn.
+\end{itemize}
 
-\subsection{Luồng xử lý thu thập dữ liệu tuyển dụng không cấu trúc}
+\subsection{Yêu cầu chức năng}
 
-Phân hệ thu thập sử dụng kỹ thuật Web Scraping kết hợp với API Integration:
-
+Hệ thống cần cung cấp các nhóm chức năng chính như sau:
 \begin{enumerate}
-    \item \textbf{Web Scraping}: Sử dụng Scrapy framework để crawl các trang web tuyển dụng.
-    \item \textbf{API Integration}: Kết nối với LinkedIn API, Indeed API để lấy dữ liệu có cấu trúc.
-    \item \textbf{Scheduling}: Sử dụng Apache Airflow để lập lịch chạy hàng ngày.
-    \item \textbf{Storage}: Lưu dữ liệu thô vào MongoDB (NoSQL) để xử lý sau.
+    \item \textbf{Phân hệ Phân tích thị trường việc làm (Dashboard)}:
+    \begin{itemize}
+        \item Trực quan hóa xu hướng tuyển dụng (Top kỹ năng được săn đón, biến động số lượng việc làm).
+        \item Thống kê mức lương trung bình theo vị trí công việc, kỹ năng và khu vực địa lý.
+        \item Biểu diễn bản đồ phân bố cơ hội việc làm theo khu vực.
+    \end{itemize}
+    \item \textbf{Phân hệ Quản lý hồ sơ ứng viên (CV Management)}:
+    \begin{itemize}
+        \item Cho phép ứng viên đăng tải CV (định dạng PDF, DOCX).
+        \item Tự động trích xuất thông tin cá nhân, kinh nghiệm làm việc và tập kỹ năng hiện có từ CV.
+    \end{itemize}
+    \item \textbf{Phân hệ Đối soát và So khớp năng lực (Skill Gap \& Matching)}:
+    \begin{itemize}
+        \item Tính điểm tương thích tổng thể giữa CV ứng viên và một tin tuyển dụng cụ thể.
+        \item Liệt kê danh sách các kỹ năng đạt yêu cầu và các kỹ năng còn thiếu (Skill Gap).
+        \item Đưa ra gợi ý cải thiện kỹ năng cho ứng viên.
+    \end{itemize}
 \end{enumerate}
 
-\subsection{Mô hình hóa cấu trúc dữ liệu việc làm tổng hợp}
+\subsection{Yêu cầu phi chức năng}
 
-Dữ liệu công việc được mô hình hóa với các trường chính:
 \begin{itemize}
-    \item Job ID, Title, Company, Location
-    \item Description (text), Requirements, Skills
-    \item Salary, Contract Type, Seniority Level
-    \item Source, Posting Date, Crawl Date
+    \item \textbf{Hiệu năng (Performance)}: 
+    \begin{itemize}
+        \item Thời gian phản hồi cho các yêu cầu tìm kiếm việc làm dưới 500ms.
+        \item Thời gian xử lý trích xuất thực thể và tính toán so khớp một CV mới tải lên không quá 3 giây.
+    \end{itemize}
+    \item \textbf{Tính sẵn sàng và khả năng mở rộng (Availability \& Scalability)}: Hệ thống hoạt động liên tục với độ sẵn sàng cao (uptime > 99.9\%), cấu trúc dịch vụ microservices cho phép mở rộng độc lập khi lượng truy cập tăng đột biến.
+    \item \textbf{Bảo mật (Security)}: Mã hóa thông tin cá nhân của ứng viên và bảo mật các tệp CV được tải lên hệ thống. Áp dụng cơ chế xác thực JWT cho tất cả các yêu cầu API.
+    \item \textbf{Trải nghiệm người dùng (UX/UI)}: Giao diện trực quan, hỗ trợ thiết kế đáp ứng (Responsive Web Design) trên các thiết bị máy tính và di động.
 \end{itemize}
 
-\section{Phân hệ xử lý và chuẩn hóa dữ liệu}
+\section{Thiết kế hệ thống}
 
-\subsection{Thuật toán nhận diện và khử trùng lặp thông tin việc làm}
+\subsection{Sơ đồ kiến trúc tổng thể của hệ thống}
 
-Để phát hiện công việc trùng lặp từ các nguồn khác nhau, sử dụng:
+Hệ thống CareerLens được xây dựng theo mô hình kiến trúc microservices chia làm 3 tầng chính:
+\begin{figure}[ht]
+    \centering
+    % \includegraphics[width=0.8\textwidth]{images/architecture.png}
+    \caption{Kiến trúc tổng thể hệ thống CareerLens}
+    \label{fig:architecture}
+\end{figure}
+\begin{itemize}
+    \item \textbf{Presentation Layer (Tầng giao diện)}: Xây dựng bằng ReactJS và Tailwind CSS, giao tiếp với backend qua các RESTful API.
+    \item \textbf{Application Layer (Tầng nghiệp vụ)}: Gồm các service độc lập như Auth Service (Xác thực), Job Search Service (Tìm kiếm việc làm), Data Pipeline Service (Thu thập tin tuyển dụng), và AI Matcher Service (Xử lý LLM và tính toán so khớp).
+    \item \textbf{Data Layer (Tầng dữ liệu)}: Sử dụng PostgreSQL để lưu trữ thông tin người dùng và dữ liệu có cấu trúc; MongoDB làm kho lưu trữ dữ liệu tin tuyển dụng thô; và Elasticsearch để tăng tốc độ tìm kiếm việc làm.
+\end{itemize}
 
+\subsection{Sơ đồ ca sử dụng tổng quát (Use Case Diagram)}
+
+Sơ đồ ca sử dụng mô tả các tương tác chính giữa tác nhân và hệ thống:
+\begin{figure}[ht]
+    \centering
+    % \includegraphics[width=0.7\textwidth]{images/usecase.png}
+    \caption{Sơ đồ ca sử dụng tổng quát hệ thống}
+    \label{fig:usecase}
+\end{figure}
+\begin{itemize}
+    \item \textbf{Ứng viên}: Có các ca sử dụng như Đăng nhập, Xem Dashboard xu hướng, Đăng tải CV, Thực hiện so khớp CV với công việc, Tìm kiếm và Lưu công việc.
+    \item \textbf{Nhà tuyển dụng}: Đăng nhập, Xem thống kê thị trường, Đăng tin tuyển dụng, và Đối soát danh sách CV ứng tuyển.
+    \item \textbf{Hệ thống tự động (Cron job/Crawler)}: Thực hiện tự động cào tin tuyển dụng và chạy pipeline làm sạch dữ liệu định kỳ.
+\end{itemize}
+
+\subsection{Sơ đồ tuần tự cho các chức năng chính (Sequence Diagram)}
+
+Sơ đồ tuần tự dưới đây thể hiện quy trình nghiệp vụ cốt lõi: \textit{Đối soát hồ sơ và phân tích khoảng cách kỹ năng}.
+\begin{figure}[ht]
+    \centering
+    % \includegraphics[width=0.9\textwidth]{images/sequence.png}
+    \caption{Sơ đồ tuần tự tiến trình Phân tích và Đối soát CV}
+    \label{fig:sequence}
+\end{figure}
 \begin{enumerate}
-    \item \textbf{Hashing}: Tính hash SHA-256 của title + company + location
-    \item \textbf{Fuzzy Matching}: Sử dụng Levenshtein distance để tìm các công việc gần giống nhau
-    \item \textbf{Similarity Threshold}: Công việc có độ tương đồng > 90\% được coi là trùng lặp
+    \item Người dùng tải tệp CV lên từ giao diện (Frontend).
+    \item Frontend gửi tệp tin đến API Gateway, chuyển tiếp tới AI Matcher Service.
+    \item AI Matcher Service gọi mô hình LLM để trích xuất thông tin kỹ năng dưới dạng JSON có cấu trúc.
+    \item AI Matcher Service truy vấn cơ sở dữ liệu để lấy yêu cầu kỹ năng của tin tuyển dụng đích.
+    \item Tính toán độ tương thích ngữ nghĩa sử dụng thuật toán Vector Space và Cosine Similarity.
+    \item AI Matcher Service trả kết quả (điểm số, kỹ năng khớp, kỹ năng thiếu) về Frontend hiển thị cho người dùng.
 \end{enumerate}
 
-\subsection{Cơ chế chuẩn hóa thuộc tính và phân loại danh mục kỹ năng nghề nghiệp}
+\section{Thiết kế cơ sở dữ liệu}
 
-Sử dụng các kỹ thuật NLP:
+\subsection{Sơ đồ mối quan hệ thực thể (ERD)}
 
+Mô hình dữ liệu quan hệ của hệ thống gồm các thực thể cốt lõi:
+\begin{figure}[ht]
+    \centering
+    % \includegraphics[width=0.8\textwidth]{images/erd.png}
+    \caption{Sơ đồ mối quan hệ thực thể (ERD)}
+    \label{fig:erd}
+\end{figure}
 \begin{itemize}
-    \item \textbf{Text Cleaning}: Loại bỏ diacritics, ký tự đặc biệt, chuẩn hóa khoảng trắng
-    \item \textbf{Skill Extraction}: Sử dụng NER (Named Entity Recognition) để trích xuất các kỹ năng
-    \item \textbf{Skill Normalization}: Ánh xạ các tên kỹ năng khác nhau về cùng một tiêu chuẩn
-    \item \textbf{Skill Taxonomy}: Xây dựng bộ phân loại kỹ năng theo các danh mục (Backend, Frontend, DevOps, etc.)
+    \item Một \textbf{User} có thể sở hữu nhiều \textbf{CV} ($1 - N$).
+    \item Một \textbf{CV} sau khi phân tích sẽ tạo ra các bản ghi \textbf{SkillGapAnalysis} tương ứng với các \textbf{Job} khác nhau ($N - N$ qua bảng trung gian).
+    \item Các \textbf{Job} và \textbf{CV} liên kết với bảng từ điển kỹ năng chuẩn hóa \textbf{Skills}.
 \end{itemize}
 
-\section{Mô hình API phục vụ trực quan hóa dữ liệu xu hướng}
+\subsection{Đặc tả các bảng dữ liệu thực tế}
 
-API được thiết kế theo tiêu chuẩn RESTful:
+Dưới đây là đặc tả chi tiết của các bảng dữ liệu quan hệ chính trong PostgreSQL:
+
+\begin{table}[ht]
+\caption{Đặc tả bảng Users (Thông tin người dùng)}
+\label{tab:spec_users}
+\begin{center}
+\begin{tabular}{|l|l|c|l|}
+\hline
+\textbf{Tên trường} & \textbf{Kiểu dữ liệu} & \textbf{Khóa} & \textbf{Mô tả} \\
+\hline
+id & UUID & PK & Định danh duy nhất của người dùng \\
+email & VARCHAR(100) & Unique & Địa chỉ email dùng để đăng nhập \\
+password\_hash & VARCHAR(255) & & Mật khẩu đã được mã hóa \\
+full\_name & VARCHAR(100) & & Họ và tên người dùng \\
+role & VARCHAR(20) & & Vai trò (CANDIDATE, RECRUITER, ADMIN) \\
+created\_at & TIMESTAMP & & Thời gian tạo tài khoản \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+\begin{table}[ht]
+\caption{Đặc tả bảng Jobs (Thông tin việc làm)}
+\label{tab:spec_jobs}
+\begin{center}
+\begin{tabular}{|l|l|c|l|}
+\hline
+\textbf{Tên trường} & \textbf{Kiểu dữ liệu} & \textbf{Khóa} & \textbf{Mô tả} \\
+\hline
+id & UUID & PK & Định danh duy nhất của công việc \\
+title & VARCHAR(150) & & Chức danh công việc chuẩn hóa \\
+company & VARCHAR(100) & & Tên công ty tuyển dụng \\
+location & VARCHAR(100) & & Địa điểm làm việc \\
+description & TEXT & & Mô tả chi tiết công việc \\
+salary\_min & NUMERIC & & Mức lương tối thiểu \\
+salary\_max & NUMERIC & & Mức lương tối đa \\
+posted\_at & TIMESTAMP & & Ngày đăng tin tuyển dụng \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+\begin{table}[ht]
+\caption{Đặc tả bảng CVs (Quản lý hồ sơ ứng viên)}
+\label{tab:spec_cvs}
+\begin{center}
+\begin{tabular}{|l|l|c|l|}
+\hline
+\textbf{Tên trường} & \textbf{Kiểu dữ liệu} & \textbf{Khóa} & \textbf{Mô tả} \\
+\hline
+id & UUID & PK & Định danh duy nhất của CV \\
+user\_id & UUID & FK & Liên kết tới bảng Users \\
+file\_path & VARCHAR(255) & & Đường dẫn lưu trữ file trên server \\
+extracted\_skills & TEXT[] & & Danh sách kỹ năng trích xuất từ CV \\
+uploaded\_at & TIMESTAMP & & Ngày tải hồ sơ lên \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+\section{Thiết kế giao diện}
+
+\subsection{Thiết kế trang chủ và Dashboard thống kê thị trường việc làm}
 
 \begin{itemize}
-    \item \texttt{GET /api/v1/jobs}: Lấy danh sách công việc với bộ lọc
-    \item \texttt{GET /api/v1/skills/trending}: Lấy top kỹ năng theo xu hướng
-    \item \texttt{GET /api/v1/salary-analysis}: Phân tích lương theo vị trí, ngành
-    \item \texttt{POST /api/v1/cv-analysis}: Phân tích CV và Skill Gap Analysis
+    \item \textbf{Trang chủ}: Thiết kế hiện đại với thanh tìm kiếm nổi bật cho phép lọc tin tuyển dụng nhanh theo chức danh, địa điểm và mức lương.
+    \item \textbf{Dashboard thống kê}: Bao gồm các thẻ KPI ở phía trên hiển thị tổng số việc làm hiện tại, số lượng kỹ năng đang có xu hướng tăng. Phần trung tâm sử dụng biểu đồ cột để biểu diễn Top 10 kỹ năng có nhu cầu tuyển dụng cao nhất, và biểu đồ đường thể hiện phân bố mức lương trung bình theo số năm kinh nghiệm.
 \end{itemize}
+
+\subsection{Thiết kế trang quản lý CV và kết quả so khớp năng lực}
+
+\begin{itemize}
+    \item \textbf{Khu vực tải CV}: Sử dụng cơ chế kéo thả (Drag and Drop) hỗ trợ trực quan kèm theo thanh tiến trình hiển thị trạng thái phân tích.
+    \item \textbf{Trang hiển thị kết quả đối soát}:
+    \begin{itemize}
+        \item \textbf{Chỉ số chính}: Điểm tương tương thích tổng thể (\% Match Score) hiển thị qua biểu đồ tròn (Radial Progress).
+        \item \textbf{Bản đồ kỹ năng (Skill Radar Chart)}: So sánh trực quan tập kỹ năng của ứng viên (màu xanh) với yêu cầu của công việc (màu đỏ).
+        \item \textbf{Bảng phân tích chi tiết (Skill Gap Detail)}: Chia làm hai cột chính: Cột bên trái liệt kê các kỹ năng đã khớp (Matched Skills) được đánh dấu tích xanh, cột bên phải là các kỹ năng còn thiếu (Missing Skills) đi kèm các gợi ý tài liệu học tập.
+    \end{itemize}
+\end{itemize}
+
+\section{Thiết kế thuật toán phân tích khoảng cách năng lực}
+
+\subsection{Luồng xử lý từ lúc người dùng upload CV đến khi nhận kết quả so khớp}
+
+Luồng thuật toán bao gồm các bước xử lý sau:
+\begin{enumerate}
+    \item \textbf{Trích xuất thông tin (Parsing)}: Sử dụng thư viện chuyên dụng để đọc nội dung văn bản thô từ file PDF/DOCX của CV.
+    \item \textbf{Bóc tách thực thể bằng LLM}: Đưa văn bản thô của CV vào mô hình LLM với một Prompt có cấu trúc nhằm phân tách chính xác danh sách các kỹ năng kỹ thuật (Hard Skills) và kỹ năng mềm (Soft Skills).
+    \item \textbf{Ánh xạ chuẩn hóa (Mapping)}: So khớp tập kỹ năng trích xuất được với danh mục kỹ năng chuẩn hóa trong cơ sở dữ liệu hệ thống (Skills Table) nhằm khử các biến thể đồng nghĩa.
+    \item \textbf{Đối soát với JD tuyển dụng (Matching)}: So sánh tập kỹ năng đã chuẩn hóa của CV với tập kỹ năng yêu cầu của Job tương ứng.
+    \item \textbf{Trả kết quả phân tích}: Tính toán tỷ lệ, xác định các kỹ năng bị khuyết thiếu và lưu trữ kết quả phân tích.
+\end{enumerate}
+
+\subsection{Thuật toán so sánh tập kỹ năng trong CV với yêu cầu của Job để tính tỷ lệ phần trăm tương thích}
+
+Để tính toán điểm số tương thích tổng thể (\textit{Match Score}), thuật toán kết hợp giữa so khớp tập hợp chính xác và so khớp ngữ nghĩa thông qua vector nhúng:
+
+Gọi $S_{CV}$ là tập hợp các kỹ năng của ứng viên đã được trích xuất và chuẩn hóa từ CV.
+Gọi $S_{Job}$ là tập hợp các kỹ năng yêu cầu được trích xuất từ mô tả công việc (JD).
+
+\textbf{Bước 1: Tính toán điểm số tương hợp tập hợp chính xác (Exact Match Score - $M_{exact}$)}:
+\begin{equation}
+M_{exact} = \frac{|S_{CV} \cap S_{Job}|}{|S_{Job}|} \times 100\%
+\end{equation}
+
+\textbf{Bước 2: So khớp ngữ nghĩa đối với các kỹ năng chưa khớp hoàn toàn}:
+Đối với mỗi kỹ năng $k_j \in S_{Job}$ nhưng không thuộc $S_{CV}$, hệ thống tính toán độ tương đồng Cosine ngữ nghĩa giữa vector nhúng của kỹ năng đó $\mathbf{V}(k_j)$ và các vector nhúng của các kỹ năng ứng viên đang sở hữu $\mathbf{V}(k_i), k_i \in S_{CV}$.
+Nếu tồn tại một cặp kỹ năng có độ tương đồng Cosine lớn hơn ngưỡng $\theta$ (thường chọn $\theta = 0.82$):
+\begin{equation}
+\max_{k_i \in S_{CV}} \text{sim}_{\text{cosine}}(\mathbf{V}(k_i), \mathbf{V}(k_j)) \ge \theta
+\end{equation}
+Thì kỹ năng $k_j$ được coi là khớp một phần (Partial Match) với trọng số tương ứng bằng giá trị Cosine Similarity đó.
+
+\textbf{Bước 3: Tổng hợp điểm số tương hợp cuối cùng (Final Match Score)}:
+Điểm số tương hợp cuối cùng là sự kết hợp có trọng số giữa điểm khớp chính xác và điểm khớp ngữ nghĩa một phần, nhằm phản ánh chính xác nhất năng lực thực tế của ứng viên so với công việc yêu cầu.
+\begin{equation}
+\text{Match Score} = \min \left( 100\%, \frac{|S_{CV} \cap S_{Job}| + \sum_{k_j \in \text{Partial}} \max \text{sim}_{\text{cosine}}}{|S_{Job}|} \times 100\% \right)
+\end{equation}
+Các kỹ năng nằm trong tập $S_{Job}$ nhưng hoàn toàn không thể so khớp chính xác hoặc khớp ngữ nghĩa một phần với bất kỳ kỹ năng nào trong $S_{CV}$ sẽ được xếp vào danh mục \textit{Kỹ năng thiếu (Missing Skills)}.

@@ -70,16 +70,14 @@ Mục tiêu chính của luận văn này là xây dựng một hệ thống th�
 
 \section{Ý nghĩa khoa học và thực tiễn}
 
-\subsection{Ý nghĩa khoa học}
-
+\textbf{Ý nghĩa khoa học:}
 \begin{itemize}
     \item Đóng góp các phương pháp và kỹ thuật mới trong lĩnh vực Khai phá dữ liệu Web (Web Mining) và Xử lý ngôn ngữ tự nhiên (NLP), đặc biệt là ứng dụng các mô hình LLM hiện đại để chuẩn hóa thực thể và so khớp ngữ nghĩa.
     \item Cung cấp một mô hình end-to-end (từ đầu đến cuối) cho bài toán kết nối thị trường lao động, có thể được áp dụng cho các lĩnh vực khác.
     \item Tạo ra một tập dữ liệu Ground Truth (tập dữ liệu kiểm thử chuẩn) cho bài toán trích xuất kỹ năng từ miêu tả công việc, có thể hỗ trợ các nghiên cứu tiếp theo trong cộng đồng.
 \end{itemize}
 
-\subsection{Ý nghĩa thực tiễn}
-
+\textbf{Ý nghĩa thực tiễn:}
 \begin{itemize}
     \item \textbf{Cho ứng viên}: Hệ thống giúp ứng viên xác định những kỹ năng cần phát triển, tìm kiếm công việc phù hợp hơn, và lập kế hoạch phát triển sự nghiệp một cách khoa học.
     \item \textbf{Cho nhà tuyển dụng}: Hệ thống cung cấp cái nhìn sâu sắc về xu hướng thị trường, giúp xác định những kỹ năng quan trọng và cạnh tranh lương thưởng một cách hợp lý.
@@ -91,15 +89,15 @@ Mục tiêu chính của luận văn này là xây dựng một hệ thống th�
 Ngoài chương Giới thiệu này, luận văn gồm 5 chương chính và các phần phụ trợ như sau:
 
 \begin{itemize}
-    \item \textbf{Chương 2 - Cơ sở lý thuyết và Các nghiên cứu liên quan}: Trình bày các khái niệm cơ bản về Web Mining, ETL, NLP, LLM, vector không gian, độ đo Cosine, và phân tích các công trình nghiên cứu liên quan để xác định khoảng trống nghiên cứu.
+    \item \textbf{Chương 2 - Cơ sở lý thuyết và Công nghệ}: Trình bày các khái niệm cơ bản về giải pháp phân tích thị trường lao động (thu thập dữ liệu tự động, quy trình ETL, nguyên lý trực quan hóa), giải pháp so khớp hồ sơ (không gian vector, độ đo Cosine, khảo sát các công cụ hiện có), và trích xuất thực thể (bóc tách kỹ năng/vị trí công việc, ứng dụng LLM và Prompt).
     
-    \item \textbf{Chương 3 - Thiết kế Khung thu thập và Phân tích dữ liệu thị trường lao động}: Mô tả chi tiết kiến trúc hệ thống, phân hệ thu thập dữ liệu đa nguồn, phân hệ xử lý và chuẩn hóa dữ liệu, và mô hình API.
+    \item \textbf{Chương 3 - Phân tích và Thiết kế hệ thống}: Trình bày chi tiết về phân tích yêu cầu (nghiệp vụ, chức năng, phi chức năng), thiết kế hệ thống (kiến trúc tổng thể, sơ đồ ca sử dụng, sơ đồ tuần tự), thiết kế cơ sở dữ liệu (ERD và đặc tả bảng), thiết kế giao diện (Dashboard, quản lý CV), và thiết kế thuật toán phân tích khoảng cách năng lực.
     
-    \item \textbf{Chương 4 - Thiết kế Ứng dụng và Khung đối soát hồ sơ thông minh}: Trình bày thiết kế ứng dụng, bao gồm kiến trúc hệ thống, các sơ đồ UML, thiết kế cơ sở dữ liệu, mô hình thuật toán Skill Gap Analysis, và thiết kế giao diện người dùng.
+    \item \textbf{Chương 4 - Xây dựng hệ thống}: Trình bày việc lựa chọn công nghệ (Frontend, Backend, Database, AI), xây dựng pipeline dữ liệu (crawler, làm sạch dữ liệu, lưu trữ PostgreSQL), xây dựng các chức năng phân hệ người dùng (Auth, Dashboard, tìm kiếm/lưu job/quản lý CV), và xây dựng thuật toán phân tích kỹ năng (prompts, tính toán độ phù hợp).
     
-    \item \textbf{Chương 5 - Hiện thực hóa, Thử nghiệm và Đánh giá}: Trình bày quá trình triển khai hệ thống, kết quả hiện thực hóa, các bài kiểm thử chức năng, đánh giá hiệu năng, và đánh giá độ chính xác của thuật toán với các độ đo khoa học dữ liệu (Precision, Recall, F1-Score).
+    \item \textbf{Chương 5 - Kiểm thử và Đánh giá}: Mô tả môi trường triển khai thử nghiệm, kiểm thử chức năng, đánh giá hiệu năng và dữ liệu thực tế, và đánh giá kết quả đầu ra của thuật toán (độ chính xác định dạng, phân tích trường hợp đối soát cụ thể).
     
-    \item \textbf{Chương 6 - Kết luận và Hướng phát triển}: Tóm tắt các kết quả đạt được, những hạn chế còn tồn tại, và đề xuất những hướng nghiên cứu tương lai.
+    \item \textbf{Chương 6 - Kết luận}: Tổng kết các kết quả đạt được của hệ thống, chỉ ra những hạn chế còn tồn tại, và đề xuất hướng nghiên cứu, phát triển tương lai.
 \end{itemize}
 
 Các phần phụ trợ bao gồm: Danh mục chữ viết tắt, Danh sách hình vẽ, Danh sách bảng biểu, Tóm tắt khóa luận (Abstract), Danh sách tài liệu tham khảo, và Phụ lục chứa các hình vẽ, bảng biểu chi tiết.

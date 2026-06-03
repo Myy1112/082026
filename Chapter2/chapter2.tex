@@ -1,102 +1,103 @@
-\chapter{Cơ sở lý thuyết và Các nghiên cứu liên quan}
+\chapter{Cơ sở lý thuyết và Công nghệ}
 \label{Chapter2}
 
-\section{Quy trình khai phá và kỹ nghệ dữ liệu trực tuyến}
+\section{Giải pháp phân tích thị trường lao động}
 
-\subsection{Kiến trúc thu thập dữ liệu tự động từ các nền tảng Web}
+\subsection{Tổng quan về kỹ thuật thu thập dữ liệu tự động từ các nền tảng Web}
 
 Khai phá dữ liệu Web (Web Mining) là quy trình tự động trích xuất thông tin từ các trang Web. Kỹ thuật chính bao gồm:
 
 \begin{itemize}
-    \item \textbf{Web Scraping}: Sử dụng các công cụ như Selenium, BeautifulSoup, Scrapy để phân tích HTML/XML và trích xuất dữ liệu từ các trang Web.
-    \item \textbf{API Integration}: Kết nối với các API công khai (public API) của LinkedIn, Indeed để lấy dữ liệu một cách có cấu trúc hơn.
-    \item \textbf{Tự động hóa quy trình}: Sử dụng các công cụ scheduling (Airflow, cron jobs) để thu thập dữ liệu định kỳ.
+    \item \textbf{Web Scraping}: Sử dụng các công cụ như Selenium, BeautifulSoup, Scrapy để phân tích cấu trúc HTML/XML và trích xuất dữ liệu từ các trang tuyển dụng trực tuyến.
+    \item \textbf{API Integration}: Kết nối với các giao diện lập trình ứng dụng (API) công khai hoặc đối tác của các nền tảng tuyển dụng để lấy dữ liệu một cách có cấu trúc và hiệu quả.
+    \item \textbf{Tự động hóa quy trình}: Thiết lập các tác vụ lập lịch tự động (như Apache Airflow hoặc cron jobs) để thực hiện việc thu thập dữ liệu định kỳ, đảm bảo tính cập nhật của thị trường.
 \end{itemize}
 
-\subsection{Quy trình trích xuất, biến đổi và lưu trữ dữ liệu (ETL)}
+\subsection{Quy trình trích xuất, biến đổi và lưu trữ dữ liệu trong phân tích dữ liệu lớn}
 
-Quy trình ETL (Extract, Transform, Load) bao gồm ba giai đoạn chính:
+Quy trình ETL (Extract, Transform, Load) đóng vai trò cốt lõi trong việc chuẩn hóa dữ liệu tuyển dụng quy mô lớn:
 
 \begin{enumerate}
-    \item \textbf{Extract (Trích xuất)}: Lấy dữ liệu từ các nguồn khác nhau (Web, API, cơ sở dữ liệu).
+    \item \textbf{Extract (Trích xuất)}: Thu nhận dữ liệu thô từ nhiều nguồn khác nhau (trang tin tuyển dụng, mạng xã hội nghề nghiệp, API đối tác).
     
     \item \textbf{Transform (Biến đổi)}: 
     \begin{itemize}
-        \item Làm sạch dữ liệu: Loại bỏ dữ liệu null, trùng lặp, định dạng sai.
-        \item Chuẩn hóa: Đưa các giá trị về cùng định dạng (VD: chuyển tất cả ngày tháng về định dạng ISO 8601).
-        \item Kỹ thuật xử lý: Tách trường, kết hợp trường, tính toán trường mới.
+        \item Làm sạch dữ liệu: Loại bỏ thông tin trống (null), lọc bỏ các tin tuyển dụng hết hạn hoặc không hợp lệ.
+        \item Xử lý trùng lặp: Nhận diện các tin tuyển dụng giống nhau được đăng tải trên nhiều nền tảng khác nhau.
+        \item Chuẩn hóa kiểu dữ liệu: Chuyển đổi các định dạng ngày tháng, mức lương về chuẩn chung thống nhất.
     \end{itemize}
     
-    \item \textbf{Load (Lưu trữ)}: Tải dữ liệu đã biến đổi vào cơ sở dữ liệu hoặc kho dữ liệu (data warehouse).
+    \item \textbf{Load (Lưu trữ)}: Tải dữ liệu đã qua xử lý và làm sạch vào hệ thống lưu trữ đích (như cơ sở dữ liệu quan hệ PostgreSQL hoặc cơ sở dữ liệu NoSQL MongoDB) để phục vụ cho các tiến trình phân tích tiếp theo.
 \end{enumerate}
 
-\section{Trí tuệ nhân tạo và Xử lý ngôn ngữ tự nhiên trong quản trị nhân sự}
+\subsection{Nguyên lý trực quan hóa thông tin hỗ trợ ra quyết định}
 
-\subsection{Mô hình ngôn ngữ lớn (LLM) và kỹ thuật trích xuất thực thể thông minh}
-
-Mô hình ngôn ngữ lớn (Large Language Models - LLM) như GPT-4, BERT, v.v. là các mô hình deep learning được huấn luyện trên các kho ngữ liệu khổng lồ. Ứng dụng của LLM:
-
+Trực quan hóa thông tin (Information Visualization) đóng vai trò then chốt trong việc chuyển đổi các tập dữ liệu thị trường lao động phức tạp thành tri thức có thể hành động. Các nguyên lý cốt lõi bao gồm:
 \begin{itemize}
-    \item \textbf{Named Entity Recognition (NER)}: Nhận diện các thực thể có tên (tên công ty, vị trí công việc, kỹ năng) từ văn bản miễn phí.
-    \item \textbf{Text Classification}: Phân loại miêu tả công việc vào các danh mục tiêu chuẩn.
-    \item \textbf{Semantic Similarity}: Đánh giá độ tương đồng ngữ nghĩa giữa các câu, cụm từ.
+    \item \textbf{Tính tập trung và rõ ràng}: Lựa chọn các loại biểu đồ phù hợp với bản chất dữ liệu (ví dụ: biểu đồ cột để so sánh nhu cầu kỹ năng, biểu đồ đường để theo dõi xu hướng tuyển dụng theo thời gian, biểu đồ radar để so sánh khoảng cách năng lực).
+    \item \textbf{Khả năng tương tác (Interactivity)}: Hỗ trợ người dùng tương tác sâu như lọc dữ liệu theo vị trí địa lý, ngành nghề hoặc thời gian thực tế để cá nhân hóa kết quả phân tích.
+    \item \textbf{Hỗ trợ ra quyết định}: Cung cấp các chỉ số trực quan nhanh (KPI cards) nhằm giúp nhà hoạch định chính sách, nhà tuyển dụng hoặc ứng viên nhanh chóng nhận diện xu hướng cung - cầu lao động để đưa ra quyết định kịp thời.
 \end{itemize}
 
-\subsection{Biểu diễn ngữ nghĩa văn bản bằng Vector không gian và đo lường tương đồng Cosine}
+\section{Giải pháp so khớp hồ sơ}
 
-\textbf{Word Embeddings}: Biểu diễn các từ dưới dạng vector số trong không gian đa chiều, trong đó các từ có ý nghĩa gần nhau sẽ có vị trí gần nhau trong không gian này.
+\subsection{Lý thuyết không gian vector và kỹ thuật tạo vector nhúng}
 
-Ví dụ, sử dụng mô hình Word2Vec hoặc GloVe:
+Lý thuyết không gian vector (Vector Space Model) biểu diễn các văn bản (như hồ sơ ứng viên và mô tả công việc) dưới dạng các vector số trong một không gian đa chiều. Kỹ thuật tạo vector nhúng (Embeddings) bao gồm:
+
+\begin{itemize}
+    \item \textbf{Word Embeddings (Nhúng từ)}: Biểu diễn các từ dưới dạng vector số sao cho các từ có ý nghĩa tương đồng sẽ nằm gần nhau trong không gian đa chiều (ví dụ: Word2Vec, GloVe, FastText).
+    \begin{equation}
+    \text{``Python''} \approx [0.2, 0.5, 0.1, \ldots] \quad \text{(vector không gian nhiều chiều)}
+    \end{equation}
+    
+    \item \textbf{Sentence \& Document Embeddings (Nhúng văn bản)}: Biểu diễn toàn bộ câu hoặc đoạn văn bản dài thành một vector duy nhất bằng các mô hình học sâu như BERT, Sentence-BERT, hoặc các mô hình nhúng của các LLM lớn nhằm nắm bắt trọn vẹn ngữ cảnh ngữ nghĩa của hồ sơ ứng viên hoặc yêu cầu công việc.
+\end{itemize}
+
+\subsection{Phương pháp định lượng hóa độ tương đồng ngữ nghĩa bằng độ đo Cosine}
+
+Để đo lường độ tương đồng về mặt ngữ nghĩa giữa hai văn bản $\mathbf{A}$ (ví dụ: vector nhúng của CV) và $\mathbf{B}$ (ví dụ: vector nhúng của tin tuyển dụng), ta sử dụng độ đo tương đồng Cosine (Cosine Similarity):
+
 \begin{equation}
-\text{``Python''} \approx [0.2, 0.5, 0.1, \ldots] \quad \text{(vector 300 chiều)}
-\end{equation}
-
-\textbf{Độ đo Cosine Similarity}: Đo lường độ tương đồng giữa hai vector:
-\begin{equation}
-\text{similarity}(\mathbf{A}, \mathbf{B}) = \frac{\mathbf{A} \cdot \mathbf{B}}{|\mathbf{A}| \times |\mathbf{B}|} = \frac{\sum_{i=1}^{n} A_i B_i}{\sqrt{\sum_{i=1}^{n} A_i^2} \times \sqrt{\sum_{i=1}^{n} B_i^2}}
+\text{similarity}(\mathbf{A}, \mathbf{B}) = \frac{\mathbf{A} \cdot \mathbf{B}}{\|\mathbf{A}\| \times \|\mathbf{B}\|} = \frac{\sum_{i=1}^{n} A_i B_i}{\sqrt{\sum_{i=1}^{n} A_i^2} \times \sqrt{\sum_{i=1}^{n} B_i^2}}
 \label{eq:cosine}
 \end{equation}
 
-Kết quả nằm trong khoảng $[-1, 1]$, trong đó 1 có nghĩa là hoàn toàn giống nhau, 0 có nghĩa là không liên quan, -1 có nghĩa là hoàn toàn khác.
-
-\section{Các công trình nghiên cứu liên quan}
-
-\subsection{Tổng quan các giải pháp phân tích xu hướng thị trường lao động và so khớp hồ sơ}
-
-Các công trình nghiên cứu gần đây đã tập trung vào:
-
+Giá trị tương đồng Cosine nằm trong khoảng $[-1, 1]$ (hoặc $[0, 1]$ đối với vector nhúng không âm):
 \begin{itemize}
-    \item \textbf{Khai phá dữ liệu tuyển dụng}: Các nghiên cứu sử dụng Web Mining để thu thập và phân tích dữ liệu từ các nền tảng tuyển dụng để xác định xu hướng kỹ năng, lương thưởng, vị trí công việc.
-    
-    \item \textbf{So khớp CV-Job}: Các hệ thống sử dụng NLP, Machine Learning để so sánh hồ sơ ứng viên với công việc, tính điểm phù hợp (matching score).
-    
-    \item \textbf{Phân tích khoảng cách kỹ năng}: Các nghiên cứu về Skill Gap Analysis sử dụng các mô hình để xác định những kỹ năng mà ứng viên thiếu so với yêu cầu công việc.
-    
-    \item \textbf{Chuẩn hóa kỹ năng}: Các công trình xây dựng các bản phân loại tiêu chuẩn (skill taxonomies) để chuẩn hóa các tên kỹ năng khác nhau.
+    \item Gần $1$: Hai văn bản có độ tương đồng ngữ nghĩa rất cao.
+    \item Gần $0$: Hai văn bản độc lập, không liên quan về mặt ngữ nghĩa.
+    \item Gần $-1$: Hai văn bản có ngữ nghĩa hoàn toàn đối lập.
 \end{itemize}
 
-\subsection{Khoảng trống nghiên cứu và giải pháp đề xuất của hệ thống CareerLens}
+\subsection{Khảo sát các công cụ và thuật toán so khớp hồ sơ nhân sự hiện có}
 
-Mặc dù có nhiều công trình nghiên cứu, vẫn tồn tại các khoảng trống:
+Các công trình nghiên cứu và giải pháp so khớp hồ sơ (CV-Job Matching) hiện nay trên thị trường bao gồm:
 
 \begin{itemize}
-    \item \textbf{Thiếu giải pháp toàn diện}: Hầu hết các công trình chỉ tập trung vào một khía cạnh (thu thập, phân tích, hoặc so khớp), chứ không có một hệ thống end-to-end.
-    
-    \item \textbf{Thiếu dữ liệu công khai}: Không có tập dữ liệu Ground Truth công khai cho bài toán trích xuất kỹ năng từ miêu tả công việc.
-    
-    \item \textbf{Chuẩn hóa dữ liệu chưa tốt}: Các giải pháp hiện có chưa xử lý tốt vấn đề chuẩn hóa thực thể và phát hiện trùng lặp trong dữ liệu tuyển dụng.
-    
-    \item \textbf{Ứng dụng cho thị trường Việt Nam còn hạn chế}: Hầu hết các công trình tập trung vào các thị trường tiếng Anh, với ít nghiên cứu về thị trường Việt Nam.
+    \item \textbf{Hệ thống quản lý ứng viên truyền thống (ATS)}: Sử dụng phương pháp khớp từ khóa chính xác (Keyword Matching). Phương pháp này đơn giản, dễ cài đặt nhưng có hạn chế lớn là bỏ sót ứng viên tiềm năng nếu họ sử dụng từ đồng nghĩa hoặc cách viết khác.
+    \item \textbf{Giải pháp dựa trên Ontology (Cây phân loại thực thể)}: Xây dựng hệ thống phân loại kỹ năng và chức danh công việc đồ sộ để thiết lập quan hệ ngữ nghĩa. Giải pháp này có độ chính xác cao nhưng đòi hỏi chi phí bảo trì và cập nhật ontology rất lớn.
+    \item \textbf{Các mô hình học máy (Machine Learning \& Deep Learning)}: Huấn luyện các mô hình phân loại để xếp hạng độ phù hợp giữa hồ sơ và tin tuyển dụng.
 \end{itemize}
 
-\textbf{Giải pháp đề xuất của CareerLens}:
+\section{Trích xuất thực thể trong quản lý thị trường việc làm}
 
-Luận văn này đề xuất xây dựng một hệ thống toàn diện bao gồm:
+\subsection{Bài toán bóc tách thông tin kỹ năng (Skills), vị trí công việc (Job Title) từ văn bản}
 
-\begin{enumerate}
-    \item Khung công tác thu thập và chuẩn hóa dữ liệu từ nhiều nguồn.
-    \item Các kỹ thuật xử lý dữ liệu hiện đại sử dụng LLM và NLP.
-    \item Mô hình Skill Gap Analysis dựa trên vector không gian và Cosine Similarity.
-    \item Một ứng dụng web hoàn chỉnh cung cấp các tính năng trực quan hóa và so khớp.
-    \item Tập dữ liệu Ground Truth công khai cho các nghiên cứu tiếp theo.
-\end{enumerate}
+Trích xuất thực thể (Named Entity Recognition - NER) đóng vai trò then chốt trong việc phân tích thông tin thị trường lao động:
+\begin{itemize}
+    \item \textbf{Trích xuất Kỹ năng (Skills)}: Nhận diện các thực thể kỹ năng chuyên môn (như Java, SQL, Machine Learning) và kỹ năng mềm (giao tiếp, quản lý thời gian) từ các đoạn mô tả công việc không cấu trúc.
+    \item \textbf{Trích xuất Vị trí công việc (Job Title)}: Xác định chính xác vai trò công việc (như Backend Developer, Project Manager) để phân nhóm dữ liệu tuyển dụng một cách hợp lý.
+\end{itemize}
+Thách thức lớn nhất là ngôn ngữ tuyển dụng thường pha trộn giữa tiếng Anh và tiếng Việt, kèm theo nhiều thuật ngữ công nghệ mới xuất hiện liên tục.
+
+\subsection{Ứng dụng mô hình ngôn ngữ lớn (LLM) và câu lệnh (Prompt) để chuẩn hóa dữ liệu}
+
+Sự xuất hiện của các mô hình ngôn ngữ lớn (LLM) mang lại những đột phá cho bài toán chuẩn hóa dữ liệu tuyển dụng:
+\begin{itemize}
+    \item \textbf{Thiết kế câu lệnh có cấu trúc (Prompt Engineering)}: Sử dụng các kỹ thuật như Few-shot prompting hoặc định dạng đầu ra bắt buộc (JSON Schema) để yêu cầu LLM trích xuất và trả về dữ liệu có cấu trúc từ văn bản thô một cách chính xác.
+    \item \textbf{Chuẩn hóa thực thể (Entity Resolution)}: Ánh xạ các biến thể khác nhau của cùng một kỹ năng (ví dụ: ``Python language'', ``lập trình Python'', ``Python 3'') về một định danh chuẩn duy nhất (``Python'') thông qua khả năng hiểu ngữ nghĩa sâu sắc của LLM.
+\end{itemize}
+
+\textbf{Khoảng trống nghiên cứu và giải pháp đề xuất của hệ thống CareerLens}:
+Mặc dù các nghiên cứu đơn lẻ đã đạt được một số kết quả, nhưng trên thị trường vẫn thiếu vắng một giải pháp end-to-end toàn diện, kết hợp hài hòa giữa việc cào dữ liệu đa nền tảng, chuẩn hóa thực thể bằng LLM và so khớp hồ sơ thông minh đặc thù cho ngôn ngữ tiếng Việt. Hệ thống \textit{CareerLens} được đề xuất nhằm giải quyết khoảng trống này bằng cách tích hợp toàn bộ các giai đoạn trên vào một nền tảng duy nhất, tối ưu hóa cho thị trường lao động Việt Nam.

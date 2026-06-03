@@ -1,65 +1,207 @@
-\chapter{Thiết kế Ứng dụng và Khung đối soát hồ sơ thông minh}
+\chapter{Xây dựng hệ thống}
 \label{Chapter4}
 
-\section{Kiến trúc hệ thống tổng thể}
+\section{Lựa chọn công nghệ}
 
-Hệ thống CareerLens được xây dựng dựa trên kiến trúc microservices với ba tầng chính: Presentation Layer (giao diện), Application Layer (logic ứng dụng), và Data Layer (dữ liệu).
+\subsection{Công nghệ Frontend}
 
-\section{Phân tích thiết kế hệ thống hướng đối tượng}
-
-\subsection{Sơ đồ ca sử dụng tổng quát (Use Case Diagram)}
-
-Các ca sử dụng chính của hệ thống bao gồm:
+Để phát triển giao diện người dùng có tính tương tác cao và phản hồi nhanh, các công nghệ sau đã được lựa chọn:
 \begin{itemize}
-    \item \textbf{Ứng viên}: Tìm kiếm công việc, Upload CV, Xem Skill Gap Analysis, Xem xu hướng thị trường
-    \item \textbf{Nhà tuyển dụng}: Đăng công việc, Phân tích CV, Xem kỹ năng xu hướng
-    \item \textbf{Admin}: Quản lý người dùng, Cập nhật dữ liệu, Giám sát hệ thống
+    \item \textbf{ReactJS}: Thư viện Javascript phổ biến cho phép xây dựng giao diện dạng Single Page Application (SPA), giúp tối ưu hóa hiệu năng render trang thông qua Virtual DOM và tái sử dụng các thành phần giao diện (components).
+    \item \textbf{TypeScript}: Ngôn ngữ mở rộng của JavaScript bổ sung cơ chế kiểm soát kiểu dữ liệu tĩnh (static typing), giúp phát hiện lỗi sớm trong quá trình biên dịch và tăng độ tin cậy của mã nguồn khi hệ thống mở rộng.
+    \item \textbf{Tailwind CSS}: Khung CSS tiện ích (utility-first) giúp xây dựng giao diện nhanh chóng, đảm bảo tính nhất quán của hệ thống thiết kế (Design System) và hỗ trợ tốt thiết kế đáp ứng (Responsive).
+    \item \textbf{Recharts}: Thư viện trực quan hóa dữ liệu dựa trên SVG được tối ưu riêng cho React, dùng để vẽ các biểu đồ xu hướng tuyển dụng, mức lương và biểu đồ radar so khớp kỹ năng.
 \end{itemize}
 
-\subsection{Sơ đồ tuần tự cho các tiến trình nghiệp vụ cốt lõi (Sequence Diagram)}
-
-Quy trình chính: Ứng viên upload CV $\rightarrow$ Hệ thống phân tích CV $\rightarrow$ Trích xuất kỹ năng $\rightarrow$ So khớp với công việc $\rightarrow$ Tính Skill Gap $\rightarrow$ Hiển thị kết quả.
-
-\section{Thiết kế cơ sở dữ liệu hệ thống}
-
-\subsection{Sơ đồ thực thể mối quan hệ (ERD)}
-
-Các bảng chính:
-\begin{itemize}
-    \item \textbf{Users}: ID, Email, Name, Role, Avatar
-    \item \textbf{Jobs}: ID, Title, Company, Location, Description, Salary
-    \item \textbf{Skills}: ID, Name, Category, Description
-    \item \textbf{CVs}: ID, UserID, FileName, UploadedDate
-    \item \textbf{SkillGapAnalysis}: ID, CVId, JobId, Score, MissingSkills
-\end{itemize}
-
-\subsection{Ánh xạ mô hình dữ liệu quan hệ logic sang cấu trúc lưu trữ}
+\subsection{Công nghệ Backend \& Database}
 
 \begin{itemize}
-    \item Sử dụng PostgreSQL để lưu trữ dữ liệu có cấu trúc
-    \item Sử dụng MongoDB để lưu trữ dữ liệu công việc thô
-    \item Sử dụng Elasticsearch để index và tìm kiếm nhanh
+    \item \textbf{FastAPI (Python)}: Khung phát triển web hiện đại, hiệu năng cao dựa trên nền tảng ASGI, hỗ trợ lập trình bất đồng bộ (async/await) và tự động tạo tài liệu API chuẩn OpenAPI (Swagger UI).
+    \item \textbf{PostgreSQL}: Cơ sở dữ liệu quan hệ mạnh mẽ dùng để lưu trữ các thông tin có tính toàn vẹn cao như tài khoản người dùng, hồ sơ CV đã phân tích, từ điển kỹ năng nghề nghiệp và kết quả so khớp.
+    \item \textbf{MongoDB}: Cơ sở dữ liệu NoSQL dạng tài liệu (document-oriented) dùng để lưu trữ tạm thời dữ liệu tin tuyển dụng thô (raw JSON) thu thập từ các trang web trước khi tiến hành chuẩn hóa.
 \end{itemize}
 
-\section{Mô hình thuật toán xử lý AI và phân tích khoảng cách năng lực (Skill Gap Analysis)}
+\subsection{Công nghệ Thu thập \& Xử lý AI}
 
-Mô hình Skill Gap Analysis:
+\begin{itemize}
+    \item \textbf{Scrapy}: Khung thu thập dữ liệu (Web Crawling) mạnh mẽ của Python, hỗ trợ xử lý đa luồng bất đồng bộ, giúp cào dữ liệu tin tuyển dụng quy mô lớn một cách nhanh chóng và ổn định.
+    \item \textbf{SentenceTransformers}: Thư viện Python dựa trên PyTorch dùng để tạo các vector nhúng (embeddings) chất lượng cao cho các kỹ năng và cụm từ chuyên môn từ mô hình pre-trained \texttt{all-MiniLM-L6-v2}.
+    \item \textbf{Gemini API / OpenAI API}: Sử dụng mô hình ngôn ngữ lớn (LLM) thông qua API để thực hiện trích xuất thông tin thực thể (kỹ năng, chức danh) từ văn bản mô tả công việc (JD) và CV không cấu trúc.
+\end{itemize}
+
+\section{Xây dựng pipeline tổ chức dữ liệu}
+
+\subsection{Cài đặt các module thu thập dữ liệu tin tuyển dụng tự động}
+
+Quy trình thu thập dữ liệu tuyển dụng được cài đặt bằng Scrapy. Dưới đây là mã nguồn minh họa một module crawler thu thập tin tuyển dụng thô từ trang web:
+
+\begin{lstlisting}[language=Python, caption=Ma nguon Scrapy Spider thu thap tin tuyen dung]
+import scrapy
+from crawler.items import JobItem
+
+class JobSpider(scrapy.Spider):
+    name = "job_spider"
+    allowed_domains = ["example-recruitment.com"]
+    start_urls = ["https://example-recruitment.com/jobs"]
+
+    def parse(self, response):
+        for job_card in response.css(".job-card"):
+            item = JobItem()
+            item['title'] = job_card.css(".job-title::text").get().strip()
+            item['company'] = job_card.css(".company-name::text").get().strip()
+            item['location'] = job_card.css(".location::text").get().strip()
+            detail_url = job_card.css("a::attr(href)").get()
+            yield response.follow(detail_url, self.parse_detail, cb_kwargs={'item': item})
+
+    def parse_detail(self, response, item):
+        item['description'] = " ".join(response.css(".job-description *::text").getall())
+        item['salary'] = response.css(".salary::text").get()
+        yield item
+\end{lstlisting}
+
+\subsection{Quy trình làm sạch dữ liệu, xử lý trùng lặp và lưu trữ vào PostgreSQL}
+
+Sau khi dữ liệu thô được lưu vào MongoDB, pipeline xử lý dữ liệu (ETL pipeline) sẽ thực hiện làm sạch và lọc trùng lặp:
 \begin{enumerate}
-    \item Trích xuất kỹ năng từ CV (sử dụng LLM)
-    \item Trích xuất kỹ năng từ mô tả công việc (sử dụng LLM)
-    \item Chuẩn hóa cả hai tập kỹ năng theo taxonomy tiêu chuẩn
-    \item Tính Cosine Similarity giữa các kỹ năng
-    \item Xác định kỹ năng thiếu (Skill Gap)
-    \item Tính điểm phù hợp tổng thể: $\text{Match Score} = \frac{\sum \text{skills có}}{|\text{skills yêu cầu}|} \times 100\%$
+    \item \textbf{Lọc trùng lặp vật lý}: Tính mã băm SHA-256 từ chuỗi nối của ba trường thông tin: \texttt{title + company + location}. Nếu mã hash đã tồn tại trong PostgreSQL, bản ghi sẽ bị loại bỏ.
+    \item \textbf{Xử lý ngôn ngữ thô}: Loại bỏ các thẻ HTML còn sót lại, chuẩn hóa dấu câu và đưa văn bản về định dạng chữ thường.
+    \item \textbf{Trích xuất và chuẩn hóa kỹ năng}: Gọi module xử lý AI để chuyển đổi văn bản thô thành danh sách kỹ năng chuẩn trước khi lưu trữ vào PostgreSQL.
 \end{enumerate}
 
-\section{Thiết kế giao diện người dùng hệ thống}
+\section{Xây dựng chức năng cho các phân hệ người dùng}
 
-Giao diện chính:
+\subsection{Hiện thực hóa các tính năng Quản lý tài khoản, Đăng ký/Đăng nhập (Auth)}
+
+Hệ thống sử dụng cơ chế bảo mật JWT (JSON Web Token):
 \begin{itemize}
-    \item \textbf{Dashboard}: Hiển thị xu hướng thị trường, top kỹ năng
-    \item \textbf{Job Search}: Tìm kiếm công việc với bộ lọc
-    \item \textbf{CV Analyzer}: Upload CV, xem kết quả phân tích
-    \item \textbf{Skill Gap Visualizer}: Hiển thị kỹ năng thiếu dưới dạng đồ thị
-    \item \textbf{Profile}: Quản lý hồ sơ người dùng
+    \item Khi người dùng đăng nhập thành công, Backend tạo ra một mã JWT chứa thông tin định danh và vai trò (\texttt{role}). Mã này được ký bằng thuật toán mã hóa đối xứng HS256 với khóa bí mật.
+    \item Token được gửi về Frontend và lưu vào \texttt{localStorage} hoặc HTTP-only Cookie.
+    \item Đối với các API yêu cầu bảo mật (như tải CV hoặc lưu việc làm), Frontend đính kèm token trong Header \texttt{Authorization: Bearer <token>}.
 \end{itemize}
+
+\subsection{Hiện thực hóa giao diện Dashboard trực quan hóa dữ liệu thị trường việc làm}
+
+Giao diện Dashboard sử dụng thư viện Recharts để hiển thị biểu đồ thống kê:
+\begin{lstlisting}[language=XML, caption=Cau truc React component ve bieu do Top ky nang]
+import React from 'react';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+
+export const SkillsTrendingChart = ({ data }) => {
+  return (
+    <div className="chart-container">
+      <h3 className="text-lg font-semibold mb-4">Top 10 most demanded skills</h3>
+      <ResponsiveContainer width="100%" height={300}>
+        <BarChart data={data} layout="vertical">
+          <XAxis type="number" />
+          <YAxis dataKey="name" type="category" width={100} />
+          <Tooltip />
+          <Bar dataKey="count" fill="#4f46e5" radius={[0, 4, 4, 0]} />
+        </BarChart>
+      </ResponsiveContainer>
+    </div>
+  );
+};
+\end{lstlisting}
+
+\subsection{Hiện thực hóa chức năng Tìm kiếm job, Lưu job và Quản lý danh sách CV}
+
+\begin{itemize}
+    \item \textbf{Tìm kiếm Job}: Sử dụng Elasticsearch làm công cụ tìm kiếm chính. Khi người dùng nhập từ khóa tìm kiếm, API Backend chuyển tiếp truy vấn thành cấu trúc câu lệnh DSL của Elasticsearch hỗ trợ tìm kiếm mờ (Fuzzy Search) để tìm kiếm các job phù hợp nhất.
+    \item \textbf{Quản lý danh sách CV}: Ứng viên có thể quản lý nhiều phiên bản CV khác nhau, thực hiện đổi tên, xóa, hoặc chọn một CV làm mặc định để đối soát.
+\end{itemize}
+
+\section{Xây dựng thuật toán phân tích kỹ năng năng lực}
+
+\subsection{Xây dựng cấu trúc câu lệnh để trích xuất thông tin CV và JD về định dạng JSON}
+
+Để trích xuất các kỹ năng từ văn bản tự do của CV và JD bằng LLM, hệ thống sử dụng cấu trúc Prompt định nghĩa JSON Schema cụ thể dưới đây:
+
+\begin{center}
+\begin{minipage}{0.95\textwidth}
+\hrule
+\vspace{2mm}
+\textbf{System Prompt trích xuất thực thể bằng LLM:}
+\vspace{2mm}
+\hrule
+\vspace{2mm}
+Bạn là một chuyên gia phân tích nhân sự thông minh. Nhiệm vụ của bạn là đọc kỹ đoạn văn bản thô dưới đây (có thể là CV của ứng viên hoặc Mô tả công việc JD) và trích xuất ra các thông tin theo định dạng JSON Schema sau:
+\begin{verbatim}
+{
+  "job_title": "Chuc danh cong viec hoac muc tieu (neu co)",
+  "hard_skills": ["Danh sach ky nang ky thuat, ngon ngu lap trinh"],
+  "soft_skills": ["Danh sach cac ky nang mem, giao tiep, quan ly"],
+  "experience_years": "So nam kinh nghiem (dang so)"
+}
+\end{verbatim}
+Chỉ trả về chuỗi định dạng JSON hợp lệ, không kèm giải thích hoặc các khối markdown.
+\vspace{2mm}
+\hrule
+\end{minipage}
+\end{center}
+
+\subsection{Cài đặt mã nguồn để tính toán độ phù hợp và liệt kê các kỹ năng còn thiếu}
+
+Dưới đây là mã nguồn Python hiện thực hóa giải thuật tính điểm so khớp và xác định kỹ năng khuyết thiếu (Skill Gap):
+
+\begin{lstlisting}[language=Python, caption=Ma nguon xu ly so khop va tinh khoang cach ky nang]
+import numpy as np
+from sentence_transformers import SentenceTransformer
+
+model = SentenceTransformer('all-MiniLM-L6-v2')
+
+def cosine_similarity(v1, v2):
+    return np.dot(v1, v2) / (np.linalg.norm(v1) * np.linalg.norm(v2))
+
+def analyze_skill_gap(cv_skills, job_skills, threshold=0.82):
+    matched_skills = []
+    missing_skills = []
+    partial_match_scores = 0.0
+
+    # Convert skills to embeddings
+    cv_embeddings = model.encode(cv_skills) if cv_skills else []
+    
+    for job_skill in job_skills:
+        # Check for exact matches
+        if job_skill.lower() in [s.lower() for s in cv_skills]:
+            matched_skills.append({"skill": job_skill, "match_type": "exact", "score": 1.0})
+            continue
+        
+        # Semantic matching for remaining skills
+        if len(cv_embeddings) > 0:
+            job_skill_emb = model.encode(job_skill)
+            max_score = 0.0
+            best_match_skill = None
+            for idx, cv_skill in enumerate(cv_skills):
+                sim = cosine_similarity(job_skill_emb, cv_embeddings[idx])
+                if sim > max_score:
+                    max_score = sim
+                    best_match_skill = cv_skill
+            
+            if max_score >= threshold:
+                matched_skills.append({
+                    "skill": job_skill, 
+                    "match_type": "semantic", 
+                    "score": float(max_score),
+                    "matched_with": best_match_skill
+                })
+                partial_match_scores += max_score
+                continue
+        
+        # No match found
+        missing_skills.append(job_skill)
+
+    # Compute final matching score
+    total_required = len(job_skills)
+    exact_count = len([s for s in matched_skills if s["match_type"] == "exact"])
+    
+    match_score = 0.0
+    if total_required > 0:
+        match_score = (exact_count + partial_match_scores) / total_required * 100
+        match_score = min(100.0, float(match_score))
+
+    return {
+        "match_score": round(match_score, 2),
+        "matched_skills": matched_skills,
+        "missing_skills": missing_skills
+    }
+\end{lstlisting}
