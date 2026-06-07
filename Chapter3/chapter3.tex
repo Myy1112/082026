@@ -1,239 +1,493 @@
-\chapter{Phân tích và Thiết kế hệ thống}
-\label{Chapter3}
+% ==============================================================================
+% CHƯƠNG 3: PHÂN TÍCH VÀ THIẾT KẾ HỆ THỐNG
+% ==============================================================================
+\chapter{PHÂN TÍCH VÀ THIẾT KẾ HỆ THỐNG}
+\label{chuyen_de:chuong_3_thiet_ke_he_thong}
+
+Chương này tập trung vào việc hiện thực hóa các yêu cầu thực tế của đề tài thành một cấu trúc thiết kế kỹ thuật hoàn chỉnh cho hệ thống tổng thể mang tên ``CareerNova''. Dựa trên phương pháp luận mô hình hóa hệ thống thông tin hướng ứng dụng của Khoa Hệ thống Thông tin - Trường Đại học Khoa học Tự nhiên (HCMUS), toàn bộ nội dung phân tích yêu cầu nghiệp vụ, phân rã đặc tả ca sử dụng chuyên sâu, sơ đồ kiến trúc phần mềm, từ điển cơ sở dữ liệu quan hệ nâng cao, và giải thuật toán học định lượng khoảng cách năng lực sẽ được đặc tả chi tiết. Sự tường minh này bảo đảm tính ánh xạ nghiêm ngặt từ logic vận hành của ba phân hệ: \texttt{JobVisualization\_BE} (Python/Scrapy), \texttt{CareerNova-Backend} (NestJS/Prisma), và \texttt{CareerNova-Frontend} (Next.js/TailwindCSS).
 
 \section{Phân tích yêu cầu hệ thống}
+\label{sec:phan_tich_yeu_cau_he_thong}
 
-\subsection{Yêu cầu nghiệp vụ}
+\subsection{Yêu cầu nghiệp vụ (Business Requirements)}
+\label{subsec:yeu_cau_nghiep_vu}
 
-Hệ thống CareerNova được thiết kế nhằm giải quyết các yêu cầu nghiệp vụ chính của thị trường tuyển dụng hiện đại:
-\begin{itemize}
-    \item \textbf{Đối với ứng viên (Sinh viên/Người tìm việc)}: Hỗ trợ tự đánh giá năng lực cá nhân, nhận diện khoảng cách kỹ năng (Skill Gap) so với yêu cầu thực tế của thị trường, và nhận gợi ý công việc phù hợp để định hướng học tập và phát triển sự nghiệp.
-    \item \textbf{Đối với nhà tuyển dụng}: Cung cấp công cụ lọc và đối soát hồ sơ ứng viên nhanh chóng dựa trên độ tương đồng ngữ nghĩa, đồng thời phân tích xu hướng biến động kỹ năng và mức lương trên thị trường lao động để tối ưu hóa chiến lược tuyển dụng.
-    \item \textbf{Đối với nhà trường và nhà quản lý}: Cung cấp các thống kê trực quan về xu hướng kỹ năng cần thiết để điều chỉnh chương trình đào tạo sát với nhu cầu thực tiễn.
-\end{itemize}
+Mục tiêu cốt lõi của hệ thống \texttt{CareerNova} là triệt tiêu sự bất cân xứng thông tin giữa năng lực hiện trạng của sinh viên năm cuối và các chỉ tiêu tuyển dụng biến động không ngừng của thị trường lao động. Luồng nghiệp vụ tổng quát được quy hoạch khép kín, phân định thành ba chu trình lớn đan cài chặt chẽ:
 
-\subsection{Yêu cầu chức năng}
-
-Hệ thống cần cung cấp các nhóm chức năng chính như sau:
 \begin{enumerate}
-    \item \textbf{Phân hệ Phân tích thị trường việc làm (Dashboard)}:
-    \begin{itemize}
-        \item Trực quan hóa xu hướng tuyển dụng (Top kỹ năng được săn đón, biến động số lượng việc làm).
-        \item Thống kê mức lương trung bình theo vị trí công việc, kỹ năng và khu vực địa lý.
-        \item Biểu diễn bản đồ phân bố cơ hội việc làm theo khu vực.
-    \end{itemize}
-    \item \textbf{Phân hệ Quản lý hồ sơ ứng viên (CV Management)}:
-    \begin{itemize}
-        \item Cho phép ứng viên đăng tải CV (định dạng PDF, DOCX).
-        \item Tự động trích xuất thông tin cá nhân, kinh nghiệm làm việc và tập kỹ năng hiện có từ CV.
-    \end{itemize}
-    \item \textbf{Phân hệ Đối soát và So khớp năng lực (Skill Gap \& Matching)}:
-    \begin{itemize}
-        \item Tính điểm tương thích tổng thể giữa CV ứng viên và một tin tuyển dụng cụ thể.
-        \item Liệt kê danh sách các kỹ năng đạt yêu cầu và các kỹ năng còn thiếu (Skill Gap).
-        \item Đưa ra gợi ý cải thiện kỹ năng cho ứng viên.
-    \end{itemize}
+    \item \textbf{Chu trình vĩ mô - Thu thập và Tích hợp dữ liệu tự động (ETL Workflow):} Phân hệ cào dữ liệu chạy độc lập, kích hoạt bởi tiến trình ngầm (\texttt{Automation Scheduler}). Hệ thống thực hiện gửi yêu cầu, bóc tách cấu trúc tài liệu HTML phi cấu trúc từ các sàn tuyển dụng trực tuyến lớn. Dữ liệu thô lập tức đi qua pipeline làm sạch, loại bỏ các bài đăng trùng lặp, xử lý giá trị khuyết thiếu và chuyển đổi định dạng tiền tệ. Điểm nghẽn kỹ thuật lớn nhất ở giai đoạn này là sự không đồng nhất ngôn từ yêu cầu công nghệ giữa các doanh nghiệp được giải quyết triệt để thông qua cấu phần chuẩn hóa thực thể từ khóa (\textit{Entity Normalization Pipeline}), đưa các từ khóa dị biệt về các nút định danh chuẩn trước khi lưu trữ vào kho dữ liệu \texttt{PostgreSQL}.
+    
+    \item \textbf{Chu trình tương tác - Trực quan hóa và Phân tích lát cắt thị trường:} Dữ liệu sau khi chuẩn hóa được tích hợp vào kho trung tâm sẽ phục vụ các mô hình phân tích mô tả. Nghiệp vụ này cung cấp cho sinh viên năng lực truy vấn động đa chiều thời gian thực thông qua cơ chế phân tích lát cắt (\textit{Data Slicing and Dicing}). Mọi sự thay đổi tham số bộ lọc (vị trí địa lý, mức kinh nghiệm, sàn nguồn) từ giao diện người dùng sẽ định hình lại cấu trúc dữ liệu đồ thị thống kê, giúp người học định vị chính xác xu hướng công nghệ chủ lưu và phân vị mức lương của ngành.
+    
+    \item \textbf{Chu trình cá nhân hóa - Đối soát hồ sơ năng lực và Hoạch định lộ trình (Skill Gap Analysis):} Khi sinh viên tải lên hồ sơ cá nhân (\texttt{PDF}), phân hệ nghiệp vụ máy chủ tiếp nhận tệp tin và thực thi tiến trình phân giải bất đồng bộ. Hệ thống ứng dụng kỹ nghệ câu lệnh kết hợp mô hình ngôn ngữ lớn (\texttt{LLM API}) để bóc tách tri thức phi cấu trúc trong CV thành cấu trúc đối tượng dữ liệu \texttt{JSON} định danh. Lõi giải thuật đối soát tập hợp sẽ tính toán độ tương tương thích năng lực, bóc tách chính xác danh sách lỗ hổng kỹ năng hiện có so với yêu cầu tuyển dụng vĩ mô và xuất ra các đề xuất hành động bổ sung tri thức.
 \end{enumerate}
 
-\subsection{Yêu cầu phi chức năng}
+\subsection{Yêu cầu chức năng và Phân rã nhóm hệ thống (Functional Requirements)}
+\label{subsec:yeu_cau_chuc_nang}
+
+Để chuyển hóa các luồng nghiệp vụ trên thành các chức năng phần mềm cụ thể, các ca sử dụng (\textit{Use Cases}) được phân rã dựa trên cấu trúc vận hành thực tế của dự án. Chi tiết về đặc tả chức năng, tác nhân tương tác sơ bộ và mô tả hành vi hệ thống được tổng hợp toàn diện trong Bảng \ref{tab:functional_requirements_detail}.
+
+\begin{table}[htbp]
+\centering
+\small
+\caption{Bảng phân rã chi tiết các yêu cầu chức năng hệ thống theo phân hệ thực tế}
+\label{tab:functional_requirements_detail}
+\begin{tabular}{|L{1.5cm}|L{3.0cm}|L{3.0cm}|L{6.5cm}|}
+\hline
+\textbf{Mã UC} & \textbf{Tên Ca sử dụng} & \textbf{Tác nhân (Actors)} & \textbf{Mô tả chi tiết hành vi chức năng} \\ \hline
+\texttt{UC-01} & Xem Dashboard xu hướng & Khách, Sinh viên & Hệ thống tổng hợp dữ liệu từ cơ sở dữ liệu và render đồ thị động về Top kỹ năng, phân bố lương vĩ mô. \\ \hline
+\texttt{UC-02} & Lọc lát cắt dữ liệu thị trường & Khách, Sinh viên & Người dùng chọn các tham số (Khu vực, Kinh nghiệm, Công nghệ); hệ thống tái tính toán số liệu đồ thị thời gian thực. \\ \hline
+\texttt{UC-03} & Đăng ký / Đăng nhập & Khách & Xác thực người dùng qua Email/Mật khẩu; hệ thống cấp phát mã thông báo \texttt{JWT} an toàn. \\ \hline
+\texttt{UC-04} & Tìm kiếm tin tuyển dụng & Khách, Sinh viên & Truy vấn danh sách việc làm dựa trên công nghệ và bộ lọc thông minh; hiển thị thông tin chi tiết bài tuyển dụng. \\ \hline
+\texttt{UC-05} & Lưu trữ việc làm mục tiêu & Sinh viên & Người dùng đánh dấu lưu các tin tuyển dụng quan tâm vào danh mục cá nhân hóa lưu trữ trong DB. \\ \hline
+\texttt{UC-06} & Tải lên hồ sơ CV (\texttt{PDF}) & Sinh viên & Tiếp nhận tệp tin kéo thả dưới dạng \texttt{FormData} từ Client, truyền tải bất đồng bộ lên tầng Server. \\ \hline
+\texttt{UC-07} & Trích xuất kỹ năng bằng AI & Hệ thống tự động & Sử dụng \texttt{LLM API} phân tích ngữ nghĩa CV văn bản thô, chuyển đổi cấu trúc sang định dạng thực thể \texttt{JSON}. \\ \hline
+\texttt{UC-08} & Đối soát và phân tích Skill Gap & Sinh viên, Hệ thống & Thực thi thuật toán so khớp tập hợp giữa kỹ năng CV và kỹ năng thị trường; hiển thị biểu đồ Radar điểm thiếu hụt. \\ \hline
+\texttt{UC-09} & Gợi ý lộ trình công nghệ & Sinh viên & Hệ thống phân tích danh sách kỹ năng thiếu hụt và xuất ra các tài liệu/khóa học tương ứng để người dùng bổ sung. \\ \hline
+\texttt{UC-10} & Thu thập dữ liệu đa nguồn & Automation Scheduler & Tiến trình kích hoạt định kỳ các bot cào dữ liệu từ bốn sàn lớn, tự động làm sạch và đẩy vào PostgreSQL. \\ \hline
+\end{tabular}
+\end{table}
+
+\subsection{Yêu cầu phi chức năng (Non-Functional Requirements)}
+\label{subsec:yeu_cau_phi_chuc_nang}
+
+Bên cạnh các yêu cầu chức năng tĩnh, kiến trúc phần mềm của hệ thống \texttt{CareerNova} bắt buộc phải thỏa mãn các tiêu chuẩn kỹ thuật phi chức năng nghiêm ngặt nhằm bảo đảm tính bền vững và an toàn của hệ thống thông tin hướng ứng dụng:
 
 \begin{itemize}
-    \item \textbf{Hiệu năng (Performance)}: 
-    \begin{itemize}
-        \item Thời gian phản hồi cho các yêu cầu tìm kiếm việc làm dưới 500ms.
-        \item Thời gian xử lý trích xuất thực thể và tính toán so khớp một CV mới tải lên không quá 3 giây.
-    \end{itemize}
-    \item \textbf{Tính sẵn sàng và khả năng mở rộng (Availability \& Scalability)}: Hệ thống hoạt động liên tục với độ sẵn sàng cao (uptime > 99.9\%), cấu trúc dịch vụ microservices cho phép mở rộng độc lập khi lượng truy cập tăng đột biến.
-    \item \textbf{Bảo mật (Security)}: Mã hóa thông tin cá nhân của ứng viên và bảo mật các tệp CV được tải lên hệ thống. Áp dụng cơ chế xác thực JWT cho tất cả các yêu cầu API.
-    \item \textbf{Trải nghiệm người dùng (UX/UI)}: Giao diện trực quan, hỗ trợ thiết kế đáp ứng (Responsive Web Design) trên các thiết bị máy tính và di động.
+    \item \textbf{Tính bảo mật dữ liệu và kiểm soát truy cập (\textit{Security}):} Toàn bộ tài nguyên RESTful API tại \texttt{CareerNova-Backend} được bảo vệ bằng lớp mã hóa xác thực \texttt{AuthGuard} của framework \texttt{NestJS}. Phiên làm việc của sinh viên được duy trì thông qua cơ chế mã thông báo ký số \texttt{JWT} (\textit{JSON Web Token}) có cấu hình thời gian hết hạn an toàn. Mã token này bắt buộc phải được đính kèm vào Header của mỗi request từ giao diện \texttt{CareerNova-Frontend} Client theo định dạng \texttt{Authorization: Bearer <Token>}. Đồng thời, các thông tin nhạy cảm định danh người dùng như mật khẩu tài khoản phải được băm mã hóa một chiều qua thuật toán \texttt{bcrypt} kết hợp chuỗi muối (\textit{Salt}) trước khi ghi nhận xuống cơ sở dữ liệu.
+    
+    \item \textbf{Hiệu năng phản hồi và xử lý bất đồng bộ (\textit{Performance \& Latency}):} Đối với các tác vụ truy vấn dữ liệu thô phục vụ kết xuất đồ thị trực quan hóa trên Dashboard, thời gian đáp ứng lý tưởng của máy chủ phải duy trì ở ngưỡng $T_{response} < 200\text{ms}$. Đối với các nghiệp vụ phức tạp mang tính hệ thống như tải tệp tin CV lên máy chủ, bóc tách cấu trúc nhị phân và giao tiếp mạng với dịch vụ \texttt{OpenAI API}, hệ thống áp dụng kiến trúc xử lý bất đồng bộ toàn phần (\texttt{async/await}), giải phóng luồng xử lý chính (\textit{Non-blocking Event Loop}) của nền tảng \texttt{Node.js}, khống chế tổng thời gian phản hồi báo cáo Skill Gap về trình duyệt trong vòng dưới $3.5\text{s}$.
+    
+    \item \textbf{Khả năng mở rộng và Tính ổn định (\textit{Scalability \& Reliability}):} Hệ quản trị cơ sở dữ liệu \texttt{PostgreSQL} được thiết kế tối ưu hóa cấu trúc lưu trữ thông qua chiến lược đánh chỉ mục cây cân bằng (\textit{B-Tree Indexing}) trên các trường dữ liệu thường xuyên thực thi mệnh đề điều kiện và truy vấn bộ lọc động (như các thuộc tính từ khóa kỹ năng, địa điểm làm việc, dải lương tuyển dụng). Cấu trúc này bảo đảm hiệu năng tìm kiếm không bị suy giảm đột ngột khi quy mô kho dữ liệu tăng trưởng lên hàng trăm nghìn bản ghi. Pipeline cào dữ liệu từ phân hệ Python được trang bị cơ chế bắt lỗi ngoại lệ toàn diện, tự động xoay vòng mã định danh trình duyệt (\textit{User-Agent Rotation}) và xử lý kết nối lại bất đồng bộ khi gặp sự cố gián đoạn mạng.
 \end{itemize}
 
-\section{Thiết kế hệ thống}
+\section{Thiết kế hệ thống và Kiến trúc phần mềm}
+\label{sec:thiet_ke_he_thong_va_kien_truc_phan_mem}
 
-\subsection{Sơ đồ kiến trúc tổng thể của hệ thống}
+\subsection{Sơ đồ kiến trúc tổng thể hệ thống (System Architecture)}
+\label{subsec:so_do_kien_truc_tong_the}
 
-Hệ thống CareerNova được xây dựng theo mô hình kiến trúc microservices chia làm 3 tầng chính:
-\begin{figure}[ht]
+Kiến trúc hệ thống \texttt{CareerNova} được triển khai dựa trên nguyên lý phân rã module hóa toàn phần, cô lập trách nhiệm xử lý giữa tầng thu thập, tầng nghiệp vụ máy chủ và tầng tương tác khách hàng, tương ứng với cấu trúc 3 phân hệ repository thực tế của dự án. Sơ đồ mô tả tường tận logic kiến trúc và dòng chảy dữ liệu tương tác (\textit{Dataflow}) được trình bày chi tiết trong Hình \ref{fig:system_architecture}.
+
+\begin{figure}[htbp]
     \centering
-    % \includegraphics[width=0.8\textwidth]{images/architecture.png}
-    \caption{Kiến trúc tổng thể hệ thống CareerNova}
-    \label{fig:architecture}
+    \includegraphics[width=1.0\textwidth]{system_architecture.png}
+    \caption{Sơ đồ kiến trúc tổng thể hệ thống CareerNova và logic điều phối dòng chảy dữ liệu chéo phân hệ}
+    \label{fig:system_architecture}
 \end{figure}
+
+Dòng chảy dữ liệu tổng thể vận hành tuần hoàn qua các nút thắt kỹ thuật cụ thể:
 \begin{itemize}
-    \item \textbf{Presentation Layer (Tầng giao diện)}: Xây dựng bằng ReactJS và Tailwind CSS, giao tiếp với backend qua các RESTful API.
-    \item \textbf{Application Layer (Tầng nghiệp vụ)}: Gồm các service độc lập như Auth Service (Xác thực), Job Search Service (Tìm kiếm việc làm), Data Pipeline Service (Thu thập tin tuyển dụng), và AI Matcher Service (Xử lý LLM và tính toán so khớp).
-    \item \textbf{Data Layer (Tầng dữ liệu)}: Sử dụng PostgreSQL để lưu trữ thông tin người dùng và dữ liệu có cấu trúc; MongoDB làm kho lưu trữ dữ liệu tin tuyển dụng thô; và Elasticsearch để tăng tốc độ tìm kiếm việc làm.
+    \item Phân hệ \texttt{JobVisualization\_BE} chạy độc lập trên nền tảng Python, sử dụng thành phần \texttt{Scrapy Engine} để quét qua các trang tuyển dụng đích. Dữ liệu thô sau đó được đưa vào cấu phần tiền xử lý bằng thư viện \texttt{Pandas} để thực thi các tác vụ lọc nhiễu, loại bỏ bản ghi khuyết thiếu và chuyển đổi định dạng. Dữ liệu sau khi chuẩn hóa được ghi trực tiếp vào kho lưu trữ dữ liệu trung tâm \texttt{PostgreSQL Data Warehouse}.
+    \item Phân hệ \texttt{CareerNova-Backend} đóng vai trò lõi điều phối nghiệp vụ. Ứng dụng xây dựng trên nền framework \texttt{NestJS}, thiết lập lớp \texttt{Prisma ORM} để tạo kênh kết nối vững chắc đến cơ sở dữ liệu \texttt{PostgreSQL}. Tầng Backend này vừa cung cấp các RESTful API đầu ra phục vụ dữ liệu trực quan, vừa đóng vai trò làm cổng kết nối an toàn đến dịch vụ \texttt{OpenAI API} nhằm bảo mật khóa truy cập.
+    \item Phân hệ \texttt{CareerNova-Frontend} được xây dựng bằng framework \texttt{Next.js} phối hợp ngôn ngữ \texttt{TypeScript}. Phân hệ này chịu trách nhiệm tương tác trực tiếp với người dùng cuối, thực thi cơ chế gọi API bất đồng bộ từ máy chủ Backend, quản lý trạng thái giao diện người dùng và chuyển đổi các cấu trúc dữ liệu định dạng \texttt{JSON} thành các mô hình đồ thị động thông qua các thành phần giao diện tối ưu bằng \texttt{TailwindCSS}.
 \end{itemize}
 
 \subsection{Sơ đồ ca sử dụng tổng quát (Use Case Diagram)}
+\label{subsec:so_do_ca_su_dung_tong_quat}
 
-Sơ đồ ca sử dụng mô tả các tương tác chính giữa tác nhân và hệ thống:
-\begin{figure}[ht]
+Sơ đồ ca sử dụng tổng quát của hệ thống đóng vai trò định vị ranh giới biên chức năng phần mềm và thiết lập mối quan hệ tương tác logic giữa các thực thể tác nhân bên ngoài (\textit{Actors}) và các chức năng hệ thống nội tại. Sơ đồ phân rã mối quan hệ ca sử dụng được biểu diễn cụ thể thông qua Hình \ref{fig:overall_usecase}.
+
+\begin{figure}[htbp]
     \centering
-    % \includegraphics[width=0.7\textwidth]{images/usecase.png}
-    \caption{Sơ đồ ca sử dụng tổng quát hệ thống}
-    \label{fig:usecase}
+    \includegraphics[width=0.65\textwidth]{overall_usecase.png}
+    \caption{Sơ đồ ca sử dụng tổng quát của toàn bộ hệ thống CareerNova}
+    \label{fig:overall_usecase}
 \end{figure}
+
+Hệ thống phân định rõ ràng ba nhóm tác nhân với phân cấp quyền hạn mang tính hệ thống cao:
 \begin{itemize}
-    \item \textbf{Ứng viên}: Có các ca sử dụng như Đăng nhập, Xem Dashboard xu hướng, Đăng tải CV, Thực hiện so khớp CV với công việc, Tìm kiếm và Lưu công việc.
-    \item \textbf{Nhà tuyển dụng}: Đăng nhập, Xem thống kê thị trường, Đăng tin tuyển dụng, và Đối soát danh sách CV ứng tuyển.
-    \item \textbf{Hệ thống tự động (Cron job/Crawler)}: Thực hiện tự động cào tin tuyển dụng và chạy pipeline làm sạch dữ liệu định kỳ.
+    \item \textbf{Khách vãng lai (Guest User):} Là đối tượng người dùng chưa thực hiện hành vi định danh hệ thống. Khách vãng lai tương tác với các ca sử dụng đại chúng thuộc tầng bề mặt của ứng dụng như xem Dashboard thống kê việc làm vĩ mô, thực hiện các thao tác lọc lát cắt thị trường, và tìm kiếm thông tin tuyển dụng thuần túy.
+    \item \textbf{Sinh viên / Ứng viên (Authenticated Student):} Là tác nhân trung tâm của hệ thống. Sau khi đi qua tiến trình đăng nhập và được xác thực quyền sở hữu tài khoản qua token \texttt{JWT}, sinh viên kế thừa toàn bộ các chức năng của Khách vãng lai, đồng thời được kích hoạt các đặc quyền sử dụng các tính năng chuyên sâu bao gồm: Quản lý thư mục hồ sơ cá nhân, lưu bài tuyển dụng mục tiêu, tải file CV lên hệ thống, kích hoạt phân hệ AI so khớp kỹ năng và theo dõi biểu đồ phân tích Skill Gap cá nhân.
+    \item \textbf{Hệ thống tự động (Automation Scheduler):} Là tác nhân hệ thống vận hành không đồng bộ và tự động ngầm bên dưới máy chủ. Tác nhân này kích hoạt các ca sử dụng cào dữ liệu đa sàn tuyển dụng trực tuyến, làm sạch dữ liệu tự động, và đồng bộ hóa cơ sở dữ liệu theo các mốc thời gian cố định.
 \end{itemize}
 
-\subsection{Sơ đồ tuần tự cho các chức năng chính (Sequence Diagram)}
+\subsection{Đặc tả chi tiết các Ca sử dụng cốt lõi (Use Case Specifications)}
+\label{subsec:dac_ta_chi_tiet_use_case}
 
-Sơ đồ tuần tự dưới đây thể hiện quy trình nghiệp vụ cốt lõi: \textit{Đối soát hồ sơ và phân tích khoảng cách kỹ năng}.
-\begin{figure}[ht]
+Nhằm làm minh chứng khoa học sâu sắc cho cấu trúc phân rã chức năng máy chủ, dưới đây là các bảng đặc tả chi tiết cho hai ca sử dụng phức tạp và cốt lõi nhất hệ thống: \texttt{UC-08} (Đối soát và phân tích Skill Gap) và \texttt{UC-10} (Thu thập dữ liệu đa nguồn).
+
+\small
+\begin{longtable}{|L{3.5cm}|L{11.0cm}|}
+\caption{Đặc tả chi tiết ca sử dụng UC-08: Đối soát và phân tích Skill Gap} \label{tab:spec_uc_08} \\
+\hline
+\textbf{Thuộc tính thông tin} & \textbf{Nội dung đặc tả chi tiết ca sử dụng} \\ \hline
+\endfirsthead
+\caption[]{Đặc tả chi tiết ca sử dụng UC-08: Đối soát và phân tích Skill Gap (tiếp theo)} \\
+\hline
+\textbf{Thuộc tính thông tin} & \textbf{Nội dung đặc tả chi tiết ca sử dụng} \\ \hline
+\endhead
+\hline
+\multicolumn{2}{r}{\textit{Xem tiếp trang sau}} \\
+\endfoot
+\hline
+\endlastfoot
+\textbf{Mã số ca sử dụng} & UC-08 \\ \hline
+\textbf{Tên ca sử dụng} & Đối soát và phân tích Skill Gap \\ \hline
+\textbf{Tác nhân kích hoạt} & Sinh viên đã xác thực tài khoản (\texttt{Authenticated Student}) \\ \hline
+\textbf{Mục tiêu ca sử dụng} & Định lượng hóa mức độ đáp ứng năng lực cá nhân và trích xuất danh sách lỗ hổng kỹ năng của sinh viên đối sánh thời gian thực với thị trường lao động vĩ mô. \\ \hline
+\textbf{Điều kiện tiên quyết} & 
+1. Người dùng đã hoàn tất đăng nhập và sở hữu token \texttt{JWT} hợp lệ.\newline
+2. Tệp tin hồ sơ CV định dạng \texttt{PDF} đã được nạp lên máy chủ.\newline
+3. Văn bản thô của CV đã được phân giải thành công trong hệ thống. \\ \hline
+\textbf{Luồng sự kiện chính} & 
+1. Sinh viên chọn vị trí công việc đích hướng tới trên giao diện và nhấn nút kích hoạt ``Phân tích khoảng cách năng lực''.\newline
+2. Hệ thống tiếp nhận mã định danh, kiểm tra tính toàn vẹn của tệp dữ liệu văn bản hồ sơ thô tương ứng lưu tại \texttt{CvProfile}.\newline
+3. Lớp máy chủ \texttt{NestJS} gửi yêu cầu trích xuất thực thể sang \texttt{AIService}, đóng gói văn bản thô cùng cấu hình tham số câu lệnh hệ thống chuyên biệt.\newline
+4. Hệ thống thực hiện lệnh gọi API qua giao thức an toàn sang máy chủ \texttt{OpenAI API}.\newline
+5. \texttt{OpenAI API} thực thi phân tích ngữ nghĩa sâu, bóc tách mô hình kỹ năng và trả về một cấu trúc dữ liệu đối tượng \texttt{JSON} chuẩn hóa.\newline
+6. \texttt{NestJS} nhận kết quả AI, đồng thời gọi \texttt{Prisma ORM} thực thi lệnh truy vấn dữ liệu xu hướng vĩ mô của vị trí công việc đích từ thực thể \texttt{JobPosting}.\newline
+7. Hệ thống nạp dữ liệu từ kho \texttt{PostgreSQL}, thực thi lõi thuật toán đối soát tập hợp, tính điểm số tương thích phần trăm và lọc ra tập hợp kỹ năng khuyết thiếu.\newline
+8. Hệ thống lưu toàn bộ số liệu báo cáo vào thực thể lịch sử đối soát và đóng gói phản hồi thành cấu trúc dữ liệu \texttt{JSON} đầu ra chuyển giao cho tầng Frontend.\newline
+9. Ứng dụng \texttt{CareerNova-Frontend} Client tiếp nhận dữ liệu phản hồi, thực hiện cập nhật trạng thái State ứng dụng và tự động kết xuất giao diện đồ thị Radar Chart động. \\ \hline
+\textbf{Luồng rẽ nhánh / Ngoại lệ} & 
+- \textit{Ngoại lệ 3a (Lỗi kết nối API trí tuệ nhân tạo):} Nếu dịch vụ của OpenAI trả về mã lỗi timeout hoặc lỗi giới hạn tần suất request, hệ thống máy chủ sẽ bắt ngoại lệ (\textit{Catch Exception}), ghi nhật ký lỗi hệ thống, gửi phản hồi mã trạng thái lỗi mạng về Client. Giao diện hiển thị hộp thoại thông báo yêu cầu sinh viên thực hiện lại tiến trình sau ít phút.\newline
+- \textit{Ngoại lệ 6a (Không có dữ liệu thị trường tương thích):} Nếu truy vấn cơ sở dữ liệu bài tuyển dụng trả về kết quả rỗng do từ khóa vị trí quá biệt lập, thuật toán sẽ gán mặc định dải điểm bằng 0, thông báo người dùng chọn lại vị trí công việc phổ quát hơn. \\ \hline
+\textbf{Điều kiện cuối} & Lịch sử phiên đối soát năng lực được ghi nhận thành công xuống cơ sở dữ liệu và biểu đồ báo cáo lỗ hổng năng lực hiển thị trực quan trên giao diện ứng viên. \\ \hline
+\end{longtable}
+
+\small
+\begin{longtable}{|L{3.5cm}|L{11.0cm}|}
+\caption{Đặc tả chi tiết ca sử dụng UC-10: Thu thập dữ liệu đa nguồn} \label{tab:spec_uc_10} \\
+\hline
+\textbf{Thuộc tính thông tin} & \textbf{Nội dung đặc tả chi tiết ca sử dụng} \\ \hline
+\endfirsthead
+\caption[]{Đặc tả chi tiết ca sử dụng UC-10: Thu thập dữ liệu đa nguồn (tiếp theo)} \\
+\hline
+\textbf{Thuộc tính thông tin} & \textbf{Nội dung đặc tả chi tiết ca sử dụng} \\ \hline
+\endhead
+\hline
+\multicolumn{2}{r}{\textit{Xem tiếp trang sau}} \\
+\endfoot
+\hline
+\endlastfoot
+\textbf{Mã số ca sử dụng} & UC-10 \\ \hline
+\textbf{Tên ca sử dụng} & Thu thập dữ liệu đa nguồn \\ \hline
+\textbf{Tác nhân kích hoạt} & Bộ lập lịch tiến trình tự động (\texttt{Automation Scheduler}) \\ \hline
+\textbf{Mục tiêu ca sử dụng} & Quét dữ liệu bài đăng việc làm tự động từ bốn cổng thông tin tuyển dụng mục tiêu, thực hiện xử lý chuẩn hóa và đồng bộ hóa cơ sở dữ liệu vĩ mô. \\ \hline
+\textbf{Điều kiện tiên quyết} & Khung kết nối mạng diện rộng ổn định và dịch vụ lưu trữ \texttt{PostgreSQL} ở trạng thái sẵn sàng tiếp nhận ghi số liệu khối lượng lớn. \\ \hline
+\textbf{Luồng sự kiện chính} & 
+1. Đến mốc chu kỳ thời gian được cấu hình sẵn trong mã nguồn, thành phần lập lịch tự động kích hoạt bot cào dữ liệu hoạt động.\newline
+2. Phân hệ \texttt{JobVisualization\_BE} thiết lập luồng động, điều phối \texttt{Scrapy Engine} phát đi hàng loạt các yêu cầu HTTP GET đến các danh mục trang tuyển dụng đích.\newline
+3. Bot xử lý mã nguồn HTML thô trả về, áp trúc bộ chọn phần tử dữ liệu để trích xuất các thuộc tính: Tiêu đề công việc, Công ty, Kinh nghiệm, Địa điểm, Mô tả và dải lương.\newline
+4. Toàn bộ mảng dữ liệu thô được chuyển tiếp bất đồng bộ sang cấu phần tiền xử lý dữ liệu tích hợp thư viện \texttt{Pandas}.\newline
+5. \texttt{Pandas Preprocessor} thực thi quy trình làm sạch sâu: Loại bỏ các bài đăng trùng mã định danh bài viết hoặc đường dẫn, loại bỏ ký tự rác văn bản, quy đổi dải lương ngoại tệ về đơn vị Việt Nam Đồng (\texttt{VND}).\newline
+6. Hệ thống chạy thuật toán tách từ và ánh xạ thực thể từ khóa công nghệ (\textit{Keyword Entity Normalization Pipeline}), đưa các cụm từ viết dị biệt về một nhãn công nghệ chuẩn.\newline
+7. Dữ liệu sau chuẩn hóa được đóng gói thành các truy vấn ghi dữ liệu hàng loạt xuống bảng dữ liệu tuyển dụng \texttt{job\_postings} trong cơ sở dữ liệu \texttt{PostgreSQL}. \\ \hline
+\textbf{Luồng rẽ nhánh / Ngoại lệ} & 
+- \textit{Ngoại lệ 2a (Hệ thống nguồn chặn kết nối - Anti-bot Evasion):} Nếu máy chủ đích phản hồi mã trạng thái 403 Forbidden hoặc kích hoạt tường lửa Cloudflare, phân hệ lập tức kích hoạt phần mềm trung gian xoay vòng thông số trình duyệt (\textit{User-Agent Rotating Middleware}) và thay đổi địa chỉ IP Proxy. Nếu tiếp tục thất bại sau 5 lần thử lại, tiến trình của sàn đó sẽ bị cô lập và ghi nhận mã lỗi vào file log hệ thống.\newline
+- \textit{Ngoại lệ 7a (Xung đột khóa chính dữ liệu):} Nếu bài đăng tuyển dụng đã được cào và lưu trữ ở chu kỳ trước (trùng khớp trường \texttt{sourceUrl}), cơ chế xử lý xung đột của cơ sở dữ liệu (\texttt{UPSERT}) sẽ tự động cập nhật các thuộc tính biến động và bỏ qua việc chèn bản ghi mới. \\ \hline
+\textbf{Điều kiện cuối} & Kho dữ liệu tuyển dụng trung tâm được gia tăng số lượng bài đăng việc làm mới nhất từ thị trường lao động, bảo đảm tính cập nhật cho Dashboard vĩ mô. \\ \hline
+\end{longtable}
+
+\newpage
+\subsection{Sơ đồ tuần tự cho các chức năng chính (Sequence Diagrams)}
+\label{subsec:so_do_tuan_tu_chuc_nang_chinh}
+
+Để mô hình hóa trực quan cơ chế điều phối thông điệp, dòng thời gian tương tác bất đồng bộ và sự cộng tác phân lớp giữa các cấu phần thuộc ba repository của hệ thống \texttt{CareerNova}, phân hệ thiết kế tiến trình được chia nhỏ thành bốn kịch bản sơ đồ tuần tự chuyên biệt, bám sát theo quy chuẩn trình bày hệ thống thông tin của Khoa Hệ thống Thông tin (HCMUS).
+
+\subsubsection{Sơ đồ tuần tự tổng quát hệ thống (System Overview Sequence)}
+Sơ đồ tuần tự tổng quát mô tả bức tranh toàn cảnh về sự điều phối luồng dữ liệu giữa người dùng cuối, phân hệ giao diện \texttt{CareerNova-Frontend}, phân hệ máy chủ \texttt{CareerNova-Backend}, tiến trình thu thập ngầm \texttt{JobVisualization\_BE} và kho lưu trữ trung tâm \texttt{PostgreSQL}, được thể hiện cụ thể thông qua Hình~\ref{fig:sequence_system_overview}.
+
+\begin{figure}[htbp]
     \centering
-    % \includegraphics[width=0.9\textwidth]{images/sequence.png}
-    \caption{Sơ đồ tuần tự tiến trình Phân tích và Đối soát CV}
-    \label{fig:sequence}
+    \includegraphics[width=0.9\textwidth]{sequence_system_overview.png}
+    \caption{Sơ đồ tuần tự mô tả dòng chảy thông điệp giao tiếp tổng quát trong hệ thống CareerNova}
+    \label{fig:sequence_system_overview}
 \end{figure}
+
+Tiến trình tổng quát vĩ mô của hệ thống được phân rã thành ba giai đoạn vận hành độc lập:
+\begin{itemize}
+    \item \textbf{Giai đoạn 1 - Thu thập dữ liệu vĩ mô ngầm định kỳ:} Giai đoạn này diễn ra hoàn toàn tự động dưới sự kiểm soát của \texttt{Automation Scheduler} trong phân hệ Python. Bot cào dữ liệu thực hiện quét dữ liệu thô trên internet, tiến hành làm sạch sâu và tích hợp trực tiếp vào bảng \texttt{job\_postings} của \texttt{PostgreSQL Data Warehouse}. Giai đoạn này chạy độc lập để bảo đảm luôn có sẵn nguồn tài nguyên tri thức lớn cho hệ thống.
+    \item \textbf{Giai đoạn 2 - Truy vấn trực quan hóa và Phân tích xu hướng:} Diễn ra khi người dùng tương tác chủ động trên giao diện Dashboard. \texttt{CareerNova-Frontend} gửi yêu cầu mạng chứa bộ lọc lát cắt cụ thể đến máy chủ Backend. Máy chủ thực thi truy vấn tổng hợp số liệu từ database và phản hồi định dạng \texttt{JSON} chuẩn để tầng giao diện render các biểu đồ thống kê vĩ mô.
+    \item \textbf{Giai đoạn 3 - Upload CV và Đối soát cá nhân hóa:} Được kích hoạt khi sinh viên tải hồ sơ năng lực cá nhân (\texttt{PDF}) lên hệ thống. Tầng máy chủ \texttt{NestJS} đóng vai trò trung gian phối hợp gọi mô hình ngôn ngữ lớn để trích xuất thực thể kỹ năng, đối chiếu với tập mẫu dữ liệu xu hướng ngành chuẩn thu được ở giai đoạn 1, tính toán dải điểm tương thích và trả về báo cáo \textit{Skill Gap Analysis} chi tiết cho ứng viên.
+\end{itemize}
+
+\subsubsection{Sơ đồ tuần tự chức năng thu thập dữ liệu vĩ mô tự động (Automated ETL Task)}
+Nhóm chức năng cào và tích hợp dữ liệu từ các sàn tuyển dụng nguồn do phân hệ \texttt{JobVisualization\_BE} (Python/Scrapy) xử lý ngầm được chi tiết hóa thông qua sơ đồ tuần tự tại Hình~\ref{fig:sequence_etl_process}.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.9\textwidth]{sequence_etl_process.png}
+    \caption{Sơ đồ tuần tự mô tả chi tiết tiến trình tự động thu thập và tiền xử lý dữ liệu vĩ mô}
+    \label{fig:sequence_etl_process}
+\end{figure}
+
+Tiến trình cào dữ liệu tự động được bóc tách học thuật thành ba giai đoạn xử lý dữ liệu tuần tự:
+\begin{itemize}
+    \item \textbf{Giai đoạn 1 - Khởi tạo luồng quét và Trích xuất thô (\textit{Data Extraction Phase}):} Đến mốc thời gian quy định bởi Cron Job, bộ lập lịch tự động kích hoạt máy chủ \texttt{Scrapy Engine}. Bộ mã nguồn điều phối các Bot quét (\textit{Spiders}) phát yêu cầu mạng an toàn đến các sàn việc làm mục tiêu. Khi nhận về mã nguồn HTML thô, Bot phân tích cây cấu trúc DOM để bóc tách các trường thông tin tuyển dụng phi cấu trúc ban đầu.
+    \item \textbf{Giai đoạn 2 - Tiền xử lý và Chuẩn hóa thực thể (\textit{Data Transformation Phase}):} Dữ liệu thô lập tức được chuyển giao sang bộ tiền xử lý tích hợp thư viện \texttt{Pandas}. Tại đây, hệ thống thực thi các thuật toán loại bỏ bản ghi trùng lặp dựa trên thuộc tính liên kết nguồn, quy đổi dải lương ngoại tệ về Việt Nam Đồng (\texttt{VND}) và chạy pipeline xử lý ngôn ngữ tự nhiên để đồng nhất các từ khóa yêu cầu công nghệ về các từ khóa thực thể chuẩn của ngành.
+    \item \textbf{Giai đoạn 3 - Đồng bộ hóa và Xử lý xung đột (\textit{Data Loading Phase}):} Cấu phần kết nối đẩy toàn bộ tập dữ liệu đã làm sạch xuống kho dữ liệu vật lý \texttt{PostgreSQL}. Tại tầng cơ sở dữ liệu, mệnh đề điều kiện \texttt{UPSERT} được thực thi để kiểm tra xung đột khóa chính. Nếu bài tuyển dụng đã tồn tại từ chu kỳ trước, hệ thống cập nhật các trường dữ liệu biến động; nếu là bài đăng mới, hệ thống thực hiện chèn bản ghi mới thành công.
+\end{itemize}
+
+\subsubsection{Sơ đồ tuần tự chức năng tương tác và đối soát nghiệp vụ (Interactive \& Matching Processes)}
+Để làm rõ các tiến trình xử lý nghiệp vụ tương tác động, sự vận hành của lõi hệ thống được phân rã thành các kịch bản thực thi chi tiết. Hình~\ref{fig:sequence_sub_analytics} đặc tả luồng nghiệp vụ tương tác truy vấn dữ liệu trực quan hóa xu hướng thị trường khi sinh viên thực hiện thao tác trên Dashboard, trong khi Hình~\ref{fig:sequence_sub_matching} mô tả chi tiết luồng tải lên hồ sơ cá nhân và thực thi giải thuật so khớp AI.
+
+\begin{figure}[htbp]
+    \centering
+    % Sơ đồ tuần tự 1: Dashboard Analytics (Bên trái)
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{sequence_market_analytics.png}
+        \caption{Luồng tương tác bộ lọc Dashboard}
+        \label{fig:sequence_sub_analytics}
+    \end{subfigure}
+    \hfill % Tạo khoảng cách lề ngang giữa hai bức ảnh
+    % Sơ đồ tuần tự 2: Upload CV Matching (Bên phải)
+    \begin{subfigure}[b]{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{sequence_matching_cv.png}
+        \caption{Luồng upload và so khớp CV bằng AI}
+        \label{fig:sequence_sub_matching}
+    \end{subfigure}
+    
+    % Tên caption tổng bọc bên dưới cả hai sơ đồ theo đúng chuẩn Khoa HTTT
+    \caption{Sơ đồ tuần tự phân rã các phân hệ chức năng nghiệp vụ tương tác và so khớp trong CareerNova}
+    \label{fig:sequence_functions_combined}
+\end{figure}
+
+Tổng thể dòng thông điệp phân lớp tại Hình~\ref{fig:sequence_functions_combined} thể hiện tính phi trạng thái và xử lý bất đồng bộ giữa các thành phần trong hệ thống. Chi tiết các giai đoạn của hai luồng nghiệp vụ được phân rã như sau:
+
 \begin{enumerate}
-    \item Người dùng tải tệp CV lên từ giao diện (Frontend).
-    \item Frontend gửi tệp tin đến API Gateway, chuyển tiếp tới AI Matcher Service.
-    \item AI Matcher Service gọi mô hình LLM để trích xuất thông tin kỹ năng dưới dạng JSON có cấu trúc.
-    \item AI Matcher Service truy vấn cơ sở dữ liệu để lấy yêu cầu kỹ năng của tin tuyển dụng đích.
-    \item Tính toán độ tương thích ngữ nghĩa sử dụng thuật toán Vector Space và Cosine Similarity.
-    \item AI Matcher Service trả kết quả (điểm số, kỹ năng khớp, kỹ năng thiếu) về Frontend hiển thị cho người dùng.
+    \item \textbf{Tiến trình tương tác và truy vấn số liệu Dashboard (Hình~\ref{fig:sequence_sub_analytics}):}
+    \begin{itemize}
+        \item \textbf{Giai đoạn 1 - Phát xạ yêu cầu lọc dữ liệu động:} Ứng viên thay đổi các tham số trên thanh công cụ bộ lọc (Địa điểm, Mức kinh nghiệm) tại giao diện \texttt{CareerNova-Frontend}. Trình duyệt bắt sự kiện thay đổi trạng thái, thực hiện đóng gói tham số URL và phát một yêu cầu truy vấn bất đồng bộ \texttt{HTTP GET} đến lớp điều hướng của máy chủ Backend.
+        \item \textbf{Giai đoạn 2 - Truy vấn tối ưu chỉ mục và Tổng hợp số liệu:} Lớp \texttt{Controller} của \texttt{NestJS} tiếp nhận tham số, chuyển giao sang dịch vụ xử lý toán học \texttt{MarketTrendService}. Dịch vụ gọi \texttt{Prisma ORM} thực thi câu lệnh tìm kiếm có điều kiện xuống cơ sở dữ liệu \texttt{PostgreSQL}. Nhờ cấu trúc chỉ mục cây cân bằng (\textit{B-Tree Indexing}) thiết kế sẵn trên các trường bộ lọc, cơ sở dữ liệu tăng tốc độ quét chỉ mục và trả về mảng thực thể bài tuyển dụng phù hợp với độ trễ tối thiểu.
+        \item \textbf{Giai đoạn 3 - Chuẩn hóa JSON và Tái kết xuất đồ họa:} Dịch vụ máy chủ chạy thuật toán đếm tần suất lập danh mục Top 10 công nghệ và tính phân vị dải lương trung bình, đóng gói thành cấu trúc đối tượng \texttt{JSON} phản hồi về Client. Khung giao diện \texttt{CareerNova-Frontend} giải mã chuỗi dữ liệu phản hồi, cập nhật cục bộ React State nội bộ và kích hoạt cơ chế tự động render lại hình học đồ thị hiển thị trực quan dải lương và top kỹ năng cho người dùng.
+    \end{itemize}
+    
+    \item \textbf{Tiến trình xử lý đối soát hồ sơ thông minh bằng AI (Hình~\ref{fig:sequence_sub_matching}):}
+    \begin{itemize}
+        \item \textbf{Giai đoạn 1 - Xác thực phiên và Phân giải văn bản hồ sơ thô:} Ứng viên kéo thả tệp tin CV vào giao diện Client, \texttt{CareerNova-Frontend} chuyển đổi sang đối tượng \texttt{FormData} đính kèm mã xác thực gửi đến endpoint máy chủ Backend. \texttt{Controller} của Backend chuyển tiếp request qua bộ lọc an toàn \texttt{JwtAuthGuard} để giải mã token kiểm tra quyền sở hữu tài khoản. Khi phiên làm việc hợp lệ, tệp dữ liệu nhị phân của hồ sơ được đẩy vào \texttt{CVProcessingService} để thực thi giải thuật phân giải chuỗi nhị phân \texttt{PDF}, kết xuất đầu ra thành một chuỗi ký tự văn bản thô hoàn chỉnh.
+        \item \textbf{Giai đoạn 2 - Trích xuất thực thể tri thức bằng mô hình trí tuệ nhân tạo:} Chuỗi văn bản thô được chuyển đến dịch vụ tích hợp \texttt{AIService}. Tại đây, hệ thống thiết lập cấu trúc câu lệnh prompt học thuật chuẩn và gửi yêu cầu mạng bất đồng bộ sang máy chủ \texttt{OpenAI API} thông qua giao thức bảo mật \texttt{HTTPS}. Mô hình ngôn ngữ lớn thực hiện phân tích cú pháp ngữ nghĩa ngữ cảnh hồ sơ cá nhân, phân loại sâu và trả về chuỗi dữ liệu cấu trúc đối tượng \texttt{JSON} chứa danh sách các nhóm kỹ năng công nghệ ứng viên đang sở hữu.
+        \item \textbf{Giai đoạn 3 - Thực thi giải thuật đối soát tập hợp trọng số vĩ mô:} Sau khi máy chủ Backend nhận về cấu trúc \texttt{JSON} kỹ năng của ứng viên từ phân hệ AI, hệ thống lập tức kích hoạt lớp dữ liệu \texttt{Prisma ORM} gửi lệnh truy vấn xuống kho lưu trữ trung tâm để lấy danh mục các bài đăng tuyển dụng chuẩn tương ứng với vị trí công việc đích sinh viên đang hướng tới. Lõi thuật toán đối soát tập hợp toán học tại máy chủ thực hiện so khớp hai tập dữ liệu, tính điểm số tương thích phần trăm dựa trên trọng số tần suất thị trường và áp dụng phép hiệu tập hợp để lọc ra danh sách các lỗ hổng kỹ năng bị khuyết thiếu (\textit{Skill Gap List}).
+        \item \textbf{Giai đoạn 4 - Ghi nhận lịch sử và Tái cấu trúc đồ thị mạng nhện:} Kết quả tính toán phân tích khoảng cách năng lực được ghi nhận trực tiếp xuống bảng lịch sử \texttt{cv\_matching\_histories} của \texttt{PostgreSQL} để lưu vết tiến trình học tập của người học. Máy chủ đóng gói toàn bộ chỉ số phần trăm tương thích, danh mục mảng kỹ năng đáp ứng và mảng khoảng trống năng lực thành phản hồi dữ liệu \texttt{JSON} trả về trình duyệt. Tầng giao diện Frontend nhận dữ liệu phản hồi, ánh xạ trực tiếp lên các trục hình học của cấu phần đồ thị mạng nhện (\textit{Radar Chart}) và các thanh tiến trình động để hiển thị báo cáo chuyên sâu trực quan cho sinh viên.
+    \end{itemize}
 \end{enumerate}
 
-\section{Thiết kế cơ sở dữ liệu}
+\section{Thiết kế cơ sở dữ liệu (Database Schema Design)}
+\label{sec:thiet_ke_co_so_du_lieu}
 
-\subsection{Sơ đồ mối quan hệ thực thể (ERD)}
+Để bảo đảm tính toàn vẹn và đồng bộ dữ liệu giữa tiến trình thu thập vĩ mô của \texttt{JobVisualization\_BE} và logic kiểm soát nghiệp vụ tài khoản ứng viên của \texttt{CareerNova-Backend}, hệ thống thiết kế mô hình dữ liệu quan hệ chuẩn hóa. Nhằm loại bỏ hoàn toàn mã lập trình thô ra khỏi báo cáo học thuật, toàn bộ cấu trúc bảng vật lý, ràng buộc thực thể và chỉ mục truy vấn tối ưu được cấu trúc chi tiết dưới dạng hệ thống Từ điển dữ liệu (\textit{Data Dictionary}) từ Bảng \ref{tab:dict_users} đến Bảng \ref{tab:dict_cv_matching_histories}.
 
-Mô hình dữ liệu quan hệ của hệ thống gồm các thực thể cốt lõi:
-\begin{figure}[ht]
+\subsection{Sơ đồ mối quan hệ thực thể (ERD Diagram)}
+\label{subsec:so_do_moi_quan_he_thuc_the_erd}
+
+Mô hình cơ sở dữ liệu quan hệ và các liên kết khóa ngoại giữa các thực thể chính của hệ thống được mô tả chi tiết thông qua sơ đồ ERD ở Hình \ref{fig:erd_diagram}.
+
+\begin{figure}[htbp]
     \centering
-    % \includegraphics[width=0.8\textwidth]{images/erd.png}
-    \caption{Sơ đồ mối quan hệ thực thể (ERD)}
-    \label{fig:erd}
+    \includegraphics[width=0.85\textwidth]{erd_diagram.png}
+    \caption{Sơ đồ mối quan hệ thực thể (ERD) trong cơ sở dữ liệu hệ thống}
+    \label{fig:erd_diagram}
 \end{figure}
-\begin{itemize}
-    \item Một \textbf{User} có thể sở hữu nhiều \textbf{CV} ($1 - N$).
-    \item Một \textbf{CV} sau khi phân tích sẽ tạo ra các bản ghi \textbf{SkillGapAnalysis} tương ứng với các \textbf{Job} khác nhau ($N - N$ qua bảng trung gian).
-    \item Các \textbf{Job} và \textbf{CV} liên kết với bảng từ điển kỹ năng chuẩn hóa \textbf{Skills}.
-\end{itemize}
 
-\subsection{Đặc tả các bảng dữ liệu thực tế}
-
-Dưới đây là đặc tả chi tiết của các bảng dữ liệu quan hệ chính trong PostgreSQL:
-
-\begin{table}[ht]
-\caption{Đặc tả bảng Users (Thông tin người dùng)}
-\label{tab:spec_users}
-\begin{center}
-\begin{tabular}{|l|l|c|l|}
+\begin{table}[htbp]
+\centering
+\small
+\caption{Từ điển dữ liệu cho thực thể Người dùng (\texttt{users})}
+\label{tab:dict_users}
+\begin{tabular}{|L{3.8cm}|L{3.0cm}|C{1.8cm}|L{6.4cm}|}
 \hline
-\textbf{Tên trường} & \textbf{Kiểu dữ liệu} & \textbf{Khóa} & \textbf{Mô tả} \\
-\hline
-id & UUID & PK & Định danh duy nhất của người dùng \\
-email & VARCHAR(100) & Unique & Địa chỉ email dùng để đăng nhập \\
-password\_hash & VARCHAR(255) & & Mật khẩu đã được mã hóa \\
-full\_name & VARCHAR(100) & & Họ và tên người dùng \\
-role & VARCHAR(20) & & Vai trò (CANDIDATE, RECRUITER, ADMIN) \\
-created\_at & TIMESTAMP & & Thời gian tạo tài khoản \\
-\hline
+\textbf{Tên trường} & \textbf{Kiểu dữ liệu} & \textbf{Ràng buộc} & \textbf{Mô tả chức năng ý nghĩa} \\ \hline
+\texttt{id} & String (UUID) & PK & Mã định danh duy nhất toàn cục của người dùng. \\ \hline
+\texttt{email} & String & Unique & Địa chỉ thư điện tử dùng để đăng nhập hệ thống. \\ \hline
+\texttt{password} & String & Not Null & Chuỗi mật khẩu bảo mật (đã được băm bằng bcrypt). \\ \hline
+\texttt{fullName} & String & Not Null & Họ và tên đầy đủ của sinh viên/người dùng. \\ \hline
+\texttt{role} & Enum & Not Null & Phân quyền tài khoản (\texttt{STUDENT} hoặc \texttt{ADMIN}). \\ \hline
+\texttt{createdAt} & DateTime & Not Null & Thời mốc khởi tạo tài khoản trên hệ thống. \\ \hline
+\texttt{updatedAt} & DateTime & Not Null & Thời mốc cập nhật thông tin tài khoản gần nhất. \\ \hline
 \end{tabular}
-\end{center}
 \end{table}
 
-\begin{table}[ht]
-\caption{Đặc tả bảng Jobs (Thông tin việc làm)}
-\label{tab:spec_jobs}
-\begin{center}
-\begin{tabular}{|l|l|c|l|}
+\begin{table}[htbp]
+\centering
+\small
+\caption{Từ điển dữ liệu cho thực thể Bài tuyển dụng (\texttt{job\_postings})}
+\label{tab:dict_job_postings}
+\begin{tabular}{|L{3.8cm}|L{3.0cm}|C{1.8cm}|L{6.4cm}|}
 \hline
-\textbf{Tên trường} & \textbf{Kiểu dữ liệu} & \textbf{Khóa} & \textbf{Mô tả} \\
-\hline
-id & UUID & PK & Định danh duy nhất của công việc \\
-title & VARCHAR(150) & & Chức danh công việc chuẩn hóa \\
-company & VARCHAR(100) & & Tên công ty tuyển dụng \\
-location & VARCHAR(100) & & Địa điểm làm việc \\
-description & TEXT & & Mô tả chi tiết công việc \\
-salary\_min & NUMERIC & & Mức lương tối thiểu \\
-salary\_max & NUMERIC & & Mức lương tối đa \\
-posted\_at & TIMESTAMP & & Ngày đăng tin tuyển dụng \\
-\hline
+\textbf{Tên trường} & \textbf{Kiểu dữ liệu} & \textbf{Ràng buộc} & \textbf{Mô tả chức năng ý nghĩa} \\ \hline
+\texttt{id} & String (UUID) & PK & Mã định danh duy nhất của bài tuyển dụng. \\ \hline
+\texttt{title} & String & Not Null & Tiêu đề vị trí công việc doanh nghiệp đăng tuyển. \\ \hline
+\texttt{companyName} & String & Not Null & Tên của tập đoàn hoặc doanh nghiệp tuyển dụng. \\ \hline
+\texttt{location} & String & Index & Địa điểm làm việc (Hồ Chí Minh, Hà Nội,...). \\ \hline
+\texttt{salaryMin} & Integer & Nullable & Mức lương tối thiểu trong dải lương tuyển dụng. \\ \hline
+\texttt{salaryMax} & Integer & Nullable & Mức lương tối đa trong dải lương tuyển dụng. \\ \hline
+\texttt{experienceLevel} & String & Index & Yêu cầu kinh nghiệm (Intern, Junior, Senior,...). \\ \hline
+\texttt{description} & String (Text) & Not Null & Văn bản mô tả chi tiết trách nhiệm công việc. \\ \hline
+\texttt{requirement} & String (Text) & Not Null & Văn bản mô tả các điều kiện năng lực bắt buộc. \\ \hline
+\texttt{skillKeywords} & String[] (Array) & Not Null & Mảng danh sách từ khóa kỹ năng công nghệ đã chuẩn hóa. \\ \hline
+\texttt{sourceUrl} & String & Unique & Đường dẫn gốc của bài đăng trên sàn tuyển dụng. \\ \hline
+\texttt{sourcePlatform} & String & Not Null & Tên sàn nguồn thu thập (TopCV, ITViec,...). \\ \hline
 \end{tabular}
-\end{center}
 \end{table}
 
-\begin{table}[ht]
-\caption{Đặc tả bảng CVs (Quản lý hồ sơ ứng viên)}
-\label{tab:spec_cvs}
-\begin{center}
-\begin{tabular}{|l|l|c|l|}
+\begin{table}[htbp]
+\centering
+\small
+\caption{Từ điển dữ liệu cho thực thể Lưu bài đăng (\texttt{saved\_jobs})}
+\label{tab:dict_saved_jobs}
+\begin{tabular}{|L{3.8cm}|L{3.0cm}|C{1.8cm}|L{6.4cm}|}
 \hline
-\textbf{Tên trường} & \textbf{Kiểu dữ liệu} & \textbf{Khóa} & \textbf{Mô tả} \\
-\hline
-id & UUID & PK & Định danh duy nhất của CV \\
-user\_id & UUID & FK & Liên kết tới bảng Users \\
-file\_path & VARCHAR(255) & & Đường dẫn lưu trữ file trên server \\
-extracted\_skills & TEXT[] & & Danh sách kỹ năng trích xuất từ CV \\
-uploaded\_at & TIMESTAMP & & Ngày tải hồ sơ lên \\
-\hline
+\textbf{Tên trường} & \textbf{Kiểu dữ liệu} & \textbf{Ràng buộc} & \textbf{Mô tả chức năng ý nghĩa} \\ \hline
+\texttt{id} & String (UUID) & PK & Mã định danh duy nhất của bản ghi lưu trữ. \\ \hline
+\texttt{userId} & String (UUID) & FK & Khóa ngoại liên kết chặt chẽ đến bảng \texttt{users}. \\ \hline
+\texttt{jobId} & String (UUID) & FK & Khóa ngoại liên kết chặt chẽ đến bảng \texttt{job\_postings}. \\ \hline
+\texttt{savedAt} & DateTime & Not Null & Thời mốc sinh viên thực hiện hành động lưu bài viết. \\ \hline
 \end{tabular}
-\end{center}
 \end{table}
 
-\section{Thiết kế giao diện}
+\begin{table}[htbp]
+\centering
+\small
+\caption{Từ điển dữ liệu cho thực thể Hồ sơ CV (\texttt{cv\_profiles})}
+\label{tab:dict_cv_profiles}
+\begin{tabular}{|L{3.8cm}|L{3.0cm}|C{1.8cm}|L{6.4cm}|}
+\hline
+\textbf{Tên trường} & \textbf{Kiểu dữ liệu} & \textbf{Ràng buộc} & \textbf{Mô tả chức năng ý nghĩa} \\ \hline
+\texttt{id} & String (UUID) & PK & Mã định danh duy nhất của hồ sơ CV. \\ \hline
+\texttt{userId} & String (UUID) & FK & Khóa ngoại xác định chủ sở hữu thuộc bảng \texttt{users}. \\ \hline
+\texttt{fileUrl} & String & Not Null & Đường dẫn lưu trữ tệp tin \texttt{PDF} trên hệ thống. \\ \hline
+\texttt{fileName} & String & Not Null & Tên tệp tin gốc do sinh viên tải lên hệ thống. \\ \hline
+\texttt{uploadedAt} & DateTime & Not Null & Thời mốc hệ thống tiếp nhận tệp tin thành công. \\ \hline
+\end{tabular}
+\end{table}
 
-\subsection{Thiết kế trang chủ và Dashboard thống kê thị trường việc làm}
+\begin{table}[htbp]
+\centering
+\small
+\caption{Từ điển dữ liệu cho thực thể Lịch sử đối soát (\texttt{cv\_matching\_histories})}
+\label{tab:dict_cv_matching_histories}
+\begin{tabular}{|L{3.8cm}|L{3.0cm}|C{1.8cm}|L{6.4cm}|}
+\hline
+\textbf{Tên trường} & \textbf{Kiểu dữ liệu} & \textbf{Ràng buộc} & \textbf{Mô tả chức năng ý nghĩa} \\ \hline
+\texttt{id} & String (UUID) & PK & Mã định danh duy nhất của phiên đối soát năng lực. \\ \hline
+\texttt{userId} & String (UUID) & FK & Khóa ngoại xác định sinh viên thực hiện đối soát. \\ \hline
+\texttt{targetRole} & String & Not Null & Vị trí công việc mục tiêu hướng đến (ví dụ: Backend). \\ \hline
+\texttt{matchScore} & Float & Not Null & Điểm số tương thích định lượng tính theo tỷ lệ \%. \\ \hline
+\texttt{extractedSkills} & String[] (Array) & Not Null & Mảng danh sách kỹ năng AI bóc tách từ văn bản CV. \\ \hline
+\texttt{missingSkills} & String[] (Array) & Not Null & Mảng danh sách từ khóa kỹ năng thiếu hụt (Skill Gap). \\ \hline
+\texttt{analyzedAt} & DateTime & Not Null & Thời mốc hệ thống thực thi thuật toán phân tích. \\ \hline
+\end{tabular}
+\end{table}
 
+\newpage
+\noindent
+\textbf{Thuyết minh kiến trúc các mối quan hệ thực thể quan trọng trong cơ sở dữ liệu:}
 \begin{itemize}
-    \item \textbf{Trang chủ}: Thiết kế hiện đại với thanh tìm kiếm nổi bật cho phép lọc tin tuyển dụng nhanh theo chức danh, địa điểm và mức lương.
-    \item \textbf{Dashboard thống kê}: Bao gồm các thẻ KPI ở phía trên hiển thị tổng số việc làm hiện tại, số lượng kỹ năng đang có xu hướng tăng. Phần trung tâm sử dụng biểu đồ cột để biểu diễn Top 10 kỹ năng có nhu cầu tuyển dụng cao nhất, và biểu đồ đường thể hiện phân bố mức lương trung bình theo số năm kinh nghiệm.
-\end{itemize}
-
-\subsection{Thiết kế trang quản lý CV và kết quả so khớp năng lực}
-
-\begin{itemize}
-    \item \textbf{Khu vực tải CV}: Sử dụng cơ chế kéo thả (Drag and Drop) hỗ trợ trực quan kèm theo thanh tiến trình hiển thị trạng thái phân tích.
-    \item \textbf{Trang hiển thị kết quả đối soát}:
-    \begin{itemize}
-        \item \textbf{Chỉ số chính}: Điểm tương tương thích tổng thể (\% Match Score) hiển thị qua biểu đồ tròn (Radial Progress).
-        \item \textbf{Bản đồ kỹ năng (Skill Radar Chart)}: So sánh trực quan tập kỹ năng của ứng viên (màu xanh) với yêu cầu của công việc (màu đỏ).
-        \item \textbf{Bảng phân tích chi tiết (Skill Gap Detail)}: Chia làm hai cột chính: Cột bên trái liệt kê các kỹ năng đã khớp (Matched Skills) được đánh dấu tích xanh, cột bên phải là các kỹ năng còn thiếu (Missing Skills) đi kèm các gợi ý tài liệu học tập.
-    \end{itemize}
+    \item \textbf{Mối quan hệ \texttt{User} và \texttt{JobPosting} qua bảng trung gian \texttt{SavedJob}:} Thiết lập mối quan hệ nhiều-nhiều (\textit{Many-to-Many Relationship}). Cho phép một sinh viên có thể thực hiện hành động lưu trữ nhiều tin tuyển dụng mục tiêu mà mình quan tâm, đồng thời một bài tuyển dụng cũng có thể nằm trong danh sách theo dõi của nhiều ứng viên khác nhau. Khóa ngoại được thiết lập thuộc tính ràng buộc toàn vẹn dữ liệu tự động xóa sạch các bản ghi liên đới khi thực thể chính bị xóa, ngăn chặn hiện tượng rác dữ liệu.
+    \item \textbf{Mối quan hệ \texttt{User} và \texttt{CvMatchingHistory}:} Thiết lập quan hệ một-nhiều (\textit{One-to-Many Relationship}), phục vụ việc lưu trữ lịch sử kiểm tra năng lực của sinh viên theo thời gian. Thuộc tính mảng chuỗi ký tự \texttt{extractedSkills} và \texttt{missingSkills} tận dụng kiểu dữ liệu mảng nguyên bản của hệ quản trị \texttt{PostgreSQL}, giúp tối ưu hóa không gian lưu trữ mà không cần tạo thêm các bảng kỹ năng phụ gây phức tạp hóa câu lệnh kết hợp (\textit{Join Query}).
+    \item \textbf{Cơ chế đánh chỉ mục tối ưu truy vấn (\textit{Indexing Strategy}):} Hệ thống cài đặt các chỉ mục tường minh trên thực thể bài đăng tuyển dụng tại các cột địa điểm và mức kinh nghiệm. Khi tầng Frontend thực hiện các thao tác lọc lát cắt dữ liệu vĩ mô, các câu lệnh truy vấn dữ liệu được thực thi thông qua chỉ mục giúp tăng tốc độ tìm kiếm từ quét toàn bảng (\textit{Full Table Scan}) sang quét chỉ mục (\textit{Index Scan}), duy trì độ trễ API ở mức tối thiểu.
 \end{itemize}
 
 \section{Thiết kế thuật toán phân tích khoảng cách năng lực}
+\label{sec:thiet_ke_thuat_toan_phan_tich_khoang_cach_nang_luc}
 
-\subsection{Luồng xử lý từ lúc người dùng upload CV đến khi nhận kết quả so khớp}
+Lõi giải thuật của hệ thống \texttt{CareerNova} nằm ở quy trình tính toán định lượng hóa sự tương đồng năng lực và bóc tách khoảng trống kỹ năng cá nhân so với thị trường lao động vĩ mô. Thuật toán được thiết kế dựa trên lý thuyết tập hợp kết hợp phương pháp tính điểm dựa trên trọng số tần suất xuất hiện thực tế của kỹ năng trong cơ sở dữ liệu tuyển dụng vĩ mô.
 
-Luồng thuật toán bao gồm các bước xử lý sau:
-\begin{enumerate}
-    \item \textbf{Trích xuất thông tin (Parsing)}: Sử dụng thư viện chuyên dụng để đọc nội dung văn bản thô từ file PDF/DOCX của CV.
-    \item \textbf{Bóc tách thực thể bằng LLM}: Đưa văn bản thô của CV vào mô hình LLM với một Prompt có cấu trúc nhằm phân tách chính xác danh sách các kỹ năng kỹ thuật (Hard Skills) và kỹ năng mềm (Soft Skills).
-    \item \textbf{Ánh xạ chuẩn hóa (Mapping)}: So khớp tập kỹ năng trích xuất được với danh mục kỹ năng chuẩn hóa trong cơ sở dữ liệu hệ thống (Skills Table) nhằm khử các biến thể đồng nghĩa.
-    \item \textbf{Đối soát với JD tuyển dụng (Matching)}: So sánh tập kỹ năng đã chuẩn hóa của CV với tập kỹ năng yêu cầu của Job tương ứng.
-    \item \textbf{Trả kết quả phân tích}: Tính toán tỷ lệ, xác định các kỹ năng bị khuyết thiếu và lưu trữ kết quả phân tích.
-\end{enumerate}
-
-\subsection{Thuật toán so sánh tập kỹ năng trong CV với yêu cầu của Job để tính tỷ lệ phần trăm tương thích}
-
-Để tính toán điểm số tương thích tổng thể (\textit{Match Score}), thuật toán kết hợp giữa so khớp tập hợp chính xác và so khớp ngữ nghĩa thông qua vector nhúng:
-
-Gọi $S_{CV}$ là tập hợp các kỹ năng của ứng viên đã được trích xuất và chuẩn hóa từ CV.
-Gọi $S_{Job}$ là tập hợp các kỹ năng yêu cầu được trích xuất từ mô tả công việc (JD).
-
-\textbf{Bước 1: Tính toán điểm số tương hợp tập hợp chính xác (Exact Match Score - $M_{exact}$)}:
+\subsection{Mô tả bài toán và mô hình hóa toán học}
+Gọi $S_{cv}$ là tập hợp gồm $n$ kỹ năng công nghệ được bóc tách từ hồ sơ cá nhân của sinh viên thông qua cấu trúc trích xuất thực thể của mô hình ngôn ngữ lớn:
 \begin{equation}
-M_{exact} = \frac{|S_{CV} \cap S_{Job}|}{|S_{Job}|} \times 100\%
+    S_{cv} = \{s_1, s_2, s_3, \dots, s_n\}
+\end{equation}
+Gọi $S_{market}$ là tập hợp gồm $m$ kỹ năng công nghệ trọng điểm yêu cầu bởi thị trường lao động vĩ mô đối với vị trí công việc đích trong một khoảng thời gian xác định, được trích xuất từ cơ sở dữ liệu bài đăng tuyển dụng \texttt{PostgreSQL}:
+\begin{equation}
+    S_{market} = \{m_1, m_2, m_3, \dots, m_m\}
+\end{equation}
+Đối với mỗi kỹ năng $m_i \in S_{market}$, hệ thống gán một trọng số tần suất $W(m_i)$ được tính toán bằng tỷ lệ xuất hiện của kỹ năng này trên tổng số lượng tin tuyển dụng thuộc danh mục vị trí đích đang khảo sát:
+\begin{equation}
+    W(m_i) = \frac{\text{Số lượng tin tuyển dụng yêu cầu kỹ năng } m_i}{\text{Tổng số lượng tin tuyển dụng của vị trí mục tiêu}}
+\end{equation}
+Trọng số $W(m_i)$ có giá trị nằm trong đoạn $[0, 1]$, phản ánh mức độ quan trọng và độ săn đón thực tế của doanh nghiệp đối với kỹ năng công nghệ đó trên thị trường lao động thời gian thực.
+
+\subsection{Công thức tính toán Chỉ số tương thích (Match Score)}
+Chỉ số tương thích tổng quan $Score_{match}$ biểu thị bằng tỷ lệ phần trăm định lượng phản ánh mức độ đáp ứng năng lực của sinh viên so với kỳ vọng của ngành. Điểm số này được tính bằng tổng các trọng số của những kỹ năng thuộc tập giao (\textit{Intersection set}) giữa hồ sơ cá nhân và thị trường, chia cho tổng toàn bộ trọng số của tập hợp thị trường mục tiêu:
+\begin{equation}
+    Score_{match} = \left( \frac{\sum_{x \in (S_{cv} \cap S_{market})} W(x)}{\sum_{y \in S_{market}} W(y)} \right) \times 100\%
 \end{equation}
 
-\textbf{Bước 2: So khớp ngữ nghĩa đối với các kỹ năng chưa khớp hoàn toàn}:
-Đối với mỗi kỹ năng $k_j \in S_{Job}$ nhưng không thuộc $S_{CV}$, hệ thống tính toán độ tương đồng Cosine ngữ nghĩa giữa vector nhúng của kỹ năng đó $\mathbf{V}(k_j)$ và các vector nhúng của các kỹ năng ứng viên đang sở hữu $\mathbf{V}(k_i), k_i \in S_{CV}$.
-Nếu tồn tại một cặp kỹ năng có độ tương đồng Cosine lớn hơn ngưỡng $\theta$ (thường chọn $\theta = 0.82$):
+\subsection{Xác định Tập hợp khoảng trống kỹ năng (Skill Gap Set)}
+Tập hợp các khoảng trống kỹ năng $S_{gap}$ đại diện cho những lỗ hổng tri thức công nghệ mà sinh viên năm cuối cần phải học tập bổ sung để gia tăng cơ hội trúng tuyển. Tập hợp này được định nghĩa toán học bằng phép hiệu tập hợp (\textit{Relative Complement set}) giữa tập kỹ năng thị trường cần và tập kỹ năng ứng viên đang sở hữu:
 \begin{equation}
-\max_{k_i \in S_{CV}} \text{sim}_{\text{cosine}}(\mathbf{V}(k_i), \mathbf{V}(k_j)) \ge \theta
+    S_{gap} = S_{market} \setminus S_{cv} = \{x \in S_{market} \mid x \notin S_{cv}\}
 \end{equation}
-Thì kỹ năng $k_j$ được coi là khớp một phần (Partial Match) với trọng số tương ứng bằng giá trị Cosine Similarity đó.
+Danh sách khoảng trống kỹ năng trả về cho giao diện Frontend sẽ được hệ thống sắp xếp tự động theo thứ tự giảm dần của trọng số tần suất $W(x)$, giúp sinh viên nhận biết được công nghệ nào đang thiếu hụt nghiêm trọng nhất để ưu tiên bổ sung trước trong lộ trình học tập của mình.
 
-\textbf{Bước 3: Tổng hợp điểm số tương hợp cuối cùng (Final Match Score)}:
-Điểm số tương hợp cuối cùng là sự kết hợp có trọng số giữa điểm khớp chính xác và điểm khớp ngữ nghĩa một phần, nhằm phản ánh chính xác nhất năng lực thực tế của ứng viên so với công việc yêu cầu.
-\begin{equation}
-\text{Match Score} = \min \left( 100\%, \frac{|S_{CV} \cap S_{Job}| + \sum_{k_j \in \text{Partial}} \max \text{sim}_{\text{cosine}}}{|S_{Job}|} \times 100\% \right)
-\end{equation}
-Các kỹ năng nằm trong tập $S_{Job}$ nhưng hoàn toàn không thể so khớp chính xác hoặc khớp ngữ nghĩa một phần với bất kỳ kỹ năng nào trong $S_{CV}$ sẽ được xếp vào danh mục \textit{Kỹ năng thiếu (Missing Skills)}.
+\subsection{Đặc tả tiến trình thực thi thuật toán logic}
+Để làm rõ hơn quy trình vận hành ngầm tại tầng máy chủ mà không cần sử dụng mã lệnh lập trình, tiến trình tính toán đối soát được mô tả chi tiết qua các bước xử lý dữ liệu tuần tự sau:
+\begin{itemize}
+    \item \textbf{Bước 1 (Khởi tạo tham số cấu trúc):} Hệ thống tiếp nhận cấu trúc dữ liệu mảng chứa các từ khóa kỹ năng của ứng viên từ phân hệ trích xuất AI, đồng thời tiếp nhận tham số bộ lọc vị trí công việc mục tiêu do người dùng chỉ định từ tầng giao diện.
+    \item \textbf{Bước 2 (Trích xuất tập hợp nền thị trường):} Thực hiện câu lệnh truy vấn có điều kiện xuống kho dữ liệu \texttt{PostgreSQL}, trích xuất toàn bộ các bản ghi bài đăng việc làm có thuộc tính chức danh trùng khớp với vị trí mục tiêu. Tiến trình duyệt qua mảng dữ liệu thực thể của các bài đăng, tính toán tổng số lượng tin tuyển dụng hiện hành và lập bảng băm thống kê tần suất xuất hiện của từng từ khóa kỹ năng riêng biệt trong tập mẫu dữ liệu.
+    \item \textbf{Bước 3 (Tính toán trọng số vĩ mô):} Với mỗi khóa kỹ năng xuất hiện trong bảng băm thị trường, hệ thống áp dụng công thức toán học tính toán trọng số quan trọng tương đối. Các kỹ năng có tần suất xuất hiện vượt ngưỡng cấu hình tối thiểu (ngưỡng lọc nhiễu hệ thống) sẽ được giữ lại để tạo thành tập hợp kỹ năng chuẩn của ngành.
+    \item \textbf{Bước 4 (Thực thi đối soát tập hợp):} Khởi tạo hai mảng lưu trữ kết quả rỗng tương ứng cho tập giao và tập hiệu. Tiến trình thực hiện duyệt tuần tự qua các phần tử thuộc tập hợp kỹ năng ngành chuẩn. Nếu phần tử hiện tại tồn tại trong mảng kỹ năng CV của sinh viên, hệ thống đẩy phần tử đó vào mảng kỹ năng đã sở hữu và cộng dồn trọng số vào biến đếm điểm tương tương thích. Ngược lại, nếu phần tử không tồn tại, nó sẽ được chuyển vào mảng khoảng trống kỹ năng kèm theo giá trị trọng số thị trường tương ứng.
+    \item \textbf{Bước 5 (Chuẩn hóa kết quả đầu ra):} Thực hiện phép chia tỷ lệ tổng trọng số để quy đổi điểm số tương thích về thang điểm phần trăm chuẩn. Tiến trình thực hiện sắp xếp danh mục mảng kỹ năng thiếu hụt theo thứ tự ưu tiên giảm dần của trọng số. Dữ liệu sau chuẩn hóa được đóng gói thành một đối tượng cấu trúc dữ liệu đầu ra hoàn chỉnh để chuyển giao cho phân hệ giao diện.
+\end{itemize}
+
+Để minh họa cho cấu trúc dữ liệu đầu ra được chuyển giao giữa tầng giải thuật máy chủ và phân hệ giao diện người dùng, các thành phần thuộc tính logic được đặc tả chi tiết trong Bảng \ref{tab:algorithm_output_spec}.
+
+\begin{table}[htbp]
+\centering
+\small
+\caption{Đặc tả các thuộc tính cấu trúc dữ liệu đầu ra của thuật toán đối soát}
+\label{tab:algorithm_output_spec}
+\begin{tabular}{|L{3.5cm}|L{3.5cm}|L{7.0cm}|}
+\hline
+\textbf{Tên thuộc tính} & \textbf{Kiểu cấu trúc} & \textbf{Ý nghĩa chức năng hiển thị đồ thị} \\ \hline
+\texttt{matchPercent} & Số thực (Float) & Tỷ lệ phần trăm tương thích tổng quan dùng để vẽ vòng tròn tiến trình vĩ mô. \\ \hline
+\texttt{matchedSkills} & Mảng chuỗi (Array) & Danh sách các kỹ năng sinh viên đã đáp ứng, dùng để gắn nhãn thành công trên giao diện. \\ \hline
+\texttt{gapAnalysis} & Mảng đối tượng & Danh sách các kỹ năng bị thiếu hụt, mỗi phần tử chứa tên công nghệ và trọng số thiếu hụt tương ứng. \\ \hline
+\texttt{radarChartData} & Đối tượng phức hợp & Cấu trúc dữ liệu phân lớp biểu diễn điểm năng lực cá nhân và điểm chuẩn ngành trên 5 trục phân tích mạng nhện. \\ \hline
+\end{tabular}
+\end{table}
+
+\section{Thiết kế giao diện người dùng (User Interface Design)}
+\label{sec:thiet_ke_giao_dien_nguoi_dung}
+
+Tầng tương tác người dùng của hệ thống được xây dựng bằng framework \texttt{Next.js} phối hợp cùng hệ thống thư viện css tiện ích \texttt{TailwindCSS}, hướng đến trải nghiệm người dùng tối giản, khoa học và trực quan cao. Bố cục hiển thị được cấu trúc mạch lạc thành hai phân vùng giao diện chức năng chính.
+
+\subsection{Thiết kế trang chủ và Dashboard thống kê thị trường việc làm}
+\label{subsec:thiet_ke_dashboard_thi_truong}
+
+Giao diện Dashboard tổng quan được thiết kế theo cấu trúc lưới đa tầng (\textit{Multi-layer Grid System}), giúp tổ chức các cấu phần thông tin vĩ mô một cách hệ thống, tránh gây hiện tượng quá tải thông tin thị giác cho người học. Bố cục không gian hiển thị chi tiết được mô tả cụ thể trong Hình \ref{fig:dashboard_layout}.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.9\textwidth]{dashboard_layout.png}
+    \caption{Bố cục thiết kế giao diện Dashboard phân tích xu hướng thị trường lao động vĩ mô trong CareerNova}
+    \label{fig:dashboard_layout}
+\end{figure}
+
+Cấu trúc các thành phần hiển thị trên Dashboard được quy hoạch theo logic phân cấp như sau:
+\begin{itemize}
+    \item \textbf{Thanh điều hướng bộ lọc thượng tầng (Top Filter Toolbar):} Nằm cố định tại vị trí trên cùng của giao diện, bao gồm các hộp chọn thả xuống thiết kế bằng cấu phần tương tác của hệ thống Client. Người dùng có thể tùy biến chọn các tham số về Khu vực địa lý, Mức kinh nghiệm yêu cầu, và Sàn nguồn dữ liệu tuyển dụng. Trạng thái lựa chọn này liên kết trực tiếp với các hàm gọi API của \texttt{Next.js}, tự động kích hoạt tiến trình nạp lại dữ liệu đồ thị mà không gây hiện tượng tải lại toàn bộ trang.
+    
+    \item \textbf{Hàng thẻ chỉ số KPI vĩ mô (Summary Cards Row):} Bố trí ngay dưới thanh bộ lọc, gồm bốn thẻ hình hộp chữ nhật bo góc gọn gàng. Thể hiện các con số thống kê tổng hợp bao gồm: Tổng số lượng tin việc làm đang kích hoạt, Mức lương trung bình thị trường, Số lượng kỹ năng mới xuất hiện, và Số lượng doanh nghiệp tham gia tuyển dụng. Các con số này sử dụng định dạng kích thước phông chữ lớn để thu hút thị giác người xem trước tiên.
+    
+    \item \textbf{Khối đồ thị trực quan trung tâm (Central Chart Grid):} Chia không gian hiển thị thành hai cột với tỷ lệ cân bằng. Cột bên trái hiển thị Đồ thị thanh ngang thống kê danh mục Top 10 từ khóa công nghệ có nhu cầu tuyển dụng lớn nhất, hỗ trợ sinh viên nhận diện nhanh ngôn ngữ lập trình chủ lưu. Cột bên phải hiển thị Đồ thị phân bổ lương kết hợp, mô tả biên độ dao động thu nhập tối thiểu và tối đa tương ứng với số năm kinh nghiệm yêu cầu từ doanh nghiệp. Phía dưới cùng là bảng dữ liệu rút gọn hiển thị chi tiết danh sách các bài tuyển dụng tương ứng đóng vai trò cung cấp thông tin theo nhu cầu của người dùng.
+\end{itemize}
+
+\subsection{Thiết kế trang quản lý CV và kết quả so khớp năng lực}
+\label{subsec:thiet_ke_trang_quan_ly_cv}
+
+Giao diện khu vực quản lý và đối soát hồ sơ cá nhân tập trung vào việc hiển thị các chỉ số mang tính cá nhân hóa sâu sắc, cung cấp cái nhìn trực diện về năng lực bản thân của sinh viên năm cuối đối chiếu với toàn ngành. Kiến trúc bố cục giao diện tương tác được đặc tả chi tiết thông qua sơ đồ hình vẽ trong Hình \ref{fig:cv_matching_layout}.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.9\textwidth]{cv_matching_layout.png}
+    \caption{Bố cục thiết kế giao diện trang tải CV và hiển thị báo cáo phân tích khoảng trống kỹ năng}
+    \label{fig:cv_matching_layout}
+\end{figure}
+
+Giao diện trang phân tích hồ sơ năng lực tích hợp ba cấu phần tương tác nghiệp vụ chuyên biệt:
+\begin{itemize}
+    \item \textbf{Vùng tương tác tải tệp tin thông minh (Drag-and-Drop Zone):} Chiếm vị trí góc trên bên trái của trang chủ giao diện. Thành phần được bao bọc bởi một đường viền nét đứt tương phản sắc nét để tăng tính nhận diện hình học. Vùng này tích hợp các bộ lắng nghe sự kiện kéo thả tệp tin, hỗ trợ người dùng kéo tệp tin CV định dạng \texttt{PDF} trực tiếp từ máy tính cá nhân vào trình duyệt, hiển thị thanh tiến trình tải lên thời gian thực sinh động.
+    
+    \item \textbf{Khối trực quan hóa phổ điểm mạng nhện (Radar Chart Component):} Bố trí tại trung tâm phân vùng báo cáo năng lực. Đồ thị mạng nhện đa chiều biểu diễn phổ điểm năng lực của ứng viên dựa trên các nhóm trục kỹ năng công nghệ cốt lõi bao gồm: \textit{Frontend, Backend, Database, DevOps, Soft Skills}. Đồ thị hiển thị hai vùng phủ màu trực quan mang tính đối tương phản cao: Vùng màu lam nhạt với độ mờ biểu thị tập hợp năng lực hiện trạng trích xuất từ CV của sinh viên; Vùng màu xám viền nét đứt biểu thị phổ điểm tiêu chuẩn mà doanh nghiệp đòi hỏi đối với vị trí công việc đích. Khoảng không gian chênh lệch hình học giữa hai vùng phủ phản chiếu trực quan biên độ khoảng trống kỹ năng cá nhân.
+    
+    \item \textbf{Ma trận đối soát chi tiết và đề xuất hành động (Skill Gap Matrix \& Action Items):} Nằm ở vị trí hạ tầng của giao diện, tổ chức dữ liệu dưới dạng bảng cấu trúc song song. Cột bên trái hiển thị danh sách các kỹ năng sinh viên đã đạt yêu cầu (được đính kèm nhãn thẻ màu xanh mã hóa trạng thái thành công). Cột bên phải hiển thị danh sách các lỗ hổng tri thức công nghệ bị thiếu hụt nghiêm trọng (đính kèm nhãn thẻ màu đỏ mã hóa trạng thái cảnh báo nguy cơ). Đối với mỗi phần tử kỹ năng thiếu hụt, hệ thống tích hợp sẵn một nút liên kết động dẫn trực tiếp người học đến kho tài liệu mã nguồn mở hoặc danh mục khóa học học thuật tương ứng để hỗ trợ sinh viên lập kế hoạch chủ động bù đắp khoảng trống tri thức.
+\end{itemize}
+
+% ==============================================================================
+% KẾT THÚC CHƯƠNG 3
+% ==============================================================================

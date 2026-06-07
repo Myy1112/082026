@@ -1,7 +1,10 @@
 \chapter{Cơ sở lý thuyết và Công nghệ}
 \label{Chapter2}
 
-\section{Giải pháp phân tích thị trường lao động}
+% ==============================================================================
+% CHƯƠNG 2: CƠ SỞ LÝ THUYẾT VÀ CÁC NGHIÊN CỨU LIÊN QUAN
+% ==============================================================================
+\section{Quy trình khai phá và kỹ nghệ dữ liệu trực tuyến}
 
 \subsection{Tổng quan về kỹ thuật thu thập dữ liệu tự động từ các nền tảng Web}
 
@@ -31,13 +34,51 @@ Quy trình ETL (Extract, Transform, Load) đóng vai trò cốt lõi trong việ
 \end{enumerate}
 
 \subsection{Nguyên lý trực quan hóa thông tin hỗ trợ ra quyết định}
+\label{subsec:nguyen_ly_truc_quan_hoa_thong_tin}
 
-Trực quan hóa thông tin (Information Visualization) đóng vai trò then chốt trong việc chuyển đổi các tập dữ liệu thị trường lao động phức tạp thành tri thức có thể hành động. Các nguyên lý cốt lõi bao gồm:
+\subsubsection{Nền tảng lý thuyết cốt lõi về trực quan hóa thông tin}
+
+Trực quan hóa thông tin (\textit{Information Visualization}) không thuần túy là việc biểu diễn đồ họa các số liệu thống kê, mà về mặt nhận thức luận, đó là quy trình ánh xạ có hệ thống giữa các không gian thuộc tính dữ liệu trừu tượng sang các thực thể hình học trực quan hình cấu trúc không gian (\textit{Visual Encodings}). Quy trình này tận dụng năng lực xử lý tiền chú ý (\textit{Preattentive Processing}) của hệ thống thị giác con người, cho phép bộ não nhận diện các mẫu hình, xu hướng biến động và các điểm dữ liệu dị biệt (\textit{Outliers}) trong một khoảng thời gian tính bằng mili-giây, trước khi các quá trình nhận thức thứ cấp có ý thức được kích hoạt.
+
+Nền tảng của quy trình ánh xạ này dựa trên Lý thuyết về các biến thị giác (\textit{Visual Variables}) do nhà bản đồ học Jacques Bertin đề xuất, bao gồm bảy thuộc tính cốt lõi: Vị trí (\textit{Position}), Hình dáng (\textit{Shape}), Hướng (\textit{Orientation}), Màu sắc (\textit{Color}), Sắc độ (\textit{Value}), Kích thước (\textit{Size}), và Kết cấu (\textit{Texture}). Trong kỹ nghệ phần mềm và quản lý thông tin, việc lựa chọn và gán các biến thị giác này vào thuộc tính dữ liệu phải tuân thủ nghiêm ngặt tính hiệu quả nhận thức (\textit{Cognitive Effectiveness}). 
+
+Hệ thống \texttt{CareerNova} áp dụng lý thuyết này để chuyển đổi các thuộc tính từ cơ sở dữ liệu tuyển dụng vĩ mô sang không gian trực quan thông qua mô hình phân cấp thực thể. Đối với dữ liệu định lượng (\textit{Quantitative Data}) như mức lương tuyển dụng, hệ thống ưu tiên áp dụng các biến thị giác có độ chính xác nhận thức cao nhất là Vị trí (Tọa độ trên trục đồ thị) và Kích thước (Chiều dài thanh biểu đồ). Đối với dữ liệu định danh rời rạc (\textit{Nominal Data}) như danh mục kỹ năng công nghệ hoặc hình thức làm việc, hệ thống sử dụng biến Màu sắc (Độ phân biệt về sắc thái màu) và Hình dáng nhằm tối ưu hóa khả năng phân lớp tri thức của người học.
+
+Sự chuyển hóa thông tin từ kho lưu trữ dữ liệu thô sang các mô hình trực quan hỗ trợ ra quyết định được giải thích một cách toàn diện thông qua cấu trúc Tháp tri thức DIKW (\textit{Data - Information - Knowledge - Wisdom Hierarchy}), thể hiện rõ ràng cơ chế nâng cấp giá trị tri thức:
 \begin{itemize}
-    \item \textbf{Tính tập trung và rõ ràng}: Lựa chọn các loại biểu đồ phù hợp với bản chất dữ liệu (ví dụ: biểu đồ cột để so sánh nhu cầu kỹ năng, biểu đồ đường để theo dõi xu hướng tuyển dụng theo thời gian, biểu đồ radar để so sánh khoảng cách năng lực).
-    \item \textbf{Khả năng tương tác (Interactivity)}: Hỗ trợ người dùng tương tác sâu như lọc dữ liệu theo vị trí địa lý, ngành nghề hoặc thời gian thực tế để cá nhân hóa kết quả phân tích.
-    \item \textbf{Hỗ trợ ra quyết định}: Cung cấp các chỉ số trực quan nhanh (KPI cards) nhằm giúp nhà hoạch định chính sách, nhà tuyển dụng hoặc ứng viên nhanh chóng nhận diện xu hướng cung - cầu lao động để đưa ra quyết định kịp thời.
+    \item \textbf{Dữ liệu (Data):} Là tập hợp hàng nghìn bản ghi tin tuyển dụng IT phi cấu trúc, rời rạc được phân hệ \texttt{JobVisualization\_BE} quét cào và làm sạch lưu trữ nguyên bản trong hệ quản trị \texttt{PostgreSQL}. At this stage, dữ liệu tồn tại ở dạng tĩnh và có mật độ nhiễu cao.
+    \item \textbf{Thông tin (Information):} Được hình thành khi ứng dụng Backend cấu trúc hóa và thực hiện các phép toán quan hệ (Gom nhóm theo khu vực địa lý, tính toán dải lương tối thiểu và tối đa). Thông tin trả lời cho câu hỏi thế nào và ở đâu thông qua các chuỗi cấu trúc \texttt{JSON}.
+    \item \textbf{Tri thức (Knowledge):} Xuất hiện ngay khi phân hệ \texttt{CareerNova-Frontend} ứng dụng lý thuyết nhận thức thị giác để chuyển hóa cấu trúc \texttt{JSON} thành hệ thống bảng điều khiển thông tin (\textit{Dashboard Architecture}). Sinh viên tương tác trực quan với các đồ thị, nhìn thấy bức tranh tổng thể về các lỗ hổng kỹ năng hiện có, hiểu rõ nhu cầu tuyển dụng thực tế của doanh nghiệp.
+    \item \textbf{Sự thông thái (Wisdom):} Là cái đích cuối cùng của hệ thống trợ giúp quyết định (\textit{Decision Support Systems - DSS}). Dựa trên các mẫu hình năng lực thu được từ tri thức trực quan, sinh viên có thể tự đưa ra các quyết định chiến lược dài hạn mang tính cá nhân hóa cao: Hoạch định lộ trình tự học tập công nghệ, tối ưu hóa hồ sơ cá nhân để nâng cao năng lực cạnh tranh thực tế trên thị trường lao động.
 \end{itemize}
+
+\subsubsection{Các nguyên lý thiết kế Dashboard học thuật ứng dụng trong hệ thống}
+
+Để tối ưu hóa trải nghiệm phân tích số liệu thời gian thực cho sinh viên vãng lai và sinh viên hệ thống, phân hệ giao diện \texttt{CareerNova-Frontend} thiết kế kiến trúc Dashboard dựa trên sự tích hợp các Quy luật tâm lý học định dạng Gestalt (\textit{Gestalt Principles of Visual Perception}) phối hợp chặt chẽ với hệ thống phân cấp thị giác (\textit{Visual Hierarchy}) khoa học.Bố cục không gian hiển thị của hệ thống được ràng buộc nghiêm ngặt bởi ba nguyên lý thiết kế cốt lõi:
+
+\begin{enumerate}
+    \item \textbf{Nguyên lý Phân cấp Thị giác dựa trên Trọng tâm thông tin:} Dashboard thiết kế luồng điều hướng mắt người xem theo quy tắc chữ Z kinh điển từ trái sang phải, từ trên xuống dưới. Các thẻ chỉ số KPI tóm tắt (\textit{KPI Cards Overview}) đại diện cho các thông tin có độ bao quát vĩ mô cao nhất (Tổng số việc làm kích hoạt, mức lương trung bình, tổng số công ty đăng tuyển) được ưu tế bố trí tại thượng tầng giao diện bằng cách sử dụng thuộc tính chữ kích thước lớn (\texttt{font-bold text-3xl}). Cấu trúc này tạo lập một điểm neo thị giác ban đầu, giúp người học định hình ngay cấu trúc vĩ mô của thị trường lao động trước khi đi sâu vào phân tích các biến động vi mô.
+    
+    \item \textbf{Nguyên lý Tiệm cận và Tương đồng (\textit{Proximity and Similarity}):} Áp dụng quy luật Gestalt, các cấu phần giao diện có mối liên hệ logic chặt chẽ với nhau được đóng gói vào các khối hình hộp chữ nhật bo góc đồng nhất (\textit{Card Containers}) có khoảng cách lề (\texttt{padding/gap}) đồng đều nhờ hệ thống lưới (\textit{Grid System}) linh hoạt của framework \texttt{TailwindCSS}. Ví dụ, bộ công cụ lọc lát cắt dữ liệu vĩ mô được quy hoạch nằm tập trung trong một phân vùng cố định; các đồ thị phân tích xu hướng công nghệ được phân lập rõ ràng với bảng dữ liệu danh sách bài tuyển dụng chi tiết. Sự đồng điệu về màu sắc của nhãn trạng thái kỹ năng (màu xanh cho công nghệ đáp ứng yêu cầu, màu đỏ cho lỗ hổng kỹ năng khuyết thiếu) giúp người dùng ngay lập tức nhóm các thực thể tri thức có cùng bản chất nhận thức mà không cần tốn thời gian đọc chi tiết từng nhãn ký tự văn bản.
+    
+    \item \textbf{Mô hình hóa đồ thị tương thích nghiêm ngặt thuộc tính dữ liệu:} Hệ thống triển khai giải pháp lập bản đồ đồ thị (\textit{Chart Mapping}) chuẩn xác dựa trên kiểu cấu trúc dữ liệu của các trường thông tin tuyển dụng lưu vết từ Backend:
+    \begin{itemize}
+        \item \textit{Đồ thị thanh cột ngang (\textit{Horizontal Bar Chart}):} Được gán cho bài toán biểu diễn danh mục kỹ năng công nghệ phổ biến. Thuộc tính dữ liệu ở đây là dữ liệu định danh rời rạc có độ dài chuỗi ký tự không cố định (như \texttt{JavaScript}, \texttt{TailwindCSS}, \texttt{PostgreSQL}). Việc áp dụng thanh ngang giúp nhãn ký tự hiển thị đầy đủ theo chiều ngang văn bản, tránh hiện tượng chữ bị xoay nghiêng hay cắt cụt như đồ thị thanh đứng thông thường. Đồng thời, việc sắp xếp thứ tự các thanh theo biên độ tần suất giảm dần tạo lập một hệ thống phân cấp lượng hóa rõ ràng, hỗ trợ sinh viên nhận diện ngay các từ khóa công nghệ mang tính chủ lưu của ngành.
+        \item \textit{Đồ thị đường xu hướng (\textit{Line Chart}):} Ánh xạ dành riêng cho dữ liệu chuỗi thời gian nhằm trực quan hóa sự biến động về số lượng tin tuyển dụng hoặc biên độ dao động dải lương tối thiểu và tối đa qua các tháng trong năm. Độ dốc và hướng của các đoạn thẳng hình học đóng vai trò truyền tải thông tin tiền chú ý về tốc độ tăng trưởng hoặc suy thoái của nhu cầu nhân lực trong từng nhánh ngành kỹ thuật.
+        \item \textit{Đồ thị vành khuyên (\textit{Donut Chart}):} Sử dụng để mô tả quan hệ tỷ lệ thành phần cấu thành một chỉnh thể toàn phần với số lượng phân lớp nhãn giới hạn ($< 6$ nhãn), cụ thể là phân bố cơ cấu tin tuyển dụng thu thập theo các sàn nguồn (như \textit{TopCV}, \textit{VietnamWorks}, \textit{ITViec}) hoặc phân bố theo hình thức làm việc tại doanh nghiệp (\textit{Full-time}, \textit{Remote}, \textit{Hybrid}).
+    \end{itemize}
+\end{enumerate}
+
+\subsubsection{Cơ chế tương tác dữ liệu động và Lát cắt tri thức vĩ mô}
+
+Năng lực hỗ trợ ra quyết định của hệ thống \texttt{CareerNova} được tối ưu hóa toàn diện nhờ cơ chế tương tác dữ liệu động đa chiều thời gian thực. Hệ thống hiện thực hóa mô hình tương tác kinh điển của Ben Shneiderman: ``Tổng quan trước, lọc và thu phóng, chi tiết sau'' (\textit{Overview first, zoom and filter, then details-on-demand}) nhằm kiểm soát dòng chảy thông tin tương tác giữa ứng viên và hệ thống:
+
+\begin{itemize}
+    \item \textbf{Tổng quan (Overview):} Khi người học khởi chạy giao diện trang Dashboard phân tích thị trường lao động vĩ mô, hệ thống hiển thị toàn bộ số liệu thống kê toàn ngành IT dựa trên tổng thể mẫu dữ liệu đã tích hợp từ kho lưu trữ trung tâm. Người dùng có cái nhìn bao quát về thực trạng phân bố lương và mật độ tuyển dụng.
+    \item \textbf{Lọc và Thu phóng (Zoom and Filter):} Để giải quyết nhu cầu tìm kiếm định hướng chuyên sâu, hệ thống cung cấp thanh công cụ bộ lọc động tương tác (\textit{Dynamic Filter Controller}) tại thượng tầng giao diện Client. Khi ứng viên thay đổi giá trị tại các hộp chọn (ví dụ: Thay đổi thuộc tính địa điểm từ toàn quốc về ``Hồ Chí Minh''), trình duyệt lập tức bắt sự kiện thay đổi trạng thái và kích hoạt tiến trình nạp lại dữ liệu cục bộ bất đồng bộ (\textit{Asynchronous State Re-rendering}). Tiến trình này cô lập các vùng nhiễu thông tin, thực hiện một lát cắt dữ liệu hình học (\textit{Data Slicing and Sicing}) để co cụm không gian phân tích về đúng phân khúc thị trường lao động mà sinh viên năm cuối quan tâm, tự động cập nhật lại hình học tất cả các đồ thị trên Dashboard thời gian thực.
+    \item \textbf{Chi tiết theo yêu cầu (Details-on-demand):} Khi sinh viên đã định vị được nhánh công nghệ mục tiêu thông qua đồ thị, người học có thể tương tác sâu bằng cách nhấp chọn trực tiếp vào một phần tử hình học trên biểu đồ (như một thanh cột kỹ năng hoặc một tọa độ điểm lương). Hành động này kích hoạt lệnh gọi API cục bộ, hiển thị bảng ma trận dữ liệu rút gọn chứa thông tin chi tiết từng bài đăng tuyển dụng thực tế của các doanh nghiệp đang tìm kiếm kỹ năng đó. Cơ chế này bảo đảm sinh viên luôn có thể truy vết nguồn gốc thông tin từ các số liệu thống kê vĩ mô quay ngược về các bằng chứng tuyển dụng vi mô đời thực, tối đa hóa độ tin cậy của tiến trình ra quyết định định hướng sự nghiệp.
+\end{itemize}
+
 
 \section{Giải pháp so khớp hồ sơ}
 
