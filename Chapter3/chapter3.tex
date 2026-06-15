@@ -791,3 +791,82 @@ Hệ thống sử dụng các ngưỡng điểm tương đồng ngữ nghĩa l�
         \item \textit{Ý nghĩa:} Ứng viên thiếu hụt hoàn toàn kiến thức này. Đây là lỗ hổng năng lực lớn nhất, đòi hỏi lộ trình học tập dài hạn hơn để bù đắp nếu muốn ứng tuyển vào vị trí công việc tương ứng.
     \end{itemize}
 \end{enumerate}
+
+% ================================================================
+\section{Thiết kế giao diện}
+
+% ----------------------------------------------------------------
+\subsection{Trang chủ và Dashboard thống kê thị trường việc làm}
+
+Hệ thống CareerNova được thiết kế với hai điểm vào chính cho người dùng: trang chủ (Landing Page) dành cho khách chưa xác thực và trang Dashboard thị trường dành cho người dùng đã đăng nhập.
+
+\textbf{Trang chủ (Landing Page)} là giao diện đầu tiên người dùng tiếp cận khi truy cập hệ thống. Phần đầu trang (hero section) trình bày thông điệp giá trị cốt lõi của nền tảng cùng hai nút hành động chính: \textit{"Bắt đầu miễn phí"} (dẫn đến trang đăng ký) và \textit{"Xem Thông tin Thị trường"} (dẫn đến Dashboard). Tiếp theo, bốn tính năng chủ đạo được trình bày dưới dạng lưới (so khớp CV, đề xuất việc làm, phân tích kỹ năng, dashboard thị trường) kèm luồng sử dụng bốn bước trực quan để định hướng người dùng mới.
+
+\begin{figure}[H]
+    \centering
+    % TODO: Chụp trang career-nova.online (chưa đăng nhập) → lưu vào images/ui_landing.png
+    \includegraphics[width=0.95\textwidth]{ui_landing}
+    \caption{Giao diện trang chủ (Landing Page) của hệ thống CareerNova.}
+    \label{fig:ui_landing}
+\end{figure}
+
+\textbf{Dashboard thống kê thị trường} (route \texttt{/dashboard}) là trang phân tích thị trường trung tâm, được tổ chức theo cấu trúc thông tin từ tổng quan đến chi tiết. Phần trên cùng hiển thị thanh lọc ba chiều (địa điểm, khoảng thời gian, loại công việc) và bốn thẻ thống kê tóm tắt: số tin tuyển dụng đang mở, mức lương IT trung bình (min/max/avg), số công ty đang tuyển và tỷ lệ tăng trưởng thị trường. Khu vực biểu đồ chính bao gồm ba thành phần bố trí theo hai hàng:
+
+\begin{itemize}
+    \item \textbf{AreaChart "Xu hướng tin tuyển dụng"} (chiếm 2/3 chiều rộng): biểu diễn tổng số tin tuyển dụng (đường xanh dương) và số vị trí làm việc từ xa (đường xanh lá) theo thời gian, với trục X là nhãn ngày/tháng và trục Y là số lượng tin.
+    \item \textbf{PieChart "Phân bổ thị trường"} (1/3 chiều rộng): biểu đồ tròn thể hiện tỷ trọng công việc phân theo ngành, kèm chú thích màu sắc cho từng danh mục.
+    \item \textbf{BarChart "Mức Lương theo Vị Trí"} (toàn bộ chiều rộng): biểu đồ cột đôi song song hiển thị mức lương tối thiểu (cột xanh nhạt) và tối đa (cột xanh đậm) cho từng chức danh công việc, đơn vị nghìn USD/năm.
+\end{itemize}
+
+Phía dưới các biểu đồ, danh sách \textit{Hot Jobs} (top công việc được lưu nhiều nhất trong 7 ngày) và hai lưới kỹ năng (\textit{Top 10 Skills} và \textit{Rising Skills}) cung cấp thông tin thị trường chi tiết theo từng vị trí. Luồng tương tác tổng thể của người dùng với Dashboard được mô tả trong Hình~\ref{fig:ui_dashboard_flow}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{ui_dashboard_flow}
+    \caption{Sơ đồ hoạt động mô tả luồng tương tác người dùng với Dashboard thị trường.}
+    \label{fig:ui_dashboard_flow}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    % TODO: Đăng nhập vào career-nova.online → vào /dashboard → scroll thấy đủ 3 biểu đồ → chụp → lưu vào images/ui_market_dashboard.png
+    \includegraphics[width=0.95\textwidth]{ui_market_dashboard}
+    \caption{Giao diện Dashboard thống kê thị trường việc làm IT, thể hiện AreaChart xu hướng tuyển dụng, PieChart phân bổ ngành và BarChart dải lương.}
+    \label{fig:ui_market_dashboard}
+\end{figure}
+
+% ----------------------------------------------------------------
+\subsection{Trang quản lý CV và kết quả so khớp năng lực}
+
+Luồng phân tích năng lực của người dùng trong hệ thống CareerNova được chia thành hai trang kế tiếp nhau: trang CV Matching (tải lên và so khớp) và trang Skill Gap Analysis (phân tích khoảng cách kỹ năng chi tiết).
+
+\textbf{Trang CV Matching} (route \texttt{/cv-matching}) được bố cục theo dạng hai cột. Cột trái hiển thị CV hiện đang được chọn làm mặc định (được đánh dấu bằng viền màu xanh và badge \textit{"Active CV"}) cùng danh sách dropdown để chuyển đổi giữa các CV đã tải lên. Cột phải là vùng tải lên CV mới với giao diện kéo-thả (drag-and-drop), chấp nhận định dạng PDF, JPG và PNG với giới hạn kích thước 5MB, kèm phản hồi trực quan tức thì (spinner trong khi tải, dấu tích khi thành công, thông báo lỗi khi không hợp lệ). Phía dưới hai cột là bộ chọn nguồn so khớp (nhóm tin tuyển dụng hoặc URL cụ thể) và nút \textit{"Phân tích \& So khớp"}.
+
+Sau khi hệ thống hoàn tất xử lý, kết quả được hiển thị ngay trên cùng trang với ba thành phần: vòng tròn điểm Match Score được tô màu theo ngưỡng (xanh lá $\geq$80\%, xanh dương $\geq$65\%, vàng $<$65\%); ba thẻ kỹ năng có thể mở rộng phân loại theo màu sắc tương phản (Matched --- xanh lá, Partial --- vàng, Missing --- đỏ); và biểu đồ Radar nhỏ so sánh trực tiếp kỹ năng CV với yêu cầu JD.
+
+\begin{figure}[H]
+    \centering
+    % TODO: Vào career-nova.online/cv-matching → tải CV lên → so khớp → chờ kết quả → chụp màn hình thấy cả phần upload và kết quả → lưu vào images/ui_cv_matching.png
+    \includegraphics[width=0.95\textwidth]{ui_cv_matching}
+    \caption{Giao diện trang CV Matching: cột trái quản lý CV, cột phải vùng tải lên, kết quả so khớp với Match Score và phân loại kỹ năng.}
+    \label{fig:ui_cv_matching}
+\end{figure}
+
+\textbf{Trang Skill Gap Analysis} (route \texttt{/skill-gap}) là giao diện phân tích năng lực chuyên sâu, được tổ chức theo bốn tầng từ tổng quan đến chi tiết. Tầng đầu tiên là hai thẻ tóm tắt: \textit{"Mức độ phù hợp với thị trường"} (phần trăm tổng thể) và \textit{"Khoảng trống nghiêm trọng"} (số kỹ năng ưu tiên cần bổ sung). Tầng thứ hai trình bày biểu đồ Radar \textit{"Chi tiết kỹ năng"} với hai vùng tô chồng nhau: vùng xanh dương thể hiện điểm kỹ năng thực tế của người dùng (\texttt{user\_score}) và vùng xanh lá mờ thể hiện ngưỡng yêu cầu thị trường (\texttt{market\_score}); tooltip tương tác hiển thị giá trị phần trăm của từng kỹ năng khi di chuột. Tầng thứ ba là Gap Report theo danh mục kỹ năng, mỗi danh mục được trình bày với biểu tượng emoji đặc trưng, badge điểm khoảng cách và thanh tiến độ đôi so sánh \texttt{user\_rate} với \texttt{market\_rate}. Khi mở rộng từng danh mục, từng kỹ năng con hiển thị badge trạng thái ba màu (Matched/Partial/Missing) cùng điểm số chi tiết. Tầng thứ tư là phần Learning Paths, gợi ý các khóa học và lộ trình học tập có thể mở rộng để xem từng bước chi tiết.
+
+Luồng tương tác đầy đủ của người dùng từ bước tải CV đến xem kết quả phân tích được mô tả trong Hình~\ref{fig:ui_cv_flow}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{ui_cv_flow}
+    \caption{Sơ đồ hoạt động mô tả luồng tương tác từ tải lên CV đến xem kết quả Skill Gap Analysis.}
+    \label{fig:ui_cv_flow}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    % TODO: Vào career-nova.online/skill-gap → chờ load xong → chụp màn hình thấy RadarChart + Gap Report (có thể mở rộng 1-2 danh mục) → lưu vào images/ui_skill_gap.png
+    \includegraphics[width=0.95\textwidth]{ui_skill_gap}
+    \caption{Giao diện trang Skill Gap Analysis: biểu đồ Radar so khớp kỹ năng và Gap Report phân loại kỹ năng theo danh mục.}
+    \label{fig:ui_skill_gap}
+\end{figure}

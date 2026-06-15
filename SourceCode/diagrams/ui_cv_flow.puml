@@ -1,0 +1,77 @@
+@startuml ui_cv_flow
+!theme plain
+skinparam defaultFontSize 10
+skinparam defaultFontName Arial
+skinparam backgroundColor #FFFFFF
+skinparam activity {
+    BackgroundColor #E8F5E9
+    BorderColor #2E7D32
+    FontSize 10
+}
+skinparam diamond {
+    BackgroundColor #FFF8E1
+    BorderColor #E65100
+}
+
+title Sơ đồ hoạt động: Luồng tương tác từ Upload CV đến Xem kết quả
+
+start
+
+:Người dùng truy cập\ntrang CV Matching (/cv-matching);
+
+if (Đã có CV trong hệ thống?) then (Có)
+    :Hiển thị CV hiện tại\nvà nút "Đặt làm mặc định";
+else (Chưa)
+    :Hiển thị vùng tải lên\n(drag-drop · PDF/JPG/PNG · max 5MB);
+    :Người dùng chọn và tải tệp CV lên;
+    if (Định dạng và kích thước hợp lệ?) then (Hợp lệ)
+        :Lưu CV thành công\nHiển thị xác nhận ✓;
+    else (Không hợp lệ)
+        :Hiển thị thông báo lỗi;
+        stop
+    endif
+endif
+
+:Người dùng chọn nguồn so khớp\n(Nhóm JD hoặc URL tin tuyển dụng);
+
+:Nhấn "Phân tích & So khớp";
+
+:Hiển thị trạng thái xử lý\n"Đang phân tích..." (spinner);
+
+:Hệ thống gọi ETL Matching Service\n(trích xuất kỹ năng → tính điểm → tạo gap report);
+
+:Kết quả trả về\n(match_score · radar_data · gap_report);
+
+:Hiển thị vòng tròn Match Score\n(xanh ≥80% · xanh dương ≥65% · vàng <65%);
+
+:Hiển thị 3 nhóm kỹ năng mở rộng được:\nStrong Matches (xanh lá)\nPartial Matches (vàng)\nMissing Skills (đỏ);
+
+:Hiển thị RadarChart\n(CV skills vs JD requirements);
+
+if (Người dùng nhấn "Xem phân tích chi tiết"?) then (Có)
+    :Điều hướng sang\nSkill Gap Analysis (/skill-gap);
+
+    :Hiển thị 2 thẻ tổng quan:\n"Mức độ phù hợp" + "Khoảng trống nghiêm trọng";
+
+    :Hiển thị RadarChart chi tiết\n(user_score vs market_score);
+
+    :Hiển thị Gap Report theo danh mục\n(emoji · tên danh mục · progress bar);
+
+    if (Người dùng mở rộng danh mục?) then (Có)
+        :Hiển thị từng kỹ năng con\nvới badge Matched/Partial/Missing\nvà điểm user_rate vs market_rate;
+    else (Không)
+    endif
+
+    if (Người dùng nhấn "Xem lộ trình học tập"?) then (Có)
+        :Hiển thị Learning Paths\n(khóa học gợi ý + các bước học);
+        :Điều hướng sang /roadmap;
+    else (Không)
+    endif
+
+else (Không)
+    :Tiếp tục xem kết quả\ntrên trang CV Matching;
+endif
+
+stop
+
+@enduml

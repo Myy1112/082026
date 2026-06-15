@@ -1,0 +1,60 @@
+@startuml ui_dashboard_flow
+!theme plain
+skinparam defaultFontSize 10
+skinparam defaultFontName Arial
+skinparam backgroundColor #FFFFFF
+skinparam activity {
+    BackgroundColor #E3F2FD
+    BorderColor #1565C0
+    FontSize 10
+}
+skinparam diamond {
+    BackgroundColor #FFF8E1
+    BorderColor #E65100
+}
+
+title Sơ đồ hoạt động: Tương tác người dùng với Dashboard thị trường
+
+start
+
+:Người dùng truy cập\ntrang chủ (Landing Page);
+
+if (Đã đăng nhập?) then (Có)
+    :Hiển thị Personal Insight Banner\n(việc phù hợp, kỹ năng thiếu, % hồ sơ);
+else (Chưa)
+    :Hiển thị CTA đăng ký\nvà thống kê thị trường công khai;
+endif
+
+:Điều hướng đến\nMarket Dashboard (/dashboard);
+
+:Tải bộ lọc từ API\n(Địa điểm · Khoảng thời gian · Loại công việc);
+
+:Áp dụng bộ lọc mặc định\nvà gọi đồng thời 3 API;
+
+fork
+    :Tải xu hướng tuyển dụng\n→ Render AreaChart;
+fork again
+    :Tải phân bổ ngành\n→ Render PieChart;
+fork again
+    :Tải dải lương\n→ Render BarChart;
+end fork
+
+:Hiển thị 4 thẻ thống kê\n(Active Jobs · Lương TB · Công ty · Tăng trưởng);
+
+:Hiển thị danh sách Hot Jobs\nvà Top 10 kỹ năng;
+
+if (Người dùng thay đổi bộ lọc?) then (Có)
+    :Gọi lại API với tham số mới;
+    :Cập nhật state và re-render các biểu đồ;
+else (Không)
+endif
+
+if (Người dùng click "Phân tích kỹ năng"?) then (Có)
+    :Điều hướng sang\n/skill-gap;
+else (Không)
+    :Tiếp tục khám phá dashboard;
+endif
+
+stop
+
+@enduml
