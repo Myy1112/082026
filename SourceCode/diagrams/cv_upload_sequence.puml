@@ -1,0 +1,60 @@
+@startuml cv_upload_sequence
+!theme plain
+skinparam defaultFontSize 10
+skinparam defaultFontName Arial
+skinparam backgroundColor #FFFFFF
+skinparam sequenceArrowThickness 1.5
+skinparam sequenceParticipant underline
+skinparam sequenceBoxBackgroundColor #F5F5F5
+
+title Sơ đồ tuần tự: Tải lên CV và So khớp kỹ năng
+
+actor       "Người dùng"              as User
+participant "Next.js\nFrontend"       as FE
+participant "CareerNova\nBackend API\n(NestJS)" as API
+participant "ETL / Matching\nService\n(FastAPI)" as ETL
+participant "Google\nGemini API"      as GEMINI
+participant "SBERT +\nFAISS Index"    as EMBED
+database    "PostgreSQL"              as DB
+
+User -> FE   : Chọn tệp CV (PDF/DOCX)\nvà nhấn "So khớp"
+FE   -> API  : POST /cv/upload\n(multipart/form-data + job_id)
+API  -> API  : Xác thực JWT token\nvà kiểm tra định dạng tệp
+API  -> DB   : INSERT user_cvs\n(lưu metadata CV)
+DB  --> API  : cv_id
+
+API  -> ETL  : POST /matching/process\n{cv_id, job_id}
+
+group Bóc tách kỹ năng từ CV
+    ETL -> ETL    : Trích xuất văn bản\n(pdf2image + Pytesseract nếu PDF ảnh)
+    ETL -> GEMINI : Prompt: trích xuất kỹ năng\n(JSON Schema + Structured Outputs)
+    GEMINI --> ETL : [{skill_name, evidence_text,\ncategory}]
+    ETL -> ETL    : Anti-hallucination check:\nxác minh evidence_text tồn tại\ntrong văn bản gốc
+    note right of ETL : Thực thể không có\nevidence khớp\nbị loại bỏ tự động
+end
+
+group Tính điểm so khớp ngữ nghĩa
+    ETL -> EMBED  : Mã hóa vector kỹ năng CV\n(all-MiniLM-L6-v2, 384 chiều)
+    EMBED --> ETL : Embedding vectors
+    ETL -> DB     : Query job_skills + TF-IDF weights\ncủa JD tương ứng
+    DB  --> ETL   : [{skill_id, embedding, weight}]
+    ETL -> ETL    : Cosine similarity (Dot Product\ntrên unit vectors)
+    ETL -> ETL    : MatchScore = Σ(weight × cosine)\n         ÷ Σ(weight)
+    ETL -> ETL    : Xây dựng radar_data JSONB:\n[{skill_name, user_score,\nmarket_score, similarity}]
+    ETL -> ETL    : Xây dựng gap_report JSONB:\n{matched, partially_matched,\nmissing skills}
+end
+
+ETL -> DB    : INSERT cv_job_matches\n(radar_data, gap_report, match_score)
+DB --> ETL   : match_id
+
+ETL --> API  : {match_id, match_score,\nstatus: "completed"}
+API --> FE   : {match_id, match_score}
+
+FE   -> API  : GET /matching/{match_id}
+API  -> DB   : SELECT radar_data, gap_report\nFROM cv_job_matches
+DB  --> API  : radar_data JSON, gap_report JSON
+API --> FE   : {radar_data, gap_report,\nmatch_score}
+
+FE  --> User : Hiển thị RadarChart\nvà Gap Report
+
+@enduml

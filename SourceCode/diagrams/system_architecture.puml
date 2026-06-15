@@ -1,0 +1,57 @@
+@startuml system_architecture
+!theme plain
+skinparam componentStyle rectangle
+skinparam defaultFontSize 11
+skinparam defaultFontName Arial
+skinparam backgroundColor #FFFFFF
+skinparam ArrowColor #444444
+skinparam ArrowThickness 1.5
+
+skinparam package {
+    BackgroundColor #F8F9FA
+    BorderColor #AAAAAA
+    FontStyle bold
+    FontSize 12
+}
+skinparam component {
+    BackgroundColor #FFFFFF
+    BorderColor #555555
+    FontSize 10
+}
+skinparam database {
+    BackgroundColor #FFF8E1
+    BorderColor #E65100
+    FontSize 10
+}
+
+title Kiến trúc tổng thể hệ thống CareerNova
+
+package "Tầng Trình Bày  (Presentation Layer)" as PL #E3F2FD {
+    component "Next.js 15 Frontend\n(React 19 · TypeScript · Tailwind CSS)\n────────────────────────────\nMarketDashboard  (AreaChart · PieChart · BarChart)\nSkillGapAnalysis  (RadarChart · Gap Report)\nPersonalDashboard · JobSearch\nLearningRoadmap · Recommendations" as FE
+}
+
+package "Tầng Nghiệp Vụ  (Business Logic Layer)" as BL #E8F5E9 {
+    component "CareerNova Backend API\n(NestJS · Node 20 · Prisma ORM)\n────────────────────────────\nauth · profile · cv · matching\nskill-gap · market-dashboard\nrecommendation · learning-roadmap" as API
+
+    component "ETL Pipeline\n(Python · FastAPI · Uvicorn)\n────────────────────────────\nCrawl  (Selenium · Requests · cloudscraper)\nClean  (Gemini API · Regex · Pydantic)\nNormalize  (SBERT · FAISS · cosine)\nImport  (SQLAlchemy · Psycopg2)" as ETL
+}
+
+package "Tầng Dữ Liệu  (Data Layer)" as DL #FFF3E0 {
+    database "PostgreSQL 17\n────────────────────────────\nusers · user_cvs · user_cv_skills\njobs · skills · job_skills\ncv_job_matches\n  ├─ radar_data JSONB\n  └─ gap_report JSONB\nsalaries · industries · companies" as DB
+}
+
+package "Dịch Vụ Ngoài  (External Services)" as EX #FCE4EC {
+    component "Google Gemini API\n(Trích xuất kỹ năng có cấu trúc\ntừ JD và CV — Structured Outputs)" as GEMINI
+    component "all-MiniLM-L6-v2\n(Sentence Transformers)\nMã hóa vector 384 chiều\nFAISS index tìm kiếm ngữ nghĩa" as EMBED
+    component "Nền tảng tuyển dụng\nITViec · VietnamWorks\nCareerViet · LinkedIn" as SOURCES
+}
+
+FE     <-right->  API     : REST API · HTTPS\nJWT Authentication
+API    <-down->   DB      : Prisma ORM\n(SQL queries)
+API    -right->   ETL     : HTTP — gọi matching\nvà CV processing
+ETL    -down->    DB      : SQLAlchemy\n(INSERT / UPDATE)
+ETL    -right->   GEMINI  : Trích xuất thực thể\n(Structured Outputs)
+ETL    -right->   EMBED   : Mã hóa kỹ năng\n(sentence-transformers)
+SOURCES -up->     ETL     : Raw JD HTML/JSON\n(HTTP · Selenium)
+
+@enduml
