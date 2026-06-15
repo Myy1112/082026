@@ -1,6 +1,146 @@
 \chapter{Phân tích và thiết kế hệ thống}
 
 % ================================================================
+\section{Phân tích yêu cầu hệ thống}
+
+% ----------------------------------------------------------------
+\subsection{Yêu cầu nghiệp vụ}
+
+Sinh viên ngành Công nghệ thông tin tại Việt Nam thường đối mặt với một nghịch lý trong quá trình tìm kiếm việc làm: dù sở hữu bằng cấp chuyên môn, nhiều sinh viên không có khả năng đánh giá khách quan khoảng cách giữa năng lực bản thân và yêu cầu thực tế của thị trường tuyển dụng. Các công cụ hỗ trợ hiện có, chủ yếu dưới dạng các trang tuyển dụng thông thường, chỉ cung cấp danh sách tin đăng mà thiếu hẳn cơ chế phân tích và phản hồi cá nhân hóa giúp sinh viên nhận diện điểm yếu năng lực một cách có hệ thống.
+
+Bài toán nghiệp vụ cốt lõi của hệ thống CareerNova được xác định như sau: sinh viên CNTT cần một công cụ tự động hóa việc so sánh hồ sơ năng lực của bản thân với tập hợp yêu cầu kỹ năng từ các tin tuyển dụng thực tế trên thị trường, từ đó cung cấp kết quả so khớp trực quan và có thể hành động được. Để giải quyết bài toán này, hệ thống hoạt động theo luồng nghiệp vụ khép kín gồm bốn giai đoạn chính:
+
+\textbf{(1) Thu thập dữ liệu tuyển dụng:} Hệ thống ETL tự động crawl và trích xuất thông tin từ các nền tảng tuyển dụng lớn tại Việt Nam (ITViec, VietnamWorks, CareerViet, LinkedIn), bao gồm yêu cầu kỹ năng, mức lương và thông tin ngành nghề, nhằm xây dựng kho dữ liệu thị trường được cập nhật liên tục.
+
+\textbf{(2) Phân tích và chuẩn hóa:} Dữ liệu tuyển dụng được làm sạch, trích xuất thực thể bằng Gemini API và chuẩn hóa ngữ nghĩa về một từ điển kỹ năng thống nhất, đảm bảo tính nhất quán để so sánh chéo giữa các nguồn thu thập.
+
+\textbf{(3) So khớp CV với thị trường:} Khi sinh viên tải lên CV, hệ thống tự động bóc tách kỹ năng, tính điểm tương đồng ngữ nghĩa dựa trên mô hình Sentence-BERT kết hợp trọng số TF-IDF thị trường, rồi tạo ra báo cáo khoảng cách kỹ năng và biểu đồ Radar chi tiết.
+
+\textbf{(4) Trực quan hóa và hỗ trợ quyết định:} Kết quả được hiển thị qua giao diện dashboard tương tác, giúp sinh viên đọc hiểu tình trạng năng lực, theo dõi xu hướng tuyển dụng thị trường và nhận đề xuất lộ trình học tập cá nhân hóa.
+
+Hai nhóm đối tượng sử dụng chính được xác định: \textbf{Sinh viên CNTT} (người dùng cuối chính, sử dụng toàn bộ tính năng phân tích và trực quan hóa) và \textbf{Quản trị viên} (Admin, có quyền truy cập nâng cao vào dữ liệu hệ thống và quản lý tài khoản người dùng). Ngoài ra, \textbf{Hệ thống ETL} đóng vai trò tác nhân tự động vận hành luồng thu thập và chuẩn hóa dữ liệu nền tảng.
+
+% ----------------------------------------------------------------
+\subsection{Yêu cầu chức năng}
+
+Các yêu cầu chức năng được xác định dựa trên cấu trúc route thực tế của ứng dụng Frontend (Next.js) và các module API của Backend (NestJS), được phân nhóm theo từng Actor như trong Bảng~\ref{tab:functional_requirements}.
+
+\begin{longtable}{|L{1.5cm}|L{2.8cm}|L{9.2cm}|}
+\caption{Danh sách yêu cầu chức năng của hệ thống CareerNova.}
+\label{tab:functional_requirements} \\
+\hline
+\textbf{Mã} & \textbf{Actor} & \textbf{Mô tả} \\
+\hline
+\endfirsthead
+\hline
+\textbf{Mã} & \textbf{Actor} & \textbf{Mô tả} \\
+\hline
+\endhead
+\multicolumn{3}{|l|}{\textit{Nhóm chức năng: Quản lý tài khoản}} \\
+\hline
+UC-01 & Sinh viên & Đăng ký tài khoản mới bằng địa chỉ email và mật khẩu. \\
+\hline
+UC-02 & Sinh viên & Đăng nhập bằng tài khoản email/mật khẩu hoặc Google OAuth (Single Sign-On). \\
+\hline
+UC-03 & Sinh viên & Xác thực địa chỉ email sau khi đăng ký để kích hoạt tài khoản. \\
+\hline
+UC-04 & Sinh viên & Yêu cầu đặt lại mật khẩu qua email và tạo mật khẩu mới. \\
+\hline
+UC-05 & Sinh viên & Hoàn tất luồng onboarding: khai báo thông tin năng lực và định hướng nghề nghiệp ban đầu. \\
+\hline
+UC-06 & Sinh viên & Cập nhật hồ sơ cá nhân (họ tên, ảnh đại diện, thông tin nghề nghiệp). \\
+\hline
+UC-07 & Sinh viên & Cài đặt tài khoản: thay đổi giao diện sáng/tối, quản lý thông báo, xóa tài khoản. \\
+\hline
+\multicolumn{3}{|l|}{\textit{Nhóm chức năng: Quản lý CV và So khớp}} \\
+\hline
+UC-08 & Sinh viên & Tải lên, quản lý và đặt CV mặc định để sử dụng trong so khớp. \\
+\hline
+UC-09 & Sinh viên & Thực hiện so khớp CV với tin tuyển dụng: hệ thống tính điểm tương đồng và tạo kết quả phân tích. \\
+\hline
+UC-10 & Sinh viên & Xem biểu đồ Radar thể hiện điểm kỹ năng bản thân so với yêu cầu thị trường. \\
+\hline
+UC-11 & Sinh viên & Xem Gap Report: báo cáo chi tiết kỹ năng đạt yêu cầu, đạt một phần và còn thiếu hụt. \\
+\hline
+\multicolumn{3}{|l|}{\textit{Nhóm chức năng: Khám phá việc làm}} \\
+\hline
+UC-12 & Sinh viên & Tìm kiếm và lọc tin tuyển dụng theo từ khóa, kỹ năng, mức lương và địa điểm. \\
+\hline
+UC-13 & Sinh viên & Xem chi tiết tin tuyển dụng bao gồm mô tả công việc và yêu cầu kỹ năng. \\
+\hline
+UC-14 & Sinh viên & Lưu tin tuyển dụng yêu thích vào danh sách cá nhân. \\
+\hline
+UC-15 & Sinh viên & Xem danh sách việc làm được đề xuất dựa trên hồ sơ năng lực cá nhân. \\
+\hline
+\multicolumn{3}{|l|}{\textit{Nhóm chức năng: Phân tích và Trực quan hóa}} \\
+\hline
+UC-16 & Sinh viên & Xem Dashboard thị trường: xu hướng đăng tuyển, phân bổ ngành công nghiệp và dải lương theo vị trí. \\
+\hline
+UC-17 & Sinh viên & Xem Dashboard cá nhân: tổng hợp năng lực, tiến độ và kết quả so khớp của bản thân. \\
+\hline
+UC-18 & Sinh viên & Xem lộ trình học tập được đề xuất để lấp đầy khoảng cách kỹ năng đã phát hiện. \\
+\hline
+\multicolumn{3}{|l|}{\textit{Nhóm chức năng: Quản trị hệ thống}} \\
+\hline
+UC-19 & Admin & Xem và quản lý danh sách người dùng trong hệ thống (xem thông tin, phân quyền). \\
+\hline
+UC-20 & Admin & Xem báo cáo tổng thể về hoạt động và dữ liệu của hệ thống. \\
+\hline
+\multicolumn{3}{|l|}{\textit{Nhóm chức năng: Thu thập và xử lý dữ liệu (tự động)}} \\
+\hline
+UC-21 & Hệ thống ETL & Thu thập dữ liệu tin tuyển dụng tự động từ các nền tảng ITViec, VietnamWorks, CareerViet, LinkedIn. \\
+\hline
+UC-22 & Hệ thống ETL & Chuẩn hóa, trích xuất thực thể kỹ năng và nạp dữ liệu vào cơ sở dữ liệu PostgreSQL. \\
+\hline
+\end{longtable}
+
+% ----------------------------------------------------------------
+\subsection{Yêu cầu phi chức năng}
+
+Các yêu cầu phi chức năng được suy ra từ các tệp cấu hình kỹ thuật thực tế của hệ thống, bao gồm \texttt{Dockerfile} của Frontend (Node 20-Alpine, port 3000) và Backend (Node 20-Alpine, port 3000, OpenSSL), tệp \texttt{docker-compose.yml} (PostgreSQL 17, Docker volume), và tệp \texttt{requirements.txt} của ETL Pipeline (FastAPI, Torch, Sentence-transformers, FAISS-cpu, Psycopg2). Các yêu cầu được phân loại và trình bày trong Bảng~\ref{tab:nonfunctional_requirements}.
+
+\begin{longtable}{|L{1.5cm}|L{2.8cm}|L{9.2cm}|}
+\caption{Danh sách yêu cầu phi chức năng của hệ thống CareerNova.}
+\label{tab:nonfunctional_requirements} \\
+\hline
+\textbf{Mã} & \textbf{Loại} & \textbf{Mô tả} \\
+\hline
+\endfirsthead
+\hline
+\textbf{Mã} & \textbf{Loại} & \textbf{Mô tả} \\
+\hline
+\endhead
+NFR-01 & Hiệu năng & Thời gian phản hồi của API Backend không vượt quá 2 giây cho 95\% các yêu cầu truy vấn thông thường (dashboard, tìm kiếm, hồ sơ). \\
+\hline
+NFR-02 & Hiệu năng & Toàn bộ quy trình so khớp CV (bóc tách kỹ năng qua Gemini API, tính điểm SBERT, tạo Gap Report) hoàn thành trong vòng 30 giây kể từ thời điểm người dùng gửi yêu cầu. \\
+\hline
+NFR-03 & Hiệu năng & Tìm kiếm ngữ nghĩa trên chỉ mục vector FAISS đạt độ trễ dưới 100ms cho tập dữ liệu hàng triệu bản ghi, nhờ cơ chế tính trước (precompute) và lưu cache vector nhúng. \\
+\hline
+NFR-04 & Bảo mật & Xác thực người dùng được thực hiện theo cơ chế JWT stateless; access token có thời hạn ngắn và được làm mới qua refresh token để giảm thiểu rủi ro rò rỉ. \\
+\hline
+NFR-05 & Bảo mật & Mật khẩu người dùng được băm bằng thuật toán bcrypt trước khi lưu vào cơ sở dữ liệu; không lưu trữ mật khẩu dạng plaintext tại bất kỳ tầng nào. \\
+\hline
+NFR-06 & Bảo mật & Các container Docker chạy dưới tài khoản non-root (UID 1001 đối với Frontend) và không nhúng thông tin xác thực nhạy cảm vào image, tuân thủ nguyên tắc đặc quyền tối thiểu. \\
+\hline
+NFR-07 & Bảo mật & Toàn bộ giao tiếp giữa Frontend và Backend được mã hóa qua HTTPS/TLS; Backend tích hợp OpenSSL (khai báo trong Dockerfile) để hỗ trợ kết nối cơ sở dữ liệu bảo mật. \\
+\hline
+NFR-08 & Khả năng mở rộng & Mỗi thành phần của hệ thống (Frontend, Backend API, ETL Pipeline) được đóng gói độc lập trong Docker container, cho phép triển khai, nâng cấp và mở rộng theo chiều ngang (horizontal scaling) mà không ảnh hưởng đến các thành phần còn lại. \\
+\hline
+NFR-09 & Khả năng mở rộng & Pipeline ETL được thiết kế theo kiến trúc module hóa (crawl → clean → normalize → import), cho phép bổ sung nguồn tuyển dụng mới hoặc thay thế mô hình LLM mà không cần thay đổi cấu trúc tổng thể. \\
+\hline
+NFR-10 & Độ tin cậy & Dữ liệu PostgreSQL được lưu trữ bền vững qua Docker named volume (\texttt{career\_nova\_postgres\_data}), đảm bảo dữ liệu không bị mất khi container khởi động lại; container PostgreSQL cấu hình \texttt{restart: unless-stopped}. \\
+\hline
+NFR-11 & Độ tin cậy & ETL Pipeline tích hợp cơ chế fallback tự động: ưu tiên cào tĩnh bằng Requests/cloudscraper, tự động chuyển sang Selenium Headless Browser khi gặp tường lửa chống bot, đảm bảo tính liên tục của quá trình thu thập dữ liệu. \\
+\hline
+NFR-12 & Độ tin cậy & Kết quả bóc tách kỹ năng từ LLM (Gemini API) được kiểm chứng bằng cơ chế anti-hallucination: mỗi thực thể kỹ năng phải kèm bằng chứng (\texttt{evidence\_text}) trích từ văn bản gốc; nếu không khớp sẽ bị loại bỏ tự động. \\
+\hline
+NFR-13 & Bảo trì & Backend NestJS được tổ chức theo kiến trúc module hóa rõ ràng (auth, profile, job, matching, skill-gap, market-dashboard, v.v.), mỗi module độc lập về controller, service và DTO, giúp dễ dàng bảo trì và mở rộng từng tính năng riêng lẻ. \\
+\hline
+NFR-14 & Bảo trì & Toàn bộ Frontend và Backend sử dụng TypeScript với kiểu dữ liệu tường minh, giúp phát hiện lỗi tại thời điểm biên dịch, giảm thiểu lỗi runtime và hỗ trợ tái cấu trúc mã nguồn an toàn. \\
+\hline
+\end{longtable}
+
+% ================================================================
 \section{Thiết kế cơ sở dữ liệu}
 
 Cơ sở dữ liệu của hệ thống được xây dựng trên hệ quản trị cơ sở dữ liệu quan hệ PostgreSQL (phiên bản 17). Thiết kế đảm bảo tính toàn vẹn dữ liệu, hiệu năng truy vấn thông qua các ràng buộc khóa ngoại (foreign key), chỉ mục (index) và phân tách chuẩn hóa các thực thể.
