@@ -1,10 +1,11 @@
-% ==============================================================================
-% CHƯƠNG 3: PHÂN TÍCH VÀ THIẾT KẾ HỆ THỐNG
-% ==============================================================================
+\chapter{Phân tích và thiết kế hệ thống}
+
+% ================================================================
 \section{Thiết kế cơ sở dữ liệu}
 
 Cơ sở dữ liệu của hệ thống được xây dựng trên hệ quản trị cơ sở dữ liệu quan hệ PostgreSQL (phiên bản 17). Thiết kế đảm bảo tính toàn vẹn dữ liệu, hiệu năng truy vấn thông qua các ràng buộc khóa ngoại (foreign key), chỉ mục (index) và phân tách chuẩn hóa các thực thể.
 
+% ----------------------------------------------------------------
 \subsection{Sơ đồ mối quan hệ thực thể (ERD)}
 
 Dưới đây là sơ đồ mối quan hệ thực thể (ERD) biểu diễn cấu trúc cơ sở dữ liệu của hệ thống:
@@ -16,10 +17,12 @@ Dưới đây là sơ đồ mối quan hệ thực thể (ERD) biểu diễn c�
     \label{fig:erd}
 \end{figure}
 
+% ----------------------------------------------------------------
 \subsection{Đặc tả các bảng dữ liệu thực tế}
 
 Dưới đây là chi tiết cấu trúc thuộc tính, kiểu dữ liệu, các ràng buộc và ý nghĩa chức năng của từng bảng trong cơ sở dữ liệu.
 
+% --- Bảng 1: users ---
 \subsubsection*{1. Bảng \texttt{users} (Thông tin người dùng)}
 
 Bảng này lưu trữ thông tin tài khoản người dùng, bao gồm sinh viên và quản trị viên hệ thống.
@@ -41,7 +44,7 @@ Bảng này lưu trữ thông tin tài khoản người dùng, bao gồm sinh vi
 \hline
 \texttt{email} & varchar(255) & UNIQUE, NOT NULL & Địa chỉ email đăng ký tài khoản. \\
 \hline
-\texttt{password\_hash} & text & NULL & Mật khẩu tài khoản đã băm an toàn. \\
+\texttt{password\_hash} & text & NULL (nếu đăng nhập mạng xã hội) & Mật khẩu tài khoản đã băm an toàn. \\
 \hline
 \texttt{avatar\_url} & text & NULL & Đường dẫn ảnh đại diện. \\
 \hline
@@ -57,13 +60,14 @@ Bảng này lưu trữ thông tin tài khoản người dùng, bao gồm sinh vi
 \hline
 \end{longtable}
 
+% --- Bảng 2: user_auth_providers ---
 \subsubsection*{2. Bảng \texttt{user\_auth\_providers} (Liên kết nhà cung cấp xác thực)}
 
 Lưu trữ thông tin xác thực bên thứ ba (Google, Facebook) phục vụ đăng nhập Single Sign-On (SSO).
 
 \begin{longtable}{|L{2.8cm}|L{2.8cm}|L{3.5cm}|L{4.5cm}|}
 \caption{Cấu trúc bảng \texttt{user\_auth\_providers}.}
-\label{tab:user_auth_providers} \\
+\label{tab:auth_providers} \\
 \hline
 \textbf{Tên trường} & \textbf{Kiểu dữ liệu} & \textbf{Ràng buộc} & \textbf{Ý nghĩa} \\
 \hline
@@ -74,15 +78,15 @@ Lưu trữ thông tin xác thực bên thứ ba (Google, Facebook) phục vụ �
 \endhead
 \texttt{auth\_provider\_id} & uuid & PK, DEFAULT gen\_random\_uuid() & Định danh duy nhất liên kết xác thực. \\
 \hline
-\texttt{user\_id} & uuid & FK $\to$ users(user\_id) ON DELETE CASCADE & ID người dùng sở hữu liên kết. \\
+\texttt{user\_id} & uuid & FK -> users(user\_id) ON DELETE CASCADE & ID người dùng sở hữu liên kết. \\
 \hline
 \texttt{provider} & varchar(50) & CHECK (provider IN ('local', 'google', 'facebook')) & Tên nhà cung cấp dịch vụ xác thực. \\
 \hline
-\texttt{provider\_user\_id} & varchar(255) & NOT NULL & ID định danh từ phía nhà cung cấp dịch vụ. \\
+\texttt{provider\_user\_id} & varchar(255) & NOT NULL & ID định danh từ phía nhà cung cấp. \\
 \hline
-\texttt{provider\_email} & varchar(255) & NULL & Email trả về từ nhà cung cấp dịch vụ. \\
+\texttt{provider\_email} & varchar(255) & NULL & Email trả về từ nhà cung cấp. \\
 \hline
-\texttt{provider\_name} & varchar(255) & NULL & Họ tên trả về từ nhà cung cấp dịch vụ. \\
+\texttt{provider\_name} & varchar(255) & NULL & Họ tên trả về từ nhà cung cấp. \\
 \hline
 \texttt{provider\_avatar\_url} & text & NULL & Ảnh đại diện trả về từ nhà cung cấp. \\
 \hline
@@ -92,6 +96,7 @@ Lưu trữ thông tin xác thực bên thứ ba (Google, Facebook) phục vụ �
 \hline
 \end{longtable}
 
+% --- Bảng 3: user_cvs ---
 \subsubsection*{3. Bảng \texttt{user\_cvs} (Thông tin tệp CV đã tải lên)}
 
 Lưu trữ thông tin các tệp tin CV do sinh viên tải lên hệ thống.
@@ -109,7 +114,7 @@ Lưu trữ thông tin các tệp tin CV do sinh viên tải lên hệ thống.
 \endhead
 \texttt{cv\_id} & uuid & PK, DEFAULT gen\_random\_uuid() & Định danh duy nhất cho CV. \\
 \hline
-\texttt{user\_id} & uuid & FK $\to$ users(user\_id) ON DELETE CASCADE & Định danh sinh viên sở hữu CV. \\
+\texttt{user\_id} & uuid & FK -> users(user\_id) ON DELETE CASCADE & Định danh sinh viên sở hữu CV. \\
 \hline
 \texttt{file\_name} & varchar(255) & NULL & Tên tệp tin gốc tải lên. \\
 \hline
@@ -123,6 +128,7 @@ Lưu trữ thông tin các tệp tin CV do sinh viên tải lên hệ thống.
 \hline
 \end{longtable}
 
+% --- Bảng 4: skills ---
 \subsubsection*{4. Bảng \texttt{skills} (Từ điển kỹ năng hệ thống)}
 
 Lưu trữ danh mục kỹ năng chuẩn hóa dựa trên phân loại hệ thống (ví dụ: chuẩn O*NET hoặc Lightcast).
@@ -150,6 +156,7 @@ Lưu trữ danh mục kỹ năng chuẩn hóa dựa trên phân loại hệ th�
 \hline
 \end{longtable}
 
+% --- Bảng 5: user_cv_skills ---
 \subsubsection*{5. Bảng \texttt{user\_cv\_skills} (Kỹ năng chi tiết của sinh viên)}
 
 Bảng cầu nối lưu trữ danh sách các kỹ năng chuẩn hóa được trích xuất từ CV ứng viên.
@@ -165,9 +172,9 @@ Bảng cầu nối lưu trữ danh sách các kỹ năng chuẩn hóa được t
 \textbf{Tên trường} & \textbf{Kiểu dữ liệu} & \textbf{Ràng buộc} & \textbf{Ý nghĩa} \\
 \hline
 \endhead
-\texttt{cv\_id} & uuid & PK, FK $\to$ user\_cvs(cv\_id) ON DELETE CASCADE & ID của CV được phân tích. \\
+\texttt{cv\_id} & uuid & PK, FK -> user\_cvs(cv\_id) ON DELETE CASCADE & ID của CV được phân tích. \\
 \hline
-\texttt{skill\_id} & integer & PK, FK $\to$ skills(skill\_id) ON DELETE CASCADE & ID kỹ năng chuẩn hóa tương ứng. \\
+\texttt{skill\_id} & integer & PK, FK -> skills(skill\_id) ON DELETE CASCADE & ID kỹ năng chuẩn hóa tương ứng. \\
 \hline
 \texttt{raw\_skill} & varchar(255) & NULL & Cụm từ kỹ năng gốc ghi trên CV. \\
 \hline
@@ -175,6 +182,7 @@ Bảng cầu nối lưu trữ danh sách các kỹ năng chuẩn hóa được t
 \hline
 \end{longtable}
 
+% --- Bảng 6: companies ---
 \subsubsection*{6. Bảng \texttt{companies} (Thông tin doanh nghiệp tuyển dụng)}
 
 Lưu trữ dữ liệu hồ sơ công ty đăng tuyển việc làm.
@@ -212,6 +220,7 @@ Lưu trữ dữ liệu hồ sơ công ty đăng tuyển việc làm.
 \hline
 \end{longtable}
 
+% --- Bảng 7: jobs ---
 \subsubsection*{7. Bảng \texttt{jobs} (Thông tin việc làm đăng tuyển)}
 
 Lưu thông tin chi tiết các bản tin tuyển dụng việc làm thu thập được.
@@ -229,7 +238,7 @@ Lưu thông tin chi tiết các bản tin tuyển dụng việc làm thu thập 
 \endhead
 \texttt{job\_id} & bigint & PK, SERIAL & Định danh tin tuyển dụng. \\
 \hline
-\texttt{company\_id} & bigint & FK $\to$ companies(company\_id) ON DELETE SET NULL & ID công ty đăng tuyển. \\
+\texttt{company\_id} & bigint & FK -> companies(company\_id) ON DELETE SET NULL & ID công ty đăng tuyển. \\
 \hline
 \texttt{title} & varchar(500) & NOT NULL & Tiêu đề công việc đăng tuyển. \\
 \hline
@@ -263,12 +272,13 @@ Lưu thông tin chi tiết các bản tin tuyển dụng việc làm thu thập 
 \hline
 \texttt{search\_group} & varchar(100) & NULL & Nhóm ngành công việc tiêu chuẩn liên kết. \\
 \hline
-\texttt{source\_name} & varchar(50) & NULL & Nguồn thu thập dữ liệu (LinkedIn, Vietnamworks...). \\
+\texttt{source\_name} & varchar(50) & NULL & Nguồn thu thập (LinkedIn, Vietnamworks...). \\
 \hline
 \texttt{source\_id} & varchar(255) & NULL & ID tin gốc trên nguồn thu thập. \\
 \hline
 \end{longtable}
 
+% --- Bảng 8: job_skills ---
 \subsubsection*{8. Bảng \texttt{job\_skills} (Yêu cầu kỹ năng chi tiết của việc làm)}
 
 Cầu nối liên kết các yêu cầu kỹ năng chuẩn hóa thuộc một tin tuyển dụng cụ thể.
@@ -284,9 +294,9 @@ Cầu nối liên kết các yêu cầu kỹ năng chuẩn hóa thuộc một ti
 \textbf{Tên trường} & \textbf{Kiểu dữ liệu} & \textbf{Ràng buộc} & \textbf{Ý nghĩa} \\
 \hline
 \endhead
-\texttt{job\_id} & bigint & PK, FK $\to$ jobs(job\_id) ON DELETE CASCADE & ID tin tuyển dụng yêu cầu. \\
+\texttt{job\_id} & bigint & PK, FK -> jobs(job\_id) ON DELETE CASCADE & ID tin tuyển dụng yêu cầu. \\
 \hline
-\texttt{skill\_id} & integer & PK, FK $\to$ skills(skill\_id) ON DELETE CASCADE & ID kỹ năng chuẩn hóa. \\
+\texttt{skill\_id} & integer & PK, FK -> skills(skill\_id) ON DELETE CASCADE & ID kỹ năng chuẩn hóa. \\
 \hline
 \texttt{is\_inferred} & boolean & DEFAULT false & Kỹ năng được suy diễn gián tiếp. \\
 \hline
@@ -298,10 +308,11 @@ Cầu nối liên kết các yêu cầu kỹ năng chuẩn hóa thuộc một ti
 \hline
 \texttt{lib\_version} & varchar(20) & NULL & Phiên bản thư viện sử dụng. \\
 \hline
-\texttt{raw\_skill\_name} & varchar(255) & NULL & Tên kỹ năng thô tìm thấy trong văn bản job. \\
+\texttt{raw\_skill\_name} & varchar(255) & NULL & Tên kỹ năng thô trong văn bản job. \\
 \hline
 \end{longtable}
 
+% --- Bảng 9: cv_job_matches ---
 \subsubsection*{9. Bảng \texttt{cv\_job\_matches} (Kết quả so khớp và phân tích khoảng cách năng lực)}
 
 Lưu trữ kết quả tính toán độ tương thích giữa CV của sinh viên với một vị trí công việc cụ thể hoặc một nhóm ngành nghề.
@@ -319,9 +330,9 @@ Lưu trữ kết quả tính toán độ tương thích giữa CV của sinh vi�
 \endhead
 \texttt{match\_id} & uuid & PK, DEFAULT gen\_random\_uuid() & Định danh duy nhất của kết quả khớp. \\
 \hline
-\texttt{cv\_id} & uuid & FK $\to$ user\_cvs(cv\_id) ON DELETE CASCADE & ID CV tham gia so khớp. \\
+\texttt{cv\_id} & uuid & FK -> user\_cvs(cv\_id) ON DELETE CASCADE & ID CV tham gia so khớp. \\
 \hline
-\texttt{job\_id} & bigint & FK $\to$ jobs(job\_id) ON DELETE SET NULL, NULL & ID Job cụ thể tham gia so khớp (nếu có). \\
+\texttt{job\_id} & bigint & FK -> jobs(job\_id) ON DELETE SET NULL, NULL & ID Job cụ thể tham gia so khớp (nếu có). \\
 \hline
 \texttt{match\_type} & varchar(50) & CHECK (match\_type IN ('search\_group', 'existing\_job', 'url\_job')) & Phân loại kiểu so khớp. \\
 \hline
@@ -329,11 +340,11 @@ Lưu trữ kết quả tính toán độ tương thích giữa CV của sinh vi�
 \hline
 \texttt{match\_score} & numeric(5,2) & CHECK (match\_score >= 0 AND match\_score <= 100) & Điểm số phần trăm tương thích tổng thể. \\
 \hline
-\texttt{radar\_data} & jsonb & NOT NULL & Cấu trúc JSON biểu diễn phân bố kỹ năng (biểu đồ Radar). \\
+\texttt{radar\_data} & jsonb & NOT NULL & Cấu trúc JSON biểu diễn phân bố kỹ năng (vẽ biểu đồ Radar). \\
 \hline
 \texttt{gap\_report} & jsonb & NOT NULL & Chi tiết báo cáo khoảng cách kỹ năng. \\
 \hline
-\texttt{model\_version} & varchar(100) & NULL & Phiên bản thuật toán đối sánh sử dụng. \\
+\texttt{model\_version} & varchar(100) & NULL & Phiên bản thuật toán đối sánh. \\
 \hline
 \texttt{created\_at} & timestamp & DEFAULT CURRENT\_TIMESTAMP & Thời điểm tính toán. \\
 \hline
@@ -341,6 +352,7 @@ Lưu trữ kết quả tính toán độ tương thích giữa CV của sinh vi�
 \hline
 \end{longtable}
 
+% --- Bảng 10: job_group_skill_weights ---
 \subsubsection*{10. Bảng \texttt{job\_group\_skill\_weights} (Trọng số kỹ năng theo nhóm ngành)}
 
 Bảng lưu trữ trọng số tầm quan trọng $w_i$ của từng kỹ năng thuộc một nhóm ngành công việc tiêu chuẩn, được tính toán bằng thuật toán TF-IDF trên tập dữ liệu việc làm.
@@ -358,62 +370,61 @@ Bảng lưu trữ trọng số tầm quan trọng $w_i$ của từng kỹ năng 
 \endhead
 \texttt{search\_group} & varchar(100) & PK & Tên nhóm ngành công việc tiêu chuẩn. \\
 \hline
-\texttt{skill\_id} & integer & PK, FK $\to$ skills(skill\_id) ON DELETE CASCADE & ID kỹ năng chuẩn hóa trong nhóm. \\
+\texttt{skill\_id} & integer & PK, FK -> skills(skill\_id) ON DELETE CASCADE & ID kỹ năng chuẩn hóa trong nhóm. \\
 \hline
-\texttt{weight\_wi} & numeric(8,4) & NOT NULL & Trọng số đặc trưng của kỹ năng $w_i$ trong nhóm. \\
+\texttt{weight\_wi} & numeric(8,4) & NOT NULL & Trọng số đặc trưng $w_i$ của kỹ năng trong nhóm. \\
 \hline
 \end{longtable}
 
-%==========================================================================
-
+% ================================================================
 \section{Thiết kế thuật toán phân tích khoảng cách năng lực}
 
 Thuật toán phân tích khoảng cách năng lực (Gap Analysis Algorithm) là nhân tố cốt lõi giúp sinh viên nhận thức được vị trí năng lực hiện tại của bản thân so với yêu cầu thị trường lao động. Hệ thống thực hiện việc này thông qua việc so khớp các kỹ năng trích xuất từ CV của người dùng với bộ kỹ năng định hình cho từng vị trí công việc hoặc nhóm ngành.
 
+% ----------------------------------------------------------------
 \subsection{Luồng xử lý từ lúc người dùng upload CV đến khi nhận kết quả so khớp}
 
-Quy trình xử lý của hệ thống từ khi sinh viên tải tệp CV lên cho đến khi nhận được kết quả phân tích khoảng cách năng lực được mô tả thông qua các bước sau:
+Quy trình xử lý của hệ thống từ khi sinh viên tải tệp CV lên cho đến khi nhận được kết quả phân tích khoảng cách năng lực được mô tả theo các bước dưới đây.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{cv_matching_flow}
-    \caption{Luồng xử lý từ khi người dùng tải CV lên đến khi nhận kết quả so khớp.}
+    \includegraphics[width=\textwidth]{cv_upload_flow}
+    \caption{Sơ đồ luồng xử lý từ khi người dùng tải CV lên đến khi nhận kết quả so khớp.}
     \label{fig:cv_flow}
 \end{figure}
 
-\textbf{(1) Trích xuất văn bản từ CV (Text Extraction):}
+\textbf{Bước 1 --- Trích xuất văn bản từ CV (Text Extraction):}
 Hệ thống hỗ trợ tải lên CV dạng PDF hoặc hình ảnh (.png, .jpg, .jpeg). Thư viện \texttt{pdfplumber} được sử dụng để trích xuất trực tiếp lớp chữ nếu tệp PDF có định dạng số văn bản (Digital PDF). Nếu tệp PDF là dạng scan ảnh hoặc người dùng upload tệp ảnh trực tiếp, hệ thống kích hoạt luồng OCR dự phòng sử dụng thư viện \texttt{pdf2image} để chuyển trang PDF sang ảnh, sau đó kết hợp \texttt{pytesseract} (Tesseract OCR) để đọc chữ từ ảnh.
 
-\textbf{(2) Tối ưu hóa bằng cơ chế Cache:}
-Sau khi trích xuất văn bản thô, hệ thống thực hiện chuẩn hóa khoảng trắng và truy vấn so khớp trên bảng \texttt{public.user\_cvs} của người dùng. Nếu tìm thấy bản ghi có nội dung văn bản trùng khớp hoàn toàn, hệ thống sẽ bỏ qua hoàn toàn việc gọi API Gemini để trích xuất và bước chuẩn hóa kỹ năng. Thay vào đó, dữ liệu kỹ năng của sinh viên được nạp trực tiếp từ bảng cầu nối \texttt{public.user\_cv\_skills} của CV đó, giúp tăng tốc độ phản hồi và tiết kiệm tài nguyên API.
+\textbf{Bước 2 --- Tối ưu hóa bằng cơ chế Cache:}
+Sau khi trích xuất văn bản thô, hệ thống thực hiện chuẩn hóa khoảng trắng của văn bản và truy vấn so khớp trên bảng \texttt{public.user\_cvs} của người dùng. Nếu tìm thấy bản ghi có nội dung văn bản trùng khớp hoàn toàn (Cache Hit), hệ thống bỏ qua việc gọi API Gemini và bước chuẩn hóa kỹ năng, thay vào đó nạp trực tiếp dữ liệu kỹ năng từ bảng cầu nối \texttt{public.user\_cv\_skills}, giúp tăng tốc độ phản hồi và tiết kiệm tài nguyên API.
 
-\textbf{(3) Trích xuất kỹ năng bằng Generative AI (Skill Extraction):}
+\textbf{Bước 3 --- Trích xuất kỹ năng bằng Generative AI (Skill Extraction):}
 Trong trường hợp Cache Miss, hệ thống sử dụng mô hình ngôn ngữ lớn Gemini thông qua API để trích xuất các kỹ năng xuất hiện trên CV. Prompt gửi đi yêu cầu mô hình trả về cấu trúc dữ liệu JSON chứa: tên kỹ năng, dẫn chứng ngữ cảnh xuất hiện (evidence) và mức độ tin cậy (confidence score $\geq 0.85$).
 
-Cơ chế chống ảo giác (Anti-Hallucination Validation): Do LLM đôi khi sinh ra các kỹ năng không có thực trong CV (ảo giác), hệ thống thực hiện kiểm tra chéo --- mọi kỹ năng trích xuất ra phải có tên hoặc dẫn chứng xuất hiện trực tiếp dưới dạng chuỗi con (substring) trong văn bản CV gốc. Nếu không thỏa mãn, kỹ năng đó sẽ bị hủy bỏ.
+\textit{Cơ chế chống ảo giác (Anti-Hallucination Validation):} Do LLM đôi khi sinh ra các kỹ năng không có thực trong CV, hệ thống thực hiện kiểm tra chéo: mọi kỹ năng trích xuất phải có tên hoặc dẫn chứng xuất hiện trực tiếp dưới dạng chuỗi con (substring) trong văn bản CV gốc. Nếu không thỏa mãn, kỹ năng đó sẽ bị hủy bỏ.
 
-Luồng xử lý dự phòng (Fallback): Nếu kết nối LLM gặp sự cố hoặc cạn kiệt hạn ngạch (quota limit), hệ thống tự động kích hoạt bộ đối sánh từ khóa thô (Keyword Match Fallback) trực tiếp với toàn bộ từ điển trong bảng \texttt{public.skills} bằng các biểu thức chính quy (Regex) thiết lập ranh giới từ để trích xuất kỹ năng tạm thời.
+\textit{Luồng xử lý dự phòng (Fallback):} Nếu kết nối LLM gặp sự cố hoặc cạn kiệt hạn ngạch (quota limit), hệ thống tự động kích hoạt bộ đối sánh từ khóa thô (Keyword Match Fallback) trực tiếp với toàn bộ từ điển trong bảng \texttt{public.skills} bằng các biểu thức chính quy (Regex) thiết lập ranh giới từ để trích xuất kỹ năng tạm thời.
 
-\textbf{(4) Chuẩn hóa kỹ năng sang từ điển hệ thống (Skill Normalization):}
+\textbf{Bước 4 --- Chuẩn hóa kỹ năng sang từ điển hệ thống (Skill Normalization):}
 Các kỹ năng thô sau trích xuất được đưa qua quy trình chuẩn hóa Lightcast Taxonomy kết hợp mô hình embedding ngữ nghĩa \texttt{all-MiniLM-L6-v2}. Quy trình gồm 4 tầng xử lý:
 
 \begin{itemize}
-    \item \textbf{Tầng 0 (Dọn dẹp phổ quát):} Loại bỏ ký tự đặc biệt, chuẩn hóa chữ thường, viết tắt (ví dụ: \texttt{css3} $\to$ \texttt{CSS}, chuẩn hóa framework \texttt{.js}).
+    \item \textbf{Tầng 0 (Dọn dẹp phổ quát):} Loại bỏ ký tự đặc biệt, chuẩn hóa chữ thường, xử lý viết tắt (ví dụ: \texttt{css3} thành \texttt{CSS}, chuẩn hóa framework \texttt{.js}).
     \item \textbf{Tầng 1 (Khớp chính xác):} So khớp trực tiếp chuỗi ký tự với từ điển canonical và tên rút gọn của bảng \texttt{public.skills}.
     \item \textbf{Tầng 2 (Tìm kiếm ngữ nghĩa ngữ cảnh):} Chuyển đổi tên kỹ năng và thông tin bổ trợ thành vector embedding ngữ cảnh. Sử dụng công cụ FAISS để tìm kiếm Top 5 ứng viên kỹ năng có độ tương đồng cosine cao nhất từ bộ nhớ đệm cache (\texttt{skills\_embedding.pkl}).
-    \item \textbf{Tầng 3 (Xử lý lai \& Phân loại):} Tính điểm lai kết hợp 85\% Cosine Similarity và 15\% sparse Jaccard n-gram (độ tương đồng ký tự) để hạn chế sai lệch từ vựng. Điểm số này được áp dụng phạt nếu loại kỹ năng (Hard Skill vs Common Skill) không trùng khớp, sau đó đối sánh với ngưỡng động (Dynamic Threshold) phù hợp với loại từ (từ viết tắt cần độ khớp $\geq 0.80$, kỹ năng chuyên môn cần $\geq 0.70$).
+    \item \textbf{Tầng 3 (Xử lý lai \& Phân loại):} Tính điểm lai kết hợp 85\% Cosine Similarity và 15\% sparse Jaccard n-gram (độ tương đồng ký tự) để hạn chế sai lệch từ vựng. Điểm số được áp dụng phạt nếu loại kỹ năng (Hard Skill vs Common Skill) không trùng khớp, sau đó đối sánh với ngưỡng động (Dynamic Threshold) phù hợp với loại từ (từ viết tắt cần độ khớp $\geq 0.80$, kỹ năng chuyên môn cần $\geq 0.70$).
 \end{itemize}
 
 Các kỹ năng được chuẩn hóa thành công sẽ được gán với \texttt{skill\_id} tương ứng trong cơ sở dữ liệu và lưu trữ vào bảng cầu nối \texttt{public.user\_cv\_skills}.
 
-\textbf{(5) Tính toán so khớp năng lực (Matching Engine):}
-Chương trình nạp bộ kỹ năng yêu cầu và trọng số tương ứng từ bảng \texttt{public.job\_group\_skill\_weights} cho Job/Nhóm ngành mục tiêu. Sau đó tính toán độ tương đồng giữa các kỹ năng CV của sinh viên với các kỹ năng của Job, phân loại khoảng cách và tính toán chỉ số tương thích tổng thể (Match Score).
+\textbf{Bước 5 --- Tính toán so khớp năng lực (Matching Engine):}
+Chương trình nạp bộ kỹ năng yêu cầu và trọng số tương ứng từ bảng \texttt{public.job\_group\_skill\_weights} cho Job/Nhóm ngành mục tiêu, sau đó tính toán độ tương đồng giữa các kỹ năng CV của sinh viên với các kỹ năng của Job, phân loại khoảng cách và tính toán chỉ số tương thích tổng thể (Match Score).
 
-\textbf{(6) Lưu trữ và kết xuất kết quả:}
+\textbf{Bước 6 --- Lưu trữ và kết xuất kết quả:}
 Kết quả phân tích phân nhóm kỹ năng, điểm tương thích cùng các báo cáo thiếu hụt được lưu trữ vào bảng \texttt{public.cv\_job\_matches} dưới dạng JSONB để phục vụ vẽ biểu đồ Radar trên giao diện người dùng.
 
-%==========================================================================
-
+% ----------------------------------------------------------------
 \subsection{Thuật toán so sánh tập kỹ năng trong CV với yêu cầu của Job để tính tỷ lệ tương thích}
 
 Để đánh giá mức độ tương thích giữa hồ sơ năng lực của ứng viên (tập kỹ năng đã chuẩn hóa từ CV) với yêu cầu tuyển dụng (tập kỹ năng đặc trưng kèm trọng số của Job), hệ thống triển khai thuật toán tính toán độ tương đồng ngữ nghĩa có trọng số (Weighted Semantic Similarity) dựa trên không gian vector embedding.
@@ -424,26 +435,26 @@ Kết quả phân tích phân nhóm kỹ năng, điểm tương thích cùng cá
     \item Gọi $\mathcal{J} = \{j_1, j_2, \ldots, j_M\}$ là tập hợp gồm $M$ kỹ năng yêu cầu của vị trí công việc.
     \item Gọi $\mathcal{W} = \{w_1, w_2, \ldots, w_M\}$ là tập các trọng số tương ứng của các kỹ năng trong $\mathcal{J}$ đối với công việc đó ($w_i > 0$), lấy từ bảng \texttt{public.job\_group\_skill\_weights}. Trọng số này phản ánh mức độ quan trọng của kỹ năng đối với vị trí nghề nghiệp.
     \item Gọi $\mathcal{C} = \{c_1, c_2, \ldots, c_K\}$ là tập hợp gồm $K$ kỹ năng được trích xuất và chuẩn hóa thành công từ CV của sinh viên.
-    \item Với mỗi kỹ năng trong cơ sở dữ liệu, ta có vector embedding phân tán 384 chiều được sinh ra bởi mô hình \texttt{all-MiniLM-L6-v2}: vector $\mathbf{e}_{j_i} \in \mathbb{R}^{384}$ đại diện cho biểu diễn ngữ nghĩa của kỹ năng $j_i$.
+    \item Với mỗi kỹ năng trong cơ sở dữ liệu, vector embedding phân tán 384 chiều được sinh ra bởi mô hình \texttt{all-MiniLM-L6-v2}: $\mathbf{e}_{j_i}$ đại diện cho biểu diễn ngữ nghĩa của kỹ năng $j_i$.
 \end{itemize}
 
 \subsubsection*{Công thức tính toán chi tiết}
 
-\textbf{Bước 1: Tính độ tương thích ngữ nghĩa lớn nhất cho từng kỹ năng yêu cầu.}
+\textbf{Bước 1 --- Tính độ tương thích ngữ nghĩa lớn nhất cho từng kỹ năng yêu cầu:}
 
-Đối với mỗi kỹ năng yêu cầu $j_i \in \mathcal{J}$, hệ thống duyệt qua toàn bộ tập kỹ năng có sẵn của sinh viên $\mathcal{C}$ để tìm độ tương đồng Cosine lớn nhất:
+Đối với mỗi kỹ năng yêu cầu $j_i$, hệ thống duyệt qua toàn bộ tập kỹ năng có sẵn của sinh viên $\mathcal{C}$ để tìm độ tương đồng Cosine lớn nhất:
 \begin{equation}
-    \text{sim}_i = \max_{c_k \in \mathcal{C}} \cos(\mathbf{e}_{j_i},\, \mathbf{e}_{c_k})
+    \text{sim}_i = \max_{c_k \in \mathcal{C}} \, \text{cosine}(\mathbf{e}_{j_i},\, \mathbf{e}_{c_k})
 \end{equation}
 
 Vì các vector embedding trong cache đã được chuẩn hóa L2 ($\|\mathbf{e}\|_2 = 1$), độ tương đồng Cosine được tính nhanh bằng tích vô hướng giữa hai vector:
 \begin{equation}
-    \text{sim}_i = \max_{c_k \in \mathcal{C}} \left(\mathbf{e}_{j_i} \cdot \mathbf{e}_{c_k}\right)
+    \text{sim}_i = \max_{c_k \in \mathcal{C}} \left( \hat{\mathbf{e}}_{j_i} \cdot \hat{\mathbf{e}}_{c_k} \right)
 \end{equation}
 
 Giá trị $\text{sim}_i$ nằm trong khoảng $[0, 1]$ (mọi giá trị âm đều được quy về $0$).
 
-\textbf{Bước 2: Tính đóng góp thực tế và khoảng cách thiếu hụt.}
+\textbf{Bước 2 --- Tính đóng góp thực tế và khoảng cách thiếu hụt:}
 
 Đóng góp (Contribution) của kỹ năng thứ $i$ vào tổng điểm năng lực của ứng viên:
 \begin{equation}
@@ -455,14 +466,14 @@ Khoảng cách thiếu hụt (Gap) của kỹ năng thứ $i$:
     \text{gap}_i = w_i \times (1 - \text{sim}_i)
 \end{equation}
 
-\textbf{Bước 3: Tính điểm số tương thích tổng hợp (Match Score).}
+\textbf{Bước 3 --- Tính điểm số tương thích tổng hợp (Match Score):}
 
 Điểm số tương thích tổng thể là tổng đóng góp của tất cả các kỹ năng yêu cầu, được chuẩn hóa chia cho tổng trọng số:
 \begin{equation}
     \text{MatchScore} = \frac{\displaystyle\sum_{i=1}^{M} w_i \times \text{sim}_i}{\displaystyle\sum_{i=1}^{M} w_i}
 \end{equation}
 
-\textbf{Bước 4: Chuyển đổi thành tỷ lệ phần trăm (Match Percent).}
+\textbf{Bước 4 --- Chuyển đổi thành tỷ lệ phần trăm (Match Percent):}
 
 Tỷ lệ tương thích hiển thị trên giao diện người dùng được tính bằng:
 \begin{equation}
@@ -471,18 +482,25 @@ Tỷ lệ tương thích hiển thị trên giao diện người dùng được 
 
 \subsubsection*{Cơ chế phân loại kỹ năng phục vụ báo cáo khoảng cách (Gap Report)}
 
-Hệ thống sử dụng các ngưỡng điểm tương đồng ngữ nghĩa lớn nhất $\text{sim}_i$ để phân loại từng kỹ năng yêu cầu $j_i$ vào ba nhóm hiển thị trên giao diện người dùng:
+Hệ thống sử dụng các ngưỡng điểm tương đồng ngữ nghĩa lớn nhất ($\text{sim}_i$) để phân loại từng kỹ năng yêu cầu $j_i$ vào ba nhóm hiển thị trên giao diện người dùng:
 
 \begin{enumerate}
-    \item \textbf{Kỹ năng đã có (Possessed/Matched Skills):}\\
-    Điều kiện: $\text{sim}_i \geq 0.75$.\\
-    Ý nghĩa: Ứng viên đã sở hữu kỹ năng này trực tiếp hoặc thông qua một kỹ năng tương đương rất gần về ngữ nghĩa (ví dụ: yêu cầu ``Scrum'' và CV có ``Agile/Scrum''). Thông tin đi kèm ghi nhận tên kỹ năng đối sánh gián tiếp (\texttt{matched\_via}) nếu không trùng ID trực tiếp.
+    \item \textbf{Kỹ năng đã có (Possessed/Matched Skills):}
+    \begin{itemize}
+        \item \textit{Điều kiện:} $\text{sim}_i \geq 0.75$
+        \item \textit{Ý nghĩa:} Ứng viên đã sở hữu kỹ năng này trực tiếp hoặc thông qua một kỹ năng tương đương rất gần về ngữ nghĩa (ví dụ: yêu cầu ``Scrum'' và CV có ``Agile/Scrum'').
+        \item \textit{Thông tin đi kèm:} Ghi nhận tên kỹ năng đối sánh gián tiếp (\texttt{matched\_via}) nếu không trùng ID trực tiếp.
+    \end{itemize}
 
-    \item \textbf{Kỹ năng cần bổ sung thêm (Partially Matched Skills):}\\
-    Điều kiện: $0.30 \leq \text{sim}_i < 0.75$.\\
-    Ý nghĩa: Ứng viên có kỹ năng liên quan nhưng chưa hoàn toàn đáp ứng đúng ngữ cảnh yêu cầu của Job (ví dụ: yêu cầu ``Consulting'' nhưng CV mới có ``Project Design''). Các kỹ năng này là các mục tiêu đào tạo ngắn hạn, ứng viên có thể tự cải thiện nhanh.
+    \item \textbf{Kỹ năng cần bổ sung thêm (Partially Matched Skills):}
+    \begin{itemize}
+        \item \textit{Điều kiện:} $0.40 \leq \text{sim}_i < 0.75$
+        \item \textit{Ý nghĩa:} Ứng viên có kỹ năng liên quan nhưng chưa hoàn toàn đáp ứng đúng ngữ cảnh yêu cầu của Job (ví dụ: yêu cầu ``Consulting'' nhưng CV mới có ``Project Design''). Đây là các mục tiêu đào tạo ngắn hạn, ứng viên có thể tự cải thiện nhanh.
+    \end{itemize}
 
-    \item \textbf{Kỹ năng thiếu hoàn toàn (Missing Skills):}\\
-    Điều kiện: $\text{sim}_i < 0.30$.\\
-    Ý nghĩa: Ứng viên thiếu hụt hoàn toàn kiến thức này. Đây là lỗ hổng năng lực lớn nhất, đòi hỏi lộ trình học tập dài hạn hơn để bù đắp nếu muốn ứng tuyển vào vị trí công việc tương ứng.
+    \item \textbf{Kỹ năng thiếu hoàn toàn (Missing Skills):}
+    \begin{itemize}
+        \item \textit{Điều kiện:} $\text{sim}_i < 0.40$
+        \item \textit{Ý nghĩa:} Ứng viên thiếu hụt hoàn toàn kiến thức này. Đây là lỗ hổng năng lực lớn nhất, đòi hỏi lộ trình học tập dài hạn hơn để bù đắp nếu muốn ứng tuyển vào vị trí công việc tương ứng.
+    \end{itemize}
 \end{enumerate}
