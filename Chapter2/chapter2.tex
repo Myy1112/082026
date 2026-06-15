@@ -62,7 +62,34 @@ Vì vậy, trong hệ thống đề xuất, quy trình ETL theo mô hình của 
 
 \subsection{Nguyên lý trực quan hóa thông tin hỗ trợ ra quyết định}
 
-[CẦN\_CITE: Nội dung mục 2.1.3 chưa được cung cấp --- bổ sung sau]
+\textbf{Trực quan hóa thông tin} (Information Visualization) là lĩnh vực nghiên cứu tập trung vào việc sử dụng các biểu diễn đồ họa tương tác được hỗ trợ bởi máy tính để khai thác khả năng nhận thức thị giác của con người, nhằm phát hiện các mẫu ẩn, xu hướng và mối quan hệ trong tập dữ liệu phức tạp \cite{card1999readings}. Card, Mackinlay và Shneiderman (1999) định nghĩa đây là "việc sử dụng biểu diễn trực quan được máy tính hỗ trợ từ dữ liệu trừu tượng để khuếch đại nhận thức (amplify cognition)" \cite{card1999readings}. Điểm then chốt trong định nghĩa này là khái niệm \textit{khuếch đại nhận thức}: thay vì thay thế tư duy của con người, trực quan hóa tạo ra một giao diện giữa hệ thống dữ liệu và não bộ, cho phép não bộ xử lý thông tin đa chiều một cách trực tiếp và hiệu quả hơn so với phân tích thuần túy bằng con số.
+
+Nguyên lý định hướng thiết kế được áp dụng phổ biến nhất trong lĩnh vực này là \textbf{mantra trực quan hóa} của Shneiderman (1996): \textit{"Overview first, zoom and filter, then details on demand"} (Tổng quan trước, thu phóng và lọc, rồi chi tiết theo yêu cầu) \cite{shneiderman1996eyes}. Theo nguyên lý này, giao diện trực quan hóa được thiết kế theo ba tầng tương tác: đầu tiên cung cấp một bức tranh toàn cảnh về tập dữ liệu, sau đó cho phép người dùng chọn lọc theo các chiều thuộc tính cụ thể, và cuối cùng hiển thị dữ liệu chi tiết khi người dùng tương tác với đối tượng quan tâm. Phân cấp này giúp giảm thiểu đáng kể tải nhận thức (cognitive load) và hỗ trợ ra quyết định theo từng tầng thông tin.
+
+Tufte (2001) nhấn mạnh rằng thiết kế đồ họa thống kê xuất sắc phải trình bày dữ liệu phức tạp theo cách rõ ràng, chính xác và hiệu quả, đồng thời tối đa hóa tỷ số dữ liệu-mực vẽ (data-ink ratio), tức là mọi yếu tố đồ họa đều phải mang thông tin có giá trị \cite{tufte2001visual}. Kế thừa nguyên tắc này, Few (2006) mở rộng ứng dụng sang lĩnh vực bảng điều khiển phân tích (dashboard): các dashboard chuyên dụng cần thể hiện đồng thời nhiều chiều dữ liệu quan trọng nhất trong một màn hình duy nhất, ưu tiên biểu đồ khai thác thuộc tính tiền chú ý (pre-attentive attributes) như màu sắc tương phản và kích thước tương đối để giúp người dùng nhận diện ngoại lệ tức thì mà không cần phân tích từng điểm số riêng lẻ \cite{few2006dashboard}. Trong lĩnh vực Hệ thống hỗ trợ ra quyết định (Decision Support Systems --- DSS), trực quan hóa dữ liệu đóng vai trò như một cầu nối giữa dữ liệu thô và quyết định của người dùng, cho phép so sánh, kiểm tra giả thuyết và nhận ra mẫu xu hướng trực tiếp từ biểu đồ mà không cần đọc từng bảng số liệu dày đặc.
+
+\textbf{Trong hệ thống CareerNova}, các nguyên lý trực quan hóa nêu trên được hiện thực hóa thông qua thư viện \textbf{Recharts} trên nền tảng Next.js, với bốn loại biểu đồ được triển khai có chủ đích, mỗi loại phục vụ một nhu cầu hỗ trợ quyết định cụ thể:
+
+\begin{enumerate}
+    \item \textbf{Biểu đồ Radar (RadarChart)}: Được triển khai trong các module \textit{SkillGapAnalysis} và \textit{PersonalDashboard}, biểu đồ Radar biểu diễn đồng thời hai chiều dữ liệu --- điểm kỹ năng thực tế của người dùng (\texttt{user\_score}) và ngưỡng yêu cầu thị trường (\texttt{market\_score}) --- trên cùng một hệ trục đa chiều. Dữ liệu nguồn được truy vấn từ cột \texttt{radar\_data JSONB} trong bảng \texttt{cv\_job\_matches}, trong đó mỗi đối tượng JSON lưu trữ các trường \texttt{skill\_name}, \texttt{user\_score}, \texttt{market\_score} và \texttt{similarity}. Phép trực quan hóa này cho phép sinh viên nhận diện ngay lập tức vùng năng lực còn chênh lệch so với yêu cầu của nhà tuyển dụng, từ đó đưa ra quyết định ưu tiên kỹ năng cần bổ sung một cách có căn cứ.
+
+    \item \textbf{Biểu đồ Vùng (AreaChart)}: Được hiển thị trên trang \textit{MarketDashboard}, biểu đồ Vùng thể hiện xu hướng đăng tuyển dụng theo thời gian, đồng thời so sánh tổng số lượng tin tuyển dụng (\texttt{total\_postings}) với số vị trí làm việc từ xa (\texttt{remote\_jobs}). Người dùng có thể quan sát sự biến động của nhu cầu tuyển dụng theo từng giai đoạn, cung cấp cơ sở định lượng cho quyết định về thời điểm tìm kiếm việc làm và xu hướng hình thức làm việc.
+
+    \item \textbf{Biểu đồ Cột (BarChart)}: Dữ liệu dải lương từ bảng \texttt{salaries} được hiển thị dưới dạng hai cột song song biểu diễn mức lương tối thiểu (\texttt{min\_salary}) và tối đa (\texttt{max\_salary}) cho từng vị trí công việc, giúp người dùng hiệu chỉnh kỳ vọng thu nhập dựa trên điều kiện thị trường thực tế.
+
+    \item \textbf{Biểu đồ Tròn (PieChart)}: Phân bổ thị phần tuyển dụng theo ngành công nghiệp (\texttt{industries}) được trực quan hóa bằng PieChart, cho phép người dùng nhanh chóng nhận diện các lĩnh vực nào đang có nhu cầu tuyển dụng cao nhất trên thị trường.
+\end{enumerate}
+
+Ngoài bốn loại biểu đồ chính, \textbf{Báo cáo khoảng cách kỹ năng (Gap Report)} được hiển thị dưới dạng biểu đồ cột ngang phân kỳ, trong đó điểm dương (kỹ năng đạt yêu cầu) và điểm âm (kỹ năng thiếu hụt) được phân biệt bằng màu xanh lá và màu đỏ tương phản. Thiết kế này áp dụng thuộc tính tiền chú ý của Few (2006) \cite{few2006dashboard}, theo đó não bộ xử lý sự khác biệt màu sắc trước khi nhận thức có chủ ý diễn ra, giúp sinh viên phát hiện các kỹ năng còn thiếu hụt một cách tức thì mà không cần phân tích từng con số. Luồng dữ liệu từ cơ sở dữ liệu đến các thành phần trực quan hóa được mô tả trong Hình~\ref{fig:visualization_theory}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{visualization_theory}
+    \caption{Luồng dữ liệu từ cơ sở dữ liệu đến các thành phần trực quan hóa trong hệ thống CareerNova.}
+    \label{fig:visualization_theory}
+\end{figure}
+
+Vì vậy, trong hệ thống đề xuất, tập hợp năm loại biểu đồ Recharts được thiết kế tuân thủ các nguyên lý của Card, Shneiderman, Tufte và Few nhằm hiện thực hóa một hệ thống hỗ trợ quyết định nghề nghiệp trực quan, trong đó người dùng không cần kiến thức phân tích dữ liệu chuyên sâu vẫn có thể nhận diện khoảng cách năng lực, theo dõi xu hướng thị trường và hiệu chỉnh kỳ vọng nghề nghiệp thông qua các biểu đồ tương tác được cung cấp bởi hệ thống.
 
 %==========================================================================
 

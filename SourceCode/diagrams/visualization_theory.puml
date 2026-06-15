@@ -1,0 +1,63 @@
+@startuml visualization_theory
+!theme plain
+skinparam componentStyle rectangle
+skinparam defaultFontSize 11
+skinparam defaultFontName Arial
+skinparam backgroundColor #FFFFFF
+skinparam ArrowColor #555555
+
+skinparam component {
+    BackgroundColor #E3F2FD
+    BorderColor #1565C0
+    FontColor #0D47A1
+}
+skinparam database {
+    BackgroundColor #FFF8E1
+    BorderColor #F57F17
+    FontColor #4E342E
+}
+skinparam package {
+    BackgroundColor #F5F5F5
+    BorderColor #9E9E9E
+    FontColor #212121
+}
+skinparam actor {
+    BackgroundColor #E8F5E9
+    BorderColor #2E7D32
+    FontColor #1B5E20
+}
+
+title Luồng dữ liệu từ CSDL đến các thành phần trực quan hóa — CareerNova
+
+package "Tầng Dữ Liệu (Data Layer)" {
+    database "PostgreSQL" as DB
+    component "cv_job_matches\n(radar_data JSONB,\ngap_report JSONB)" as T_MATCH
+    component "jobs · salaries\nindustries · skills" as T_MARKET
+    DB -- T_MATCH
+    DB -- T_MARKET
+}
+
+package "Tầng Nghiệp Vụ (Business Logic Layer)" {
+    component "ETL Pipeline\n(Python — Crawl/Clean/\nNormalize/Import)" as ETL
+    component "CareerNova Backend API\n(NestJS + Prisma ORM)" as API
+}
+
+package "Tầng Trình Bày (Presentation Layer)" {
+    component "MarketDashboard\n────────────────\nAreaChart: Xu hướng tuyển dụng\nPieChart: Phân bổ ngành\nBarChart: Dải lương" as MD
+    component "SkillGapAnalysis\n────────────────\nRadarChart: So khớp kỹ năng\nGap Report (Biểu đồ phân kỳ)" as SGA
+    component "PersonalDashboard\n────────────────\nRadarChart: Năng lực cá nhân" as PD
+}
+
+actor "Người dùng\n(Sinh viên)" as User
+
+ETL -down-> DB       : Import JD đã crawl\nvà chuẩn hóa kỹ năng
+T_MARKET -right-> API : Query dữ liệu\nthị trường
+T_MATCH  -right-> API : Query radar_data\nvà gap_report JSON
+API -right-> MD  : Dữ liệu thị trường\n(trends, salary, industry)
+API -right-> SGA : radar_data,\ngap_report
+API -right-> PD  : Kỹ năng cá nhân\n(user_score, market_score)
+MD  -down-> User : Hỗ trợ quyết định\nnghề nghiệp
+SGA -down-> User : Phát hiện khoảng\ncách kỹ năng
+PD  -down-> User : Đánh giá năng\nlực bản thân
+
+@enduml
