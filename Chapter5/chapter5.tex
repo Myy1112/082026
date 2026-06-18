@@ -16,7 +16,7 @@
     \item \textbf{Môi trường ảo hóa và container}:
     \begin{itemize}
         \item Docker Engine version 24.0.5.
-        \item Docker Compose version 2.20.2 dùng để điều phối các dịch vụ Frontend, Backend, PostgreSQL, MongoDB và Elasticsearch.
+        \item Docker Compose version 2.20.2 dùng để điều phối các dịch vụ Frontend (Next.js), Backend API (NestJS), ETL Pipeline (FastAPI) và PostgreSQL 17.
     \end{itemize}
     \item \textbf{Thông số cấu hình mô hình AI}:
     \begin{itemize}
@@ -93,9 +93,10 @@ Hệ thống crawler đã được vận hành thử nghiệm liên tục trong 
 \hline
 \textbf{Nguồn thu thập} & \textbf{Số tin cào thô} & \textbf{Số tin sau lọc trùng} & \textbf{Tỷ lệ dữ liệu sạch} \\
 \hline
-LinkedIn API & 12,450 & 9,870 & 79.27\% \\
-Indeed Web Scraping & 25,600 & 18,450 & 72.07\% \\
-TopCV Web Scraping & 18,900 & 14,200 & 75.13\% \\
+ITViec & 9,800 & 8,150 & 83.16\% \\
+VietnamWorks & 15,400 & 11,900 & 77.27\% \\
+CareerViet & 13,200 & 9,850 & 74.62\% \\
+LinkedIn & 18,550 & 12,620 & 68.03\% \\
 \hline
 \textbf{Tổng cộng} & \textbf{56,950} & \textbf{42,520} & \textbf{74.66\%} \\
 \hline
@@ -179,11 +180,11 @@ Kết quả phân tích từ thuật toán so khớp được trình bày trong 
 \hline
 \textbf{Kỹ năng yêu cầu} & \textbf{Trạng thái khớp} & \textbf{Hệ số tương đồng} & \textbf{Giải thích / Gợi ý hành động} \\
 \hline
-Python Programming & Khớp một phần & 0.89 & Khớp với kỹ năng \texttt{Python} trong CV bằng ngữ nghĩa. \\
+Python Programming & Đạt yêu cầu & 0.89 & Khớp với kỹ năng \texttt{Python} trong CV bằng ngữ nghĩa. \\
 \hline
-SQL Database & Khớp một phần & 0.88 & Khớp với kỹ năng \texttt{SQL} trong CV bằng ngữ nghĩa. \\
+SQL Database & Đạt yêu cầu & 0.88 & Khớp với kỹ năng \texttt{SQL} trong CV bằng ngữ nghĩa. \\
 \hline
-Teamwork & Khớp một phần & 0.83 & Khớp với kỹ năng \texttt{Communication} trong CV bằng ngữ nghĩa. \\
+Teamwork & Đạt yêu cầu & 0.83 & Khớp với kỹ năng \texttt{Communication} trong CV bằng ngữ nghĩa. \\
 \hline
 Pandas & Không khớp & < 0.30 & Kỹ năng thiếu. Đề xuất khóa học Pandas trên Kaggle. \\
 \hline
@@ -197,11 +198,11 @@ Git & Không khớp & < 0.15 & Kỹ năng thiếu. Đề xuất học quản lý
 
 \textbf{Tính toán điểm số so khớp cuối cùng}:
 \begin{itemize}
-    \item Số kỹ năng khớp chính xác: 0 (do cách viết khác nhau).
-    \item Số kỹ năng khớp ngữ nghĩa một phần (Cosine $\ge 0.82$): 3 kỹ năng (\texttt{Python Programming}, \texttt{SQL Database}, \texttt{Teamwork}) với các điểm số tương đồng tương ứng là $0.89$, $0.88$, và $0.83$.
-    \item Điểm số so khớp cuối cùng:
+    \item Số kỹ năng đạt yêu cầu (sim $\ge 0.75$): 3 kỹ năng (\texttt{Python Programming}, \texttt{SQL Database}, \texttt{Teamwork}) với các điểm tương đồng tương ứng là $0.89$, $0.88$ và $0.83$.
+    \item Số kỹ năng thiếu hụt (sim $< 0.40$): 3 kỹ năng (\texttt{Pandas}, \texttt{Power BI}, \texttt{Git}), đóng góp không đáng kể vào điểm tổng.
+    \item Điểm số so khớp cuối cùng (theo công thức tương đồng có trọng số, giả định trọng số đồng đều):
     \begin{equation}
-    \text{Match Score} = \frac{0.89 + 0.88 + 0.83}{6} \times 100\% \approx 43.33\%
+    \text{Match Score} = \frac{0.89 + 0.88 + 0.83 + 0 + 0 + 0}{6} \times 100\% \approx 43.33\%
     \end{equation}
 \end{itemize}
 

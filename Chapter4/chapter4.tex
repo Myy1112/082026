@@ -3,85 +3,104 @@
 
 \section{Lựa chọn công nghệ}
 
+Việc lựa chọn công nghệ cho hệ thống CareerNova tuân theo nguyên tắc phân tách trách nhiệm rõ ràng giữa ba thành phần triển khai độc lập --- ứng dụng Frontend, dịch vụ Backend API và Pipeline ETL --- đồng thời ưu tiên các nền tảng có hệ sinh thái trưởng thành, hỗ trợ kiểu dữ liệu tường minh (TypeScript/Python type hints) và thuận tiện cho việc đóng gói thành container Docker. Toàn bộ ngăn xếp công nghệ được mô tả trong các tiểu mục dưới đây tương ứng với mã nguồn thực tế của hệ thống.
+
 \subsection{Công nghệ Frontend}
 
 Để phát triển giao diện người dùng có tính tương tác cao và phản hồi nhanh, các công nghệ sau đã được lựa chọn:
 \begin{itemize}
-    \item \textbf{ReactJS}: Thư viện Javascript phổ biến cho phép xây dựng giao diện dạng Single Page Application (SPA), giúp tối ưu hóa hiệu năng render trang thông qua Virtual DOM và tái sử dụng các thành phần giao diện (components).
+    \item \textbf{Next.js 15 và React 19}: Khung phát triển ứng dụng web hiện đại trên nền React, sử dụng kiến trúc App Router. Next.js cho phép kết hợp linh hoạt giữa kết xuất phía máy chủ (Server-Side Rendering) cho các trang công khai và kết xuất phía trình duyệt (Client-Side Rendering) cho các trang dashboard tương tác, giúp tối ưu thời gian tải trang và trải nghiệm người dùng.
     \item \textbf{TypeScript}: Ngôn ngữ mở rộng của JavaScript bổ sung cơ chế kiểm soát kiểu dữ liệu tĩnh (static typing), giúp phát hiện lỗi sớm trong quá trình biên dịch và tăng độ tin cậy của mã nguồn khi hệ thống mở rộng.
-    \item \textbf{Tailwind CSS}: Khung CSS tiện ích (utility-first) giúp xây dựng giao diện nhanh chóng, đảm bảo tính nhất quán của hệ thống thiết kế (Design System) và hỗ trợ tốt thiết kế đáp ứng (Responsive).
-    \item \textbf{Recharts}: Thư viện trực quan hóa dữ liệu dựa trên SVG được tối ưu riêng cho React, dùng để vẽ các biểu đồ xu hướng tuyển dụng, mức lương và biểu đồ radar so khớp kỹ năng.
+    \item \textbf{Tailwind CSS và shadcn/ui}: Khung CSS tiện ích (utility-first) kết hợp bộ thành phần giao diện (component library) giúp xây dựng giao diện nhanh chóng, đảm bảo tính nhất quán của hệ thống thiết kế (Design System), hỗ trợ chế độ sáng/tối và thiết kế đáp ứng (Responsive).
+    \item \textbf{Recharts}: Thư viện trực quan hóa dữ liệu dựa trên SVG được tối ưu riêng cho React, dùng để vẽ các biểu đồ xu hướng tuyển dụng (AreaChart), phân bổ ngành (PieChart), dải lương (BarChart) và biểu đồ Radar so khớp kỹ năng (RadarChart).
 \end{itemize}
 
-\subsection{Công nghệ Backend \& Database}
+\subsection{Công nghệ Backend và Cơ sở dữ liệu}
 
 \begin{itemize}
-    \item \textbf{FastAPI (Python)}: Khung phát triển web hiện đại, hiệu năng cao dựa trên nền tảng ASGI, hỗ trợ lập trình bất đồng bộ (async/await) và tự động tạo tài liệu API chuẩn OpenAPI (Swagger UI).
-    \item \textbf{PostgreSQL}: Cơ sở dữ liệu quan hệ mạnh mẽ dùng để lưu trữ các thông tin có tính toàn vẹn cao như tài khoản người dùng, hồ sơ CV đã phân tích, từ điển kỹ năng nghề nghiệp và kết quả so khớp.
-    \item \textbf{MongoDB}: Cơ sở dữ liệu NoSQL dạng tài liệu (document-oriented) dùng để lưu trữ tạm thời dữ liệu tin tuyển dụng thô (raw JSON) thu thập từ các trang web trước khi tiến hành chuẩn hóa.
+    \item \textbf{NestJS (Node.js 20)}: Khung phát triển Backend dựa trên TypeScript, tổ chức theo kiến trúc module hóa (auth, profile, job, matching, skill-gap, market-dashboard, v.v.). NestJS đóng vai trò cổng dịch vụ chính, điều phối toàn bộ luồng yêu cầu từ Frontend, xử lý xác thực, phân quyền và tổng hợp dữ liệu.
+    \item \textbf{Prisma ORM}: Bộ ánh xạ quan hệ - đối tượng (ORM) thế hệ mới cho Node.js, cung cấp truy vấn an toàn kiểu (type-safe) tới PostgreSQL, đồng thời quản lý lược đồ và migration cơ sở dữ liệu một cách tường minh.
+    \item \textbf{PostgreSQL 17}: Cơ sở dữ liệu quan hệ mạnh mẽ, lưu trữ toàn bộ dữ liệu hệ thống bao gồm tài khoản người dùng, hồ sơ CV, kho dữ liệu tuyển dụng, từ điển kỹ năng và kết quả so khớp. Hệ thống tận dụng kiểu dữ liệu JSONB của PostgreSQL để lưu trước (precompute) các cấu trúc \texttt{radar\_data} và \texttt{gap\_report}, tối ưu hóa hiệu năng truy vấn thời gian thực.
+    \item \textbf{FastAPI (Python)}: Khung phát triển web bất đồng bộ hiệu năng cao trên nền ASGI, được sử dụng để xây dựng dịch vụ ETL Matching Service. Dịch vụ này tiếp nhận yêu cầu so khớp từ NestJS Backend qua giao thức HTTP và thực thi toàn bộ luồng xử lý AI nặng (trích xuất, chuẩn hóa, tính điểm).
 \end{itemize}
 
-\subsection{Công nghệ Thu thập \& Xử lý AI}
+\subsection{Công nghệ Thu thập và Xử lý AI}
 
 \begin{itemize}
-    \item \textbf{Scrapy}: Khung thu thập dữ liệu (Web Crawling) mạnh mẽ của Python, hỗ trợ xử lý đa luồng bất đồng bộ, giúp cào dữ liệu tin tuyển dụng quy mô lớn một cách nhanh chóng và ổn định.
-    \item \textbf{SentenceTransformers}: Thư viện Python dựa trên PyTorch dùng để tạo các vector nhúng (embeddings) chất lượng cao cho các kỹ năng và cụm từ chuyên môn từ mô hình pre-trained \texttt{all-MiniLM-L6-v2}.
-    \item \textbf{Gemini API / OpenAI API}: Sử dụng mô hình ngôn ngữ lớn (LLM) thông qua API để thực hiện trích xuất thông tin thực thể (kỹ năng, chức danh) từ văn bản mô tả công việc (JD) và CV không cấu trúc.
+    \item \textbf{Requests, cloudscraper và Selenium}: Bộ công cụ thu thập dữ liệu theo cơ chế dự phòng hai tầng. Hệ thống ưu tiên cào tĩnh bằng \texttt{Requests}/\texttt{cloudscraper} (nhẹ, nhanh) và tự động chuyển sang \texttt{Selenium} (trình duyệt headless) khi gặp tường lửa chống bot hoặc nội dung được kết xuất động bằng JavaScript.
+    \item \textbf{Google Gemini API}: Mô hình ngôn ngữ lớn (LLM) được sử dụng để trích xuất thực thể kỹ năng có cấu trúc từ văn bản JD và CV thông qua cơ chế Structured Outputs (ràng buộc đầu ra theo JSON Schema), kèm bằng chứng ngữ cảnh phục vụ kiểm chứng chống ảo giác.
+    \item \textbf{Sentence-Transformers (\texttt{all-MiniLM-L6-v2})}: Thư viện dựa trên PyTorch dùng để mã hóa kỹ năng và cụm từ chuyên môn thành vector nhúng phân tán 384 chiều, phục vụ tính toán độ tương đồng ngữ nghĩa.
+    \item \textbf{FAISS}: Thư viện tìm kiếm tương đồng vector của Facebook AI, dùng để lập chỉ mục và truy vấn lân cận gần nhất (nearest-neighbor) trên không gian embedding kỹ năng với độ trễ thấp.
+    \item \textbf{pdfplumber, pdf2image và pytesseract}: Bộ công cụ trích xuất văn bản từ CV. \texttt{pdfplumber} đọc trực tiếp lớp chữ của PDF số; khi gặp PDF dạng ảnh quét, hệ thống kích hoạt luồng OCR dự phòng dùng \texttt{pdf2image} kết hợp \texttt{pytesseract} (Tesseract OCR).
+\end{itemize}
+
+\subsection{Hạ tầng và công cụ triển khai}
+
+\begin{itemize}
+    \item \textbf{Docker và Docker Compose}: Mỗi thành phần (Frontend, Backend API, ETL Pipeline, PostgreSQL) được đóng gói độc lập thành container. Tệp \texttt{docker-compose.yml} điều phối toàn bộ dịch vụ, trong đó container PostgreSQL 17 lưu dữ liệu bền vững qua Docker named volume và được cấu hình \texttt{restart: unless-stopped}. Các image ứng dụng dựa trên Node 20-Alpine, chạy dưới tài khoản non-root nhằm tuân thủ nguyên tắc đặc quyền tối thiểu.
 \end{itemize}
 
 \section{Xây dựng pipeline tổ chức dữ liệu}
 
+Pipeline ETL được tổ chức theo kiến trúc module hóa gồm bốn giai đoạn nối tiếp: \textit{crawl} (thu thập) $\rightarrow$ \textit{clean} (làm sạch, khử trùng) $\rightarrow$ \textit{normalize} (chuẩn hóa kỹ năng) $\rightarrow$ \textit{import} (nạp vào PostgreSQL). Cách tổ chức này cho phép bổ sung nguồn tuyển dụng mới hoặc thay thế mô hình xử lý mà không ảnh hưởng tới cấu trúc tổng thể.
+
 \subsection{Cài đặt các module thu thập dữ liệu tin tuyển dụng tự động}
 
-Quy trình thu thập dữ liệu tuyển dụng được cài đặt bằng Scrapy. Dưới đây là mã nguồn minh họa một module crawler thu thập tin tuyển dụng thô từ trang web:
+Quy trình thu thập dữ liệu được thực hiện trên bốn nền tảng tuyển dụng lớn tại Việt Nam (ITViec, VietnamWorks, CareerViet, LinkedIn) theo cơ chế dự phòng hai tầng nhằm đảm bảo tính liên tục: hệ thống ưu tiên cào tĩnh bằng \texttt{Requests}/\texttt{cloudscraper}, và chỉ kích hoạt \texttt{Selenium} (trình duyệt headless) khi phát hiện tường lửa chống bot hoặc nội dung được kết xuất động. Mã nguồn minh họa cơ chế thu thập có dự phòng được trình bày dưới đây:
 
-\begin{lstlisting}[language=Python, caption=Ma nguon Scrapy Spider thu thap tin tuyen dung]
-import scrapy
-from crawler.items import JobItem
+\begin{lstlisting}[language=Python, caption=Co che thu thap JD voi fallback Requests sang Selenium]
+import cloudscraper
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 
-class JobSpider(scrapy.Spider):
-    name = "job_spider"
-    allowed_domains = ["example-recruitment.com"]
-    start_urls = ["https://example-recruitment.com/jobs"]
+def fetch_job_page(url: str) -> str:
+    # Tang 1: Cao tinh nhe va nhanh bang cloudscraper
+    scraper = cloudscraper.create_scraper()
+    resp = scraper.get(url, timeout=15)
+    if resp.status_code == 200 and is_content_valid(resp.text):
+        return resp.text
 
-    def parse(self, response):
-        for job_card in response.css(".job-card"):
-            item = JobItem()
-            item['title'] = job_card.css(".job-title::text").get().strip()
-            item['company'] = job_card.css(".company-name::text").get().strip()
-            item['location'] = job_card.css(".location::text").get().strip()
-            detail_url = job_card.css("a::attr(href)").get()
-            yield response.follow(detail_url, self.parse_detail, cb_kwargs={'item': item})
-
-    def parse_detail(self, response, item):
-        item['description'] = " ".join(response.css(".job-description *::text").getall())
-        item['salary'] = response.css(".salary::text").get()
-        yield item
+    # Tang 2 (Fallback): Selenium headless khi gap tuong lua / JS render
+    options = Options()
+    options.add_argument("--headless=new")
+    options.add_argument("--no-sandbox")
+    driver = webdriver.Chrome(options=options)
+    try:
+        driver.get(url)
+        html = driver.page_source
+    finally:
+        driver.quit()
+    return html
 \end{lstlisting}
+
+Mỗi tin tuyển dụng sau khi tải về được bóc tách thành các trường có cấu trúc (tiêu đề, công ty, địa điểm, mô tả, mức lương, ngày đăng) và lưu kèm trường \texttt{source\_name} (tên nguồn) cùng \texttt{source\_id} (ID tin gốc) phục vụ truy vết.
 
 \subsection{Quy trình làm sạch dữ liệu, xử lý trùng lặp và lưu trữ vào PostgreSQL}
 
-Sau khi dữ liệu thô được lưu vào MongoDB, pipeline xử lý dữ liệu (ETL pipeline) sẽ thực hiện làm sạch và lọc trùng lặp:
+Sau khi thu thập, dữ liệu thô được đưa qua pipeline xử lý để làm sạch và khử trùng trước khi nạp vào PostgreSQL:
 \begin{enumerate}
-    \item \textbf{Lọc trùng lặp vật lý}: Tính mã băm SHA-256 từ chuỗi nối của ba trường thông tin: \texttt{title + company + location}. Nếu mã hash đã tồn tại trong PostgreSQL, bản ghi sẽ bị loại bỏ.
-    \item \textbf{Xử lý ngôn ngữ thô}: Loại bỏ các thẻ HTML còn sót lại, chuẩn hóa dấu câu và đưa văn bản về định dạng chữ thường.
-    \item \textbf{Trích xuất và chuẩn hóa kỹ năng}: Gọi module xử lý AI để chuyển đổi văn bản thô thành danh sách kỹ năng chuẩn trước khi lưu trữ vào PostgreSQL.
+    \item \textbf{Khử trùng lặp bằng fingerprint}: Hệ thống tính mã băm MD5 (lưu ở trường \texttt{fingerprint}, ràng buộc UNIQUE trong bảng \texttt{jobs}) từ chuỗi đặc trưng của tin tuyển dụng. Nếu fingerprint đã tồn tại, bản ghi mới bị loại bỏ, đảm bảo mỗi tin chỉ xuất hiện một lần dù được thu thập từ nhiều nguồn.
+    \item \textbf{Làm sạch văn bản}: Loại bỏ các thẻ HTML còn sót lại, chuẩn hóa khoảng trắng và dấu câu, thống nhất định dạng văn bản mô tả công việc.
+    \item \textbf{Trích xuất và chuẩn hóa kỹ năng}: Gọi module xử lý AI (Gemini API kết hợp chuẩn hóa Lightcast Taxonomy, xem Mục~\ref{sec:skill_algorithm}) để chuyển văn bản thô thành danh sách kỹ năng chuẩn hóa, gán \texttt{skill\_id} tương ứng trong từ điển hệ thống.
+    \item \textbf{Nạp dữ liệu (Import)}: Lưu các thực thể đã chuẩn hóa vào PostgreSQL thông qua SQLAlchemy, bao gồm các bảng \texttt{jobs}, \texttt{companies}, \texttt{skills}, \texttt{job\_skills} cùng các liên kết khóa ngoại.
 \end{enumerate}
 
 \section{Xây dựng chức năng cho các phân hệ người dùng}
 
 \subsection{Hiện thực hóa các tính năng Quản lý tài khoản, Đăng ký/Đăng nhập (Auth)}
 
-Hệ thống sử dụng cơ chế bảo mật JWT (JSON Web Token):
+Module \texttt{auth} của NestJS quản lý toàn bộ luồng xác thực và phân quyền, được xây dựng theo cơ chế JWT stateless kết hợp refresh token:
 \begin{itemize}
-    \item Khi người dùng đăng nhập thành công, Backend tạo ra một mã JWT chứa thông tin định danh và vai trò (\texttt{role}). Mã này được ký bằng thuật toán mã hóa đối xứng HS256 với khóa bí mật.
-    \item Token được gửi về Frontend và lưu vào \texttt{localStorage} hoặc HTTP-only Cookie.
-    \item Đối với các API yêu cầu bảo mật (như tải CV hoặc lưu việc làm), Frontend đính kèm token trong Header \texttt{Authorization: Bearer <token>}.
+    \item \textbf{Băm mật khẩu}: Khi đăng ký, mật khẩu người dùng được băm bằng thuật toán \texttt{bcrypt} trước khi lưu vào trường \texttt{password\_hash}; hệ thống không bao giờ lưu mật khẩu dạng plaintext.
+    \item \textbf{Xác thực email}: Sau đăng ký, hệ thống sinh \texttt{verify\_token} có thời hạn và gửi email kích hoạt; tài khoản chỉ chuyển sang trạng thái \texttt{is\_active = true} sau khi người dùng xác nhận.
+    \item \textbf{Cấp phát token}: Khi đăng nhập thành công, Backend cấp một \textit{access token} thời hạn ngắn (chứa \texttt{user\_id} và \texttt{role}) và một \textit{refresh token} thời hạn dài. Access token hết hạn được làm mới qua refresh token nhằm giảm thiểu rủi ro rò rỉ.
+    \item \textbf{Đăng nhập Google (SSO)}: Bên cạnh đăng nhập email/mật khẩu, hệ thống hỗ trợ đăng nhập một lần (Single Sign-On) qua Google OAuth; thông tin nhà cung cấp được lưu vào bảng \texttt{user\_auth\_providers}.
+    \item \textbf{Bảo vệ API}: Các route yêu cầu xác thực được bảo vệ bằng Guard của NestJS; Frontend đính kèm token trong header \texttt{Authorization: Bearer <token>} hoặc qua HTTP-only Cookie.
 \end{itemize}
 
 \subsection{Hiện thực hóa giao diện Dashboard trực quan hóa dữ liệu thị trường việc làm}
 
-Giao diện Dashboard sử dụng thư viện Recharts để hiển thị biểu đồ thống kê:
+Giao diện MarketDashboard khởi tạo ba truy vấn API song song (\texttt{Promise.all}) để lấy dữ liệu xu hướng tuyển dụng, phân bổ ngành và dải lương, sau đó kết xuất đồng thời bằng thư viện Recharts. Mã nguồn minh họa một thành phần biểu đồ cột hiển thị top kỹ năng được yêu cầu nhiều nhất:
 \begin{lstlisting}[language=XML, caption=Cau truc React component ve bieu do Top ky nang]
 import React from 'react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
@@ -106,102 +125,87 @@ export const SkillsTrendingChart = ({ data }) => {
 \subsection{Hiện thực hóa chức năng Tìm kiếm job, Lưu job và Quản lý danh sách CV}
 
 \begin{itemize}
-    \item \textbf{Tìm kiếm Job}: Sử dụng Elasticsearch làm công cụ tìm kiếm chính. Khi người dùng nhập từ khóa tìm kiếm, API Backend chuyển tiếp truy vấn thành cấu trúc câu lệnh DSL của Elasticsearch hỗ trợ tìm kiếm mờ (Fuzzy Search) để tìm kiếm các job phù hợp nhất.
-    \item \textbf{Quản lý danh sách CV}: Ứng viên có thể quản lý nhiều phiên bản CV khác nhau, thực hiện đổi tên, xóa, hoặc chọn một CV làm mặc định để đối soát.
+    \item \textbf{Tìm kiếm Job}: Hệ thống truy vấn trực tiếp trên PostgreSQL thông qua Prisma ORM, kết hợp lọc theo từ khóa, kỹ năng, mức lương và địa điểm. Ở cấp độ kỹ năng, việc đối sánh ngữ nghĩa được hỗ trợ bởi chỉ mục vector FAISS, giúp tìm các tin tuyển dụng có kỹ năng tương đồng về ngữ nghĩa thay vì chỉ khớp từ khóa chính xác.
+    \item \textbf{Lưu Job}: Người dùng có thể lưu các tin tuyển dụng yêu thích vào danh sách cá nhân để theo dõi, phục vụ việc so khớp về sau.
+    \item \textbf{Quản lý danh sách CV}: Người dùng có thể tải lên nhiều phiên bản CV, đổi tên, xóa, hoặc chọn một CV làm mặc định (Active CV) để sử dụng trong quá trình đối soát. Metadata CV được lưu trong bảng \texttt{user\_cvs}.
 \end{itemize}
 
 \section{Xây dựng thuật toán phân tích kỹ năng năng lực}
+\label{sec:skill_algorithm}
 
-\subsection{Xây dựng cấu trúc câu lệnh để trích xuất thông tin CV và JD về định dạng JSON}
+\subsection{Xây dựng cấu trúc Structured Output để trích xuất thông tin CV và JD}
 
-Để trích xuất các kỹ năng từ văn bản tự do của CV và JD bằng LLM, hệ thống sử dụng cấu trúc Prompt định nghĩa JSON Schema cụ thể dưới đây:
+Để trích xuất kỹ năng từ văn bản tự do của CV và JD, hệ thống sử dụng cơ chế \textit{Structured Outputs} của Gemini API: ràng buộc mô hình trả về đúng một đối tượng JSON tuân theo JSON Schema định nghĩa trước. Khác với việc chỉ yêu cầu ``trả về JSON'' trong prompt, cơ chế này đảm bảo đầu ra luôn hợp lệ về cấu trúc, loại bỏ rủi ro mô hình chèn văn bản giải thích hoặc khối markdown. Mỗi kỹ năng trích xuất bắt buộc đi kèm bằng chứng ngữ cảnh (\texttt{evidence\_text}) và điểm tin cậy (\texttt{confidence}) phục vụ kiểm chứng chống ảo giác.
 
 \begin{center}
 \begin{minipage}{0.95\textwidth}
 \hrule
 \vspace{2mm}
-\textbf{System Prompt trích xuất thực thể bằng LLM:}
+\textbf{JSON Schema ràng buộc đầu ra trích xuất thực thể kỹ năng:}
 \vspace{2mm}
 \hrule
 \vspace{2mm}
-Bạn là một chuyên gia phân tích nhân sự thông minh. Nhiệm vụ của bạn là đọc kỹ đoạn văn bản thô dưới đây (có thể là CV của ứng viên hoặc Mô tả công việc JD) và trích xuất ra các thông tin theo định dạng JSON Schema sau:
+Đọc kỹ đoạn văn bản thô (CV của ứng viên hoặc Mô tả công việc JD) và trích xuất danh sách kỹ năng theo đúng cấu trúc JSON sau. Mỗi kỹ năng phải kèm cụm từ bằng chứng được trích nguyên văn từ văn bản gốc:
 \begin{verbatim}
 {
-  "job_title": "Chuc danh cong viec hoac muc tieu (neu co)",
-  "hard_skills": ["Danh sach ky nang ky thuat, ngon ngu lap trinh"],
-  "soft_skills": ["Danh sach cac ky nang mem, giao tiep, quan ly"],
-  "experience_years": "So nam kinh nghiem (dang so)"
+  "skills": [
+    {
+      "skill_name": "Ten ky nang (vi du: Python, Project Management)",
+      "evidence_text": "Cum tu trich nguyen van tu CV/JD lam bang chung",
+      "skill_type": "hard | soft",
+      "confidence": 0.0
+    }
+  ]
 }
 \end{verbatim}
-Chỉ trả về chuỗi định dạng JSON hợp lệ, không kèm giải thích hoặc các khối markdown.
 \vspace{2mm}
 \hrule
 \end{minipage}
 \end{center}
 
-\subsection{Cài đặt mã nguồn để tính toán độ phù hợp và liệt kê các kỹ năng còn thiếu}
+\textbf{Cơ chế chống ảo giác (Anti-Hallucination):} Sau khi nhận kết quả từ Gemini, hệ thống chỉ giữ lại các kỹ năng thỏa mãn đồng thời hai điều kiện: (1) điểm \texttt{confidence} $\geq 0.85$, và (2) \texttt{evidence\_text} xuất hiện trực tiếp dưới dạng chuỗi con (substring) trong văn bản gốc. Mọi thực thể không thỏa mãn đều bị loại bỏ. Trong trường hợp gọi LLM thất bại hoặc cạn hạn ngạch, hệ thống kích hoạt bộ đối sánh từ khóa thô (Keyword Match Fallback) trực tiếp với từ điển trong bảng \texttt{skills} bằng biểu thức chính quy có ranh giới từ.
 
-Dưới đây là mã nguồn Python hiện thực hóa giải thuật tính điểm so khớp và xác định kỹ năng khuyết thiếu (Skill Gap):
+\subsection{Cài đặt Matching Engine tính độ phù hợp và liệt kê các kỹ năng còn thiếu}
 
-\begin{lstlisting}[language=Python, caption=Ma nguon xu ly so khop va tinh khoang cach ky nang]
+Sau khi kỹ năng được chuẩn hóa, bộ máy so khớp (Matching Engine) nạp tập kỹ năng yêu cầu cùng trọng số $w_i$ từ bảng \texttt{job\_group\_skill\_weights} và tính điểm tương thích theo công thức tương đồng ngữ nghĩa có trọng số đã trình bày ở Chương~\ref{Chapter3}. Vì các vector embedding trong cache đã được chuẩn hóa L2 ($\|\mathbf{e}\|_2 = 1$), độ tương đồng Cosine được rút gọn thành tích vô hướng, giúp tăng tốc tính toán. Mỗi kỹ năng yêu cầu được phân loại theo ba ngưỡng: Đạt yêu cầu ($\text{sim} \geq 0.75$), Đạt một phần ($0.40 \leq \text{sim} < 0.75$) và Thiếu hụt ($\text{sim} < 0.40$). Mã nguồn Python hiện thực hóa được trình bày dưới đây:
+
+\begin{lstlisting}[language=Python, caption=Ma nguon Matching Engine tinh diem so khop co trong so]
 import numpy as np
-from sentence_transformers import SentenceTransformer
 
-model = SentenceTransformer('all-MiniLM-L6-v2')
+def weighted_match(cv_emb, job_emb_list, weights):
+    """
+    cv_emb       : ma tran embedding ky nang trong CV (K x 384), da chuan hoa L2
+    job_emb_list : danh sach embedding ky nang yeu cau cua Job (M x 384)
+    weights      : trong so w_i (lay tu bang job_group_skill_weights)
+    """
+    matched, partial, missing = [], [], []
+    weighted_sim_sum = 0.0
+    total_weight = 0.0
 
-def cosine_similarity(v1, v2):
-    return np.dot(v1, v2) / (np.linalg.norm(v1) * np.linalg.norm(v2))
+    for i, (job_emb, w_i) in enumerate(zip(job_emb_list, weights)):
+        # Vector da chuan hoa L2 nen cosine = tich vo huong
+        if len(cv_emb) > 0:
+            sim_i = float(np.clip((cv_emb @ job_emb).max(), 0.0, 1.0))
+        else:
+            sim_i = 0.0
 
-def analyze_skill_gap(cv_skills, job_skills, threshold=0.82):
-    matched_skills = []
-    missing_skills = []
-    partial_match_scores = 0.0
+        weighted_sim_sum += w_i * sim_i
+        total_weight += w_i
 
-    # Convert skills to embeddings
-    cv_embeddings = model.encode(cv_skills) if cv_skills else []
-    
-    for job_skill in job_skills:
-        # Check for exact matches
-        if job_skill.lower() in [s.lower() for s in cv_skills]:
-            matched_skills.append({"skill": job_skill, "match_type": "exact", "score": 1.0})
-            continue
-        
-        # Semantic matching for remaining skills
-        if len(cv_embeddings) > 0:
-            job_skill_emb = model.encode(job_skill)
-            max_score = 0.0
-            best_match_skill = None
-            for idx, cv_skill in enumerate(cv_skills):
-                sim = cosine_similarity(job_skill_emb, cv_embeddings[idx])
-                if sim > max_score:
-                    max_score = sim
-                    best_match_skill = cv_skill
-            
-            if max_score >= threshold:
-                matched_skills.append({
-                    "skill": job_skill, 
-                    "match_type": "semantic", 
-                    "score": float(max_score),
-                    "matched_with": best_match_skill
-                })
-                partial_match_scores += max_score
-                continue
-        
-        # No match found
-        missing_skills.append(job_skill)
+        if sim_i >= 0.75:
+            matched.append({"skill_index": i, "sim": sim_i})
+        elif sim_i >= 0.40:
+            partial.append({"skill_index": i, "sim": sim_i})
+        else:
+            missing.append({"skill_index": i, "sim": sim_i})
 
-    # Compute final matching score
-    total_required = len(job_skills)
-    exact_count = len([s for s in matched_skills if s["match_type"] == "exact"])
-    
-    match_score = 0.0
-    if total_required > 0:
-        match_score = (exact_count + partial_match_scores) / total_required * 100
-        match_score = min(100.0, float(match_score))
-
+    match_score = (weighted_sim_sum / total_weight) if total_weight else 0.0
     return {
-        "match_score": round(match_score, 2),
-        "matched_skills": matched_skills,
-        "missing_skills": missing_skills
+        "match_percent": round(match_score * 100, 2),
+        "matched": matched,
+        "partial": partial,
+        "missing": missing,
     }
 \end{lstlisting}
+
+Kết quả trả về bao gồm điểm tương thích tổng thể (\texttt{match\_percent}) và ba nhóm kỹ năng đã phân loại, được lưu vào cột \texttt{radar\_data} và \texttt{gap\_report} (kiểu JSONB) của bảng \texttt{cv\_job\_matches} để phục vụ kết xuất biểu đồ Radar và Gap Report trên giao diện người dùng.
