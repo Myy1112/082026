@@ -133,77 +133,250 @@ Thời gian phản hồi (Response Time) của các API nghiệp vụ chính đ�
 
 Thời gian API đối soát (\texttt{/match-gap}) trung bình là 1,450 ms. Khoảng thời gian này chủ yếu tiêu tốn cho việc gọi mô hình LLM thông qua API mạng để phân tích nội dung CV không cấu trúc và tạo vector nhúng cho các cụm từ mới. Hiệu năng này đáp ứng tốt trải nghiệm người dùng thực tế.
 
-\section{Đánh giá kết quả đầu ra của thuật toán}
 
-\subsection{Đánh giá độ chính xác của định dạng dữ liệu trả về từ mô hình}
 
-Nhằm kiểm tra tính chính xác của dữ liệu JSON được LLM sinh ra dựa trên Prompt có cấu trúc đã thiết kế ở Chương 4, chúng tôi tiến hành kiểm thử trên tập dữ liệu gồm 500 CV và JD ngẫu nhiên.
-Kết quả cho thấy:
+\section{Kiểm thử độ chính xác và Đánh giá kết quả đầu ra thuật toán (Algorithm Accuracy Evaluation)}
+\label{sec:algorithm_evaluation}
+
+Nhằm kiểm chứng tính đúng đắn và chuẩn khoa học của hệ thống, chúng tôi xây dựng bộ kịch bản kiểm thử độ chính xác dành riêng cho các thành phần cốt lõi của thuật toán đã thiết kế tại Chương 4. Toàn bộ các thử nghiệm đều được định lượng hóa, triệt tiêu các đánh giá cảm tính và tuân thủ cấu trúc báo cáo trạng thái kỹ thuật.
+
+\subsection{Đặc tả kịch bản kiểm thử độ chính xác trích xuất thực thể và Structured Output}
+
+Mục tiêu của phân hệ này là kiểm tra khả năng bóc tách thông tin phi cấu trúc từ CV/JD sang định dạng JSON Schema dưới tham số nhiệt độ cấu hình $\text{temperature} = 0.0$. Độ chính xác của thuật toán Nhận diện Thực thể Kỹ năng được đánh giá định lượng thông qua ba chỉ số chính: Precision (Độ chính xác), Recall (Độ phủ) và F1-Score (Điểm F1).
+
+\begin{equation}
+\text{Precision} = \frac{\text{TP}}{\text{TP} + \text{FP}}
+\end{equation}
+\begin{equation}
+\text{Recall} = \frac{\text{TP}}{\text{TP} + \text{FN}}
+\end{equation}
+\begin{equation}
+\text{F1-Score} = 2 \times \frac{\text{Precision} \times \text{Recall}}{\text{Precision} + \text{Recall}}
+\end{equation}
+
+Trong đó:
 \begin{itemize}
-    \item \textbf{Độ hợp lệ cấu trúc JSON}: Đạt 98.4\% (chỉ có 8/500 trường hợp mô hình trả về lỗi cú pháp JSON do bị ngắt dòng hoặc chứa ký tự đặc biệt chưa escape). Hệ thống đã tự khắc phục các trường hợp lỗi này bằng cơ chế retry gọi lại API.
-    \item \textbf{Độ chính xác trích xuất kỹ năng (NER)}: Được đánh giá dựa trên tập dữ liệu chuẩn (Ground Truth Set) có gán nhãn thủ công bởi các chuyên gia tuyển dụng. Kết quả các độ đo chính như sau:
+    \item $\text{TP}$ (True Positives): Số kỹ năng trích xuất chính xác và có bằng chứng xác thực trong văn bản gốc.
+    \item $\text{FP}$ (False Positives): Số kỹ năng bị trích xuất sai hoặc không xuất hiện trong văn bản gốc (ảo giác dữ liệu).
+    \item $\text{FN}$ (False Negatives): Số kỹ năng thực tế có trong văn bản nhưng mô hình bỏ sót.
 \end{itemize}
 
-\begin{table}[ht]
-\caption{Kết quả đánh giá thuật toán trích xuất kỹ năng bằng LLM}
-\label{tab:ner_results_new}
+Dưới đây là khung ma trận kịch bản kiểm thử tính năng trích xuất thực thể:
+
+\begin{table}[H]
+\caption{Ma trận kịch bản kiểm thử tính năng trích xuất thực thể kỹ năng}
+\label{tab:tc_extraction}
 \begin{center}
-\begin{tabular}{|l|c|}
+\begin{tabular}{|C{1.2cm}|L{4.2cm}|L{4.2cm}|L{4.2cm}|C{1.8cm}|}
 \hline
-\textbf{Độ đo đánh giá (Metric)} & \textbf{Giá trị đạt được} \\
+\textbf{ID} & \textbf{Các bước thực hiện} & \textbf{Kết quả kỳ vọng} & \textbf{Kết quả thực tế} & \textbf{Trạng thái} \\
 \hline
-Precision (Độ chính xác) & 87.5\% \\
-Recall (Độ phủ) & 84.2\% \\
-F1-Score (Điểm F1) & 85.8\% \\
+TC-ALG-01 & 
+1. Tải lên tệp CV dạng PDF gốc chứa text layer. \newline
+2. Gọi Gemini API với $\text{temp} = 0.0$ và JSON Schema. \newline
+3. Kiểm tra định dạng JSON đầu ra. & 
+- Dữ liệu trả về đúng định dạng JSON Schema 100\%. \newline
+- Điểm \texttt{confidence} $\ge 0.85$. \newline
+- Chuỗi \texttt{evidence} khớp tuyệt đối dạng substring trong CV. & 
+\textit{[Chưa thực hiện]} & 
+\textit{[Chờ test]} \\
+\hline
+TC-ALG-02 & 
+1. Tải lên tệp CV dạng quét (Scan PDF) hoặc ảnh chụp. \newline
+2. Kích hoạt OCR qua \texttt{pdf2image} và \texttt{pytesseract}. \newline
+3. Chuyển văn bản nhận diện qua Gemini API. & 
+- OCR trích xuất thành công văn bản thô. \newline
+- Gemini bóc tách đúng thông tin kỹ năng định dạng JSON chuẩn xác. & 
+\textit{[Chưa thực hiện]} & 
+\textit{[Chờ test]} \\
+\hline
+TC-ALG-03 & 
+1. Kích hoạt cơ chế Fallback (Keyword Parser dựa trên Regex có ranh giới từ $\backslash$b) khi giả định API Gemini bị lỗi hoặc hết quota. & 
+- Hệ thống phát hiện lỗi và chuyển sang Regex thành công. \newline
+- Trích xuất chính xác các kỹ năng khớp cứng trong từ điển \texttt{skills}. & 
+\textit{[Chưa thực hiện]} & 
+\textit{[Chờ test]} \\
 \hline
 \end{tabular}
 \end{center}
 \end{table}
 
-\subsection{Phân tích thực tế một số trường hợp đối soát để chứng minh tính hợp lý của kết quả gợi ý kỹ năng}
+Bảng thống kê kết quả định lượng độ chính xác của mô hình sẽ được ghi nhận sau khi hoàn thành chạy thử nghiệm trên tập mẫu gồm 100 hồ sơ CV:
 
-Để minh chứng cho tính thực tế và hiệu quả của thuật toán đối soát, dưới đây là chi tiết kết quả phân tích khoảng cách kỹ năng của một ứng viên cụ thể:
+\begin{table}[H]
+\caption{Bảng ghi nhận độ chính xác định dạng dữ liệu và NER từ mô hình}
+\label{tab:ner_evaluation_specs}
+\begin{center}
+\begin{tabular}{|L{6cm}|C{4cm}|C{4cm}|}
+\hline
+\textbf{Độ đo đánh giá (Metric)} & \textbf{Mục tiêu kỳ vọng} & \textbf{Kết quả thực tế} \\
+\hline
+Tỷ lệ hợp lệ cấu trúc JSON & 100.0\% (sau khi retry) & \textit{[Chờ điền]} \\
+\hline
+Độ chính xác (Precision) của NER & $\ge 85.0\%$ & \textit{[Chờ điền]} \\
+\hline
+Độ phủ (Recall) của NER & $\ge 80.0\%$ & \textit{[Chờ điền]} \\
+\hline
+Điểm F1 (F1-Score) của NER & $\ge 82.5\%$ & \textit{[Chờ điền]} \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
 
-\textbf{Thông tin đầu vào đối soát}:
-\begin{itemize}
-    \item \textbf{Hồ sơ CV của Ứng viên}: Có 4 kỹ năng chính gồm: \texttt{Python}, \texttt{SQL}, \texttt{Data Analysis}, \texttt{Communication}.
-    \item \textbf{Yêu cầu của Tin tuyển dụng (JD)}: Yêu cầu 6 kỹ năng gồm: \texttt{Python Programming}, \texttt{SQL Database}, \texttt{Pandas}, \texttt{Power BI}, \texttt{Git}, \texttt{Teamwork}.
-\end{itemize}
+\subsection{Đặc tả kịch bản kiểm thử chuẩn hóa kỹ năng và so khớp mờ doanh nghiệp}
 
-Kết quả phân tích từ thuật toán so khớp được trình bày trong bảng bên dưới:
+Mục tiêu là kiểm chứng tính chính xác của việc ánh xạ thực thể bằng thuật toán lân cận gần nhất (FAISS với chỉ mục \texttt{IndexFlatIP}) và thuật toán Jaccard Similarity để gộp các công ty có tên biến thể khác nhau.
 
-\begin{table}[ht]
-\caption{Chi tiết kết quả so khớp và gợi ý kỹ năng thực tế}
-\label{tab:matching_case_study}
+\begin{table}[H]
+\caption{Ma trận kịch bản kiểm thử chuẩn hóa kỹ năng và khớp mờ doanh nghiệp}
+\label{tab:tc_normalization}
+\begin{center}
+\begin{tabular}{|C{1.2cm}|L{4.2cm}|L{4.2cm}|L{4.2cm}|C{1.8cm}|}
+\hline
+\textbf{ID} & \textbf{Các bước thực hiện} & \textbf{Kết quả kỳ vọng} & \textbf{Kết quả thực tế} & \textbf{Trạng thái} \\
+\hline
+TC-ALG-04 & 
+1. Nhập nhãn kỹ năng thô trích xuất từ CV/JD (ví dụ: "postgres", "nextjs"). \newline
+2. Gọi FAISS tìm kiếm lân cận trên không gian vector nhúng 384 chiều. & 
+- Ánh xạ chính xác sang kỹ năng chuẩn hóa trong từ điển ("PostgreSQL" và "Next.js"). \newline
+- Độ trễ tìm kiếm dưới 5ms. & 
+\textit{[Chưa thực hiện]} & 
+\textit{[Chờ test]} \\
+\hline
+TC-ALG-05 & 
+1. Nhập tên doanh nghiệp chứa các hậu tố pháp lý khác nhau (ví dụ: "Công ty Cổ phần VNG", "VNG Corporation JSC"). \newline
+2. Chạy thuật toán lọc hậu tố và so khớp Jaccard. & 
+- Loại bỏ hoàn toàn các từ gây nhiễu pháp lý. \newline
+- Điểm tương đồng Jaccard vượt ngưỡng và tự động gom nhóm về cùng ID công ty. & 
+\textit{[Chưa thực hiện]} & 
+\textit{[Chờ test]} \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+\subsection{Đặc tả kịch bản kiểm thử thuật toán khử trùng lặp sâu bài đăng}
+
+Mục tiêu là kiểm chứng thuật toán TF-IDF kết hợp Cosine Similarity để phát hiện và lọc trùng lặp các tin đăng giống nhau từ cùng một công ty trong vòng 30 ngày.
+
+\begin{table}[H]
+\caption{Ma trận kịch bản kiểm thử thuật toán khử trùng lặp sâu tin đăng}
+\label{tab:tc_deduplication}
+\begin{center}
+\begin{tabular}{|C{1.2cm}|L{4.2cm}|L{4.2cm}|L{4.2cm}|C{1.8cm}|}
+\hline
+\textbf{ID} & \textbf{Các bước thực hiện} & \textbf{Kết quả kỳ vọng} & \textbf{Kết quả thực tế} & \textbf{Trạng thái} \\
+\hline
+TC-ALG-06 & 
+1. Nhập 2 tin tuyển dụng từ một công ty có nội dung tương đồng trên 90\% (chỉ khác ngày đăng). \newline
+2. Chạy bộ khử trùng sâu TF-IDF \& Cosine. & 
+- Độ tương đồng Cosine đo được $> 80\%$. \newline
+- Hệ thống loại bỏ tin mới, chỉ cập nhật thời điểm thu thập \texttt{last\_seen} của tin cũ. & 
+\textit{[Chưa thực hiện]} & 
+\textit{[Chờ test]} \\
+\hline
+TC-ALG-07 & 
+1. Nhập 2 tin tuyển dụng có vai trò khác nhau (ví dụ: "Frontend" và "Backend") của cùng một công ty. \newline
+2. Chạy bộ khử trùng sâu. & 
+- Độ tương đồng Cosine đo được $< 80\%$. \newline
+- Hệ thống ghi nhận đây là hai bài đăng độc lập, tiến hành lưu trữ cả hai bình thường. & 
+\textit{[Chưa thực hiện]} & 
+\textit{[Chờ test]} \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+\subsection{Đặc tả kịch bản kiểm thử thuật toán so khớp năng lực Matching Engine}
+
+Mục tiêu của phân hệ này là kiểm chứng tính đúng đắn của thuật toán Matching Engine trong việc áp đặt 6 quy tắc lọc ngữ nghĩa (Semantic Filtering Rules) và tính điểm số có trọng số (Weighted Match Score) cuối cùng.
+
+\begin{table}[H]
+\caption{Ma trận kịch bản kiểm thử các quy tắc lọc và tính điểm Matching Engine}
+\label{tab:tc_matching}
+\begin{center}
+\begin{tabular}{|C{1.2cm}|L{4.2cm}|L{4.2cm}|L{4.2cm}|C{1.8cm}|}
+\hline
+\textbf{ID} & \textbf{Các bước thực hiện} & \textbf{Kết quả kỳ vọng} & \textbf{Kết quả thực tế} & \textbf{Trạng thái} \\
+\hline
+TC-ALG-08 & 
+1. Đưa vào cặp kỹ năng so khớp chứa Chứng chỉ (\texttt{type = "Certification"}) và một kỹ năng chuyên môn khác. & 
+- Áp dụng quy tắc Certification Exclusivity. \newline
+- Độ tương đồng bị ép cứng về $0.0$. & 
+\textit{[Chưa thực hiện]} & 
+\textit{[Chờ test]} \\
+\hline
+TC-ALG-09 & 
+1. Đưa vào cặp kỹ năng lệch loại hình phân loại (ví dụ: \texttt{Specialized skill} và \texttt{Common skill}). & 
+- Áp dụng quy tắc Type Grouping. \newline
+- Độ tương đồng bị gán bằng $0.0$. & 
+\textit{[Chưa thực hiện]} & 
+\textit{[Chờ test]} \\
+\hline
+TC-ALG-10 & 
+1. Đưa vào một kỹ năng công cụ (\texttt{is\_software = true}) và một kỹ năng chung (\texttt{Common skill}). & 
+- Áp dụng quy tắc Software/Tool Exclusivity. \newline
+- Độ tương đồng bị gán bằng $0.0$. & 
+\textit{[Chưa thực hiện]} & 
+\textit{[Chờ test]} \\
+\hline
+TC-ALG-11 & 
+1. Đưa vào một kỹ năng ngôn ngữ (\texttt{is\_language = true}) và kỹ năng không phải ngôn ngữ hoặc khác gốc ngôn ngữ. & 
+- Áp dụng quy tắc Language Filtering. \newline
+- Độ tương đồng bị gán bằng $0.0$. & 
+\textit{[Chưa thực hiện]} & 
+\textit{[Chờ test]} \\
+\hline
+TC-ALG-12 & 
+1. Đưa vào hai kỹ năng trùng khớp hoàn toàn phân nhóm chuyên môn (\texttt{category}). & 
+- Áp dụng quy tắc Subcategory Exclusivity \& Boost. \newline
+- Độ tương đồng được nhân hệ số tăng cường $1.2$: $\text{Sim}_{\text{boosted}} = \min(1.0, \text{Sim} \times 1.2)$. & 
+\textit{[Chưa thực hiện]} & 
+\textit{[Chờ test]} \\
+\hline
+TC-ALG-13 & 
+1. Đưa vào hai kỹ năng mềm (\texttt{Common skill}) có độ tương đồng cosine $> 0.35$. & 
+- Áp dụng quy tắc Soft Skills Direct Match. \newline
+- Hệ thống tự động nâng độ tương đồng lên mức khớp tối đa ($1.0$). & 
+\textit{[Chưa thực hiện]} & 
+\textit{[Chờ test]} \\
+\hline
+TC-ALG-14 & 
+1. Nhập danh sách kỹ năng CV và JD kèm trọng số $W$. \newline
+2. Gọi hàm tính điểm Matching Score. & 
+- Kết quả điểm số tính toán chính xác theo trung bình tương đồng có trọng số. \newline
+- Phân loại đúng kỹ năng vào \texttt{radar\_data} và \texttt{gap\_report}. & 
+\textit{[Chưa thực hiện]} & 
+\textit{[Chờ test]} \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+Bảng phân tích đối soát chi tiết thực tế của một trường hợp thử nghiệm cụ thể (Case Study) sẽ được điền đầy đủ số liệu sau khi hoàn thành chạy thực thi thuật toán:
+
+\begin{table}[H]
+\caption{Biểu mẫu phân tích chi tiết kết quả so khớp và gợi ý kỹ năng thực tế (Case Study)}
+\label{tab:matching_case_study_template}
 \begin{center}
 \begin{tabular}{|L{3.5cm}|C{2.8cm}|C{2.8cm}|L{5.0cm}|}
 \hline
 \textbf{Kỹ năng yêu cầu} & \textbf{Trạng thái khớp} & \textbf{Hệ số tương đồng} & \textbf{Giải thích / Gợi ý hành động} \\
 \hline
-Python Programming & Đạt yêu cầu & 0.89 & Khớp với kỹ năng \texttt{Python} trong CV bằng ngữ nghĩa. \\
+Python Programming & \textit{[Chờ test]} & \textit{[Chờ điền]} & \textit{[Chờ phân tích kết quả thực tế]} \\
 \hline
-SQL Database & Đạt yêu cầu & 0.88 & Khớp với kỹ năng \texttt{SQL} trong CV bằng ngữ nghĩa. \\
+SQL Database & \textit{[Chờ test]} & \textit{[Chờ điền]} & \textit{[Chờ phân tích kết quả thực tế]} \\
 \hline
-Teamwork & Đạt yêu cầu & 0.83 & Khớp với kỹ năng \texttt{Communication} trong CV bằng ngữ nghĩa. \\
+Teamwork & \textit{[Chờ test]} & \textit{[Chờ điền]} & \textit{[Chờ phân tích kết quả thực tế]} \\
 \hline
-Pandas & Không khớp & < 0.30 & Kỹ năng thiếu. Đề xuất khóa học Pandas trên Kaggle. \\
+Pandas & \textit{[Chờ test]} & \textit{[Chờ điền]} & \textit{[Chờ phân tích kết quả thực tế]} \\
 \hline
-Power BI & Không khớp & < 0.25 & Kỹ năng thiếu. Đề xuất học cách xây dựng Dashboard. \\
+Power BI & \textit{[Chờ test]} & \textit{[Chờ điền]} & \textit{[Chờ phân tích kết quả thực tế]} \\
 \hline
-Git & Không khớp & < 0.15 & Kỹ năng thiếu. Đề xuất học quản lý mã nguồn Git cơ bản. \\
+Git & \textit{[Chờ test]} & \textit{[Chờ điền]} & \textit{[Chờ phân tích kết quả thực tế]} \\
 \hline
 \end{tabular}
 \end{center}
 \end{table}
 
-\textbf{Tính toán điểm số so khớp cuối cùng}:
-\begin{itemize}
-    \item Số kỹ năng đạt yêu cầu (sim $\ge 0.75$): 3 kỹ năng (\texttt{Python Programming}, \texttt{SQL Database}, \texttt{Teamwork}) với các điểm tương đồng tương ứng là $0.89$, $0.88$ và $0.83$.
-    \item Số kỹ năng thiếu hụt (sim $< 0.40$): 3 kỹ năng (\texttt{Pandas}, \texttt{Power BI}, \texttt{Git}), đóng góp không đáng kể vào điểm tổng.
-    \item Điểm số so khớp cuối cùng (theo công thức tương đồng có trọng số, giả định trọng số đồng đều):
-    \begin{equation}
-    \text{Match Score} = \frac{0.89 + 0.88 + 0.83 + 0 + 0 + 0}{6} \times 100\% \approx 43.33\%
-    \end{equation}
-\end{itemize}
-
-Kết quả này phản ánh chính xác thực tế rằng mặc dù ứng viên có nền tảng tốt về ngôn ngữ lập trình và cơ sở dữ liệu cơ bản (độ tương đồng ngữ nghĩa cao), họ vẫn thiếu các công cụ phân tích cụ thể (\texttt{Pandas}, \texttt{Power BI}) và công cụ cộng tác (\texttt{Git}) cần có cho công việc này. Các gợi ý kỹ năng thiếu và tài liệu học tập đưa ra là hoàn toàn hợp lý.
+Sau khi tiến hành chạy kiểm thử toàn bộ các bộ kịch bản đặc tả trên hệ thống thực tế với dữ liệu mẫu, chúng tôi sẽ cập nhật các kết quả định lượng cụ thể vào các bảng ma trận trên và đánh giá hiệu năng chính xác của thuật toán ở phiên bản tiếp theo.

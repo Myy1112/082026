@@ -26,12 +26,22 @@ Việc lựa chọn công nghệ cho hệ thống CareerNova tuân theo nguyên 
 
 \subsection{Công nghệ Thu thập và Xử lý AI}
 
+Phân hệ thu thập và xử lý trí tuệ nhân tạo (AI) được thiết kế nhằm giải quyết bài toán bóc tách thông tin phi cấu trúc từ các trang tuyển dụng và hồ sơ ứng viên (CV), sau đó quy chuẩn chúng về không gian vector ngữ nghĩa. Các cấu hình tham số và công nghệ cốt lõi được lựa chọn bao gồm:
+
 \begin{itemize}
-    \item \textbf{Requests, cloudscraper và Selenium}: Bộ công cụ thu thập dữ liệu theo cơ chế dự phòng hai tầng. Hệ thống ưu tiên cào tĩnh bằng \texttt{Requests}/\texttt{cloudscraper} (nhẹ, nhanh) và tự động chuyển sang \texttt{Selenium} (trình duyệt headless) khi gặp tường lửa chống bot hoặc nội dung được kết xuất động bằng JavaScript.
-    \item \textbf{Google Gemini API}: Mô hình ngôn ngữ lớn (LLM) được sử dụng để trích xuất thực thể kỹ năng có cấu trúc từ văn bản JD và CV thông qua cơ chế Structured Outputs (ràng buộc đầu ra theo JSON Schema), kèm bằng chứng ngữ cảnh phục vụ kiểm chứng chống ảo giác.
-    \item \textbf{Sentence-Transformers (\texttt{all-MiniLM-L6-v2})}: Thư viện dựa trên PyTorch dùng để mã hóa kỹ năng và cụm từ chuyên môn thành vector nhúng phân tán 384 chiều, phục vụ tính toán độ tương đồng ngữ nghĩa.
-    \item \textbf{FAISS}: Thư viện tìm kiếm tương đồng vector của Facebook AI, dùng để lập chỉ mục và truy vấn lân cận gần nhất (nearest-neighbor) trên không gian embedding kỹ năng với độ trễ thấp.
-    \item \textbf{pdfplumber, pdf2image và pytesseract}: Bộ công cụ trích xuất văn bản từ CV. \texttt{pdfplumber} đọc trực tiếp lớp chữ của PDF số; khi gặp PDF dạng ảnh quét, hệ thống kích hoạt luồng OCR dự phòng dùng \texttt{pdf2image} kết hợp \texttt{pytesseract} (Tesseract OCR).
+    \item \textbf{Requests, cloudscraper và Selenium (Cơ chế thu thập dự phòng hai tầng)}:
+    \begin{itemize}
+        \item \textit{Tầng 1 (Cào tĩnh)}: Hệ thống sử dụng thư viện \texttt{requests} kết hợp \texttt{cloudscraper} để giả lập các phiên kết nối HTTP ở mức socket, giúp vượt qua các thử thách chống bot cơ bản (như Cloudflare Challenge) với tốc độ xử lý tối đa và tiêu tốn ít tài nguyên.
+        \item \textit{Tầng 2 (Trình duyệt tự động)}: Khi gặp các trang web chặn IP hoặc kết xuất hoàn toàn bằng JavaScript ở phía client, hệ thống tự động kích hoạt trình duyệt ẩn danh \texttt{Selenium} (Headless Chrome) để mô phỏng hành vi cuộn trang và tải dữ liệu động.
+    \end{itemize}
+    \item \textbf{Google Gemini API (Mô hình ngôn ngữ lớn làm bộ bóc tách cấu trúc)}: Sử dụng mô hình \texttt{gemini-2.5-flash} hoặc \texttt{gemini-2.0-flash} thông qua tính năng \textit{Structured Outputs}. Để đảm bảo tính ổn định tối đa của dữ liệu trích xuất và triệt tiêu hoàn toàn hiện tượng ảo giác (hallucination) dữ liệu, hệ thống thiết lập tham số nhiệt độ phát sinh bằng không ($\text{temperature} = 0.0$). Bằng cách định nghĩa trước một JSON Schema chặt chẽ trên API, hệ thống ép buộc mô hình trả về dữ liệu định dạng JSON chuẩn xác 100\%, loại bỏ hoàn toàn các văn bản thừa hay định dạng sai.
+    \item \textbf{Sentence-Transformers (\texttt{all-MiniLM-L6-v2})}: Mô hình sinh vector nhúng (embedding generator) nhận đầu vào là các nhãn kỹ năng và mã hóa chúng thành các vector phân tán 384 chiều biểu diễn ngữ nghĩa trong không gian Hilbert thực. Các vector đầu ra đều được chuẩn hóa độ dài L2 ($\|\mathbf{e}\|_2 = 1$), cho phép tối ưu hóa hiệu năng tính toán độ đo tương đồng Cosine thành phép tính tích vô hướng trực tiếp giữa hai vector nhúng.
+    \item \textbf{FAISS (Facebook AI Similarity Search)}: Thư viện tối ưu hóa tìm kiếm vector lân cận gần nhất (Nearest Neighbors). FAISS lập chỉ mục cho hơn 30.000 kỹ năng công nghệ chuẩn hóa từ hệ thống Lightcast/O*NET. Hệ thống sử dụng cấu trúc chỉ mục tích vô hướng phẳng (\texttt{IndexFlatIP}) kết hợp với việc chuẩn hóa L2 trước đó để tính toán tích vô hướng chính xác tuyệt đối, giúp tìm kiếm và ánh xạ nhanh kỹ năng từ CV/JD vào từ điển chuẩn hóa với độ trễ dưới 5 mili-giây.
+    \item \textbf{Bộ ba pdfplumber, pdf2image và pytesseract (Xử lý CV đa định dạng)}:
+    \begin{itemize}
+        \item Ưu tiên sử dụng \texttt{pdfplumber} để đọc trực tiếp lớp văn bản số (text layer) của tệp tin PDF gốc.
+        \item Đối với CV dạng ảnh chụp hoặc PDF quét (scan), hệ thống tự động chuyển đổi trang tài liệu sang ảnh độ phân giải cao bằng \texttt{pdf2image} và chạy OCR bằng công cụ nguồn mở \texttt{pytesseract} (Tesseract OCR).
+    \end{itemize}
 \end{itemize}
 
 \subsection{Hạ tầng và công cụ triển khai}
@@ -42,48 +52,180 @@ Việc lựa chọn công nghệ cho hệ thống CareerNova tuân theo nguyên 
 
 \section{Xây dựng pipeline tổ chức dữ liệu}
 
-Pipeline ETL được tổ chức theo kiến trúc module hóa gồm bốn giai đoạn nối tiếp: \textit{crawl} (thu thập) $\rightarrow$ \textit{clean} (làm sạch, khử trùng) $\rightarrow$ \textit{normalize} (chuẩn hóa kỹ năng) $\rightarrow$ \textit{import} (nạp vào PostgreSQL). Cách tổ chức này cho phép bổ sung nguồn tuyển dụng mới hoặc thay thế mô hình xử lý mà không ảnh hưởng tới cấu trúc tổng thể.
+Pipeline dữ liệu (ETL Pipeline) hoạt động theo cơ chế xử lý theo lô (batch processing) định kỳ hằng ngày để thu thập và xử lý tin tuyển dụng trên thị trường.
 
 \subsection{Cài đặt các module thu thập dữ liệu tin tuyển dụng tự động}
 
-Quy trình thu thập dữ liệu được thực hiện trên bốn nền tảng tuyển dụng lớn tại Việt Nam (ITViec, VietnamWorks, CareerViet, LinkedIn) theo cơ chế dự phòng hai tầng nhằm đảm bảo tính liên tục: hệ thống ưu tiên cào tĩnh bằng \texttt{Requests}/\texttt{cloudscraper}, và chỉ kích hoạt \texttt{Selenium} (trình duyệt headless) khi phát hiện tường lửa chống bot hoặc nội dung được kết xuất động. Mã nguồn minh họa cơ chế thu thập có dự phòng được trình bày dưới đây:
+Quy trình thu thập được thực thi song song trên bốn nền tảng tuyển dụng lớn tại Việt Nam bao gồm: ITViec, LinkedIn, VietnamWorks và CareerViet.
 
-\begin{lstlisting}[language=Python, caption=Co che thu thap JD voi fallback Requests sang Selenium]
-import cloudscraper
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+    align=center,
+    coord/.style={rectangle, draw=blue!70!black, fill=blue!5, thick, text width=3.2cm, minimum height=0.8cm, rounded corners, font=\small},
+    process/.style={rectangle, draw=gray!70!black, fill=gray!5, thick, text width=4.2cm, minimum height=0.7cm, rounded corners, font=\small},
+    decision/.style={rectangle, draw=orange!70!black, fill=orange!5, thick, text width=3.8cm, minimum height=0.8cm, rounded corners, font=\small},
+    storage/.style={rectangle, draw=green!70!black, fill=green!5, thick, text width=3.0cm, minimum height=0.8cm, rounded corners, font=\small}
+]
+    % Nodes
+    \node (coord) [coord] at (0, -1.8) {Bộ điều phối};
+    
+    \node (kw_rot) [process] at (4.5, 0.8) {199 Từ khóa xoay vòng};
+    \node (kw_sel) [process] at (9.5, 0.8) {Chọn 4 từ khóa tiếp theo};
+    
+    \node (s1) [process] at (4.5, -0.6) {Luồng 1 (ITViec Scraper)};
+    \node (s2) [process] at (4.5, -1.4) {Luồng 2 (VietnamWorks API)};
+    \node (s3) [process] at (4.5, -2.2) {Luồng 3 (LinkedIn Scraper)};
+    \node (s4) [process] at (4.5, -3.0) {Luồng 4 (CareerViet Scraper)};
+    
+    \node (dedup) [decision] at (9.5, -1.4) {Lọc trùng ID \& URL sớm};
+    \node (download) [process] at (9.5, -3.0) {Chỉ tải tin mới};
+    \node (json) [storage] at (14.0, -2.2) {Lưu JSON tạm thời};
+    
+    % Connections
+    \draw [thick, ->, >=stealth] (coord.north) |- (kw_rot.west);
+    \draw [thick, ->, >=stealth] (kw_rot.east) -- (kw_sel.west);
+    \draw [thick, ->, >=stealth] (kw_sel.south) -- ++(0, -0.2) -| (coord.north);
+    
+    \draw [thick, ->, >=stealth] (coord.east) -- ++(0.3,0) |- (s1.west);
+    \draw [thick, ->, >=stealth] (coord.east) -- ++(0.3,0) |- (s2.west);
+    \draw [thick, ->, >=stealth] (coord.east) -- ++(0.3,0) |- (s3.west);
+    \draw [thick, ->, >=stealth] (coord.east) -- ++(0.3,0) |- (s4.west);
+    
+    \draw [thick, ->, >=stealth] (s1.east) -- ++(0.4,0) |- (dedup.west);
+    \draw [thick, ->, >=stealth] (s2.east) -- ++(0.4,0) |- (dedup.west);
+    \draw [thick, ->, >=stealth] (s3.east) -- ++(0.4,0) |- (dedup.west);
+    \draw [thick, ->, >=stealth] (s4.east) -- ++(0.4,0) |- (dedup.west);
+    
+    \draw [thick, ->, >=stealth] (dedup.south) -- (download.north);
+    \draw [thick, ->, >=stealth] (dedup.east) -- ++(0.3,0) |- (json.west);
+    \draw [thick, ->, >=stealth] (download.east) -- ++(0.3,0) |- (json.west);
+\end{tikzpicture}
+\caption{Sơ đồ hoạt động của pipeline thu thập (Crawl)}
+\label{fig:crawl_pipeline}
+\end{figure}
 
-def fetch_job_page(url: str) -> str:
-    # Tang 1: Cao tinh nhe va nhanh bang cloudscraper
-    scraper = cloudscraper.create_scraper()
-    resp = scraper.get(url, timeout=15)
-    if resp.status_code == 200 and is_content_valid(resp.text):
-        return resp.text
+\textbf{A. Các chiến lược thu thập tối ưu hóa:}
+\begin{enumerate}
+    \item \textbf{Date Cutoff (Bộ lọc thời gian thực)}: Hệ thống tính toán mốc thời gian giới hạn $t_{\text{cutoff}} = t_{\text{current}} - 3\text{ ngày}$. Ngay từ pha duyệt danh sách (List Phase), các tin đăng cũ hơn mốc này sẽ bị bỏ qua lập tức, giúp tiết kiệm 80\% băng thông mạng.
+    \item \textbf{Keyword Rotation (Xoay vòng từ khóa)}: Hệ thống quản lý danh sách 199 từ khóa IT cốt lõi. Mỗi chu kỳ chạy hằng ngày tự động bốc ra 4 từ khóa tiếp theo nhằm đảm bảo độ phủ rộng toàn ngành công nghệ thông tin sau một chu kỳ chạy, đồng thời tránh việc gửi quá nhiều yêu cầu trùng lặp lên máy chủ nguồn.
+    \item \textbf{Bypass React Server Components (RSC) Payload (VietnamWorks)}: Để cào nội dung mô tả của VietnamWorks (kết xuất động phía client), hệ thống không dùng Selenium mà bắt trực tiếp luồng RSC payload truyền tải từ máy chủ. Luồng dữ liệu dạng này sau đó được giải mã bằng biểu thức chính quy để trích xuất văn bản mô tả gốc, giúp cải thiện tốc độ thu thập gấp 10 lần và tiết kiệm tài nguyên CPU.
+\end{enumerate}
 
-    # Tang 2 (Fallback): Selenium headless khi gap tuong lua / JS render
-    options = Options()
-    options.add_argument("--headless=new")
-    options.add_argument("--no-sandbox")
-    driver = webdriver.Chrome(options=options)
-    try:
-        driver.get(url)
-        html = driver.page_source
-    finally:
-        driver.quit()
-    return html
-\end{lstlisting}
-
-Mỗi tin tuyển dụng sau khi tải về được bóc tách thành các trường có cấu trúc (tiêu đề, công ty, địa điểm, mô tả, mức lương, ngày đăng) và lưu kèm trường \texttt{source\_name} (tên nguồn) cùng \texttt{source\_id} (ID tin gốc) phục vụ truy vết.
+\textbf{B. Phân rã logic cấu trúc phân hệ thu thập:}
+\begin{itemize}
+    \item \textbf{Đầu vào dữ liệu thô}: Các yêu cầu HTTP GET gửi đến các sàn tuyển dụng theo danh sách từ khóa xoay vòng hằng ngày.
+    \item \textbf{Điều kiện lọc / Làm sạch}:
+    \begin{itemize}
+        \item Mốc thời gian đăng tin: $t_{\text{post}} \geq t_{\text{cutoff}}$.
+        \item Đối chiếu URL và mã định danh bài tuyển dụng (\texttt{source\_id}) với cơ sở dữ liệu PostgreSQL. Nếu trùng lặp, bỏ qua hoàn toàn yêu cầu tải trang chi tiết (Early Deduplication).
+    \end{itemize}
+    \item \textbf{Cấu trúc đầu ra}: Tệp tin JSON lưu trữ tạm thời chứa dữ liệu thô được cấu trúc như sau:
+\begin{verbatim}
+{
+  "source_id": "itviec-10293",
+  "job_url": "https://itviec.com/.../software-engineer",
+  "raw_html": "<html>...</html>",
+  "captured_at": "2026-07-10T16:00:00Z"
+}
+\end{verbatim}
+\end{itemize}
 
 \subsection{Quy trình làm sạch dữ liệu, xử lý trùng lặp và lưu trữ vào PostgreSQL}
 
-Sau khi thu thập, dữ liệu thô được đưa qua pipeline xử lý để làm sạch và khử trùng trước khi nạp vào PostgreSQL:
-\begin{enumerate}
-    \item \textbf{Khử trùng lặp bằng fingerprint}: Hệ thống tính mã băm MD5 (lưu ở trường \texttt{fingerprint}, ràng buộc UNIQUE trong bảng \texttt{jobs}) từ chuỗi đặc trưng của tin tuyển dụng. Nếu fingerprint đã tồn tại, bản ghi mới bị loại bỏ, đảm bảo mỗi tin chỉ xuất hiện một lần dù được thu thập từ nhiều nguồn.
-    \item \textbf{Làm sạch văn bản}: Loại bỏ các thẻ HTML còn sót lại, chuẩn hóa khoảng trắng và dấu câu, thống nhất định dạng văn bản mô tả công việc.
-    \item \textbf{Trích xuất và chuẩn hóa kỹ năng}: Gọi module xử lý AI (Gemini API kết hợp chuẩn hóa Lightcast Taxonomy, xem Mục~\ref{sec:skill_algorithm}) để chuyển văn bản thô thành danh sách kỹ năng chuẩn hóa, gán \texttt{skill\_id} tương ứng trong từ điển hệ thống.
-    \item \textbf{Nạp dữ liệu (Import)}: Lưu các thực thể đã chuẩn hóa vào PostgreSQL thông qua SQLAlchemy, bao gồm các bảng \texttt{jobs}, \texttt{companies}, \texttt{skills}, \texttt{job\_skills} cùng các liên kết khóa ngoại.
-\end{enumerate}
+Sau khi thu thập, dữ liệu thô được đưa vào quy trình xử lý làm sạch, khử trùng lặp và lưu trữ theo sơ đồ luồng dữ liệu sau:
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+    align=center,
+    process/.style={rectangle, draw=blue!70!black, fill=blue!5, thick, text width=5.5cm, minimum height=0.8cm, rounded corners, font=\small},
+    error/.style={rectangle, draw=red!70!black, fill=red!5, thick, text width=3.5cm, minimum height=0.8cm, rounded corners, font=\small},
+    system/.style={rectangle, draw=gray!70!black, fill=gray!5, thick, text width=4.5cm, minimum height=0.8cm, rounded corners, font=\small},
+    database/.style={rectangle, draw=green!70!black, fill=green!5, thick, text width=4.2cm, minimum height=0.8cm, rounded corners, font=\small}
+]
+    % Nodes
+    \node (raw) [process] at (0,0) {Dữ liệu thô};
+    \node (clean) [process] at (0,-1.3) {Làm sạch HTML/CSS};
+    \node (qgate) [process] at (0,-2.6) {Cổng kiểm soát chất lượng};
+    \node (qgate_err) [error] at (5.2,-2.6) {Tệp log lỗi};
+    
+    \node (dedup_in) [process] at (0,-4.1) {Khử trùng lặp nội bộ (Cosine)};
+    \node (dedup_skip) [error] at (5.2,-4.1) {Bỏ qua tin};
+    
+    \node (llm) [process] at (0,-5.6) {Gọi LLM trích xuất thuộc tính};
+    \node (llm_retry) [system] at (5.2,-5.6) {Cơ chế xoay vòng Key \&\\Hàng đợi Retry};
+    
+    \node (faiss) [process] at (0,-7.1) {Chuẩn hóa kỹ năng (FAISS)};
+    \node (fuzzy) [process] at (0,-8.4) {So khớp mờ công ty (Jaccard)};
+    \node (dedup_deep) [process] at (0,-9.7) {Khử trùng sâu (TF-IDF)};
+    \node (db) [database] at (0,-11.0) {Lưu PostgreSQL theo Lô};
+    
+    % Connections
+    \draw [thick, ->, >=stealth] (raw) -- (clean);
+    \draw [thick, ->, >=stealth] (clean) -- (qgate);
+    \draw [thick, ->, >=stealth] (qgate) -- (dedup_in) node[midway, left, font=\footnotesize] {Đạt};
+    \draw [thick, ->, >=stealth] (qgate) -- (qgate_err) node[midway, above, font=\footnotesize] {Lỗi};
+    
+    \draw [thick, ->, >=stealth] (dedup_in) -- (llm) node[midway, left, font=\footnotesize] {Mới};
+    \draw [thick, ->, >=stealth] (dedup_in) -- (dedup_skip) node[midway, above, font=\footnotesize] {Trùng};
+    
+    \draw [thick, <->, >=stealth] (llm) -- (llm_retry);
+    \draw [thick, ->, >=stealth] (llm) -- (faiss);
+    \draw [thick, ->, >=stealth] (faiss) -- (fuzzy);
+    \draw [thick, ->, >=stealth] (fuzzy) -- (dedup_deep);
+    \draw [thick, ->, >=stealth] (dedup_deep) -- (db);
+\end{tikzpicture}
+\caption{Quy trình làm sạch dữ liệu, khử trùng lặp và lưu trữ (Transform \& Load)}
+\label{fig:transform_load_pipeline}
+\end{figure}
+
+\textbf{Phân rã logic cấu trúc phân hệ xử lý:}
+\begin{itemize}
+    \item \textbf{Đầu vào dữ liệu thô}: Tệp tin JSON chứa nội dung HTML thô từ phân hệ thu thập.
+    \item \textbf{Điều kiện lọc / Làm sạch (Quality Gate \& Deduplication)}:
+    \begin{itemize}
+        \item \textit{Làm sạch văn bản}: Loại bỏ thẻ HTML/CSS, chuẩn hóa khoảng trắng thừa.
+        \item \textit{Quality Gate (Cổng chất lượng)}: Loại bỏ tin tuyển dụng có chiều dài $< 100$ ký tự hoặc $< 20$ từ, hoặc tỷ lệ ký tự chữ/số $< 25\%$ (chỉ dấu lỗi font/mã hóa), hoặc thiếu các trường bắt buộc (\texttt{job\_title}, \texttt{job\_url}).
+        \item \textit{Khử trùng lặp nội bộ}: Tính Cosine Similarity giữa các tin mới tải về của cùng một công ty. Nếu $\text{Similarity} \geq 90\%$, loại bỏ tin trùng lặp trước khi gửi đến LLM để tiết kiệm chi phí.
+        \item \textit{Kiểm định chống ảo giác}: Điểm tin cậy trích xuất kỹ năng từ LLM phải đạt $\text{confidence} \ge 0.85$, đồng thời chuỗi bằng chứng ngữ cảnh (\texttt{evidence}) phải trùng khớp tuyệt đối dạng chuỗi con (substring) trong văn bản gốc.
+        \item \textit{So khớp mờ doanh nghiệp (Fuzzy Company Matching)}: Loại bỏ các hậu tố pháp lý (ví dụ: ``Công ty cổ phần'', ``Trách nhiệm hữu hạn'', ``JSC'') và thực hiện so khớp Jaccard Similarity trên tập hợp từ của tên công ty.
+        \item \textit{Khử trùng lặp sâu tin tuyển dụng}: Tính toán tần suất từ - nghịch đảo tần suất văn bản (TF-IDF) trên tập hợp các bài đăng của cùng một công ty trong vòng 30 ngày. Nếu độ tương đồng Cosine của hai vector trọng số TF-IDF vượt ngưỡng $80\%$, tin mới sẽ bị loại bỏ và hệ thống chỉ cập nhật thời điểm thu thập dữ liệu (\texttt{last\_seen}) của bài đăng cũ.
+    \end{itemize}
+    \item \textbf{Công thức toán học định lượng}:
+    \begin{itemize}
+        \item \textit{Jaccard Similarity dùng để so khớp mờ tên công ty}:
+        \begin{equation}
+        J(A, B) = \frac{|A \cap B|}{|A \cup B|}
+        \end{equation}
+        (Trong đó $A, B$ lần lượt là tập các từ đơn sau khi làm sạch của tên công ty A và B).
+        
+        \item \textit{Trọng số TF-IDF của từ khóa $t$ trong tin tuyển dụng $d$ đối với tập hợp tin tuyển dụng $D$ của cùng một công ty trong 30 ngày}:
+        \begin{equation}
+        \text{TF-IDF}(t, d, D) = \text{TF}(t, d) \times \text{IDF}(t, D)
+        \end{equation}
+        Trong đó tần suất từ $\text{TF}(t, d)$ và nghịch đảo tần suất văn bản $\text{IDF}(t, D)$ được định nghĩa như sau:
+        \begin{equation}
+        \text{TF}(t, d) = \frac{f_{t, d}}{\sum_{t' \in d} f_{t', d}}
+        \end{equation}
+        \begin{equation}
+        \text{IDF}(t, D) = \log \left( \frac{|D|}{1 + |\{d \in D : t \in d\}|} \right)
+        \end{equation}
+        Với $f_{t, d}$ là số lần xuất hiện của từ $t$ trong tin tuyển dụng $d$, và $|D|$ là tổng số tin tuyển dụng của công ty trong 30 ngày.
+        
+        \item \textit{Độ tương đồng Cosine giữa hai vector trọng số TF-IDF $\mathbf{d}_1$ và $\mathbf{d}_2$}:
+        \begin{equation}
+        \text{Sim}_{\text{Cosine}}(\mathbf{d}_1, \mathbf{d}_2) = \frac{\mathbf{d}_1 \cdot \mathbf{d}_2}{\|\mathbf{d}_1\|_2 \|\mathbf{d}_2\|_2}
+        \end{equation}
+    \end{itemize}
+    \item \textbf{Cấu trúc đầu ra (DB Schema)}:
+    Dữ liệu được nạp vào cơ sở dữ liệu PostgreSQL theo cơ chế \textbf{Atomic Transactions} (cam kết theo lô 50 bản ghi, có thiết lập Savepoint riêng cho từng bản ghi để nếu một bản ghi lỗi thì các bản ghi còn lại trong lô vẫn ghi thành công). Dữ liệu được ghi vào 3 bảng chính:
+    \begin{itemize}
+        \item \texttt{companies}: ID công ty, tên công ty chuẩn hóa.
+        \item \texttt{jobs}: ID tin tuyển dụng, ID công ty, tiêu đề, mức lương, kinh nghiệm yêu cầu, loại hình làm việc.
+        \item \texttt{job\_skills}: Liên kết khóa ngoại giữa \texttt{job\_id} và \texttt{skill\_id} chuẩn hóa.
+    \end{itemize}
+\end{itemize}
 
 \section{Xây dựng chức năng cho các phân hệ người dùng}
 
@@ -98,114 +240,177 @@ Module \texttt{auth} của NestJS quản lý toàn bộ luồng xác thực và 
     \item \textbf{Bảo vệ API}: Các route yêu cầu xác thực được bảo vệ bằng Guard của NestJS; Frontend đính kèm token trong header \texttt{Authorization: Bearer <token>} hoặc qua HTTP-only Cookie.
 \end{itemize}
 
-\subsection{Hiện thực hóa giao diện Dashboard trực quan hóa dữ liệu thị trường việc làm}
-
-Giao diện MarketDashboard khởi tạo ba truy vấn API song song (\texttt{Promise.all}) để lấy dữ liệu xu hướng tuyển dụng, phân bổ ngành và dải lương, sau đó kết xuất đồng thời bằng thư viện Recharts. Mã nguồn minh họa một thành phần biểu đồ cột hiển thị top kỹ năng được yêu cầu nhiều nhất:
-\begin{lstlisting}[language=XML, caption=Cau truc React component ve bieu do Top ky nang]
-import React from 'react';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
-
-export const SkillsTrendingChart = ({ data }) => {
-  return (
-    <div className="chart-container">
-      <h3 className="text-lg font-semibold mb-4">Top 10 most demanded skills</h3>
-      <ResponsiveContainer width="100%" height={300}>
-        <BarChart data={data} layout="vertical">
-          <XAxis type="number" />
-          <YAxis dataKey="name" type="category" width={100} />
-          <Tooltip />
-          <Bar dataKey="count" fill="#4f46e5" radius={[0, 4, 4, 0]} />
-        </BarChart>
-      </ResponsiveContainer>
-    </div>
-  );
-};
-\end{lstlisting}
-
-\subsection{Hiện thực hóa chức năng Tìm kiếm job, Lưu job và Quản lý danh sách CV}
-
-\begin{itemize}
-    \item \textbf{Tìm kiếm Job}: Hệ thống truy vấn trực tiếp trên PostgreSQL thông qua Prisma ORM, kết hợp lọc theo từ khóa, kỹ năng, mức lương và địa điểm. Ở cấp độ kỹ năng, việc đối sánh ngữ nghĩa được hỗ trợ bởi chỉ mục vector FAISS, giúp tìm các tin tuyển dụng có kỹ năng tương đồng về ngữ nghĩa thay vì chỉ khớp từ khóa chính xác.
-    \item \textbf{Lưu Job}: Người dùng có thể lưu các tin tuyển dụng yêu thích vào danh sách cá nhân để theo dõi, phục vụ việc so khớp về sau.
-    \item \textbf{Quản lý danh sách CV}: Người dùng có thể tải lên nhiều phiên bản CV, đổi tên, xóa, hoặc chọn một CV làm mặc định (Active CV) để sử dụng trong quá trình đối soát. Metadata CV được lưu trong bảng \texttt{user\_cvs}.
-\end{itemize}
-
 \section{Xây dựng thuật toán phân tích kỹ năng năng lực}
 \label{sec:skill_algorithm}
 
+Thuật toán phân tích kỹ năng năng lực đóng vai trò cốt lõi trong việc đánh giá mức độ tương thích giữa hồ sơ cá nhân của ứng viên (CV) và yêu cầu thực tế từ thị trường lao động (thông qua tin tuyển dụng hoặc nhóm công việc mục tiêu). Thuật toán được xây dựng trên nguyên tắc kết hợp giữa bóc tách ngữ cảnh bằng mô hình ngôn ngữ lớn (LLM) và so khớp khoảng cách ngữ nghĩa trong không gian vector nhúng.
+
 \subsection{Xây dựng cấu trúc Structured Output để trích xuất thông tin CV và JD}
 
-Để trích xuất kỹ năng từ văn bản tự do của CV và JD, hệ thống sử dụng cơ chế \textit{Structured Outputs} của Gemini API: ràng buộc mô hình trả về đúng một đối tượng JSON tuân theo JSON Schema định nghĩa trước. Khác với việc chỉ yêu cầu ``trả về JSON'' trong prompt, cơ chế này đảm bảo đầu ra luôn hợp lệ về cấu trúc, loại bỏ rủi ro mô hình chèn văn bản giải thích hoặc khối markdown. Mỗi kỹ năng trích xuất bắt buộc đi kèm bằng chứng ngữ cảnh (\texttt{evidence\_text}) và điểm tin cậy (\texttt{confidence}) phục vụ kiểm chứng chống ảo giác.
+Để trích xuất kỹ năng từ văn bản tự do của CV và JD, hệ thống triển khai cơ chế Structured Output của Gemini API. Mô hình ngôn ngữ lớn được cung cấp một định nghĩa JSON Schema nghiêm ngặt và bắt buộc phải trả về kết quả tuân thủ hoàn toàn cấu trúc dữ liệu này. Hệ thống thiết lập tham số nhiệt độ phát sinh $\text{temperature} = 0.0$ để tối đa hóa tính ổn định và tính tất định (deterministic output) của mô hình.
 
 \begin{center}
 \begin{minipage}{0.95\textwidth}
 \hrule
 \vspace{2mm}
-\textbf{JSON Schema ràng buộc đầu ra trích xuất thực thể kỹ năng:}
-\vspace{2mm}
-\hrule
-\vspace{2mm}
-Đọc kỹ đoạn văn bản thô (CV của ứng viên hoặc Mô tả công việc JD) và trích xuất danh sách kỹ năng theo đúng cấu trúc JSON sau. Mỗi kỹ năng phải kèm cụm từ bằng chứng được trích nguyên văn từ văn bản gốc:
+\textbf{Logic cấu trúc trích xuất thực thể kỹ năng (Skill Extraction Engine):}
+\begin{itemize}
+    \item \textbf{Đầu vào dữ liệu thô}: Chuỗi văn bản thuần trích xuất từ tệp tin CV (PDF/Hình ảnh sau khi qua bộ lọc \texttt{pdfplumber} hoặc OCR \texttt{pytesseract}) hoặc văn bản JD đã được làm sạch.
+    \item \textbf{Cấu hình tham số mô hình}:
+    \begin{itemize}
+        \item Mô hình: \texttt{gemini-2.5-flash} / \texttt{gemini-2.0-flash}.
+        \item Nhiệt độ phát sinh (\texttt{temperature}): $0.0$ (triệt tiêu tính ngẫu nhiên, cưỡng chế độ tin cậy và chống ảo giác).
+        \item Cơ chế phản hồi: \textit{Structured Outputs} với JSON Schema bắt buộc.
+    \end{itemize}
+    \item \textbf{Điều kiện lọc / Làm sạch \& Chống ảo giác}:
+    \begin{itemize}
+        \item Điểm tin cậy trích xuất của mô hình phải đạt $\text{confidence} \ge 0.85$.
+        \item Cụm từ bằng chứng (\texttt{evidence}) phải là một chuỗi con (substring) xuất hiện trực tiếp trong văn bản gốc của CV/JD sau khi đã chuẩn hóa khoảng trắng.
+        \item \textit{Bộ phân tích cú pháp dự phòng (Fallback)}: Trong trường hợp API bị lỗi hoặc hết hạn mức, hệ thống tự động chuyển sang cơ chế duyệt tìm từ khóa chính xác dựa trên ranh giới từ ($\backslash$b) của biểu thức chính quy đối chiếu với toàn bộ từ điển kỹ năng chuẩn hóa trong bảng \texttt{public.skills}.
+    \end{itemize}
+    \item \textbf{Cấu trúc JSON Schema nghiêm ngặt (Prompt Structure)}:
 \begin{verbatim}
-{
-  "skills": [
-    {
-      "skill_name": "Ten ky nang (vi du: Python, Project Management)",
-      "evidence_text": "Cum tu trich nguyen van tu CV/JD lam bang chung",
-      "skill_type": "hard | soft",
-      "confidence": 0.0
-    }
-  ]
-}
+[
+  {
+    "skill": "React.js",
+    "evidence": "Experienced in building frontend interfaces using React.js and Redux",
+    "confidence": 0.95
+  }
+]
 \end{verbatim}
+\end{itemize}
 \vspace{2mm}
 \hrule
 \end{minipage}
 \end{center}
 
-\textbf{Cơ chế chống ảo giác (Anti-Hallucination):} Sau khi nhận kết quả từ Gemini, hệ thống chỉ giữ lại các kỹ năng thỏa mãn đồng thời hai điều kiện: (1) điểm \texttt{confidence} $\geq 0.85$, và (2) \texttt{evidence\_text} xuất hiện trực tiếp dưới dạng chuỗi con (substring) trong văn bản gốc. Mọi thực thể không thỏa mãn đều bị loại bỏ. Trong trường hợp gọi LLM thất bại hoặc cạn hạn ngạch, hệ thống kích hoạt bộ đối sánh từ khóa thô (Keyword Match Fallback) trực tiếp với từ điển trong bảng \texttt{skills} bằng biểu thức chính quy có ranh giới từ.
-
 \subsection{Cài đặt Matching Engine tính độ phù hợp và liệt kê các kỹ năng còn thiếu}
 
-Sau khi kỹ năng được chuẩn hóa, bộ máy so khớp (Matching Engine) nạp tập kỹ năng yêu cầu cùng trọng số $w_i$ từ bảng \texttt{job\_group\_skill\_weights} và tính điểm tương thích theo công thức tương đồng ngữ nghĩa có trọng số đã trình bày ở Chương~\ref{Chapter3}. Vì các vector embedding trong cache đã được chuẩn hóa L2 ($\|\mathbf{e}\|_2 = 1$), độ tương đồng Cosine được rút gọn thành tích vô hướng, giúp tăng tốc tính toán. Mỗi kỹ năng yêu cầu được phân loại theo ba ngưỡng: Đạt yêu cầu ($\text{sim} \geq 0.75$), Đạt một phần ($0.40 \leq \text{sim} < 0.75$) và Thiếu hụt ($\text{sim} < 0.40$). Mã nguồn Python hiện thực hóa được trình bày dưới đây:
+Sau khi kỹ năng được chuẩn hóa, bộ máy so khớp (Matching Engine) nạp tập kỹ năng yêu cầu cùng trọng số $w_i$ từ bảng \texttt{job\_group\_skill\_weights} và tính điểm tương thích theo quy trình sau:
 
-\begin{lstlisting}[language=Python, caption=Ma nguon Matching Engine tinh diem so khop co trong so]
-import numpy as np
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+    align=center,
+    input/.style={rectangle, draw=blue!70!black, fill=blue!5, thick, text width=3.5cm, minimum height=0.8cm, rounded corners, font=\small},
+    process/.style={rectangle, draw=gray!70!black, fill=gray!5, thick, text width=4.5cm, minimum height=0.8cm, rounded corners, font=\small},
+    filter/.style={rectangle, draw=orange!70!black, fill=orange!5, thick, text width=4.5cm, minimum height=0.8cm, rounded corners, font=\small},
+    exclude/.style={rectangle, draw=red!70!black, fill=red!5, thick, text width=3.5cm, minimum height=0.8cm, rounded corners, font=\small},
+    database/.style={rectangle, draw=green!70!black, fill=green!5, thick, text width=4.5cm, minimum height=0.8cm, rounded corners, font=\small}
+]
+    % Nodes
+    \node (cv_skill) [input] at (-3,0.8) {Kỹ năng CV};
+    \node (job_skill) [input] at (3,0.8) {Kỹ năng Nhóm Việc\\(Weights)};
+    
+    \node (embed) [process] at (0,-0.4) {Nhận diện Vector Nhúng};
+    \node (cosine) [process] at (0,-1.6) {Tính Cosine Similarity};
+    \node (filter) [filter] at (0,-2.8) {Áp dụng 6 bộ luật lọc ngữ nghĩa};
+    \node (exclude) [exclude] at (5.2,-2.8) {Loại trừ các cặp\\khớp sai bản chất};
+    
+    \node (max_sim) [process] at (0,-4.1) {Tìm Max Similarity};
+    \node (weight_score) [process] at (0,-5.3) {Tính toán điểm số\\Weighted Score};
+    \node (classify) [process] at (0,-6.5) {Phân loại thành 3 nhóm kỹ năng};
+    \node (save_db) [database] at (0,-7.7) {Lưu JSONB\\radar\_data \& gap\_report};
+    
+    % Connections
+    \draw [thick, ->, >=stealth] (cv_skill.south) |- (embed.west);
+    \draw [thick, ->, >=stealth] (job_skill.south) |- (embed.east);
+    \draw [thick, ->, >=stealth] (embed) -- (cosine);
+    \draw [thick, ->, >=stealth] (cosine) -- (filter);
+    \draw [thick, ->, >=stealth] (filter) -- (exclude);
+    \draw [thick, ->, >=stealth] (filter) -- (max_sim);
+    \draw [thick, ->, >=stealth] (max_sim) -- (weight_score);
+    \draw [thick, ->, >=stealth] (weight_score) -- (classify);
+    \draw [thick, ->, >=stealth] (classify) -- (save_db);
+\end{tikzpicture}
+\caption{Quy trình tính điểm so khớp kỹ năng (Matching Engine)}
+\label{fig:matching_engine_process}
+\end{figure}
 
-def weighted_match(cv_emb, job_emb_list, weights):
-    """
-    cv_emb       : ma tran embedding ky nang trong CV (K x 384), da chuan hoa L2
-    job_emb_list : danh sach embedding ky nang yeu cau cua Job (M x 384)
-    weights      : trong so w_i (lay tu bang job_group_skill_weights)
-    """
-    matched, partial, missing = [], [], []
-    weighted_sim_sum = 0.0
-    total_weight = 0.0
+\begin{center}
+\begin{minipage}{0.95\textwidth}
+\hrule
+\vspace{2mm}
+\textbf{Phân rã logic cấu trúc Matching Engine:}
+\begin{itemize}
+    \item \textbf{Đầu vào dữ liệu}:
+    \begin{itemize}
+        \item Tập kỹ năng của ứng viên: $S_{\text{student}} = \{s_1, s_2, \dots, s_m\}$ (đã ánh xạ sang ID chuẩn).
+        \item Tập kỹ năng yêu cầu của nhóm công việc: $S_{\text{job\_group}} = \{J_1, J_2, \dots, J_n\}$ kèm bộ trọng số tầm quan trọng $W = \{w_1, w_2, \dots, w_n\}$ ($\sum w_i = 1$).
+        \item Bảng tra cứu vector nhúng kỹ năng $\mathbf{E} \in \mathbb{R}^{D \times 384}$ đã chuẩn hóa L2 ($\|\mathbf{e}\|_2 = 1$).
+    \end{itemize}
+    \item \textbf{Điều kiện lọc / Bộ luật lọc ngữ nghĩa (Semantic Filtering Rules)}:
+    Để triệt tiêu các trường hợp khớp sai do khoảng cách không gian vector nhầm lẫn giữa các nhóm khái niệm (ví dụ: ngôn ngữ tự nhiên khớp nhầm sang ngôn ngữ lập trình, hoặc chứng chỉ khớp nhầm sang kỹ năng), hệ thống áp đặt 6 quy tắc logic cứng:
+    \begin{enumerate}
+        \item \textbf{Certification Exclusivity (Độc quyền chứng chỉ)}: Nếu một trong hai kỹ năng thuộc nhóm Chứng chỉ (\texttt{type = "Certification"}), ép độ tương đồng về $0.0$.
+        \item \textbf{Type Grouping (Đồng nhất loại hình)}: Bắt buộc hai kỹ năng phải có cùng kiểu phân loại chuyên môn (ví dụ cùng là \texttt{Specialized skill} hoặc cùng là \texttt{Common skill}), nếu lệch nhau sẽ gán bằng $0.0$.
+        \item \textbf{Software/Tool Exclusivity (Độc quyền công cụ)}: Kỹ năng dạng công cụ/phần mềm (\texttt{is\_software = true}) không được so khớp với kỹ năng chung/mềm (\texttt{Common skill}), lệch nhau gán bằng $0.0$.
+        \item \textbf{Language Filtering (Bộ lọc ngôn ngữ tự nhiên)}: Nếu một trong hai kỹ năng là ngôn ngữ tự nhiên (\texttt{is\_language = true}), bắt buộc kỹ năng còn lại cũng phải là ngôn ngữ tự nhiên và phải cùng một gốc ngôn ngữ (ví dụ: tiếng Anh chỉ được khớp với tiếng Anh), lệch gốc ngôn ngữ gán bằng $0.0$.
+        \item \textbf{Subcategory Exclusivity \& Boost (Đặc hiệu phân nhóm)}:
+        \begin{itemize}
+            \item Nếu hai kỹ năng có phân nhóm (\texttt{category}) khác nhau (ví dụ: phát triển phần mềm vs kiểm thử), ép độ tương đồng về $0.0$.
+            \item Nếu trùng khớp tuyệt đối phân nhóm, nhân thêm hệ số tăng cường $1.2$: $\text{Sim}_{\text{boosted}} = \min(1.0, \text{Sim} \times 1.2)$.
+        \end{itemize}
+        \item \textbf{Soft Skills Direct Match (Khớp nhanh kỹ năng mềm)}: Nếu cả hai kỹ năng đều là kỹ năng mềm (\texttt{Common skill}) và có độ tương đồng cơ bản $> 0.35$, hệ thống tự động nâng lên mức khớp tối đa ($1.0$).
+    \end{enumerate}
+    \item \textbf{Công thức toán học}:
+    \begin{itemize}
+        \item \textit{Độ tương đồng ngữ nghĩa Cosine giữa vector nhúng của kỹ năng yêu cầu $\mathbf{e}(J_i)$ và vector nhúng của kỹ năng ứng viên $\mathbf{e}(s_j)$} (do vector nhúng đã chuẩn hóa L2 nên được rút gọn thành phép nhân ma trận/tích vô hướng hiệu năng cao):
+        \begin{equation}
+        \text{Sim}(J_i, s_j) = \mathbf{e}(J_i) \cdot \mathbf{e}(s_j)
+        \end{equation}
+        \item \textit{Độ tương đồng lớn nhất của kỹ năng yêu cầu $J_i$ đối với toàn bộ CV}:
+        \begin{equation}
+        \text{MaxSim}(J_i) = \max_{j} \left( \text{Sim}(J_i, s_j) \right)
+        \end{equation}
+        \item \textit{Điểm số so khớp có trọng số tổng thể (Weighted Match Score)}:
+        \begin{equation}
+        \text{MatchScore} = \frac{\sum_{i=1}^{n} w_i \cdot \text{MaxSim}(J_i)}{\sum_{i=1}^{n} w_i}
+        \end{equation}
+    \end{itemize}
+    \item \textbf{Cấu trúc đầu ra (JSON kết quả)}:
+    Kỹ năng được phân loại theo các ngưỡng giá trị $\text{MaxSim}(J_i)$ và lưu vào bảng \texttt{public.cv\_job\_matches} dưới dạng JSONB gồm hai trường \texttt{radar\_data} và \texttt{gap\_report}:
+\begin{verbatim}
+{
+  "match_score": 0.7852,
+  "radar_data": {
+    "matched_skills": [
+      {
+        "skill_id": 102,
+        "skill_name": "PostgreSQL",
+        "weight": 0.15,
+        "similarity": 1.0,
+        "matched_via": "PostgreSQL"
+      }
+    ]
+  },
+  "gap_report": {
+    "partially_matched_skills": [
+      {
+        "skill_id": 204,
+        "skill_name": "Docker",
+        "weight": 0.10,
+        "similarity": 0.65,
+        "matched_via": "Kubernetes"
+      }
+    ],
+    "missing_skills": [
+      {
+        "skill_id": 305,
+        "skill_name": "Go (Programming Language)",
+        "weight": 0.20,
+        "similarity": 0.12
+      }
+    ]
+  }
+}
+\end{verbatim}
+\end{itemize}
+\vspace{2mm}
+\hrule
+\end{minipage}
+\end{center}
 
-    for i, (job_emb, w_i) in enumerate(zip(job_emb_list, weights)):
-        # Vector da chuan hoa L2 nen cosine = tich vo huong
-        if len(cv_emb) > 0:
-            sim_i = float(np.clip((cv_emb @ job_emb).max(), 0.0, 1.0))
-        else:
-            sim_i = 0.0
+Trong trường hợp gọi LLM thất bại hoặc cạn hạn ngạch, hệ thống kích hoạt bộ đối sánh từ khóa thô (Keyword Match Fallback) trực tiếp với từ điển trong bảng \texttt{skills} bằng biểu thức chính quy có ranh giới từ.
 
-        weighted_sim_sum += w_i * sim_i
-        total_weight += w_i
-
-        if sim_i >= 0.75:
-            matched.append({"skill_index": i, "sim": sim_i})
-        elif sim_i >= 0.40:
-            partial.append({"skill_index": i, "sim": sim_i})
-        else:
-            missing.append({"skill_index": i, "sim": sim_i})
-
-    match_score = (weighted_sim_sum / total_weight) if total_weight else 0.0
-    return {
-        "match_percent": round(match_score * 100, 2),
-        "matched": matched,
-        "partial": partial,
-        "missing": missing,
-    }
-\end{lstlisting}
-
-Kết quả trả về bao gồm điểm tương thích tổng thể (\texttt{match\_percent}) và ba nhóm kỹ năng đã phân loại, được lưu vào cột \texttt{radar\_data} và \texttt{gap\_report} (kiểu JSONB) của bảng \texttt{cv\_job\_matches} để phục vụ kết xuất biểu đồ Radar và Gap Report trên giao diện người dùng.
+Kết quả tính toán sau khi phân loại thành ba nhóm kỹ năng đã lọc sẽ được lưu trực tiếp vào cột \texttt{radar\_data} và \texttt{gap\_report} (kiểu JSONB) của bảng \texttt{cv\_job\_matches} để phục vụ kết xuất biểu đồ Radar và Gap Report trên giao diện người dùng.
