@@ -26,12 +26,22 @@ Việc lựa chọn công nghệ cho hệ thống CareerNova tuân theo nguyên 
 
 \subsection{Công nghệ Thu thập và Xử lý AI}
 
+Phân hệ thu thập và xử lý trí tuệ nhân tạo (AI) được thiết kế nhằm giải quyết bài toán bóc tách thông tin phi cấu trúc từ các trang tuyển dụng và hồ sơ ứng viên (CV), sau đó quy chuẩn chúng về không gian vector ngữ nghĩa. Các cấu hình tham số và công nghệ cốt lõi được lựa chọn bao gồm:
+
 \begin{itemize}
-    \item \textbf{Requests, cloudscraper và Selenium}: Bộ công cụ thu thập dữ liệu theo cơ chế dự phòng hai tầng. Hệ thống ưu tiên cào tĩnh bằng \texttt{Requests}/\texttt{cloudscraper} (nhẹ, nhanh) và tự động chuyển sang \texttt{Selenium} (trình duyệt headless) khi gặp tường lửa chống bot hoặc nội dung được kết xuất động bằng JavaScript.
-    \item \textbf{Google Gemini API}: Mô hình ngôn ngữ lớn (LLM) được sử dụng để trích xuất thực thể kỹ năng có cấu trúc từ văn bản JD và CV thông qua cơ chế Structured Outputs (ràng buộc đầu ra theo JSON Schema), kèm bằng chứng ngữ cảnh phục vụ kiểm chứng chống ảo giác.
-    \item \textbf{Sentence-Transformers (\texttt{all-MiniLM-L6-v2})}: Thư viện dựa trên PyTorch dùng để mã hóa kỹ năng và cụm từ chuyên môn thành vector nhúng phân tán 384 chiều, phục vụ tính toán độ tương đồng ngữ nghĩa.
-    \item \textbf{FAISS}: Thư viện tìm kiếm tương đồng vector của Facebook AI, dùng để lập chỉ mục và truy vấn lân cận gần nhất (nearest-neighbor) trên không gian embedding kỹ năng với độ trễ thấp.
-    \item \textbf{pdfplumber, pdf2image và pytesseract}: Bộ công cụ trích xuất văn bản từ CV. \texttt{pdfplumber} đọc trực tiếp lớp chữ của PDF số; khi gặp PDF dạng ảnh quét, hệ thống kích hoạt luồng OCR dự phòng dùng \texttt{pdf2image} kết hợp \texttt{pytesseract} (Tesseract OCR).
+    \item \textbf{Requests, cloudscraper và Selenium (Cơ chế thu thập dự phòng hai tầng)}:
+    \begin{itemize}
+        \item \textit{Tầng 1 (Cào tĩnh)}: Hệ thống sử dụng thư viện \texttt{requests} kết hợp \texttt{cloudscraper} để giả lập các phiên kết nối HTTP ở mức socket, giúp vượt qua các thử thách chống bot cơ bản (như Cloudflare Challenge) với tốc độ xử lý tối đa và tiêu tốn ít tài nguyên.
+        \item \textit{Tầng 2 (Trình duyệt tự động)}: Khi gặp các trang web chặn IP hoặc kết xuất hoàn toàn bằng JavaScript ở phía client, hệ thống tự động kích hoạt trình duyệt ẩn danh \texttt{Selenium} (Headless Chrome) để mô phỏng hành vi cuộn trang và tải dữ liệu động.
+    \end{itemize}
+    \item \textbf{Google Gemini API (Mô hình ngôn ngữ lớn làm bộ bóc tách cấu trúc)}: Sử dụng mô hình \texttt{gemini-2.5-flash} hoặc \texttt{gemini-2.0-flash} thông qua tính năng \textit{Structured Outputs}. Để đảm bảo tính ổn định tối đa của dữ liệu trích xuất và triệt tiêu hoàn toàn hiện tượng ảo giác (hallucination) dữ liệu, hệ thống thiết lập tham số nhiệt độ phát sinh bằng không ($\text{temperature} = 0.0$). Bằng cách định nghĩa trước một JSON Schema chặt chẽ trên API, hệ thống ép buộc mô hình trả về dữ liệu định dạng JSON chuẩn xác 100\%, loại bỏ hoàn toàn các văn bản thừa hay định dạng sai.
+    \item \textbf{Sentence-Transformers (\texttt{all-MiniLM-L6-v2})}: Mô hình sinh vector nhúng (embedding generator) nhận đầu vào là các nhãn kỹ năng và mã hóa chúng thành các vector phân tán 384 chiều biểu diễn ngữ nghĩa trong không gian Hilbert thực. Các vector đầu ra đều được chuẩn hóa độ dài L2 ($\|\mathbf{e}\|_2 = 1$), cho phép tối ưu hóa hiệu năng tính toán độ đo tương đồng Cosine thành phép tính tích vô hướng trực tiếp giữa hai vector nhúng.
+    \item \textbf{FAISS (Facebook AI Similarity Search)}: Thư viện tối ưu hóa tìm kiếm vector lân cận gần nhất (Nearest Neighbors). FAISS lập chỉ mục cho hơn 30.000 kỹ năng công nghệ chuẩn hóa từ hệ thống Lightcast/O*NET. Hệ thống sử dụng cấu trúc chỉ mục tích vô hướng phẳng (\texttt{IndexFlatIP}) kết hợp với việc chuẩn hóa L2 trước đó để tính toán tích vô hướng chính xác tuyệt đối, giúp tìm kiếm và ánh xạ nhanh kỹ năng từ CV/JD vào từ điển chuẩn hóa với độ trễ dưới 5 mili-giây.
+    \item \textbf{Bộ ba pdfplumber, pdf2image và pytesseract (Xử lý CV đa định dạng)}:
+    \begin{itemize}
+        \item Ưu tiên sử dụng \texttt{pdfplumber} để đọc trực tiếp lớp văn bản số (text layer) của tệp tin PDF gốc.
+        \item Đối với CV dạng ảnh chụp hoặc PDF quét (scan), hệ thống tự động chuyển đổi trang tài liệu sang ảnh độ phân giải cao bằng \texttt{pdf2image} và chạy OCR bằng công cụ nguồn mở \texttt{pytesseract} (Tesseract OCR).
+    \end{itemize}
 \end{itemize}
 
 \subsection{Hạ tầng và công cụ triển khai}

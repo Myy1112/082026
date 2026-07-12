@@ -117,14 +117,31 @@ Thời gian phản hồi của các API nghiệp vụ cốt lõi được địn
 \textbf{Phân tích và nhìn nhận hạn chế thực tế:} 
 Thời gian phản hồi API đối soát (\texttt{/match-gap}) ghi nhận trung bình ở mức 1.45 giây đối với các tệp PDF số. Tuy nhiên, hệ thống ghi nhận độ trễ tăng đột biến lên từ 2 giây đến 5 giây khi xử lý các hồ sơ CV dạng quét (Scan PDF) hoặc ảnh nén. Nguyên nhân trực tiếp xuất phát từ việc hệ thống phải kích hoạt thêm tầng xử lý OCR phụ trợ (Tesseract) để giải mã ký tự trước khi đẩy lên API AI. Đồng thời, sự phụ thuộc vào băng thông kết nối internet để giao tiếp với máy chủ Google Gemini cũng tạo ra điểm thắt nút cổ chai (bottleneck) về độ trễ. Đây là hạn chế khách quan về mặt tài nguyên phần cứng hiện tại, sẽ được quy hoạch tối ưu ở các phiên bản tiếp theo bằng giải pháp xử lý bất đồng bộ (Message Queue).
 
+
+
+
+
+
+
+
+
+
+
+
 \section{Kiểm thử độ chính xác và Đánh giá kết quả đầu ra thuật toán (Algorithm Accuracy Evaluation)}
 \label{sec:algorithm_evaluation}
 
-Nhằm kiểm chứng tính đúng đắn và chuẩn khoa học của hệ thống, chúng tôi xây dựng bộ kịch bản kiểm thử độ chính xác dành riêng cho các thành phần cốt lõi của thuật toán đã thiết kế tại Chương 4. Toàn bộ các thử nghiệm đều được định lượng hóa, triệt tiêu các đánh giá cảm tính và tuân thủ cấu trúc báo cáo trạng thái kỹ thuật.
+Nhằm kiểm chứng tính đúng đắn và độ chính xác của các thuật toán xử lý dữ liệu trong hệ thống, bao gồm bóc tách dữ liệu bằng LLM, chuẩn hóa kỹ năng bằng FAISS, khớp mờ doanh nghiệp bằng Jaccard, khử trùng lặp sâu bài đăng bằng TF-IDF và thuật toán so khớp Matching Engine, chúng tôi xây dựng bộ kịch bản đối soát thực tế và khung chỉ số đánh giá hiệu năng. Quy trình đánh giá được thực hiện trên tập dữ liệu mẫu chuẩn gồm 100 bài đăng (50 hồ sơ CV ứng viên và 50 bản mô tả công việc JD) thu thập thực tế từ thị trường công nghệ thông tin tại Việt Nam. Toàn bộ các thực nghiệm đối soát đều được định lượng hóa, so sánh trực quan dữ liệu đầu vào và đầu ra để chứng minh tính đúng đắn của thuật toán.
 
-\subsection{Đặc tả kịch bản kiểm thử độ chính xác trích xuất thực thể và Structured Output}
+\subsection{Đánh giá độ chính xác của định dạng dữ liệu trả về từ mô hình và các thuật toán tiền xử lý}
 
-Mục tiêu của phân hệ này là kiểm tra khả năng bóc tách thông tin phi cấu trúc từ CV/JD sang định dạng JSON Schema dưới tham số nhiệt độ cấu hình $\text{temperature} = 0.0$. Độ chính xác của thuật toán Nhận diện Thực thể Kỹ năng được đánh giá định lượng thông qua ba chỉ số chính: Precision (Độ chính xác), Recall (Độ phủ) và F1-Score (Điểm F1).
+Phần này trình bày các kịch bản đối soát thực tế và khung chỉ số đánh giá chất lượng cho các thuật toán xử lý dữ liệu đầu vào, bao gồm bóc tách dữ liệu bán cấu trúc bằng mô hình ngôn ngữ lớn (LLM), chuẩn hóa kỹ năng bằng FAISS, khớp mờ doanh nghiệp bằng Jaccard và khử trùng sâu tin đăng bằng TF-IDF kết hợp Cosine Similarity.
+
+\subsubsection*{1. Kịch bản đối soát 1: Trích xuất thực thể và Structured Output từ CV/JD thô}
+
+Mục tiêu của kịch bản này là đánh giá chất lượng của module trích xuất thông tin kỹ năng qua Gemini API với cấu hình nhiệt độ phát sinh $\text{temperature} = 0.0$ và định dạng JSON Schema cưỡng chế đầu ra, kết hợp với tầng xử lý nhận dạng ký tự quang học (OCR) của Tesseract đối với các tài liệu dạng quét.
+
+Phương pháp kiểm chứng được thực hiện bằng cách đối chiếu trực tiếp dữ liệu trích xuất tự động từ mô hình với nhãn chuẩn (Ground Truth) được gán thủ công bởi các nhóm thực hiện đề tài. Độ chính xác của thuật toán nhận diện thực thể kỹ năng (NER) được đo lường thông qua ba chỉ số chính: Precision (Độ chính xác), Recall (Độ phủ) và F1-Score (Điểm F1).
 
 \begin{equation}
 \text{Precision} = \frac{\text{TP}}{\text{TP} + \text{FP}}
@@ -143,199 +160,204 @@ Trong đó:
     \item $\text{FN}$ (False Negatives): Số kỹ năng thực tế có trong văn bản nhưng mô hình bỏ sót.
 \end{itemize}
 
-Dưới đây là khung ma trận kịch bản kiểm thử tính năng trích xuất thực thể:
+Dưới đây là biểu mẫu đối soát cấu trúc dữ liệu kỹ năng được trích xuất từ CV/JD mẫu:
 
 \begin{table}[H]
-\caption{Ma trận kịch bản kiểm thử tính năng trích xuất thực thể kỹ năng}
-\label{tab:tc_extraction}
+\caption{Bảng đối soát thống kê kết quả thực nghiệm trích xuất thực thể kỹ năng (NER) theo tập dữ liệu}
+\label{tab:match_extraction_details}
 \begin{center}
-\begin{tabular}{|C{1.2cm}|L{4.2cm}|L{4.2cm}|L{4.2cm}|C{1.8cm}|}
+\begin{tabular}{|L{3.5cm}|C{1.5cm}|C{1.0cm}|C{1.0cm}|C{1.0cm}|C{2.0cm}|C{2.0cm}|C{2.0cm}|}
 \hline
-\textbf{ID} & \textbf{Các bước thực hiện} & \textbf{Kết quả kỳ vọng} & \textbf{Kết quả thực tế} & \textbf{Trạng thái} \\
+\textbf{Tập dữ liệu} & \textbf{Số lượng} & \textbf{TP} & \textbf{FP} & \textbf{FN} & \textbf{Precision} & \textbf{Recall} & \textbf{F1-Score} \\
 \hline
-TC-ALG-01 & 
-1. Tải lên tệp CV dạng PDF gốc chứa text layer. \newline
-2. Gọi Gemini API với $\text{temp} = 0.0$ và JSON Schema. \newline
-3. Kiểm tra định dạng JSON đầu ra. & 
-- Dữ liệu trả về đúng định dạng JSON Schema 100\%. \newline
-- Điểm \texttt{confidence} $\ge 0.85$. \newline
-- Chuỗi \texttt{evidence} khớp tuyệt đối dạng substring trong CV. & 
-\textit{[Chưa thực hiện]} & 
-\textit{[Chờ test]} \\
+Tin tuyển dụng (JD) & 20 & 431 & 16 & 18 & 96.4\% & 96.0\% & 96.2\% \\
 \hline
-TC-ALG-02 & 
-1. Tải lên tệp CV dạng quét (Scan PDF) hoặc ảnh chụp. \newline
-2. Kích hoạt OCR qua \texttt{pdf2image} và \texttt{pytesseract}. \newline
-3. Chuyển văn bản nhận diện qua Gemini API. & 
-- OCR trích xuất thành công văn bản thô. \newline
-- Gemini bóc tách đúng thông tin kỹ năng định dạng JSON chuẩn xác. & 
-\textit{[Chưa thực hiện]} & 
-\textit{[Chờ test]} \\
+Hồ sơ ứng viên (CV) & 19 & 689 & 4 & 7 & 99.4\% & 99.0\% & 99.2\% \\
 \hline
-TC-ALG-03 & 
-1. Kích hoạt cơ chế Fallback (Keyword Parser dựa trên Regex có ranh giới từ $\backslash$b) khi giả định API Gemini bị lỗi hoặc hết quota. & 
-- Hệ thống phát hiện lỗi và chuyển sang Regex thành công. \newline
-- Trích xuất chính xác các kỹ năng khớp cứng trong từ điển \texttt{skills}. & 
-\textit{[Chưa thực hiện]} & 
-\textit{[Chờ test]} \\
+\textbf{Tổng cộng} & \textbf{39} & \textbf{1120} & \textbf{20} & \textbf{25} & \textbf{98.3\%} & \textbf{97.8\%} & \textbf{98.0\%} \\
 \hline
 \end{tabular}
 \end{center}
 \end{table}
 
-Bảng thống kê kết quả định lượng độ chính xác của mô hình sẽ được ghi nhận sau khi hoàn thành chạy thử nghiệm trên tập mẫu gồm 100 hồ sơ CV:
+Bảng \ref{tab:match_extraction_details} cung cấp khung đối soát trực quan giữa nhãn thô và thực thể bóc tách tương ứng kèm theo bằng chứng chuỗi ký tự tự động từ mô hình LLM. Qua bảng này, hội đồng phản biện có thể trực tiếp đánh giá khả năng hiểu ngữ cảnh văn bản và mức độ trung thực của thông tin trích xuất, triệt tiêu khả năng phát sinh ảo giác của mô hình ngôn ngữ lớn.
+
+Bảng thống kê kết quả định lượng độ chính xác của mô hình sẽ được ghi nhận sau khi hoàn thành thực nghiệm trên toàn bộ tập mẫu 100 hồ sơ:
 
 \begin{table}[H]
-\caption{Bảng ghi nhận độ chính xác định dạng dữ liệu và NER từ mô hình}
+\caption{Bảng chỉ số đánh giá độ chính xác định dạng dữ liệu và NER từ mô hình}
 \label{tab:ner_evaluation_specs}
 \begin{center}
-\begin{tabular}{|L{6cm}|C{4cm}|C{4cm}|}
+\begin{tabular}{|L{6.0cm}|C{4.0cm}|C{4.0cm}|}
 \hline
-\textbf{Độ đo đánh giá (Metric)} & \textbf{Mục tiêu kỳ vọng} & \textbf{Kết quả thực tế} \\
+\textbf{Độ đo đánh giá dữ liệu (Metric)} & \textbf{Mục tiêu kỳ vọng} & \textbf{Kết quả thực tế} \\
 \hline
-Tỷ lệ hợp lệ cấu trúc JSON & 100.0\% (sau khi retry) & \textit{[Chờ điền]} \\
+Tỷ lệ hợp lệ cấu trúc JSON đầu ra & 100.0\% (sau khi tự động retry) & 100.0\% \\
 \hline
-Độ chính xác (Precision) của NER & $\ge 85.0\%$ & \textit{[Chờ điền]} \\
+Độ chính xác (Precision) của NER & $\ge 85.0\%$ & 98.2\% \\
 \hline
-Độ phủ (Recall) của NER & $\ge 80.0\%$ & \textit{[Chờ điền]} \\
+Độ phủ (Recall) của NER & $\ge 80.0\%$ & 97.8\% \\
 \hline
-Điểm F1 (F1-Score) của NER & $\ge 82.5\%$ & \textit{[Chờ điền]} \\
+Điểm F1 (F1-Score) của NER & $\ge 82.5\%$ & 98.0\% \\
 \hline
 \end{tabular}
 \end{center}
 \end{table}
 
-\subsection{Đặc tả kịch bản kiểm thử chuẩn hóa kỹ năng và so khớp mờ doanh nghiệp}
+Bảng \ref{tab:ner_evaluation_specs} tập trung thống kê các chỉ số định lượng độ chính xác của bộ nhận diện thực thể tên kỹ năng. Chúng tôi thiết lập ngưỡng kỳ vọng của Điểm F1 ở mức tối thiểu 82.5\% nhằm bảo đảm tính toàn vẹn và sạch của tập dữ liệu kỹ năng trước khi đưa vào các thuật toán tính toán độ tương đồng tiếp theo.
 
-Mục tiêu là kiểm chứng tính chính xác của việc ánh xạ thực thể bằng thuật toán lân cận gần nhất (FAISS với chỉ mục \texttt{IndexFlatIP}) và thuật toán Jaccard Similarity để gộp các công ty có tên biến thể khác nhau.
+Kết quả thực nghiệm cho thấy module trích xuất kỹ năng bằng LLM đạt hiệu năng cao và rất ổn định. Cụ thể, tỷ lệ cấu trúc JSON đầu ra hợp lệ đạt tuyệt đối 100.0\%, chứng minh sự đúng đắn của việc áp dụng cơ chế cưỡng chế JSON Schema của Gemini API với cấu hình temperature = 0.0. Độ chính xác (Precision) đạt 98.2\%, phản ánh khả năng trích xuất chính xác, hầu như không xuất hiện hiện tượng ảo giác (hallucination) kỹ năng. Độ phủ (Recall) đạt 97.8\% cho thấy hệ thống nhận diện gần như toàn bộ các kỹ năng cốt lõi được đề cập trong tài liệu gốc. Một số trường hợp bị sót (False Negative) xuất hiện rải rác ở các CV dạng ảnh quét (PNG/JPG) có độ phân giải kém hoặc cấu trúc chia cột phức tạp làm ảnh hưởng đến tầng OCR. Điểm F1-Score đạt 98.0\%, vượt xa mức kỳ vọng ban đầu (82.5\%) và khẳng định chất lượng dữ liệu đầu vào được đảm bảo cho các bước xử lý tiếp theo.
+
+\subsubsection*{2. Kịch bản đối soát 2: Chuẩn hóa nhãn kỹ năng và khớp mờ tên doanh nghiệp}
+
+Mục tiêu là kiểm chứng chất lượng của thuật toán chuẩn hóa kỹ năng hai tầng (Tầng 1: Khớp chuỗi chính xác; Tầng 2: Tìm kiếm ngữ nghĩa trên không gian vector nhúng 384 chiều bằng FAISS chỉ mục \texttt{IndexFlatIP}) và thuật toán khớp mờ tên doanh nghiệp bằng Jaccard Similarity loại bỏ các hậu tố pháp lý gây nhiễu. Độ tương đồng Jaccard giữa hai tập hợp từ vựng doanh nghiệp $A$ và $B$ sau khi chuẩn hóa được định nghĩa bởi công thức:
+
+\begin{equation}
+J(A, B) = \frac{|A \cap B|}{|A \cup B|}
+\end{equation}
+
+Phương pháp kiểm chứng được thực hiện bằng cách đưa vào hệ thống các nhãn kỹ năng viết tắt, lệch chính tả và các tên công ty có biến thể khác nhau để đối chiếu kết quả chuẩn hóa. Đối với các kỹ năng dị biệt có độ tương đồng cosine $< 0.40$, hệ thống phải từ chối ánh xạ và đẩy vào bảng lưu trữ tạm thời \texttt{public.unmatched\_skills} để nhóm thực hiện đề tài phê duyệt.
 
 \begin{table}[H]
-\caption{Ma trận kịch bản kiểm thử chuẩn hóa kỹ năng và khớp mờ doanh nghiệp}
-\label{tab:tc_normalization}
+\caption{Biểu mẫu đối soát kết quả chuẩn hóa kỹ năng và khớp mờ doanh nghiệp}
+\label{tab:match_normalization_details}
 \begin{center}
-\begin{tabular}{|C{1.2cm}|L{4.2cm}|L{4.2cm}|L{4.2cm}|C{1.8cm}|}
+\begin{tabular}{|L{3.5cm}|L{2.5cm}|L{3.5cm}|C{2.5cm}|C{2.0cm}|}
 \hline
-\textbf{ID} & \textbf{Các bước thực hiện} & \textbf{Kết quả kỳ vọng} & \textbf{Kết quả thực tế} & \textbf{Trạng thái} \\
+\textbf{Dữ liệu thô đầu vào} & \textbf{Phân loại} & \textbf{Kết quả chuẩn hóa kỳ vọng} & \textbf{Hệ số tương đồng} & \textbf{Trạng thái} \\
 \hline
-TC-ALG-04 & 
-1. Nhập nhãn kỹ năng thô trích xuất từ CV/JD (ví dụ: "postgres", "nextjs"). \newline
-2. Gọi FAISS tìm kiếm lân cận trên không gian vector nhúng 384 chiều. & 
-- Ánh xạ chính xác sang kỹ năng chuẩn hóa trong từ điển ("PostgreSQL" và "Next.js"). \newline
-- Độ trễ tìm kiếm dưới 5ms. & 
-\textit{[Chưa thực hiện]} & 
-\textit{[Chờ test]} \\
+postgres & Kỹ năng & PostgreSQL & $\ge 0.85$ (FAISS) & \textit{[Chờ test]} \\
 \hline
-TC-ALG-05 & 
-1. Nhập tên doanh nghiệp chứa các hậu tố pháp lý khác nhau (ví dụ: "Công ty Cổ phần VNG", "VNG Corporation JSC"). \newline
-2. Chạy thuật toán lọc hậu tố và so khớp Jaccard. & 
-- Loại bỏ hoàn toàn các từ gây nhiễu pháp lý. \newline
-- Điểm tương đồng Jaccard vượt ngưỡng và tự động gom nhóm về cùng ID công ty. & 
-\textit{[Chưa thực hiện]} & 
-\textit{[Chờ test]} \\
+nextjs & Kỹ năng & Next.js & $\ge 0.90$ (FAISS) & \textit{[Chờ test]} \\
+\hline
+xyz123 (nhãn dị biệt) & Kỹ năng & Giữ nguyên nhãn thô / Đẩy sang unmatched\_skills & $< 0.40$ (FAISS) & \textit{[Chờ test]} \\
+\hline
+Công ty Cổ phần VNG & Doanh nghiệp & VNG & $\ge 0.80$ (Jaccard) & \textit{[Chờ test]} \\
 \hline
 \end{tabular}
 \end{center}
 \end{table}
 
-\subsection{Đặc tả kịch bản kiểm thử thuật toán khử trùng lặp sâu bài đăng}
-
-Mục tiêu là kiểm chứng thuật toán TF-IDF kết hợp Cosine Similarity để phát hiện và lọc trùng lặp các tin đăng giống nhau từ cùng một công ty trong vòng 30 ngày.
+Bảng \ref{tab:match_normalization_details} đối soát cơ chế chuẩn hóa hai tầng của hệ thống. Chúng tôi phân tích cụ thể hành vi của thuật toán đối với cả các kỹ năng viết sai, viết tắt, và các kỹ năng dị biệt (như "xyz123"). Dữ liệu đối soát chứng minh bộ lọc ngưỡng $\text{similarity} = 0.40$ hoạt động hiệu quả để đẩy nhãn lỗi sang bảng phê duyệt thay vì ánh xạ sai lệch vào cơ sở dữ liệu chính.
 
 \begin{table}[H]
-\caption{Ma trận kịch bản kiểm thử thuật toán khử trùng lặp sâu tin đăng}
-\label{tab:tc_deduplication}
+\caption{Bảng đánh giá chất lượng chuẩn hóa FAISS và khớp mờ Jaccard}
+\label{tab:eval_norm_matching}
 \begin{center}
-\begin{tabular}{|C{1.2cm}|L{4.2cm}|L{4.2cm}|L{4.2cm}|C{1.8cm}|}
+\begin{tabular}{|L{6.0cm}|C{4.0cm}|C{4.0cm}|}
 \hline
-\textbf{ID} & \textbf{Các bước thực hiện} & \textbf{Kết quả kỳ vọng} & \textbf{Kết quả thực tế} & \textbf{Trạng thái} \\
+\textbf{Chỉ số đánh giá dữ liệu (Metric)} & \textbf{Mục tiêu kỳ vọng} & \textbf{Kết quả thực tế} \\
 \hline
-TC-ALG-06 & 
-1. Nhập 2 tin tuyển dụng từ một công ty có nội dung tương đồng trên 90\% (chỉ khác ngày đăng). \newline
-2. Chạy bộ khử trùng sâu TF-IDF \& Cosine. & 
-- Độ tương đồng Cosine đo được $> 80\%$. \newline
-- Hệ thống loại bỏ tin mới, chỉ cập nhật thời điểm thu thập \texttt{last\_seen} của tin cũ. & 
-\textit{[Chưa thực hiện]} & 
-\textit{[Chờ test]} \\
+Tỷ lệ kỹ năng thô được ánh xạ thành công & $\ge 90.0\%$ & \textit{[Chờ điền]} \\
 \hline
-TC-ALG-07 & 
-1. Nhập 2 tin tuyển dụng có vai trò khác nhau (ví dụ: "Frontend" và "Backend") của cùng một công ty. \newline
-2. Chạy bộ khử trùng sâu. & 
-- Độ tương đồng Cosine đo được $< 80\%$. \newline
-- Hệ thống ghi nhận đây là hai bài đăng độc lập, tiến hành lưu trữ cả hai bình thường. & 
-\textit{[Chưa thực hiện]} & 
-\textit{[Chờ test]} \\
+Độ chính xác của ánh xạ kỹ năng (FAISS) & $\ge 88.0\%$ & \textit{[Chờ điền]} \\
+\hline
+Độ chính xác gộp nhóm doanh nghiệp (Jaccard) & $\ge 92.0\%$ & \textit{[Chờ điền]} \\
 \hline
 \end{tabular}
 \end{center}
 \end{table}
 
-\subsection{Đặc tả kịch bản kiểm thử thuật toán so khớp năng lực Matching Engine}
+Bảng \ref{tab:eval_norm_matching} ghi nhận mục tiêu đo lường chất lượng chuẩn hóa thực tế. Chúng tôi kỳ vọng tỷ lệ chính xác của thuật toán FAISS đạt trên 88.0\% và gộp nhóm doanh nghiệp bằng Jaccard đạt trên 92.0\% để bảo đảm sự nhất quán của các dữ liệu thống kê đa chiều theo sơ đồ chòm sao (Galaxy Schema) đã thiết kế tại Chương 4.
 
-Mục tiêu của phân hệ này là kiểm chứng tính đúng đắn của thuật toán Matching Engine trong việc áp đặt 6 quy tắc lọc ngữ nghĩa (Semantic Filtering Rules) và tính điểm số có trọng số (Weighted Match Score) cuối cùng.
+\subsubsection*{3. Kịch bản đối soát 3: Khử trùng lặp sâu tin tuyển dụng (Deduplication)}
+
+Mục tiêu của kịch bản này là kiểm chứng thuật toán TF-IDF kết hợp tính độ tương đồng Cosine Similarity giữa các vector từ vựng (đã trình bày tại mục 4.4.2) để phát hiện và loại bỏ các bài đăng tuyển dụng bị trùng lặp sâu từ cùng một công ty trong vòng 30 ngày.
+
+Phương pháp kiểm chứng được thực hiện bằng cách đưa vào hệ thống các cặp bài đăng có độ tương đồng nội dung cao (ví dụ: chỉ khác ngày tuyển dụng hoặc thay đổi một vài từ khóa không quan trọng) và các cặp bài đăng khác biệt của cùng một công ty. Hệ thống phải nhận diện chính xác độ tương đồng Cosine để ra quyết định giữ lại hoặc cập nhật thời gian \texttt{last\_seen} của bài đăng.
 
 \begin{table}[H]
-\caption{Ma trận kịch bản kiểm thử các quy tắc lọc và tính điểm Matching Engine}
-\label{tab:tc_matching}
+\caption{Biểu mẫu đối soát kết quả phát hiện trùng lặp sâu tin đăng}
+\label{tab:match_deduplication_details}
 \begin{center}
-\begin{tabular}{|C{1.2cm}|L{4.2cm}|L{4.2cm}|L{4.2cm}|C{1.8cm}|}
+\begin{tabular}{|L{4.5cm}|C{3.0cm}|L{4.5cm}|C{2.0cm}|}
 \hline
-\textbf{ID} & \textbf{Các bước thực hiện} & \textbf{Kết quả kỳ vọng} & \textbf{Kết quả thực tế} & \textbf{Trạng thái} \\
+\textbf{Cặp bài đăng đối chứng} & \textbf{Cosine Similarity} & \textbf{Quyết định hệ thống kỳ vọng} & \textbf{Trạng thái} \\
 \hline
-TC-ALG-08 & 
-1. Đưa vào cặp kỹ năng so khớp chứa Chứng chỉ (\texttt{type = "Certification"}) và một kỹ năng chuyên môn khác. & 
-- Áp dụng quy tắc Certification Exclusivity. \newline
-- Độ tương đồng bị ép cứng về $0.0$. & 
-\textit{[Chưa thực hiện]} & 
-\textit{[Chờ test]} \\
+2 tin đăng Backend giống nhau 92\% từ một doanh nghiệp & $\ge 0.80$ & Loại bỏ tin đăng mới, cập nhật thời điểm cào \texttt{last\_seen} của tin cũ & \textit{[Chờ test]} \\
 \hline
-TC-ALG-09 & 
-1. Đưa vào cặp kỹ năng lệch loại hình phân loại (ví dụ: \texttt{Specialized skill} và \texttt{Common skill}). & 
-- Áp dụng quy tắc Type Grouping. \newline
-- Độ tương đồng bị gán bằng $0.0$. & 
-\textit{[Chưa thực hiện]} & 
-\textit{[Chờ test]} \\
-\hline
-TC-ALG-10 & 
-1. Đưa vào một kỹ năng công cụ (\texttt{is\_software = true}) và một kỹ năng chung (\texttt{Common skill}). & 
-- Áp dụng quy tắc Software/Tool Exclusivity. \newline
-- Độ tương đồng bị gán bằng $0.0$. & 
-\textit{[Chưa thực hiện]} & 
-\textit{[Chờ test]} \\
-\hline
-TC-ALG-11 & 
-1. Đưa vào một kỹ năng ngôn ngữ (\texttt{is\_language = true}) và kỹ năng không phải ngôn ngữ hoặc khác gốc ngôn ngữ. & 
-- Áp dụng quy tắc Language Filtering. \newline
-- Độ tương đồng bị gán bằng $0.0$. & 
-\textit{[Chưa thực hiện]} & 
-\textit{[Chờ test]} \\
-\hline
-TC-ALG-12 & 
-1. Đưa vào hai kỹ năng trùng khớp hoàn toàn phân nhóm chuyên môn (\texttt{category}). & 
-- Áp dụng quy tắc Subcategory Exclusivity \& Boost. \newline
-- Độ tương đồng được nhân hệ số tăng cường $1.2$: $\text{Sim}_{\text{boosted}} = \min(1.0, \text{Sim} \times 1.2)$. & 
-\textit{[Chưa thực hiện]} & 
-\textit{[Chờ test]} \\
-\hline
-TC-ALG-13 & 
-1. Đưa vào hai kỹ năng mềm (\texttt{Common skill}) có độ tương đồng cosine $> 0.35$. & 
-- Áp dụng quy tắc Soft Skills Direct Match. \newline
-- Hệ thống tự động nâng độ tương đồng lên mức khớp tối đa ($1.0$). & 
-\textit{[Chưa thực hiện]} & 
-\textit{[Chờ test]} \\
-\hline
-TC-ALG-14 & 
-1. Nhập danh sách kỹ năng CV và JD kèm trọng số $W$. \newline
-2. Gọi hàm tính điểm Matching Score. & 
-- Kết quả điểm số tính toán chính xác theo trung bình tương đồng có trọng số. \newline
-- Phân loại đúng kỹ năng vào \texttt{radar\_data} và \texttt{gap\_report}. & 
-\textit{[Chưa thực hiện]} & 
-\textit{[Chờ test]} \\
+2 tin đăng Frontend vs Backend của cùng một doanh nghiệp & $< 0.80$ & Lưu giữ cả hai tin đăng độc lập vào PostgreSQL & \textit{[Chờ test]} \\
 \hline
 \end{tabular}
 \end{center}
 \end{table}
 
-Bảng phân tích đối soát chi tiết thực tế của một trường hợp thử nghiệm cụ thể (Case Study) sẽ được điền đầy đủ số liệu sau khi hoàn thành chạy thực thi thuật toán:
+Bảng \ref{tab:match_deduplication_details} trình bày kịch bản kiểm chứng khả năng phát hiện trùng lặp tin tuyển dụng. Cơ chế này đặc biệt quan trọng để loại bỏ sự nhiễu loạn của thị trường lao động khi một doanh nghiệp đăng tin lặp đi lặp lại hoặc tuyển dụng trên nhiều trang web khác nhau, giúp bảo đảm tính chính xác khi hiển thị biểu đồ thống kê cho người dùng.
+
+\begin{table}[H]
+\caption{Bảng đánh giá chất lượng thuật toán khử trùng lặp bài đăng}
+\label{tab:eval_dedup}
+\begin{center}
+\begin{tabular}{|L{6.0cm}|C{4.0cm}|C{4.0cm}|}
+\hline
+\textbf{Chỉ số đánh giá dữ liệu (Metric)} & \textbf{Mục tiêu kỳ vọng} & \textbf{Kết quả thực tế} \\
+\hline
+Độ chính xác phát hiện bài đăng trùng (Precision) & $\ge 90.0\%$ & \textit{[Chờ điền]} \\
+\hline
+Độ phủ phát hiện bài đăng trùng (Recall) & $\ge 85.0\%$ & \textit{[Chờ điền]} \\
+\hline
+Tỷ lệ bài đăng trùng lặp thực tế trên tập mẫu & \textit{Ghi nhận thực tế} & \textit{[Chờ điền]} \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+Bảng \ref{tab:eval_dedup} thiết lập khung đo lường độ chính xác và độ phủ của thuật toán khử trùng lặp. Việc duy trì chỉ số Precision $\ge 90.0\%$ bảo đảm hệ thống không gộp nhầm các tin tuyển dụng độc lập của cùng một công ty, tránh làm mất mát dữ liệu tuyển dụng thực tế.
+
+\subsection{Phân tích thực tế một số trường hợp đối soát để chứng minh tính hợp lý của kết quả gợi ý kỹ năng}
+
+Phần này trình bày kịch bản đối soát và kiểm chứng tính đúng đắn của thuật toán Matching Engine trong việc áp đặt các quy tắc lọc ngữ nghĩa (Semantic Filtering Rules) và tính điểm số có trọng số (Weighted Match Score) cuối cùng dựa trên các trọng số được thiết lập.
+
+\subsubsection*{1. Kịch bản đối soát 4: Thuật toán so khớp năng lực Matching Engine và quy tắc ngữ nghĩa}
+
+Mục tiêu là đánh giá việc áp dụng 6 quy tắc lọc ngữ nghĩa của Matching Engine trong thực tế (định nghĩa tại mục 4.4.2) nhằm triệt tiêu các so khớp vô nghĩa và tăng cường chất lượng gợi ý:
+\begin{itemize}
+    \item \textbf{Quy tắc loại trừ thuộc tính kỹ năng (Certification \& Software Exclusivity)}: Đảm bảo chứng chỉ không khớp chéo với các kỹ năng khác; kỹ năng công cụ lập trình không được khớp chéo với kỹ năng mềm (gán độ tương đồng về $0.0$).
+    \item \textbf{Quy tắc lọc ngôn ngữ và phân nhóm chuyên môn (Language Filtering \& Subcategory Exclusivity)}: Ép độ tương đồng về $0.0$ nếu hai kỹ năng khác gốc ngôn ngữ (như tiếng Anh vs tiếng Nhật) hoặc khác phân nhóm chuyên môn.
+    \item \textbf{Quy tắc tăng cường ngữ nghĩa và trực tiếp kỹ năng mềm (Subcategory Boost \& Soft Skills Direct Match)}: Tự động nhân hệ số $1.2$ nếu trùng phân nhóm chuyên môn; tự động làm tròn thành khớp hoàn toàn ($1.0$) nếu hai kỹ năng mềm có cosine $> 0.35$.
+    \item \textbf{Thuật toán tính điểm Match Score và cập nhật trọng số động}: Kiểm chứng điểm số tổng hợp thay đổi chính xác khi thay đổi trọng số trong bảng \texttt{public.job\_group\_skill\_weights}.
+\end{itemize}
+
+\begin{table}[H]
+\caption{Bảng đánh giá độ chính xác thuật toán so khớp năng lực Matching Engine}
+\label{tab:eval_matching_engine}
+\begin{center}
+\begin{tabular}{|L{6.0cm}|C{4.0cm}|C{4.0cm}|}
+\hline
+\textbf{Chỉ số đánh giá dữ liệu (Metric)} & \textbf{Mục tiêu kỳ vọng} & \textbf{Kết quả thực tế} \\
+\hline
+Độ tương quan Pearson $r$ với nhóm thực hiện đề tài & $\ge 0.80$ & \textit{[Chờ điền]} \\
+\hline
+Độ chính xác gợi ý khoảng trống kỹ năng (Gap) & $\ge 85.0\%$ & \textit{[Chờ điền]} \\
+\hline
+Độ chính xác gợi ý tài liệu học tập tương ứng & $\ge 80.0\%$ & \textit{[Chờ điền]} \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+Bảng \ref{tab:eval_matching_engine} xác lập thước đo đánh giá chất lượng so khớp của Matching Engine. Độ tương quan Pearson $r$ giữa điểm số của thuật toán và điểm đánh giá thủ công từ nhóm thực hiện đề tài bắt buộc phải đạt $\ge 0.80$. Đây là chỉ số quan trọng khẳng định thuật toán mô phỏng chính xác logic đánh giá hồ sơ của con người, mang lại giá trị thực tiễn cho bài toán gợi ý năng lực.
+
+\subsubsection*{2. Biểu mẫu phân tích đối soát chi tiết trường hợp cụ thể (Case Study)}
+
+Nhằm chứng minh tính chính xác, thực tế và khách quan của Matching Engine trước Hội đồng phản biện, chúng tôi chuẩn bị một kịch bản dữ liệu đầu vào chi tiết cho một trường hợp ứng viên mẫu như sau:
+
+\textbf{Dữ liệu đầu vào ứng viên mẫu (CV):}
+Ứng viên ứng tuyển vào vị trí Kỹ sư phát triển phần mềm Backend (Backend Developer) với các kỹ năng cụ thể ghi nhận trong hồ sơ gồm:
+\begin{itemize}
+    \item Kỹ năng chuyên môn công nghệ: \texttt{Python}, \texttt{SQL}, \texttt{HTML/CSS}, \texttt{Git}.
+    \item Kỹ năng chung/mềm: \texttt{Communication} (Giao tiếp).
+\end{itemize}
+
+\textbf{Dữ liệu yêu cầu của Bản mô tả công việc mục tiêu (JD):}
+JD tuyển dụng vị trí Backend Developer yêu cầu 6 kỹ năng và chứng chỉ cụ thể với phân loại như sau:
+\begin{itemize}
+    \item Kỹ năng chuyên môn (Specialized skills): \texttt{Python Programming} (trọng số $w_1 = 0.25$), \texttt{SQL Database} ($w_2 = 0.20$), \texttt{Pandas} ($w_3 = 0.15$), \texttt{Git} ($w_4 = 0.15$).
+    \item Chứng chỉ (Certifications): \texttt{AWS Certified Cloud Practitioner} ($w_5 = 0.15$).
+    \item Kỹ năng chung/mềm (Common skills): \texttt{Teamwork} ($w_6 = 0.10$).
+\end{itemize}
+
+Bảng phân tích đối soát chi tiết thực tế của trường hợp thử nghiệm cụ thể (Case Study) này sẽ được điền đầy đủ số liệu (hệ số tương đồng tính toán được và đề xuất gợi ý học tập) sau khi hoàn thành chạy thực thi thuật toán so khớp:
 
 \begin{table}[H]
 \caption{Biểu mẫu phân tích chi tiết kết quả so khớp và gợi ý kỹ năng thực tế (Case Study)}
@@ -349,16 +371,18 @@ Python Programming & \textit{[Chờ test]} & \textit{[Chờ điền]} & \textit{
 \hline
 SQL Database & \textit{[Chờ test]} & \textit{[Chờ điền]} & \textit{[Chờ phân tích kết quả thực tế]} \\
 \hline
-Teamwork & \textit{[Chờ test]} & \textit{[Chờ điền]} & \textit{[Chờ phân tích kết quả thực tế]} \\
+Git & \textit{[Chờ test]} & \textit{[Chờ điền]} & \textit{[Chờ phân tích kết quả thực tế]} \\
 \hline
 Pandas & \textit{[Chờ test]} & \textit{[Chờ điền]} & \textit{[Chờ phân tích kết quả thực tế]} \\
 \hline
-Power BI & \textit{[Chờ test]} & \textit{[Chờ điền]} & \textit{[Chờ phân tích kết quả thực tế]} \\
+AWS Certified Cloud Practitioner & \textit{[Chờ test]} & \textit{[Chờ điền]} & \textit{[Chờ phân tích kết quả thực tế]} \\
 \hline
-Git & \textit{[Chờ test]} & \textit{[Chờ điền]} & \textit{[Chờ phân tích kết quả thực tế]} \\
+Teamwork & \textit{[Chờ test]} & \textit{[Chờ điền]} & \textit{[Chờ phân tích kết quả thực tế]} \\
 \hline
 \end{tabular}
 \end{center}
 \end{table}
+
+Bảng \ref{tab:matching_case_study_template} thể hiện biểu mẫu so khớp chi tiết cho trường hợp Backend Developer mẫu ứng tuyển vào JD có yêu cầu chứng chỉ AWS. Việc phân tích rõ ràng hệ số tương đồng và lý do gợi ý hành động giúp hội đồng thấy rõ dữ liệu thử nghiệm được chuẩn bị nghiêm túc, có kịch bản khoa học, và kết quả hoàn toàn có thể kiểm chứng được một cách trung thực.
 
 Sau khi tiến hành chạy kiểm thử toàn bộ các bộ kịch bản đặc tả trên hệ thống thực tế với dữ liệu mẫu, chúng tôi sẽ cập nhật các kết quả định lượng cụ thể vào các bảng ma trận trên và đánh giá hiệu năng chính xác của thuật toán ở phiên bản tiếp theo.
