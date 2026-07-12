@@ -1,0 +1,42 @@
+@startuml image2_2
+!theme plain
+skinparam defaultFontName Arial
+skinparam defaultFontSize 12
+skinparam backgroundColor #FFFFFF
+
+title Quy trình ETL Pipeline theo phương pháp luận Kimball trong hệ thống CareerNova
+
+rectangle "**NGUỒN DỮ LIỆU**" as src #F0F0F0 {
+    rectangle "ITViec" as s1
+    rectangle "VietnamWorks" as s2
+    rectangle "CareerViet" as s3
+    rectangle "LinkedIn" as s4
+}
+
+rectangle "**EXTRACT**\n(Trích xuất)" as extract #E8F4FD {
+    rectangle "Crawler\n(Requests / cloudscraper\n/ Selenium fallback)" as crawler
+    rectangle "Raw JSON\n(jobs_combined.json)" as raw
+    crawler -down-> raw
+}
+
+rectangle "**TRANSFORM**\n(Biến đổi)" as transform #FDF2E8 {
+    rectangle "Làm sạch HTML,\nkhử trùng lặp (fuzzy dedup)" as clean
+    rectangle "Trích xuất thực thể\n(Gemini API + JSON Schema)" as llm
+    rectangle "Chuẩn hóa ngữ nghĩa\n(SBERT + FAISS,\ntừ điển kỹ năng)" as norm
+    clean -down-> llm
+    llm -down-> norm
+}
+
+rectangle "**LOAD**\n(Nạp)" as load #E8FDE8 {
+    database "PostgreSQL\njobs / companies / skills\njob_skills / salaries" as pg
+    rectangle "Cập nhật trọng số\nTF-IDF động\n(job_group_skill_weights)" as tfidf
+    pg -down-> tfidf
+}
+
+s1 -down-> crawler
+s2 -down-> crawler
+s3 -down-> crawler
+s4 -down-> crawler
+raw -right-> clean
+norm -right-> pg
+@enduml

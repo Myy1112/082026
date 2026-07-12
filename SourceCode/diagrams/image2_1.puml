@@ -1,0 +1,43 @@
+@startuml image2_1
+!theme plain
+skinparam defaultFontName Arial
+skinparam defaultFontSize 12
+skinparam backgroundColor #FFFFFF
+skinparam rectangleBorderColor #333333
+
+title Phân biệt cơ chế Thu thập dữ liệu Tĩnh (Static) và Động (Dynamic)
+
+rectangle "**LUỒNG CÀO TĨNH (Static Scraping)**" as static #E8F4FD {
+    rectangle "Python Requests\n+ cloudscraper" as req
+    rectangle "HTTP GET/POST" as http
+    rectangle "HTML thô\n(server render sẵn)" as html
+    rectangle "Bóc tách dữ liệu\n(BeautifulSoup)" as parse1
+    req -right-> http
+    http -right-> html
+    html -right-> parse1
+}
+
+rectangle "**LUỒNG CÀO ĐỘNG (Dynamic Scraping)**" as dynamic #FDF2E8 {
+    rectangle "Selenium\nHeadless Browser" as sel
+    rectangle "Thực thi JavaScript\n(cuộn trang, click, phân trang)" as js
+    rectangle "DOM hoàn chỉnh\n(client render)" as dom
+    rectangle "Bóc tách dữ liệu\n(WebDriver API)" as parse2
+    sel -right-> js
+    js -right-> dom
+    dom -right-> parse2
+}
+
+note bottom of static
+  Ưu điểm: nhanh, nhẹ, ít tốn CPU/RAM
+  Nhược điểm: bất lực với trang
+  Client-Side Rendering / SPA
+end note
+
+note bottom of dynamic
+  Ưu điểm: vượt WAF, xử lý được nội dung JS
+  Nhược điểm: chậm, tốn RAM,
+  tài nguyên gấp nhiều lần HTTP thuần
+end note
+
+static -[hidden]down-> dynamic
+@enduml

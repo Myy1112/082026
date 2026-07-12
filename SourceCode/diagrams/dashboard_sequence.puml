@@ -1,6 +1,6 @@
 @startuml dashboard_sequence
 !theme plain
-skinparam defaultFontSize 10
+skinparam defaultFontSize 11
 skinparam defaultFontName Arial
 skinparam backgroundColor #FFFFFF
 skinparam sequenceArrowThickness 1.5
@@ -9,46 +9,46 @@ skinparam sequenceBoxBackgroundColor #F5F5F5
 
 title Sơ đồ tuần tự: Xem Dashboard thống kê thị trường việc làm
 
-actor       "Người dùng"              as User
-participant "Next.js\nFrontend"       as FE
-participant "CareerNova\nBackend API\n(NestJS)" as API
-database    "PostgreSQL"              as DB
+actor       "Sinh viên"              as User
+participant "Trình duyệt\n(Frontend)"       as FE
+participant "Core API"               as API
+database    "Cơ sở dữ liệu"          as DB
+
+autonumber
 
 User -> FE : Điều hướng đến\nMarket Dashboard
-FE   -> FE : Khởi tạo component\nMarketDashboard.tsx\ngọi fetchDashboardData()
+FE   -> FE : Khởi tạo giao diện\nvà yêu cầu dữ liệu
 
-note over FE, API : Ba truy vấn được gửi song song — Promise.all()
+note over FE, API : Truy vấn song song (Promise.all)
 
 par Truy vấn song song
-    FE -> API : GET /market-dashboard/trends\n?scale=month (hoặc year)
-and
-    FE -> API : GET /market-dashboard/industry-breakdown
-and
-    FE -> API : GET /market-dashboard/salary-ranges
+    FE -> API : Yêu cầu Xu hướng tuyển dụng
+else
+    FE -> API : Yêu cầu Phân bổ ngành
+else
+    FE -> API : Yêu cầu Dải lương theo vị trí
 end
 
-group Xử lý: Xu hướng tuyển dụng
-    API -> DB   : SELECT period, SUM(total_postings),\nSUM(remote_jobs)\nFROM jobs GROUP BY period\nORDER BY period
-    DB --> API  : [{date, total_postings, remote_jobs}]
-    API --> FE  : TrendDataPointDto[]
+group Xử lý Xu hướng tuyển dụng
+    API -> DB   : Truy vấn lượng tin tuyển dụng\nvà việc làm từ xa theo thời gian
+    DB --> API  : Dữ liệu thời gian thực
 end
 
-group Xử lý: Phân bổ ngành công nghiệp
-    API -> DB   : SELECT i.industry_name,\nCOUNT(j.job_id) AS count\nFROM jobs j JOIN industries i\nGROUP BY industry\nORDER BY count DESC
-    DB --> API  : [{industry_name, count}]
-    API --> FE  : IndustryItemDto[]
+group Xử lý Phân bổ ngành
+    API -> DB   : Đếm số tin theo từng ngành
+    DB --> API  : Dữ liệu phân bổ
 end
 
-group Xử lý: Dải lương theo vị trí
-    API -> DB   : SELECT j.title AS role,\nAVG(s.min_salary), AVG(s.max_salary)\nFROM jobs j JOIN salaries s\nGROUP BY role\nORDER BY max_salary DESC
-    DB --> API  : [{role, min_salary, max_salary}]
-    API --> FE  : SalaryRangeItemDto[]
+group Xử lý Dải lương
+    API -> DB   : Tính trung bình lương (Min/Max)\nnhóm theo vị trí
+    DB --> API  : Dữ liệu lương trung bình
 end
 
-FE -> FE : Cập nhật state:\nsetTrends()\nsetIndustriesData()\nsetSalaryRangesData()
+API --> FE : Tập hợp toàn bộ kết quả\n(JSON)
 
-FE -> FE : Kết xuất 3 biểu đồ\n(Recharts ResponsiveContainer)
+FE -> FE : Xử lý dữ liệu và\ncập nhật trạng thái (State)
 
-FE --> User : AreaChart — Xu hướng tuyển dụng\nPieChart  — Phân bổ ngành\nBarChart  — Dải lương theo vị trí
+FE -> FE : Kết xuất biểu đồ\n(Xu hướng, Phân bổ, Dải lương)
 
+FE --> User : Hiển thị Dashboard hoàn chỉnh
 @enduml

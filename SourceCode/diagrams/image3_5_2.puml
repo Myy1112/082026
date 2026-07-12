@@ -1,0 +1,22 @@
+@startuml image3_5_2
+!theme plain
+skinparam defaultFontName Arial
+skinparam defaultFontSize 12
+skinparam backgroundColor #FFFFFF
+
+title Quy tắc phân loại kỹ năng phục vụ báo cáo khoảng cách năng lực
+
+start
+:Nhận giá trị tương đồng\nsim_i cho từng kỹ năng;
+
+if (sim_i >= 0.75?) then (Có)
+  :Kỹ năng đã có\n(Possessed / Matched Skills);
+elseif (sim_i >= 0.45?) then (Có)
+  :Kỹ năng cần bổ sung thêm\n(Partially Matched Skills);
+else (Không)
+  :Kỹ năng thiếu hoàn toàn\n(Missing Skills);
+endif
+
+:Ghi vào gap_report\nvà radar_data;
+stop
+@enduml

@@ -1,4 +1,4 @@
-﻿\chapter{Phân tích và thiết kế hệ thống}
+\chapter{Phân tích và thiết kế hệ thống}
 \label{Chapter3}
 
 % ================================================================
@@ -13,18 +13,18 @@ Bài toán nghiệp vụ cốt lõi của hệ thống CareerNova được xác 
 
 \textbf{(1) Thu thập dữ liệu tuyển dụng:} Hệ thống ETL tự động crawl và trích xuất thông tin từ các nền tảng tuyển dụng lớn tại Việt Nam (ITViec, VietnamWorks, CareerViet, LinkedIn), bao gồm yêu cầu kỹ năng, mức lương và thông tin ngành nghề, nhằm xây dựng kho dữ liệu thị trường được cập nhật liên tục.
 
-\textbf{(2) Phân tích và chuẩn hóa:} Dữ liệu tuyển dụng được làm sạch, trích xuất thực thể bằng Gemini API và chuẩn hóa ngữ nghĩa về một từ điển kỹ năng thống nhất, đảm bảo tính nhất quán để so sánh chéo giữa các nguồn thu thập.
+\textbf{(2) Phân tích và chuẩn hóa:} Dữ liệu tuyển dụng được làm sạch, trích xuất thực thể bằng Mô hình ngôn ngữ lớn (LLM API) và chuẩn hóa ngữ nghĩa về một từ điển kỹ năng thống nhất, đảm bảo tính nhất quán để so sánh chéo giữa các nguồn thu thập.
 
 \textbf{(3) So khớp CV với thị trường:} Khi sinh viên tải lên CV, hệ thống tự động bóc tách kỹ năng, tính điểm tương đồng ngữ nghĩa dựa trên mô hình Sentence-BERT kết hợp trọng số TF-IDF thị trường, rồi tạo ra báo cáo khoảng cách kỹ năng và biểu đồ Radar chi tiết.
 
 \textbf{(4) Trực quan hóa và hỗ trợ quyết định:} Kết quả được hiển thị qua giao diện dashboard tương tác, giúp sinh viên đọc hiểu tình trạng năng lực, theo dõi xu hướng tuyển dụng thị trường và nhận đề xuất lộ trình học tập cá nhân hóa.
 
-Hai nhóm đối tượng sử dụng chính được xác định: \textbf{Sinh viên CNTT} (người dùng cuối chính, sử dụng toàn bộ tính năng phân tích và trực quan hóa) và \textbf{Quản trị viên} (Admin, có quyền truy cập nâng cao vào dữ liệu hệ thống và quản lý tài khoản người dùng). Ngoài ra, \textbf{Hệ thống ETL} đóng vai trò tác nhân tự động vận hành luồng thu thập và chuẩn hóa dữ liệu nền tảng.
+Đối tượng sử dụng chính được xác định là \textbf{Sinh viên CNTT} (người dùng cuối chính, sử dụng toàn bộ tính năng phân tích và trực quan hóa). Ngoài ra, \textbf{Hệ thống ETL} đóng vai trò tác nhân tự động vận hành luồng thu thập và chuẩn hóa dữ liệu nền tảng.
 
 % ----------------------------------------------------------------
 \subsection{Yêu cầu chức năng}
 
-Các yêu cầu chức năng được xác định dựa trên cấu trúc route thực tế của ứng dụng Frontend (Next.js) và các module API của Backend (NestJS), được phân nhóm theo từng Actor như trong Bảng~\ref{tab:functional_requirements}.
+Dựa trên bài toán nghiệp vụ, các yêu cầu chức năng của hệ thống được xác định và phân nhóm theo từng tác nhân (Actor) tham gia vào hệ thống như trong Bảng~\ref{tab:functional_requirements}.
 
 \begin{longtable}{|L{1.5cm}|L{2.8cm}|L{9.2cm}|}
 \caption{Danh sách yêu cầu chức năng của hệ thống CareerNova.}
@@ -75,30 +75,25 @@ UC-15 & Sinh viên & Xem danh sách việc làm được đề xuất dựa trê
 \hline
 \multicolumn{3}{|l|}{\textit{Nhóm chức năng: Phân tích và Trực quan hóa}} \\
 \hline
-UC-16 & Sinh viên & Xem Dashboard thị trường: xu hướng đăng tuyển, phân bổ ngành công nghiệp và dải lương theo vị trí. \\
+UC-16 & Sinh viên & Xem Dashboard thị trường: thống kê tổng quan, xu hướng đăng tuyển, phân bổ thị trường, top vị trí và top kỹ năng nổi bật. \\
 \hline
 UC-17 & Sinh viên & Xem Dashboard cá nhân: tổng hợp năng lực, tiến độ và kết quả so khớp của bản thân. \\
 \hline
 UC-18 & Sinh viên & Xem lộ trình học tập được đề xuất để lấp đầy khoảng cách kỹ năng đã phát hiện. \\
-\hline
-\multicolumn{3}{|l|}{\textit{Nhóm chức năng: Quản trị hệ thống}} \\
-\hline
-UC-19 & Admin & Xem và quản lý danh sách người dùng trong hệ thống (xem thông tin, phân quyền). \\
-\hline
-UC-20 & Admin & Xem báo cáo tổng thể về hoạt động và dữ liệu của hệ thống. \\
+
 \hline
 \multicolumn{3}{|l|}{\textit{Nhóm chức năng: Thu thập và xử lý dữ liệu (tự động)}} \\
 \hline
 UC-21 & Hệ thống ETL & Thu thập dữ liệu tin tuyển dụng tự động từ các nền tảng ITViec, VietnamWorks, CareerViet, LinkedIn. \\
 \hline
-UC-22 & Hệ thống ETL & Chuẩn hóa, trích xuất thực thể kỹ năng và nạp dữ liệu vào cơ sở dữ liệu PostgreSQL. \\
+UC-22 & Hệ thống ETL & Chuẩn hóa, trích xuất thực thể kỹ năng và nạp dữ liệu vào cơ sở dữ liệu Cơ sở dữ liệu (Database). \\
 \hline
 \end{longtable}
 
 % ----------------------------------------------------------------
 \subsection{Yêu cầu phi chức năng}
 
-Các yêu cầu phi chức năng được suy ra từ các tệp cấu hình kỹ thuật thực tế của hệ thống, bao gồm \texttt{Dockerfile} của Frontend (Node 20-Alpine, port 3000) và Backend (Node 20-Alpine, port 3000, OpenSSL), tệp \texttt{docker-compose.yml} (PostgreSQL 17, Docker volume), và tệp \texttt{requirements.txt} của ETL Pipeline (FastAPI, Torch, Sentence-transformers, FAISS-cpu, Psycopg2). Các yêu cầu được phân loại và trình bày trong Bảng~\ref{tab:nonfunctional_requirements}.
+Các yêu cầu phi chức năng thiết lập các ràng buộc về mặt kiến trúc, đảm bảo hệ thống vận hành ổn định, an toàn và dễ bảo trì. Các yêu cầu này được phân loại và trình bày trong Bảng~\ref{tab:nonfunctional_requirements}.
 
 \begin{longtable}{|L{1.5cm}|L{2.8cm}|L{9.2cm}|}
 \caption{Danh sách yêu cầu phi chức năng của hệ thống CareerNova.}
@@ -113,7 +108,7 @@ Các yêu cầu phi chức năng được suy ra từ các tệp cấu hình k�
 \endhead
 NFR-01 & Hiệu năng & Thời gian phản hồi của API Backend không vượt quá 2 giây cho 95\% các yêu cầu truy vấn thông thường (dashboard, tìm kiếm, hồ sơ). \\
 \hline
-NFR-02 & Hiệu năng & Toàn bộ quy trình so khớp CV (bóc tách kỹ năng qua Gemini API, tính điểm SBERT, tạo Gap Report) hoàn thành trong vòng 30 giây kể từ thời điểm người dùng gửi yêu cầu. \\
+NFR-02 & Hiệu năng & Toàn bộ quy trình so khớp CV (bóc tách kỹ năng qua Mô hình ngôn ngữ lớn (LLM API), tính điểm Mô hình nhúng (Embedding), tạo Gap Report) hoàn thành trong vòng 30 giây kể từ thời điểm người dùng gửi yêu cầu. \\
 \hline
 NFR-03 & Hiệu năng & Tìm kiếm ngữ nghĩa trên chỉ mục vector FAISS đạt độ trễ dưới 100ms cho tập dữ liệu hàng triệu bản ghi, nhờ cơ chế tính trước (precompute) và lưu cache vector nhúng. \\
 \hline
@@ -121,23 +116,23 @@ NFR-04 & Bảo mật & Xác thực người dùng được thực hiện theo c�
 \hline
 NFR-05 & Bảo mật & Mật khẩu người dùng được băm bằng thuật toán bcrypt trước khi lưu vào cơ sở dữ liệu; không lưu trữ mật khẩu dạng plaintext tại bất kỳ tầng nào. \\
 \hline
-NFR-06 & Bảo mật & Các container Docker chạy dưới tài khoản non-root (UID 1001 đối với Frontend) và không nhúng thông tin xác thực nhạy cảm vào image, tuân thủ nguyên tắc đặc quyền tối thiểu. \\
+NFR-06 & Bảo mật & Các container Docker chạy dưới tài khoản non-root (UID 1001 đối với Giao diện người dùng (Frontend)) và không nhúng thông tin xác thực nhạy cảm vào image, tuân thủ nguyên tắc đặc quyền tối thiểu. \\
 \hline
-NFR-07 & Bảo mật & Toàn bộ giao tiếp giữa Frontend và Backend được mã hóa qua HTTPS/TLS; Backend tích hợp OpenSSL (khai báo trong Dockerfile) để hỗ trợ kết nối cơ sở dữ liệu bảo mật. \\
+NFR-07 & Bảo mật & Toàn bộ giao tiếp giữa Giao diện người dùng (Frontend) và Backend được mã hóa qua HTTPS/TLS; Backend tích hợp OpenSSL (khai báo trong Dockerfile) để hỗ trợ kết nối cơ sở dữ liệu bảo mật. \\
 \hline
-NFR-08 & Khả năng mở rộng & Mỗi thành phần của hệ thống (Frontend, Backend API, ETL Pipeline) được đóng gói độc lập trong Docker container, cho phép triển khai, nâng cấp và mở rộng theo chiều ngang (horizontal scaling) mà không ảnh hưởng đến các thành phần còn lại. \\
+NFR-08 & Khả năng mở rộng & Các thành phần của hệ thống (Tầng Trình bày, Tầng Nghiệp vụ, Tầng Xử lý dữ liệu) phải được thiết kế đóng gói độc lập, cho phép triển khai, nâng cấp và mở rộng theo chiều ngang (horizontal scaling) mà không ảnh hưởng đến các thành phần còn lại. \\
 \hline
 NFR-09 & Khả năng mở rộng & Pipeline ETL được thiết kế theo kiến trúc module hóa (crawl → clean → normalize → import), cho phép bổ sung nguồn tuyển dụng mới hoặc thay thế mô hình LLM mà không cần thay đổi cấu trúc tổng thể. \\
 \hline
-NFR-10 & Độ tin cậy & Dữ liệu PostgreSQL được lưu trữ bền vững qua Docker named volume (\texttt{career\_nova\_postgres\_data}), đảm bảo dữ liệu không bị mất khi container khởi động lại; container PostgreSQL cấu hình \texttt{restart: unless-stopped}. \\
+NFR-10 & Độ tin cậy & Hệ quản trị cơ sở dữ liệu phải có cơ chế sao lưu và cấp phát vùng nhớ độc lập, đảm bảo dữ liệu không bị mất khi máy chủ dịch vụ khởi động lại. \\
 \hline
 NFR-11 & Độ tin cậy & ETL Pipeline tích hợp cơ chế fallback tự động: ưu tiên cào tĩnh bằng Requests/cloudscraper, tự động chuyển sang Selenium Headless Browser khi gặp tường lửa chống bot, đảm bảo tính liên tục của quá trình thu thập dữ liệu. \\
 \hline
-NFR-12 & Độ tin cậy & Kết quả bóc tách kỹ năng từ LLM (Gemini API) được kiểm chứng bằng cơ chế anti-hallucination: mỗi thực thể kỹ năng phải kèm bằng chứng (\texttt{evidence\_text}) trích từ văn bản gốc; nếu không khớp sẽ bị loại bỏ tự động. \\
+NFR-12 & Độ tin cậy & Kết quả bóc tách kỹ năng từ Mô hình ngôn ngữ lớn (LLM) được kiểm chứng bằng cơ chế anti-hallucination: mỗi thực thể kỹ năng phải kèm bằng chứng (\texttt{evidence\_text}) trích từ văn bản gốc; nếu không khớp sẽ bị loại bỏ tự động. \\
 \hline
-NFR-13 & Bảo trì & Backend NestJS được tổ chức theo kiến trúc module hóa rõ ràng (auth, profile, job, matching, skill-gap, market-dashboard, v.v.), mỗi module độc lập về controller, service và DTO, giúp dễ dàng bảo trì và mở rộng từng tính năng riêng lẻ. \\
+NFR-13 & Bảo trì & Tầng Xử lý nghiệp vụ phải được tổ chức theo kiến trúc phân hệ (module) rõ ràng (auth, profile, job, matching, skill-gap, market-dashboard, v.v.), mỗi module độc lập về controller, service và DTO, giúp dễ dàng bảo trì và mở rộng từng tính năng riêng lẻ. \\
 \hline
-NFR-14 & Bảo trì & Toàn bộ Frontend và Backend sử dụng TypeScript với kiểu dữ liệu tường minh, giúp phát hiện lỗi tại thời điểm biên dịch, giảm thiểu lỗi runtime và hỗ trợ tái cấu trúc mã nguồn an toàn. \\
+NFR-14 & Bảo trì & Hệ thống ưu tiên sử dụng các ngôn ngữ lập trình có kiểu dữ liệu tĩnh và tường minh, giúp phát hiện lỗi tại thời điểm biên dịch, giảm thiểu lỗi runtime và hỗ trợ tái cấu trúc mã nguồn an toàn. \\
 \hline
 \end{longtable}
 
@@ -156,30 +151,30 @@ Hệ thống CareerNova được xây dựng theo kiến trúc đa tầng (multi
     \label{fig:system_architecture}
 \end{figure}
 
-\textbf{Tầng Trình Bày (Presentation Layer)} bao gồm ứng dụng web đơn trang được xây dựng trên Next.js 15 và React 19 (TypeScript). Tầng này đảm nhận toàn bộ việc hiển thị giao diện và tương tác người dùng, bao gồm các trang xác thực (đăng nhập, đăng ký, Google OAuth), luồng onboarding, trang quản lý CV, và bốn thành phần trực quan hóa cốt lõi: \textit{MarketDashboard} (AreaChart, PieChart, BarChart), \textit{SkillGapAnalysis} (RadarChart, Gap Report), \textit{PersonalDashboard} và \textit{LearningRoadmap}. Giao tiếp với tầng nghiệp vụ được thực hiện qua REST API sử dụng HTTPS và xác thực JWT.
+\textbf{Tầng Trình Bày (Presentation Layer)} bao gồm ứng dụng web đơn trang (Single-Page Application). Tầng này đảm nhận toàn bộ việc hiển thị giao diện và tương tác người dùng, bao gồm các trang xác thực (đăng nhập, đăng ký, SSO), luồng định hướng (onboarding), trang quản lý CV, và các thành phần trực quan hóa cốt lõi. Giao tiếp với tầng nghiệp vụ được thiết kế qua giao thức REST API sử dụng HTTPS và cơ chế xác thực không trạng thái (stateless authentication).
 
-\textbf{Tầng Nghiệp Vụ (Business Logic Layer)} gồm hai thành phần hoạt động phối hợp. Thành phần thứ nhất là \textbf{CareerNova Backend API} (NestJS, Node 20), đóng vai trò cổng dịch vụ điều phối toàn bộ luồng yêu cầu từ Frontend: quản lý xác thực và phân quyền (JWT), xử lý hồ sơ người dùng, tổng hợp dữ liệu dashboard, và điều phối luồng so khớp CV sang ETL Service qua giao thức HTTP. Kết nối cơ sở dữ liệu được thực hiện qua Prisma ORM. Thành phần thứ hai là \textbf{ETL Pipeline} (Python, FastAPI), chịu trách nhiệm toàn bộ luồng xử lý dữ liệu nặng: thu thập JD từ các nền tảng tuyển dụng bằng Selenium và Requests/cloudscraper, trích xuất và chuẩn hóa thực thể kỹ năng qua Gemini API, tính điểm so khớp ngữ nghĩa bằng SBERT và FAISS, rồi nạp kết quả vào PostgreSQL qua SQLAlchemy.
+\textbf{Tầng Nghiệp Vụ (Business Logic Layer)} gồm hai thành phần hoạt động phối hợp. Thành phần thứ nhất là \textbf{Cổng dịch vụ điều phối (Core API)}, quản lý xác thực và phân quyền, xử lý hồ sơ người dùng, tổng hợp dữ liệu, và điều phối luồng đối soát sang Dịch vụ xử lý dữ liệu. Kết nối cơ sở dữ liệu được thực hiện qua cơ chế Object-Relational Mapping (ORM). Thành phần thứ hai là \textbf{Pipeline Xử lý dữ liệu (Data Processing Engine)}, chịu trách nhiệm toàn bộ luồng công việc nặng: thu thập dữ liệu tự động, trích xuất và chuẩn hóa thực thể, mã hóa vector ngữ nghĩa và tìm kiếm tương đồng trên không gian nhiều chiều.
 
-\textbf{Tầng Dữ Liệu (Data Layer)} sử dụng PostgreSQL 17, lưu trữ toàn bộ dữ liệu hệ thống: thông tin người dùng và CV (\texttt{users}, \texttt{user\_cvs}), kho dữ liệu tuyển dụng (\texttt{jobs}, \texttt{skills}, \texttt{job\_skills}, \texttt{salaries}, \texttt{industries}), và kết quả phân tích so khớp (\texttt{cv\_job\_matches} với hai cột JSONB \texttt{radar\_data} và \texttt{gap\_report}). Việc lưu trữ trước kết quả tính toán dưới dạng JSONB giúp tối ưu hóa hiệu năng truy vấn thời gian thực tại tầng trình bày mà không cần tính toán lại.
+\textbf{Tầng Dữ Liệu (Data Layer)} sử dụng hệ quản trị cơ sở dữ liệu quan hệ (RDBMS), lưu trữ toàn bộ dữ liệu hệ thống: thông tin người dùng và CV, kho dữ liệu tuyển dụng, và kết quả phân tích so khớp. Việc lưu trữ trước kết quả tính toán dưới dạng văn bản có cấu trúc (JSON) giúp tối ưu hóa hiệu năng truy vấn thời gian thực tại tầng trình bày mà không cần lặp lại các phép toán tốn kém.
 
-\textbf{Tầng Dịch Vụ Ngoài (External Services Layer)} bao gồm ba thành phần: \textbf{Google Gemini API} thực hiện trích xuất thực thể kỹ năng có cấu trúc từ văn bản JD và CV (Structured Outputs với JSON Schema); \textbf{mô hình nhúng all-MiniLM-L6-v2} (Sentence Transformers) mã hóa kỹ năng thành vector 384 chiều và xây dựng chỉ mục FAISS để tìm kiếm ngữ nghĩa; và \textbf{các nền tảng tuyển dụng} (ITViec, VietnamWorks, CareerViet, LinkedIn) cung cấp nguồn dữ liệu JD thô cho ETL Pipeline.
+\textbf{Tầng Dịch Vụ Ngoài (External Services Layer)} bao gồm ba thành phần: \textbf{Dịch vụ Mô hình ngôn ngữ lớn (LLM)} thực hiện trích xuất thực thể có cấu trúc từ văn bản tự do; \textbf{Mô hình nhúng ngữ nghĩa (Embedding Model)} mã hóa câu thành vector và xây dựng chỉ mục tìm kiếm; và \textbf{Các nền tảng nguồn} cung cấp dữ liệu tin tuyển dụng thô cho Pipeline xử lý.
 
 % ----------------------------------------------------------------
-\subsection{Sơ đồ ca sử dụng tổng quát}
+\subsection{Sơ đồ Use Case tổng quát}
 
-Sơ đồ ca sử dụng tổng quát thể hiện toàn bộ tương tác giữa ba Actor --- Sinh viên, Admin và Hệ thống ETL --- với hệ thống CareerNova, bao gồm các quan hệ \texttt{include} và \texttt{extend} giữa các ca sử dụng. Sơ đồ được mô tả trong Hình~\ref{fig:usecase_diagram}.
+Sơ đồ Use Case tổng quát thể hiện toàn bộ tương tác giữa hai Actor --- Sinh viên và Hệ thống ETL --- với hệ thống CareerNova, bao gồm các quan hệ \texttt{include} và \texttt{extend} giữa các Use Case. Sơ đồ được mô tả trong Hình~\ref{fig:usecase_diagram}.
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.95\textwidth]{usecase_diagram}
-    \caption{Sơ đồ ca sử dụng tổng quát của hệ thống CareerNova.}
+    \caption{Sơ đồ Use Case tổng quát của hệ thống CareerNova.}
     \label{fig:usecase_diagram}
 \end{figure}
 
-Bảng~\ref{tab:uc09}, Bảng~\ref{tab:uc11} và Bảng~\ref{tab:uc16} trình bày đặc tả chi tiết cho ba ca sử dụng quan trọng nhất của hệ thống.
+Bảng~\ref{tab:uc09}, Bảng~\ref{tab:uc11} và Bảng~\ref{tab:uc16} trình bày đặc tả chi tiết cho ba Use Case quan trọng nhất của hệ thống.
 
 \begin{longtable}{|L{3.5cm}|L{10cm}|}
-\caption{Đặc tả ca sử dụng UC-09: Tải lên CV và So khớp kỹ năng.}
+\caption{Đặc tả Use Case UC-09: Tải lên CV và So khớp kỹ năng.}
 \label{tab:uc09} \\
 \hline
 \textbf{Trường} & \textbf{Nội dung} \\
@@ -197,7 +192,7 @@ Actor chính & Sinh viên \\
 \hline
 Tiền điều kiện & Sinh viên đã đăng nhập và hoàn tất onboarding; tài khoản đang active. \\
 \hline
-Luồng chính & 1. Sinh viên truy cập trang CV Matching, chọn tệp CV (PDF/DOCX) và tin tuyển dụng mục tiêu. \newline 2. Hệ thống xác thực định dạng tệp, tải lên Backend API. \newline 3. Backend API lưu metadata CV vào \texttt{user\_cvs}, chuyển tiếp sang ETL Matching Service. \newline 4. ETL Service trích xuất văn bản CV (OCR nếu là ảnh quét), gọi Gemini API bóc tách danh sách kỹ năng. \newline 5. Hệ thống mã hóa kỹ năng thành vector SBERT, tính Match Score = $\sum(\text{weight} \times \text{cosine}) \div \sum(\text{weight})$. \newline 6. Kết quả \texttt{radar\_data} và \texttt{gap\_report} JSONB được lưu vào bảng \texttt{cv\_job\_matches}. \newline 7. Frontend truy vấn và hiển thị biểu đồ Radar và Gap Report. \\
+Luồng chính & 1. Sinh viên truy cập trang CV Matching, chọn tệp CV (PDF/JPG/PNG) và tin tuyển dụng mục tiêu. \newline 2. Hệ thống xác thực định dạng tệp, tải lên Core API. \newline 3. Hệ thống lưu metadata CV vào \texttt{user\_cvs}, chuyển tiếp sang Data Processing Engine. \newline 4. Data Engine trích xuất văn bản CV (OCR nếu là ảnh quét), gọi LLM API bóc tách danh sách kỹ năng. \newline 5. Hệ thống mã hóa kỹ năng thành vector Mô hình nhúng (Embedding), tính Match Score = $\sum(\text{weight} \times \text{cosine}) \div \sum(\text{weight})$. \newline 6. Kết quả \texttt{radar\_data} và \texttt{gap\_report} JSONB được lưu vào bảng \texttt{cv\_job\_matches}. \newline 7. Giao diện người dùng (Frontend) truy vấn và hiển thị biểu đồ Radar và Gap Report. \\
 \hline
 Luồng thay thế & 4a. Nếu CV là ảnh quét: hệ thống thực hiện OCR (pdf2image + Pytesseract) trước khi trích xuất. \newline 4b. Nếu kỹ năng được Gemini trả về không có \texttt{evidence\_text} khớp trong văn bản gốc: thực thể bị loại bỏ (anti-hallucination). \\
 \hline
@@ -206,7 +201,7 @@ Hậu điều kiện & Kết quả so khớp được lưu vào cơ sở dữ li
 \end{longtable}
 
 \begin{longtable}{|L{3.5cm}|L{10cm}|}
-\caption{Đặc tả ca sử dụng UC-11: Xem Gap Report và báo cáo khoảng cách kỹ năng.}
+\caption{Đặc tả Use Case UC-11: Xem Gap Report và báo cáo khoảng cách kỹ năng.}
 \label{tab:uc11} \\
 \hline
 \textbf{Trường} & \textbf{Nội dung} \\
@@ -224,7 +219,7 @@ Actor chính & Sinh viên \\
 \hline
 Tiền điều kiện & Sinh viên đã thực hiện so khớp CV (UC-09); trường \texttt{gap\_report} JSONB đã được lưu vào \texttt{cv\_job\_matches}. \\
 \hline
-Luồng chính & 1. Sinh viên truy cập trang Skill Gap Analysis. \newline 2. Frontend gọi API lấy dữ liệu từ \texttt{cv\_job\_matches.gap\_report}. \newline 3. Hệ thống phân loại kỹ năng thành ba nhóm: Đạt yêu cầu (xanh lá), Đạt một phần (vàng), Thiếu hụt (đỏ). \newline 4. Frontend hiển thị biểu đồ cột ngang phân kỳ và danh sách kỹ năng chi tiết. \newline 5. Sinh viên mở rộng từng danh mục kỹ năng để xem điểm \texttt{user\_rate} và \texttt{market\_rate}. \\
+Luồng chính & 1. Sinh viên truy cập trang Skill Gap Analysis. \newline 2. Giao diện người dùng (Frontend) gọi API lấy dữ liệu từ \texttt{cv\_job\_matches.gap\_report}. \newline 3. Hệ thống phân loại kỹ năng thành ba nhóm: Đạt yêu cầu (xanh lá), Đạt một phần (vàng), Thiếu hụt (đỏ). \newline 4. Giao diện người dùng (Frontend) hiển thị biểu đồ cột ngang phân kỳ và danh sách kỹ năng chi tiết. \newline 5. Sinh viên mở rộng từng danh mục kỹ năng để xem điểm \texttt{user\_rate} và \texttt{market\_rate}. \\
 \hline
 Luồng thay thế & 2a. Nếu chưa có kết quả so khớp: hệ thống hiển thị gợi ý thực hiện UC-09 trước. \\
 \hline
@@ -233,7 +228,7 @@ Hậu điều kiện & Sinh viên nắm được danh sách kỹ năng cụ th�
 \end{longtable}
 
 \begin{longtable}{|L{3.5cm}|L{10cm}|}
-\caption{Đặc tả ca sử dụng UC-16: Xem Dashboard thống kê thị trường việc làm.}
+\caption{Đặc tả Use Case UC-16: Xem Dashboard thống kê thị trường việc làm.}
 \label{tab:uc16} \\
 \hline
 \textbf{Trường} & \textbf{Nội dung} \\
@@ -251,11 +246,11 @@ Actor chính & Sinh viên \\
 \hline
 Tiền điều kiện & Sinh viên đã đăng nhập; cơ sở dữ liệu đã có dữ liệu tuyển dụng từ ETL Pipeline. \\
 \hline
-Luồng chính & 1. Sinh viên truy cập trang Market Dashboard. \newline 2. Frontend khởi tạo fetchDashboardData() và gửi đồng thời (Promise.all) ba yêu cầu API: xu hướng tuyển dụng, phân bổ ngành và dải lương. \newline 3. Backend API truy vấn PostgreSQL và trả về JSON tương ứng cho từng biểu đồ. \newline 4. Frontend kết xuất AreaChart (xu hướng), PieChart (phân bổ ngành) và BarChart (dải lương) bằng Recharts. \newline 5. Sinh viên lọc theo khoảng thời gian (tháng/năm) để xem xu hướng tương ứng. \\
+Luồng chính & 1. Sinh viên truy cập trang Market Dashboard. \newline 2. Giao diện người dùng (Frontend) khởi tạo fetchDashboardData() và gửi đồng thời (Promise.all) sáu yêu cầu API: thống kê tổng quan, xu hướng tuyển dụng, phân bổ thị trường, top vị trí hot, top kỹ năng được yêu cầu và kỹ năng tăng trưởng. \newline 3. Core API truy vấn cơ sở dữ liệu và trả về JSON tương ứng cho từng thành phần trực quan hóa. \newline 4. Giao diện người dùng (Frontend) kết xuất AreaChart (xu hướng), Treemap (phân bổ thị trường), BarChart (xếp hạng kỹ năng/chỉ báo) và các khối thống kê bằng thư viện biểu đồ trực quan. \newline 5. Sinh viên lọc theo khoảng thời gian (tháng/năm) để xem xu hướng tương ứng. \\
 \hline
 Luồng thay thế & 3a. Nếu không có dữ liệu trong cơ sở dữ liệu (ETL chưa chạy): hiển thị thông báo dữ liệu chưa sẵn sàng. \\
 \hline
-Hậu điều kiện & Sinh viên nắm được xu hướng tuyển dụng, các ngành đang có nhu cầu cao và mức lương tham chiếu trên thị trường. \\
+Hậu điều kiện & Sinh viên nắm được xu hướng tuyển dụng, các ngành đang có nhu cầu cao, các vị trí hot và nhóm kỹ năng nổi bật trên thị trường. \\
 \hline
 \end{longtable}
 
@@ -268,12 +263,12 @@ Hình~\ref{fig:cv_upload_sequence} mô tả luồng tương tác tuần tự gi�
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.95\textwidth]{cv_upload_sequence}
+    \includegraphics[width=0.95\textwidth,height=0.82\textheight,keepaspectratio]{cv_upload_sequence}
     \caption{Sơ đồ tuần tự luồng tải lên CV và so khớp kỹ năng.}
     \label{fig:cv_upload_sequence}
 \end{figure}
 
-Luồng xử lý bắt đầu khi người dùng gửi tệp CV từ Frontend. Backend API tiếp nhận, lưu metadata và chuyển tiếp sang ETL Matching Service qua HTTP. Tại đây, văn bản CV được bóc tách (OCR nếu cần), kỹ năng được trích xuất qua Gemini API với cơ chế kiểm chứng chống ảo giác (\texttt{evidence\_text}), sau đó mã hóa thành vector 384 chiều bằng mô hình SBERT và tính điểm tương đồng Cosine có trọng số TF-IDF thị trường. Kết quả \texttt{radar\_data} và \texttt{gap\_report} JSONB được lưu vào bảng \texttt{cv\_job\_matches} trong PostgreSQL và trả về Frontend để kết xuất biểu đồ Radar và Gap Report.
+Luồng xử lý bắt đầu khi người dùng gửi tệp CV từ Giao diện người dùng (Frontend). Core API tiếp nhận, lưu metadata và chuyển tiếp sang Data Processing Engine qua HTTP. Tại đây, văn bản CV được bóc tách (OCR nếu cần), kỹ năng được trích xuất qua Mô hình ngôn ngữ lớn (LLM API) với cơ chế kiểm chứng chống ảo giác (\texttt{evidence\_text}), sau đó mã hóa thành vector 384 chiều bằng mô hình Mô hình nhúng (Embedding) và tính điểm tương đồng Cosine có trọng số TF-IDF thị trường. Kết quả \texttt{radar\_data} và \texttt{gap\_report} JSONB được lưu vào bảng \texttt{cv\_job\_matches} trong Cơ sở dữ liệu (Database) và trả về Giao diện người dùng (Frontend) để kết xuất biểu đồ Radar và Gap Report.
 
 \subsubsection*{Luồng xem Dashboard thị trường}
 
@@ -286,12 +281,12 @@ Hình~\ref{fig:dashboard_sequence} mô tả luồng tương tác tuần tự khi
     \label{fig:dashboard_sequence}
 \end{figure}
 
-Khi người dùng điều hướng đến MarketDashboard, Frontend khởi tạo ba truy vấn API song song (Promise.all) để lấy dữ liệu xu hướng tuyển dụng, phân bổ ngành và dải lương. Backend API thực hiện các truy vấn tổng hợp (aggregation) trực tiếp trên PostgreSQL và trả về JSON cho từng biểu đồ. Frontend cập nhật state qua \texttt{setTrends()}, \texttt{setIndustriesData()} và \texttt{setSalaryRangesData()}, rồi kết xuất đồng thời AreaChart, PieChart và BarChart thông qua thư viện Recharts, mang lại trải nghiệm tải trang nhanh và phản hồi tương tác tức thì.
+Khi người dùng điều hướng đến MarketDashboard, Giao diện người dùng (Frontend) khởi tạo sáu truy vấn API song song (Promise.all) để lấy dữ liệu thống kê tổng quan, xu hướng tuyển dụng, phân bổ thị trường, top vị trí hot, top kỹ năng được yêu cầu và kỹ năng tăng trưởng. Core API thực hiện các truy vấn tổng hợp (aggregation) trực tiếp trên Cơ sở dữ liệu (Database) và trả về JSON cho từng thành phần trực quan hóa. Giao diện người dùng (Frontend) cập nhật state qua \texttt{setStats()}, \texttt{setTrends()}, \texttt{setIndustriesData()}, \texttt{setHotJobsData()}, \texttt{setInDemandSkillsData()} và \texttt{setRisingSkillsData()}, rồi kết xuất đồng thời AreaChart, Treemap, BarChart và các khối thống kê bằng thư viện biểu đồ trực quan, mang lại trải nghiệm tải trang nhanh và phản hồi tương tác tức thì.
 
 % ================================================================
 \section{Thiết kế cơ sở dữ liệu}
 
-Cơ sở dữ liệu của hệ thống được xây dựng trên hệ quản trị cơ sở dữ liệu quan hệ PostgreSQL (phiên bản 17). Thiết kế đảm bảo tính toàn vẹn dữ liệu, hiệu năng truy vấn thông qua các ràng buộc khóa ngoại (foreign key), chỉ mục (index) và phân tách chuẩn hóa các thực thể.
+Cơ sở dữ liệu của hệ thống được xây dựng trên hệ quản trị cơ sở dữ liệu quan hệ Cơ sở dữ liệu (Database) (phiên bản 17). Thiết kế đảm bảo tính toàn vẹn dữ liệu, hiệu năng truy vấn thông qua các ràng buộc khóa ngoại (foreign key), chỉ mục (index) và phân tách chuẩn hóa các thực thể.
 
 % ----------------------------------------------------------------
 \subsection{Sơ đồ mối quan hệ thực thể (ERD)}
@@ -336,7 +331,7 @@ Bảng này lưu trữ thông tin tài khoản người dùng, bao gồm sinh vi
 \hline
 \texttt{avatar\_url} & text & NULL & Đường dẫn ảnh đại diện. \\
 \hline
-\texttt{role} & varchar(50) & DEFAULT 'student', CHECK (role IN ('student', 'admin')) & Vai trò tài khoản (Sinh viên / Quản trị viên). \\
+\texttt{role} & varchar(50) & DEFAULT 'student', CHECK (role IN ('student')) & Vai trò tài khoản (Sinh viên). \\
 \hline
 \texttt{created\_at} & timestamp & DEFAULT CURRENT\_TIMESTAMP & Thời điểm tạo tài khoản. \\
 \hline
@@ -438,7 +433,13 @@ Lưu trữ danh mục kỹ năng chuẩn hóa dựa trên phân loại hệ th�
 \hline
 \texttt{category} & varchar(255) & NULL & Nhóm phân loại chính của kỹ năng. \\
 \hline
-\texttt{type} & varchar(100) & NULL & Loại kỹ năng (Hard Skill, Common Skill). \\
+\texttt{type} & varchar(100) & NULL & Loại kỹ năng (Specialized skill, Common skill, Certification). \\
+\hline
+\texttt{is\_software} & boolean & NULL & Đánh dấu kỹ năng thuộc nhóm phần mềm/công cụ (phục vụ luật lọc ngữ nghĩa). \\
+\hline
+\texttt{is\_language} & boolean & NULL & Đánh dấu kỹ năng là ngôn ngữ tự nhiên (phục vụ luật lọc ngôn ngữ). \\
+\hline
+\texttt{category\_name} & varchar(255) & NULL & Tên phân nhóm chuyên môn dùng cho luật phạt/tăng cường theo phân nhóm. \\
 \hline
 \texttt{created\_at} & timestamp & DEFAULT CURRENT\_TIMESTAMP & Ngày tạo bản ghi kỹ năng. \\
 \hline
@@ -664,6 +665,97 @@ Bảng lưu trữ trọng số tầm quan trọng $w_i$ của từng kỹ năng 
 \hline
 \end{longtable}
 
+% --- Bảng 11: salaries ---
+\subsubsection*{11. Bảng \texttt{salaries} (Thông tin mức lương của tin tuyển dụng)}
+
+Lưu trữ dữ liệu mức lương tương ứng cho từng tin tuyển dụng. Dữ liệu này phục vụ cho thông tin chi tiết của tin và các phân tích có thể mở rộng trong tương lai; phiên bản Dashboard hiện tại không trực quan hóa chỉ số lương.
+
+\begin{longtable}{|L{2.8cm}|L{2.8cm}|L{3.5cm}|L{4.5cm}|}
+\caption{Cấu trúc bảng \texttt{salaries}.}
+\label{tab:salaries} \\
+\hline
+\textbf{Tên trường} & \textbf{Kiểu dữ liệu} & \textbf{Ràng buộc} & \textbf{Ý nghĩa} \\
+\hline
+\endfirsthead
+\hline
+\textbf{Tên trường} & \textbf{Kiểu dữ liệu} & \textbf{Ràng buộc} & \textbf{Ý nghĩa} \\
+\hline
+\endhead
+\texttt{salary\_id} & integer & PK, SERIAL & Định danh duy nhất bản ghi lương. \\
+\hline
+\texttt{job\_id} & bigint & FK $\rightarrow$ jobs(job\_id) ON DELETE CASCADE & Tin tuyển dụng tương ứng. \\
+\hline
+\texttt{min\_salary} & numeric(18,2) & NULL & Mức lương tối thiểu. \\
+\hline
+\texttt{max\_salary} & numeric(18,2) & NULL & Mức lương tối đa. \\
+\hline
+\texttt{med\_salary} & numeric(18,2) & NULL & Mức lương trung vị. \\
+\hline
+\texttt{currency} & varchar(10) & DEFAULT 'VND' & Đơn vị tiền tệ. \\
+\hline
+\texttt{pay\_period} & varchar(20) & NULL & Chu kỳ trả lương (Monthly, Yearly). \\
+\hline
+\end{longtable}
+
+% --- Bảng 12: saved_jobs ---
+\subsubsection*{12. Bảng \texttt{saved\_jobs} (Việc làm yêu thích của sinh viên)}
+
+Bảng cầu nối ghi nhận các tin tuyển dụng được sinh viên đánh dấu lưu lại, phục vụ tính năng danh sách yêu thích và gợi ý đối soát CV.
+
+\begin{longtable}{|L{2.8cm}|L{2.8cm}|L{3.5cm}|L{4.5cm}|}
+\caption{Cấu trúc bảng \texttt{saved\_jobs}.}
+\label{tab:saved_jobs} \\
+\hline
+\textbf{Tên trường} & \textbf{Kiểu dữ liệu} & \textbf{Ràng buộc} & \textbf{Ý nghĩa} \\
+\hline
+\endfirsthead
+\hline
+\textbf{Tên trường} & \textbf{Kiểu dữ liệu} & \textbf{Ràng buộc} & \textbf{Ý nghĩa} \\
+\hline
+\endhead
+\texttt{saved\_job\_id} & uuid & PK, DEFAULT gen\_random\_uuid() & Định danh duy nhất bản ghi lưu. \\
+\hline
+\texttt{user\_id} & uuid & FK $\rightarrow$ users(user\_id) ON DELETE CASCADE & Sinh viên thực hiện lưu. \\
+\hline
+\texttt{job\_id} & bigint & FK $\rightarrow$ jobs(job\_id) ON DELETE CASCADE & Tin tuyển dụng được lưu. \\
+\hline
+\texttt{created\_at} & timestamp & Tự động; UNIQUE & Thời điểm lưu; ràng buộc composite ngăn lưu trùng. \\
+\hline
+\end{longtable}
+
+% --- Bảng 13-15: courses, learning_paths, path_courses ---
+\subsubsection*{13--15. Nhóm bảng Khóa học và Lộ trình học tập}
+
+Nhóm ba bảng phụ trợ \texttt{courses}, \texttt{learning\_paths} và \texttt{path\_courses} lưu trữ dữ liệu phục vụ tính năng đề xuất lộ trình học tập (Learning Roadmap) cá nhân hóa theo kết quả Gap Report của từng sinh viên.
+
+\begin{itemize}
+    \item \textbf{\texttt{courses}}: Mỗi bản ghi lưu metadata một khóa học gồm tiêu đề, nhà cung cấp (Coursera, Udemy, v.v.), đường dẫn nguồn, thời lượng (giờ), đánh giá sao, giá và mảng thẻ kỹ năng (\texttt{skills\_tags[]}) để đối chiếu với kỹ năng thiếu hụt trong Gap Report.
+    \item \textbf{\texttt{learning\_paths}}: Mỗi lộ trình học tập được định nghĩa bởi một \texttt{skill\_key} (tên kỹ năng chuẩn), cấp độ (Beginner/Intermediate/Advanced), thời gian ước tính và một tập hợp các khóa học được sắp xếp tuần tự theo \texttt{sort\_order}.
+    \item \textbf{\texttt{path\_courses}}: Bảng cầu nối N-N liên kết \texttt{learning\_paths} và \texttt{courses}, lưu thêm trường \texttt{sort\_order} để đảm bảo thứ tự học tập logic trong lộ trình.
+\end{itemize}
+
+Khi sinh viên xem kết quả Gap Report, hệ thống tự động tra cứu \texttt{skill\_key} của từng kỹ năng thiếu hụt trong bảng \texttt{learning\_paths} và trả về lộ trình tương ứng cùng danh sách khóa học được sắp xếp theo thứ tự ưu tiên.
+
+% --- Bảng 16-17: notifications, notification_templates ---
+\subsubsection*{16--17. Nhóm bảng Thông báo hệ thống}
+
+Nhóm bảng \texttt{notifications} và \texttt{notification\_templates} triển khai hệ thống thông báo in-app đa kênh.
+
+\begin{itemize}
+    \item \textbf{\texttt{notification\_templates}}: Lưu trữ các mẫu thông báo tái sử dụng với tiêu đề và nội dung dạng template (có placeholder thay thế động). Mỗi template được định danh bằng \texttt{template\_code} duy nhất (ví dụ: \texttt{CV\_MATCH\_COMPLETE}, \texttt{NEW\_JOB\_RECOMMENDATION}) và có thể tắt/bật qua trường \texttt{is\_active}.
+    \item \textbf{\texttt{notifications}}: Mỗi bản ghi là một thông báo cụ thể gửi đến một người dùng, liên kết với thực thể nguồn qua cặp (\texttt{entity\_type}, \texttt{entity\_id}), lưu trạng thái đọc (\texttt{is\_read}, \texttt{read\_at}) và metadata bổ sung dưới dạng JSONB. Các chỉ mục composite trên \texttt{(user\_id, created\_at)}, \texttt{(user\_id, is\_read)} đảm bảo hiệu năng truy vấn danh sách thông báo chưa đọc theo thời gian thực.
+\end{itemize}
+
+% --- Bảng 18-19: unmatched_skills, search_group_keywords ---
+\subsubsection*{18--19. Nhóm bảng Hỗ trợ ETL Pipeline}
+
+Hai bảng phụ trợ phục vụ vận hành và cải thiện chất lượng Pipeline ETL theo thời gian:
+
+\begin{itemize}
+    \item \textbf{\texttt{unmatched\_skills}}: Ghi lại các cụm từ kỹ năng thô từ văn bản JD hoặc CV mà Pipeline không thể chuẩn hóa thành công vào từ điển \texttt{skills} (điểm tương đồng dưới ngưỡng). Mỗi bản ghi lưu số lần xuất hiện (\texttt{occurrence\_count}), điểm tương đồng cao nhất (\texttt{max\_similarity\_score}) và kỹ năng ứng viên gần nhất (\texttt{top\_candidate\_skill\_id}). Bảng này là đầu vào quan trọng cho quy trình mở rộng từ điển định kỳ, giúp hệ thống tự cải thiện khả năng nhận dạng kỹ năng mới xuất hiện trên thị trường.
+    \item \textbf{\texttt{search\_group\_keywords}}: Ánh xạ từ khóa tìm kiếm của người dùng hoặc tiêu đề tin tuyển dụng sang nhóm ngành chuẩn hóa (\texttt{group\_key}) tương ứng. Bảng này phục vụ bước phân loại tự động nhóm ngành cho từng tin tuyển dụng mới thu thập, đảm bảo tính nhất quán trong cách phân loại dữ liệu giữa các lần chạy ETL.
+\end{itemize}
+
 % ================================================================
 \section{Thiết kế giao diện}
 
@@ -676,21 +768,20 @@ Hệ thống CareerNova được thiết kế với hai điểm vào chính cho 
 
 \begin{figure}[H]
     \centering
-    % TODO: Chụp trang career-nova.online (chưa đăng nhập) → lưu vào images/ui_landing.png
-    \includegraphics[width=0.95\textwidth]{ui_landing}
+    % Đã chụp từ career-nova.online ngày 12/07/2026
+    \includegraphics[width=0.95\textwidth,height=0.82\textheight,keepaspectratio]{ui_landing}
     \caption{Giao diện trang chủ (Landing Page) của hệ thống CareerNova.}
     \label{fig:ui_landing}
 \end{figure}
 
-\textbf{Dashboard thống kê thị trường} (route \texttt{/dashboard}) là trang phân tích thị trường trung tâm, được tổ chức theo cấu trúc thông tin từ tổng quan đến chi tiết. Phần trên cùng hiển thị thanh lọc ba chiều (địa điểm, khoảng thời gian, loại công việc) và bốn thẻ thống kê tóm tắt: số tin tuyển dụng đang mở, mức lương IT trung bình (min/max/avg), số công ty đang tuyển và tỷ lệ tăng trưởng thị trường. Khu vực biểu đồ chính bao gồm ba thành phần bố trí theo hai hàng:
+\textbf{Dashboard thống kê thị trường} (route \texttt{/dashboard}) là trang phân tích thị trường trung tâm, được tổ chức theo cấu trúc thông tin từ tổng quan đến chi tiết. Phần trên cùng hiển thị thanh lọc ba chiều (khu vực, khoảng thời gian, loại hình công việc) và ba thẻ thống kê tóm tắt: số tin tuyển dụng đang mở (kèm badge phần trăm tăng trưởng so với kỳ trước), số công ty đang tuyển và số vị trí thực tập phù hợp với sinh viên. Mỗi thẻ đồng thời là liên kết điều hướng sang trang tìm kiếm việc làm với bộ lọc tương ứng được giữ nguyên. Khu vực biểu đồ chính bao gồm hai thành phần bố trí trên cùng một hàng:
 
 \begin{itemize}
-    \item \textbf{AreaChart "Xu hướng tin tuyển dụng"} (chiếm 2/3 chiều rộng): biểu diễn tổng số tin tuyển dụng (đường xanh dương) và số vị trí làm việc từ xa (đường xanh lá) theo thời gian, với trục X là nhãn ngày/tháng và trục Y là số lượng tin.
-    \item \textbf{PieChart "Phân bổ thị trường"} (1/3 chiều rộng): biểu đồ tròn thể hiện tỷ trọng công việc phân theo ngành, kèm chú thích màu sắc cho từng danh mục.
-    \item \textbf{BarChart "Mức Lương theo Vị Trí"} (toàn bộ chiều rộng): biểu đồ cột đôi song song hiển thị mức lương tối thiểu (cột xanh nhạt) và tối đa (cột xanh đậm) cho từng chức danh công việc, đơn vị nghìn USD/năm.
+    \item \textbf{AreaChart "Xu hướng tin tuyển dụng"} (chiếm 2/3 chiều rộng): biểu diễn tổng số tin tuyển dụng (đường xanh dương) và số vị trí làm việc từ xa (đường xanh lá) theo thời gian, với trục X là nhãn ngày/tháng (tự động chuyển thang đo theo khoảng thời gian lọc) và trục Y là số lượng tin.
+    \item \textbf{Treemap "Phân bổ thị trường"} (1/3 chiều rộng): biểu đồ treemap thể hiện tỷ trọng công việc theo nhóm kỹ năng hoặc danh mục ngành, giúp so sánh nhanh nhóm nào chiếm diện tích lớn hơn và phù hợp với dữ liệu có nhiều danh mục hơn.
 \end{itemize}
 
-Phía dưới các biểu đồ, danh sách \textit{Hot Jobs} (top công việc được lưu nhiều nhất trong 7 ngày) và hai lưới kỹ năng (\textit{Top 10 Skills} và \textit{Rising Skills}) cung cấp thông tin thị trường chi tiết theo từng vị trí. Luồng tương tác tổng thể của người dùng với Dashboard được mô tả trong Hình~\ref{fig:ui_dashboard_flow}.
+Phía dưới các biểu đồ, danh sách \textit{"Top 5 vị trí được tuyển nhiều nhất tuần này"} (Hot Jobs) và hai lưới kỹ năng (\textit{"Top 10 Kỹ năng được yêu cầu"} và \textit{"Kỹ năng tăng trưởng nhanh"}) cung cấp thông tin thị trường chi tiết theo từng vị trí và từng kỹ năng. Luồng tương tác tổng thể của người dùng với Dashboard được mô tả trong Hình~\ref{fig:ui_dashboard_flow}.
 
 \begin{figure}[H]
     \centering
@@ -701,9 +792,9 @@ Phía dưới các biểu đồ, danh sách \textit{Hot Jobs} (top công việc 
 
 \begin{figure}[H]
     \centering
-    % TODO: Đăng nhập vào career-nova.online → vào /dashboard → scroll thấy đủ 3 biểu đồ → chụp → lưu vào images/ui_market_dashboard.png
-    \includegraphics[width=0.95\textwidth]{ui_market_dashboard}
-    \caption{Giao diện Dashboard thống kê thị trường việc làm IT, thể hiện AreaChart xu hướng tuyển dụng, PieChart phân bổ ngành và BarChart dải lương.}
+    % Đã chụp từ career-nova.online/dashboard ngày 12/07/2026
+    \includegraphics[width=0.95\textwidth,height=0.82\textheight,keepaspectratio]{ui_market_dashboard}
+    \caption{Giao diện Dashboard thống kê thị trường việc làm IT, thể hiện thẻ chỉ số tổng quan, AreaChart xu hướng tuyển dụng, Treemap phân bổ thị trường, Top 5 vị trí và hai lưới kỹ năng.}
     \label{fig:ui_market_dashboard}
 \end{figure}
 
@@ -718,8 +809,7 @@ Sau khi hệ thống hoàn tất xử lý, kết quả được hiển thị nga
 
 \begin{figure}[H]
     \centering
-    % TODO: Vào career-nova.online/cv-matching → tải CV lên → so khớp → chờ kết quả → chụp màn hình thấy cả phần upload và kết quả → lưu vào images/ui_cv_matching.png
-    \includegraphics[width=0.95\textwidth]{ui_cv_matching}
+    \includegraphics[width=0.95\textwidth,height=0.82\textheight,keepaspectratio]{ui_cv_matching}
     \caption{Giao diện trang CV Matching: cột trái quản lý CV, cột phải vùng tải lên, kết quả so khớp với Match Score và phân loại kỹ năng.}
     \label{fig:ui_cv_matching}
 \end{figure}
@@ -737,8 +827,8 @@ Luồng tương tác đầy đủ của người dùng từ bước tải CV đ�
 
 \begin{figure}[H]
     \centering
-    % TODO: Vào career-nova.online/skill-gap → chờ load xong → chụp màn hình thấy RadarChart + Gap Report (có thể mở rộng 1-2 danh mục) → lưu vào images/ui_skill_gap.png
-    \includegraphics[width=0.95\textwidth]{ui_skill_gap}
+    % TODO (BẮT BUỘC trước khi nộp): ảnh hiện tại là PLACEHOLDER. Đăng nhập career-nova.online/skill-gap → chờ load → chụp màn hình RadarChart + Gap Report → ghi đè images/ui_skill_gap.png
+    \includegraphics[width=0.95\textwidth,height=0.82\textheight,keepaspectratio]{ui_skill_gap}
     \caption{Giao diện trang Skill Gap Analysis: biểu đồ Radar so khớp kỹ năng và Gap Report phân loại kỹ năng theo danh mục.}
     \label{fig:ui_skill_gap}
 \end{figure}
@@ -755,7 +845,7 @@ Quy trình xử lý của hệ thống từ khi sinh viên tải tệp CV lên c
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{cv_upload_flow}
+    \includegraphics[width=\textwidth,height=0.82\textheight,keepaspectratio]{cv_upload_sequence}
     \caption{Sơ đồ luồng xử lý từ khi người dùng tải CV lên đến khi nhận kết quả so khớp.}
     \label{fig:cv_flow}
 \end{figure}
@@ -819,7 +909,7 @@ Vì các vector embedding trong cache đã được chuẩn hóa L2 ($\|\mathbf{
     \text{sim}_i = \max_{c_k \in \mathcal{C}} \left( \hat{\mathbf{e}}_{j_i} \cdot \hat{\mathbf{e}}_{c_k} \right)
 \end{equation}
 
-Giá trị $\text{sim}_i$ nằm trong khoảng $[0, 1]$ (mọi giá trị âm đều được quy về $0$).
+Giá trị $\text{sim}_i$ nằm trong khoảng $[0, 1]$ (mọi giá trị âm đều được quy về $0$). Trước khi lấy giá trị lớn nhất, mỗi cặp kỹ năng còn được đưa qua bộ luật lọc ngữ nghĩa (Semantic Filtering Rules) dựa trên metadata phân loại của bảng \texttt{skills} nhằm triệt tiêu các so khớp vô nghĩa giữa các nhóm kỹ năng khác bản chất; chi tiết bộ luật này được trình bày tại mục~\ref{sec:skill_algorithm} của Chương 4.
 
 \textbf{Bước 2 --- Tính đóng góp thực tế và khoảng cách thiếu hụt:}
 
@@ -851,6 +941,13 @@ Tỷ lệ tương thích hiển thị trên giao diện người dùng được 
 
 Hệ thống sử dụng các ngưỡng điểm tương đồng ngữ nghĩa lớn nhất ($\text{sim}_i$) để phân loại từng kỹ năng yêu cầu $j_i$ vào ba nhóm hiển thị trên giao diện người dùng:
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{image3_5_2}
+    \caption{Quy tắc phân loại kỹ năng phục vụ báo cáo khoảng cách năng lực.}
+    \label{fig:skill_classification}
+\end{figure}
+
 \begin{enumerate}
     \item \textbf{Kỹ năng đã có (Possessed/Matched Skills):}
     \begin{itemize}
@@ -861,13 +958,13 @@ Hệ thống sử dụng các ngưỡng điểm tương đồng ngữ nghĩa l�
 
     \item \textbf{Kỹ năng cần bổ sung thêm (Partially Matched Skills):}
     \begin{itemize}
-        \item \textit{Điều kiện:} $0.40 \leq \text{sim}_i < 0.75$
+        \item \textit{Điều kiện:} $0.45 \leq \text{sim}_i < 0.75$
         \item \textit{Ý nghĩa:} Ứng viên có kỹ năng liên quan nhưng chưa hoàn toàn đáp ứng đúng ngữ cảnh yêu cầu của Job (ví dụ: yêu cầu ``Consulting'' nhưng CV mới có ``Project Design''). Đây là các mục tiêu đào tạo ngắn hạn, ứng viên có thể tự cải thiện nhanh.
     \end{itemize}
 
     \item \textbf{Kỹ năng thiếu hoàn toàn (Missing Skills):}
     \begin{itemize}
-        \item \textit{Điều kiện:} $\text{sim}_i < 0.40$
+        \item \textit{Điều kiện:} $\text{sim}_i < 0.45$
         \item \textit{Ý nghĩa:} Ứng viên thiếu hụt hoàn toàn kiến thức này. Đây là lỗ hổng năng lực lớn nhất, đòi hỏi lộ trình học tập dài hạn hơn để bù đắp nếu muốn ứng tuyển vào vị trí công việc tương ứng.
     \end{itemize}
 \end{enumerate}
