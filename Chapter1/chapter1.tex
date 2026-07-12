@@ -6,12 +6,12 @@
 Trong bối cảnh cách mạng công nghiệp 4.0, sự chuyển đổi số đã làm thay đổi cơ bản cách thức tuyển dụng và quản lý nhân sự. Theo các báo cáo gần đây, thị trường lao động toàn cầu đang trải qua sự biến động lớn với:
 
 \begin{itemize}
-    \item Sự phát triển nhanh chóng của các nền tảng tuyển dụng trực tuyến (LinkedIn, Indeed, GlassDoor, v.v.) tạo ra khối lượng dữ liệu lớn chưa từng có.
+    \item Sự phát triển nhanh chóng của các nền tảng tuyển dụng trực tuyến (LinkedIn, Vietnamworks, CareerViet, Itviec, v.v.) tạo ra khối lượng dữ liệu lớn chưa từng có.
     \item Nhu cầu cấp thiết về việc chuẩn hóa và phân tích dữ liệu việc làm từ nhiều nguồn khác nhau.
     \item Khó khăn trong việc kết nối hiệu quả giữa các nhu cầu nhân sự của doanh nghiệp và những kỹ năng thực tế của ứng viên.
 \end{itemize}
 
-Do đó, việc xây dựng một hệ thống thông minh có khả năng khai phá, chuẩn hóa và phân tích dữ liệu tuyển dụng từ nhiều nguồn trở thành một nhu cầu cấp thiết.
+Do đó, việc xây dựng một hệ thống thông minh có khả năng khai phá, chuẩn hóa và phân tích dữ liệu tuyển dụng từ nhiều nguồn trở thành một nhu cầu cấp thiết, giúp sinh viên ngành Công nghệ Thông tin (IT) năm cuối định hình và bù đắp khoảng cách năng lực trước khi bước vào thị trường lao động.
 
 \section{Phát biểu bài toán}
 
@@ -21,19 +21,44 @@ Dữ liệu tuyển dụng trên Web thường ở dạng không cấu trúc ho�
 
 \begin{itemize}
     \item \textbf{Tính không đồng nhất}: Các nền tảng khác nhau sử dụng các định dạng, cấu trúc dữ liệu khác nhau để lưu trữ thông tin công việc.
-    \item \textbf{Dữ liệu trùng lặp}: Một công việc có thể được đăng trên nhiều nền tảng khác nhau, dẫn đến sự trùng lặp.
+    \item \textbf{Dữ liệu trùng lặp}: Một công việc có thể được đăng trên nhiều nền tảng tuyển dụng khác nhau, dẫn đến sự trùng lặp dữ liệu thô.
     \item \textbf{Dữ liệu bất đầy đủ}: Thông tin công việc trên các trang Web có thể thiếu những trường quan trọng hoặc không được chuẩn hóa.
-    \item \textbf{Khó khăn trong trích xuất thông tin}: Thông tin kỹ năng, yêu cầu công việc thường nhúng trong mô tả miễn phí dạng text, khó trích xuất tự động.
+    \item \textbf{Khó khăn trong trích xuất thông tin}: Thông tin kỹ năng, yêu cầu công việc thường nhúng trong mô tả công việc (Job Description --- JD) dạng văn bản tự do, gây khó khăn cho việc trích xuất tự động.
 \end{itemize}
 
 \subsection{Vấn đề chuẩn hóa thực thể và đánh giá khoảng cách năng lực ứng viên}
 
-Ngay cả khi dữ liệu được thu thập, vấn đề tiếp theo là chuẩn hóa các thực thể (như kỹ năng, vị trí công việc, công ty, v.v.) và so sánh chúng có ý nghĩa. Các vấn đề cụ thể:
+Ngay cả khi dữ liệu được thu thập, vấn đề tiếp theo là chuẩn hóa các thực thể (như kỹ năng, vị trí công việc, công ty, v.v.) và so sánh chúng một cách có ý nghĩa:
 
 \begin{itemize}
-    \item \textbf{Chuẩn hóa kỹ năng}: Cùng một kỹ năng có thể được gọi bằng nhiều tên khác nhau (VD: ``Python Programming'', ``Python Development'', ``Python Coding'').
-    \item \textbf{Hiểu biết ngữ nghĩa}: Cần hiểu được rằng ``Machine Learning'' có liên quan đến ``Data Science'' hoặc ``Artificial Intelligence''.
-    \item \textbf{Đánh giá khoảng cách}: Cần phương pháp tính toán khách quan để so sánh kỹ năng yêu cầu của công việc và kỹ năng hiện có của ứng viên.
+    \item \textbf{Chuẩn hóa kỹ năng}: Cùng một kỹ năng có thể được gọi bằng nhiều tên hoặc biến thể viết tắt khác nhau (ví dụ: ``Python Programming'', ``Python Development'', ``Python Coding'').
+    \item \textbf{Hiểu biết ngữ nghĩa}: Cần hiểu được các mối quan hệ tương đồng hoặc tương đương ngữ nghĩa (ví dụ: ``Machine Learning'' có liên quan mật thiết đến ``Data Science'' hoặc ``Artificial Intelligence'').
+    \item \textbf{Đánh giá khoảng cách}: Cần một phương pháp tính toán định lượng khách quan để so sánh tập kỹ năng yêu cầu của công việc với tập kỹ năng hiện có trên hồ sơ ứng viên (CV), từ đó đưa ra báo cáo chi tiết.
+\end{itemize}
+
+\section{Khảo sát các giải pháp hiện tại và Hạn chế}
+
+Trong các nghiên cứu và ứng dụng thực tiễn, bài toán kết nối hồ sơ năng lực với yêu cầu tuyển dụng đã được giải quyết qua một số thế hệ công nghệ chính:
+
+\begin{itemize}
+    \item \textbf{Hệ thống ATS truyền thống (Rule-based \& Keyword Matching)}: Hoạt động dựa trên việc so khớp từ khóa chính xác thông qua các biểu thức chính quy (Regex). 
+    \\* \textit{Hạn chế}: Hoàn toàn bỏ sót các từ đồng nghĩa hoặc các kỹ năng tương đương ngữ nghĩa (như không nhận diện được "Git" liên quan đến "Version Control"), đồng thời dễ bị gian lận bằng kỹ thuật nhồi từ khóa (keyword stuffing) trong CV.
+    
+    \item \textbf{Giải pháp học máy truyền thống}: Sử dụng mô hình túi từ (Bag of Words) hoặc các biểu diễn vector thưa như TF-IDF tĩnh từ từ vựng để tính toán độ tương đồng.
+    \\* \textit{Hạn chế}: Bỏ qua trật tự từ và ngữ cảnh câu văn, dẫn đến hiệu quả so khớp thấp đối với các cụm từ kỹ năng phức tạp.
+    
+    \item \textbf{Giải pháp sử dụng mô hình ngôn ngữ lớn (LLM API) thuần túy}: Sử dụng các API thương mại của các mô hình ngôn ngữ lớn để đọc hiểu và đánh giá trực tiếp hồ sơ ứng viên.
+    \\* \textit{Hạn chế}: Chi phí gọi API rất cao khi xử lý hàng loạt, độ trễ phản hồi (latency) lớn (vài giây), không thể đáp ứng nhu cầu tìm kiếm, phân tích dữ liệu lớn và trực quan hóa thời gian thực trên giao diện người dùng.
+\end{itemize}
+
+\section{Giải pháp đề xuất và Cách tiếp cận}
+
+Để giải quyết triệt để các hạn chế nêu trên, đề tài đề xuất hệ thống \textit{CareerNova} --- một nền tảng thông minh áp dụng mô hình lai kết hợp giữa sức mạnh hiểu ngữ cảnh của Generative AI và tốc độ của mô hình biểu diễn ngữ nghĩa cục bộ:
+
+\begin{itemize}
+    \item \textbf{Khâu tiền xử lý và cấu trúc hóa dữ liệu (ETL Pipeline)}: Hệ thống tích hợp thư viện cào dữ liệu để thu thập tin tuyển dụng. Ở tầng biến đổi, hệ thống gọi mô hình ngôn ngữ lớn Gemini API thông qua cấu hình Pydantic Schema (Structured Outputs) để bóc tách thông tin thô thành các trường dữ liệu JSON cấu trúc. Để loại bỏ hiện tượng ảo giác (hallucination) của LLM, cơ chế hậu kiểm dựa trên bằng chứng (evidence-based validation) được triển khai để kiểm chứng thực thể kỹ năng.
+    
+    \item \textbf{Khâu so khớp và phân tích khoảng cách năng lực (Matching Engine)}: Sử dụng mô hình Sentence-BERT cục bộ (\texttt{all-MiniLM-L6-v2}) để chuyển đổi các thực thể kỹ năng chuẩn hóa thành vector nhúng 384 chiều, kết hợp thư viện FAISS của Meta để lập chỉ mục ngữ nghĩa và tìm kiếm siêu tốc. Thuật toán so khớp áp dụng công thức tính điểm tương đồng Cosine có trọng số TF-IDF động (Inverse Document Frequency được tính toán thực tế từ cơ sở dữ liệu thị trường Việt Nam) để đảm bảo các kỹ năng khan hiếm có tiếng nói quyết định hơn các kỹ năng đại trà.
 \end{itemize}
 
 \section{Mục tiêu và Đối tượng nghiên cứu}
@@ -66,20 +91,20 @@ Mục tiêu chính của luận văn này là xây dựng một hệ thống th�
     \item Địa chỉ địa lý: Chủ yếu tập trung vào thị trường Việt Nam.
 \end{itemize}
 
-\section{Ý nghĩa khoa học và thực tiễn}
+\section{Ý nghĩa khoa học và thực tiễn (Đóng góp của đề tài)}
 
-\textbf{Ý nghĩa khoa học:}
+\textbf{Ý nghĩa khoa học (Đóng góp về phương pháp \& dữ liệu):}
 \begin{itemize}
-    \item Đóng góp các phương pháp và kỹ thuật mới trong lĩnh vực Khai phá dữ liệu Web (Web Mining) và Xử lý ngôn ngữ tự nhiên (NLP), đặc biệt là ứng dụng các mô hình LLM hiện đại để chuẩn hóa thực thể và so khớp ngữ nghĩa.
-    \item Cung cấp một mô hình end-to-end (từ đầu đến cuối) cho bài toán kết nối thị trường lao động, có thể được áp dụng cho các lĩnh vực khác.
-    \item Tạo ra một tập dữ liệu Ground Truth (tập dữ liệu kiểm thử chuẩn) cho bài toán trích xuất kỹ năng từ miêu tả công việc, có thể hỗ trợ các nghiên cứu tiếp theo trong cộng đồng.
+    \item Thiết lập một quy trình ETL lai tối ưu: Kết hợp trích xuất thực thể bằng Generative AI (chống ảo giác bằng hậu kiểm) và so khớp ngữ nghĩa bằng SBERT cục bộ cùng chỉ mục FAISS, giải quyết đồng thời ba yếu tố: độ chính xác ngữ nghĩa, chi phí vận hành và tốc độ phản hồi thời gian thực.
+    \item Xây dựng tập dữ liệu thị trường việc làm ngành IT tại Việt Nam với quy mô 6.729 tin tuyển dụng sạch được xử lý và lưu trữ trong cơ sở dữ liệu hệ thống, chủ yếu thu thập trong năm 2026.
+    \item Xây dựng bộ dữ liệu đối soát chuẩn (Ground Truth) gồm 100 tài liệu ngẫu nhiên (50 CV, 50 JD) được gán nhãn thực tế bởi nhóm thực hiện đề tài để phục vụ kiểm chứng thực tế.
 \end{itemize}
 
-\textbf{Ý nghĩa thực tiễn:}
+\textbf{Ý nghĩa thực tiễn (Đóng góp ứng dụng):}
 \begin{itemize}
-    \item \textbf{Cho ứng viên}: Hệ thống giúp ứng viên xác định những kỹ năng cần phát triển, tìm kiếm công việc phù hợp hơn, và lập kế hoạch phát triển sự nghiệp một cách khoa học.
-    \item \textbf{Cho nhà tuyển dụng}: Hệ thống cung cấp cái nhìn sâu sắc về xu hướng thị trường, giúp xác định những kỹ năng quan trọng và cạnh tranh lương thưởng một cách hợp lý.
-    \item \textbf{Cho nhà hoạch định chính sách}: Dữ liệu và phân tích từ hệ thống có thể hỗ trợ quyết định về chính sách đào tạo, phát triển nguồn nhân lực quốc gia.
+    \item \textbf{Cho sinh viên IT năm cuối (Ứng viên)}: Giúp sinh viên tự đánh giá mức độ tương thích của bản thân với nhu cầu tuyển dụng thực tế của thị trường năm 2026. Biểu đồ trực quan (Radar chart) và Báo cáo khoảng cách kỹ năng (Gap report) giúp sinh viên nhận diện rõ các kỹ năng còn thiếu, định hướng học tập và bổ sung kịp thời để đáp ứng tiêu chuẩn tuyển dụng. Đồng thời hỗ trợ sinh viên định hình bức tranh toàn cảnh về thị trường việc làm IT thông qua các bảng thống kê trực quan (dashboard).
+    \item \textbf{Cho nhà tuyển dụng}: Cung cấp cái nhìn sâu sắc về nhu cầu kỹ năng thực tế, hỗ trợ quá trình sàng lọc hồ sơ ứng viên dựa trên độ đo tương đồng ngữ nghĩa chính xác hơn.
+    \item \textbf{Cho cơ sở đào tạo}: Dữ liệu phân tích từ hệ thống có thể giúp các khoa chuyên ngành tham khảo để điều chỉnh chương trình đào tạo sát hơn với nhu cầu thực tiễn của doanh nghiệp.
 \end{itemize}
 
 \section{Cấu trúc cuốn luận văn}
