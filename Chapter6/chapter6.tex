@@ -6,13 +6,13 @@
 Luận văn này đã nghiên cứu, thiết kế và hiện thực hóa thành công hệ thống CareerNova, đạt được các kết quả chính sau:
 
 \begin{enumerate}
-    \item \textbf{Xây dựng hoàn chỉnh khung dữ liệu đa nguồn}: Phát triển thành công hệ thống thu thập dữ liệu tin tuyển dụng tự động từ các nền tảng lớn tại Việt Nam (ITViec, VietnamWorks, CareerViet, LinkedIn), cài đặt các module tiền xử lý dữ liệu và thuật toán khử trùng lặp hiệu quả trước khi lưu trữ tập trung.
-    
-    \item \textbf{Ứng dụng thành công công nghệ AI tiên tiến}: Áp dụng các mô hình ngôn ngữ lớn (LLM) để thực hiện trích xuất thông tin kỹ năng và vị trí công việc từ văn bản phi cấu trúc thông qua kỹ thuật Prompt Engineering có cấu trúc, đạt độ chính xác cao (F1-Score 85.8\%).
-    
-    \item \textbf{Đề xuất giải thuật đối soát và phân tích khoảng cách kỹ năng thông minh}: Kết hợp giữa so khớp tập hợp chính xác và so khớp ngữ nghĩa bằng vector nhúng (embeddings) thông qua độ đo tương đồng Cosine, giúp định lượng hóa chính xác mức độ tương thích giữa hồ sơ CV của ứng viên và yêu cầu của tin tuyển dụng.
-    
-    \item \textbf{Hiện thực hóa ứng dụng Web hoàn chỉnh}: Triển khai hệ thống Web thực tế cung cấp giao diện Dashboard trực quan hóa xu hướng thị trường lao động và tính năng phân tích đối soát CV trực quan, nhận được phản hồi tích cực từ người dùng thử nghiệm.
+    \item \textbf{Xây dựng hoàn chỉnh khung dữ liệu đa nguồn}: Phát triển thành công hệ thống thu thập dữ liệu tin tuyển dụng tự động từ bốn nền tảng lớn tại Việt Nam (ITViec, VietnamWorks, CareerViet, LinkedIn) theo cơ chế dự phòng hai tầng (cào tĩnh ưu tiên, cào động dự phòng), cài đặt các module tiền xử lý dữ liệu và thuật toán khử trùng lặp hiệu quả trước khi lưu trữ tập trung. Đến thời điểm nghiệm thu, kho dữ liệu đã tích lũy 6.729 tin tuyển dụng sạch, trong đó 942 tin đang mở được trực quan hóa theo thời gian thực trên Dashboard.
+
+    \item \textbf{Ứng dụng thành công công nghệ AI tiên tiến}: Áp dụng mô hình ngôn ngữ lớn Gemini để trích xuất thông tin kỹ năng và vị trí công việc từ văn bản phi cấu trúc thông qua kỹ thuật Prompt Engineering có cấu trúc (Structured Outputs kết hợp JSON Schema) và cơ chế hậu kiểm chống ảo giác dựa trên bằng chứng. Kết quả thực nghiệm trên tập dữ liệu đối soát cho thấy module trích xuất đạt Precision 98.2\%, Recall 97.8\% và F1-Score 98.0\%, vượt xa ngưỡng kỳ vọng 82.5\% đặt ra ban đầu.
+
+    \item \textbf{Đề xuất giải thuật đối soát và phân tích khoảng cách kỹ năng thông minh}: Kết hợp so khớp ngữ nghĩa bằng vector nhúng SBERT cục bộ (\texttt{all-MiniLM-L6-v2}) với trọng số TF-IDF được tính động từ dữ liệu thị trường thực tế và bộ sáu quy tắc lọc ngữ nghĩa theo metadata phân loại kỹ năng, giúp định lượng hóa chính xác mức độ tương thích giữa hồ sơ CV của ứng viên và yêu cầu tuyển dụng, đồng thời phân loại kỹ năng thành ba nhóm hành động được (đã có, cần bổ sung, thiếu hoàn toàn).
+
+    \item \textbf{Hiện thực hóa và triển khai ứng dụng Web hoàn chỉnh}: Triển khai hệ thống thực tế tại địa chỉ \texttt{career-nova.online} trên hạ tầng đám mây, cung cấp đầy đủ các phân hệ: xác thực người dùng (email và Google SSO), Dashboard trực quan hóa xu hướng thị trường lao động (thời gian phản hồi dưới 1 giây, thỏa mãn yêu cầu phi chức năng), quản lý CV, tìm kiếm và lưu việc làm, phân tích đối soát CV với biểu đồ Radar, báo cáo khoảng cách kỹ năng và gợi ý lộ trình học tập cá nhân hóa theo kỹ năng thiếu hụt. Toàn bộ 11 kịch bản kiểm thử chức năng hộp đen đều đạt.
 \end{enumerate}
 
 \section{Hạn chế còn tồn tại của đề tài}
@@ -20,11 +20,13 @@ Luận văn này đã nghiên cứu, thiết kế và hiện thực hóa thành 
 Mặc dù hệ thống đã hoạt động ổn định và đạt các chỉ số đánh giá tốt, đề tài vẫn còn một số hạn chế cần khắc phục:
 
 \begin{itemize}
-    \item \textbf{Phạm vi dữ liệu}: Thử nghiệm thực tế mới chỉ tập trung chủ yếu vào nhóm ngành Công nghệ Thông tin (IT) và Khoa học Dữ liệu, chưa mở rộng sang các lĩnh vực ngành nghề phi kỹ thuật khác.
-    
-    \item \textbf{Hiệu năng thời gian thực}: Thời gian phản hồi của tính năng đối soát và phân tích khoảng cách kỹ năng (trung bình 1,450 ms) vẫn còn phụ thuộc nhiều vào tốc độ kết nối và độ trễ của API mô hình ngôn ngữ lớn bên ngoài.
-    
-    \item \textbf{Sự phụ thuộc vào chất lượng dữ liệu thô}: Kết quả trích xuất kỹ năng có thể bị ảnh hưởng nếu tệp CV của ứng viên được trình bày quá cẩu thả hoặc sử dụng các định dạng thiết kế cột phức tạp mà bộ phân tích văn bản thô không đọc đúng thứ tự dòng.
+    \item \textbf{Phạm vi dữ liệu}: Thử nghiệm thực tế mới chỉ tập trung chủ yếu vào nhóm ngành Công nghệ Thông tin (IT) và Khoa học Dữ liệu tại thị trường Việt Nam, chưa mở rộng sang các lĩnh vực ngành nghề phi kỹ thuật khác. Quy mô dữ liệu tích lũy (6.729 tin) đủ cho các phân tích xu hướng ngắn hạn nhưng chưa đủ dày để phân tích chu kỳ tuyển dụng theo mùa qua nhiều năm.
+
+    \item \textbf{Hiệu năng thời gian thực}: Thời gian phản hồi của tính năng đối soát và phân tích khoảng cách kỹ năng vẫn còn phụ thuộc vào độ trễ của API mô hình ngôn ngữ lớn bên ngoài (trong trường hợp cache miss) và thời điểm hệ thống đồng bộ dữ liệu tuyển dụng. Hai endpoint thống kê kỹ năng của Dashboard (\texttt{in-demand}, \texttt{rising}) chậm hơn đáng kể các endpoint còn lại do truy vấn tổng hợp trên bảng liên kết lớn, cần tối ưu bằng chỉ mục bổ sung hoặc materialized view.
+
+    \item \textbf{Sự phụ thuộc vào chất lượng dữ liệu thô}: Kết quả trích xuất kỹ năng có thể bị ảnh hưởng nếu tệp CV của ứng viên được trình bày quá cẩu thả, ảnh quét có độ phân giải kém hoặc sử dụng các định dạng thiết kế cột phức tạp mà tầng OCR không đọc đúng thứ tự dòng.
+
+    \item \textbf{Từ điển kỹ năng cần bảo trì định kỳ}: Các kỹ năng mới xuất hiện trên thị trường chưa có trong từ điển chuẩn hóa được đẩy vào bảng \texttt{unmatched\_skills} và hiện vẫn cần con người phê duyệt thủ công trước khi bổ sung vào từ điển, chưa có quy trình tự động hóa hoàn chỉnh.
 \end{itemize}
 
 \section{Hướng nghiên cứu và phát triển tương lai}
@@ -32,9 +34,11 @@ Mặc dù hệ thống đã hoạt động ổn định và đạt các chỉ s�
 Để hoàn thiện và nâng cao giá trị thực tiễn của đề tài, các hướng nghiên cứu và phát triển trong tương lai bao gồm:
 
 \begin{enumerate}
-    \item \textbf{Mở rộng đa ngành nghề}: Cập nhật cây phân loại (taxonomy) và huấn luyện thêm các mô hình nhúng để hỗ trợ phân tích dữ liệu tuyển dụng ở các lĩnh vực khác như Tài chính, Marketing, Y tế và Giáo dục.
-    
-    \item \textbf{Khuyến nghị lộ trình học tập cá nhân hóa}: Phát triển thêm module AI gợi ý chi tiết các khóa học trực tuyến (Coursera, Udemy, EdX) hoặc tài liệu học tập tương ứng cụ thể với từng kỹ năng bị khuyết thiếu (Missing Skills) được phát hiện trong quá trình phân tích Skill Gap.
-    
-    \item \textbf{Tối ưu hóa hiệu năng và triển khai mô hình nội bộ (On-premise LLMs)}: Nghiên cứu tinh chỉnh (Fine-tuning) và triển khai các mô hình ngôn ngữ lớn mã nguồn mở có kích thước nhỏ (như LLaMA-3-8B hoặc Qwen-2.5) trực tiếp trên máy chủ hệ thống để tự chủ công nghệ, tăng tính bảo mật dữ liệu và giảm tối đa thời gian trễ của API so khớp.
+    \item \textbf{Mở rộng đa ngành nghề}: Cập nhật cây phân loại (taxonomy) và huấn luyện thêm các mô hình nhúng để hỗ trợ phân tích dữ liệu tuyển dụng ở các lĩnh vực khác như Tài chính, Marketing, Y tế và Giáo dục, đồng thời mở rộng danh sách nguồn thu thập để tăng độ phủ thị trường.
+
+    \item \textbf{Tự động hóa vòng lặp cải thiện từ điển kỹ năng}: Xây dựng quy trình bán tự động khai thác bảng \texttt{unmatched\_skills} --- kết hợp tần suất xuất hiện, điểm tương đồng gần nhất và xác nhận của LLM --- để đề xuất bổ sung kỹ năng mới vào từ điển chuẩn hóa theo chu kỳ, giúp hệ thống tự thích nghi với các công nghệ mới nổi trên thị trường mà không cần can thiệp thủ công.
+
+    \item \textbf{Nâng cao chất lượng gợi ý lộ trình học tập}: Mở rộng kho khóa học liên kết với Gap Report bằng cách tự động đồng bộ metadata từ các nền tảng học trực tuyến (Coursera, Udemy, edX), bổ sung cơ chế xếp hạng khóa học theo phản hồi người dùng và theo dõi tiến độ học tập để đo lường mức độ thu hẹp khoảng cách kỹ năng theo thời gian.
+
+    \item \textbf{Tối ưu hóa hiệu năng và triển khai mô hình nội bộ (On-premise LLMs)}: Nghiên cứu tinh chỉnh (Fine-tuning) và triển khai các mô hình ngôn ngữ lớn mã nguồn mở có kích thước nhỏ (như LLaMA-3-8B hoặc Qwen-2.5) trực tiếp trên máy chủ hệ thống để tự chủ công nghệ, tăng tính bảo mật dữ liệu và giảm tối đa thời gian trễ của khâu trích xuất kỹ năng khi cache miss.
 \end{enumerate}
