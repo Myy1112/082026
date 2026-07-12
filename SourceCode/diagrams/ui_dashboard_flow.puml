@@ -29,17 +29,17 @@ endif
 
 :Tải bộ lọc từ API\n(Địa điểm · Khoảng thời gian · Loại công việc);
 
-:Áp dụng bộ lọc mặc định\nvà gọi đồng thời 3 API;
+:Áp dụng bộ lọc mặc định\nvà gọi đồng thời các API Dashboard;
 
 fork
     :Tải xu hướng tuyển dụng\n→ Render AreaChart;
 fork again
-    :Tải phân bổ ngành\n→ Render PieChart;
+    :Tải phân bổ thị trường\n→ Render Treemap;
 fork again
-    :Tải dải lương\n→ Render BarChart;
+    :Tải vị trí nổi bật và kỹ năng\n→ Render danh sách, BarChart;
 end fork
 
-:Hiển thị 4 thẻ thống kê\n(Active Jobs · Lương TB · Công ty · Tăng trưởng);
+:Hiển thị 3 thẻ thống kê\n(Tin đang mở · Công ty · Cơ hội thực tập);
 
 :Hiển thị danh sách Hot Jobs\nvà Top 10 kỹ năng;
 

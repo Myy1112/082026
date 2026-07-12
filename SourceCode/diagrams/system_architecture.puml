@@ -27,7 +27,7 @@ skinparam database {
 title Kiến trúc tổng thể hệ thống CareerNova
 
 package "Tầng Trình Bày  (Presentation Layer)" as PL #E3F2FD {
-    component "Next.js 15 Frontend\n(React 19 · TypeScript · Tailwind CSS)\n────────────────────────────\nMarketDashboard  (AreaChart · PieChart · BarChart)\nSkillGapAnalysis  (RadarChart · Gap Report)\nPersonalDashboard · JobSearch\nLearningRoadmap · Recommendations" as FE
+    component "Next.js 15 Frontend\n(React 19 · TypeScript · Tailwind CSS)\n────────────────────────────\nMarketDashboard  (AreaChart · Treemap · BarChart)\nSkillGapAnalysis  (RadarChart · Gap Report)\nPersonalDashboard · JobSearch\nLearningRoadmap · Recommendations" as FE
 }
 
 package "Tầng Nghiệp Vụ  (Business Logic Layer)" as BL #E8F5E9 {
