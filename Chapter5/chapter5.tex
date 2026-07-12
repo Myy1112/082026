@@ -30,7 +30,7 @@
 
 \subsection{Kịch bản kiểm thử cho các tính năng}
 
-Hệ thống được kiểm thử thông qua các kịch bản kiểm thử hộp đen (Black-box Testing) để đảm bảo các tính năng hoạt động đúng đặc tả yêu cầu. Các ca kiểm thử dưới đây bám sát đúng các chức năng đang có trên hệ thống:
+Hệ thống được kiểm thử thông qua các kịch bản kiểm thử hộp đen (Black-box Testing) để đảm bảo các tính năng hoạt động đúng đặc tả yêu cầu. Các kịch bản được xây dựng theo hành trình sử dụng thực tế của vai trò người dùng sinh viên/ứng viên --- từ lúc tạo tài khoản, quản lý hồ sơ CV, phân tích đối soát cho đến khai thác dữ liệu thị trường --- và bám sát đúng các chức năng đang có trên hệ thống. Bảng~\ref{tab:test_cases} liệt kê 11 ca kiểm thử cùng dữ liệu đầu vào và kết quả mong đợi tương ứng.
 
 \begin{table}[ht]
 \caption{Kịch bản kiểm thử chức năng hệ thống}
@@ -66,9 +66,11 @@ TC-11 & Lưu và hủy lưu việc làm & Bấm lưu trên một tin tuyển d�
 \end{center}
 \end{table}
 
+Mười một kịch bản trong Bảng~\ref{tab:test_cases} bao phủ bốn nhóm chức năng theo trình tự trải nghiệm người dùng: nhóm xác thực tài khoản (TC-01 đến TC-04), nhóm quản lý hồ sơ CV (TC-05 đến TC-07), nhóm phân tích đối soát năng lực (TC-08) và nhóm khai thác dữ liệu thị trường (TC-09 đến TC-11). Trong đó, TC-06 được thiết kế riêng để kiểm tra biên từ chối dữ liệu không hợp lệ (định dạng và dung lượng tệp), còn TC-08 là kịch bản phức tạp nhất vì đi xuyên qua toàn bộ chuỗi xử lý AI của hệ thống.
+
 \subsection{Kết quả thực thi kiểm thử}
 
-Toàn bộ các kịch bản kiểm thử trên đã được thực thi trên môi trường chạy thật. Kết quả kiểm thử được tổng hợp dưới đây theo dạng đạt/không đạt để phản ánh nhanh mức độ hoàn thành chức năng:
+Toàn bộ các kịch bản kiểm thử trên đã được thực thi trên môi trường chạy thật tại địa chỉ \texttt{career-nova.online}. Kết quả từng ca được tổng hợp trong Bảng~\ref{tab:test_results} theo dạng đạt/không đạt để phản ánh nhanh mức độ hoàn thành chức năng:
 
 \begin{table}[ht]
 \caption{Kết quả thực thi kiểm thử chức năng}
@@ -104,11 +106,13 @@ TC-11 & Lưu và hủy lưu việc làm & Danh sách đã lưu cập nhật đú
 \end{center}
 \end{table}
 
+Theo Bảng~\ref{tab:test_results}, toàn bộ \textbf{11/11 kịch bản đạt (100\%)}, xác nhận các chức năng cốt lõi vận hành đúng đặc tả trên môi trường triển khai thật. Đáng chú ý, hai ca có rủi ro cao nhất đều vượt qua: TC-06 chứng minh tầng kiểm tra dữ liệu đầu vào từ chối đúng các tệp sai định dạng hoặc vượt 5 MB mà không để lọt dữ liệu rác vào hệ thống lưu trữ, và TC-08 xác nhận chuỗi xử lý AI nhiều bước (trích xuất --- chuẩn hóa --- so khớp) trả về kết quả nhất quán từ đầu đến cuối. Kiểm thử chức năng vì vậy chỉ trả lời câu hỏi ``hệ thống có chạy đúng hay không''; các khía cạnh định lượng về tốc độ và độ chính xác được đo riêng tại Mục 5.3 và 5.4.
+
 \section{Đánh giá hiệu năng và dữ liệu thực tế}
 
 \subsection{Thống kê số lượng dữ liệu bài đăng tuyển dụng đã thu thập và xử lý thành công}
 
-Số lượng dữ liệu tuyển dụng của hệ thống không cố định theo ngày vì phụ thuộc vào biến động thị trường và lịch đồng bộ từ các nguồn khác nhau. Do đó, báo cáo này sử dụng ảnh chụp trạng thái (snapshot) của cơ sở dữ liệu và Dashboard tại thời điểm kiểm thử gần nhất (ngày 13/07/2026) để phản ánh đúng tình hình dữ liệu:
+Số lượng dữ liệu tuyển dụng của hệ thống không cố định theo ngày vì phụ thuộc vào biến động thị trường và lịch đồng bộ từ các nguồn khác nhau. Do đó, báo cáo này sử dụng ảnh chụp trạng thái (snapshot) của cơ sở dữ liệu và Dashboard tại thời điểm kiểm thử gần nhất (ngày 13/07/2026), trình bày trong Bảng~\ref{tab:data_stats}, để phản ánh đúng tình hình dữ liệu:
 
 \begin{table}[ht]
 \caption{Snapshot dữ liệu tuyển dụng tại thời điểm kiểm thử (13/07/2026)}
@@ -132,7 +136,7 @@ Nguồn dữ liệu & Cập nhật định kỳ & Pipeline ETL chạy theo lô h
 \end{center}
 \end{table}
 
-Sự chênh lệch giữa tổng số tin tích lũy (6.872) và số tin đang mở (1.050) phản ánh đúng đặc thù của dữ liệu tuyển dụng: các tin hết hạn nộp hồ sơ vẫn được giữ lại trong kho dữ liệu để phục vụ phân tích xu hướng dài hạn và tính trọng số TF-IDF, trong khi Dashboard chỉ trực quan hóa các tin còn hiệu lực theo bộ lọc thời gian của người dùng.
+Số liệu đáng chú ý nhất trong Bảng~\ref{tab:data_stats} là sự chênh lệch giữa tổng số tin tích lũy (\textbf{6.872}) và số tin đang mở (\textbf{1.050}): mức chênh khoảng 6,5 lần này phản ánh đúng đặc thù của dữ liệu tuyển dụng --- các tin hết hạn nộp hồ sơ vẫn được giữ lại trong kho dữ liệu để phục vụ phân tích xu hướng dài hạn và tính trọng số TF-IDF, trong khi Dashboard chỉ trực quan hóa các tin còn hiệu lực theo bộ lọc thời gian của người dùng. Bên cạnh đó, 1.050 tin đang mở đến từ \textbf{716} nhà tuyển dụng khác nhau (trung bình chưa tới 1,5 tin/công ty) cho thấy dữ liệu phân tán rộng trên thị trường thay vì tập trung vào một số ít doanh nghiệp lớn, giúp các thống kê thị trường ít bị lệch theo một nguồn tuyển dụng đơn lẻ.
 
 \subsection{Đánh giá thời gian phản hồi khi gọi API trích xuất và đối soát CV}
 
@@ -172,7 +176,7 @@ Trước hết, sáu endpoint dữ liệu của Dashboard thị trường đư�
 \end{center}
 \end{table}
 
-Kết quả cho thấy toàn bộ 30 lượt gọi đều thành công (tỷ lệ lỗi 0\%). Do Frontend gửi sáu truy vấn song song bằng \texttt{Promise.all}, thời gian chờ dữ liệu của toàn trang Dashboard về nguyên tắc bị chi phối bởi endpoint chậm nhất (\texttt{skills/rising}, trung bình 914ms), thay vì tổng thời gian sáu truy vấn tuần tự (khoảng 3,1 giây). Kết quả này xác nhận các API Dashboard thỏa NFR-01 ở mức đo API. Hai endpoint nhóm kỹ năng (\texttt{in-demand} và \texttt{rising}) chậm hơn đáng kể so với nhóm còn lại vì phải thực hiện truy vấn tổng hợp (aggregation) trên bảng liên kết \texttt{job\_skills} có số bản ghi lớn nhất; đây là điểm tối ưu tiềm năng bằng chỉ mục bổ sung hoặc materialized view trong tương lai.
+Kết quả cho thấy toàn bộ 30 lượt gọi đều thành công (tỷ lệ lỗi \textbf{0\%}) và mọi endpoint đều phản hồi dưới 1 giây. Do Frontend gửi sáu truy vấn song song bằng \texttt{Promise.all}, thời gian chờ dữ liệu của toàn trang Dashboard về nguyên tắc bị chi phối bởi endpoint chậm nhất (\texttt{skills/rising}, trung bình \textbf{914ms}), thay vì tổng thời gian sáu truy vấn tuần tự (khoảng 3,1 giây). Kết quả này xác nhận các API Dashboard thỏa NFR-01 ở mức đo API. Hai endpoint nhóm kỹ năng (\texttt{in-demand} và \texttt{rising}) chậm hơn đáng kể so với nhóm còn lại vì phải thực hiện truy vấn tổng hợp (aggregation) trên bảng liên kết \texttt{job\_skills} có số bản ghi lớn nhất; đây là điểm tối ưu tiềm năng bằng chỉ mục bổ sung hoặc materialized view trong tương lai.
 
 Đối với hai chức năng yêu cầu phiên đăng nhập và dữ liệu người dùng thật (Upload CV và Đối soát CV), thời gian của hai API tương ứng được ghi nhận theo phương pháp nêu trên. Kết quả tổng hợp được trình bày trong Bảng~\ref{tab:api_performance_auth}.
 
@@ -196,7 +200,7 @@ Upload CV & 5 & 1,58 & 1,94 & 1,94 & 0\% \\
 \end{center}
 \end{table}
 
-Kết quả đo cho thấy sự phân hóa rõ rệt giữa hai chế độ hoạt động của chức năng Đối soát CV. Ở lượt phân tích lần đầu (cache miss), toàn bộ pipeline được thực thi tuần tự: tải văn bản CV, gọi Gemini API trích xuất kỹ năng, chuẩn hóa qua FAISS trên CPU và tính điểm so khớp, dẫn đến thời gian trung bình 43,8 giây (lớn nhất 55,9 giây) --- vượt ngưỡng 30 giây của NFR-02, dù toàn bộ 5 lượt đều trả về kết quả thành công và điểm số ổn định (0,34--0,35). Nguyên nhân chính là độ trễ của lượt gọi Gemini API bên ngoài cộng với chi phí tính vector nhúng trên máy chủ chỉ có 2 vCPU không GPU. Ngược lại, các lượt phân tích lặp lại trên cùng CV (cache hit) chỉ mất trung bình 0,22 giây do kỹ năng đã trích xuất được tái sử dụng từ bảng \texttt{user\_cv\_skills}. Như vậy NFR-02 hiện chỉ được thỏa ở chế độ cache hit; đối với lần phân tích đầu tiên, các hướng cải thiện khả thi gồm: trích xuất kỹ năng bất đồng bộ ngay sau khi upload CV (thay vì chờ đến lúc người dùng bấm phân tích), hiển thị tiến trình từng bước trên giao diện, hoặc nâng cấp hạ tầng suy luận vector nhúng.
+Kết quả đo cho thấy sự phân hóa rõ rệt giữa hai chế độ hoạt động của chức năng Đối soát CV. Ở lượt phân tích lần đầu (cache miss), toàn bộ pipeline được thực thi tuần tự: tải văn bản CV, gọi Gemini API trích xuất kỹ năng, chuẩn hóa qua FAISS trên CPU và tính điểm so khớp, dẫn đến thời gian trung bình \textbf{43,8 giây} (lớn nhất 55,9 giây) --- \textbf{vượt ngưỡng 30 giây của NFR-02}, dù toàn bộ 5 lượt đều trả về kết quả thành công và điểm số ổn định (0,34--0,35). Nguyên nhân chính là độ trễ của lượt gọi Gemini API bên ngoài cộng với chi phí tính vector nhúng trên máy chủ chỉ có 2 vCPU không GPU. Ngược lại, các lượt phân tích lặp lại trên cùng CV (cache hit) chỉ mất trung bình \textbf{0,22 giây} --- nhanh hơn khoảng 200 lần --- do kỹ năng đã trích xuất được tái sử dụng từ bảng \texttt{user\_cv\_skills}. Như vậy NFR-02 hiện chỉ được thỏa ở chế độ cache hit; đối với lần phân tích đầu tiên, các hướng cải thiện khả thi gồm: trích xuất kỹ năng bất đồng bộ ngay sau khi upload CV (thay vì chờ đến lúc người dùng bấm phân tích), hiển thị tiến trình từng bước trên giao diện, hoặc nâng cấp hạ tầng suy luận vector nhúng.
 
 \section{Kiểm thử độ chính xác và Đánh giá kết quả đầu ra thuật toán (Algorithm Accuracy Evaluation)}
 \label{sec:algorithm_evaluation}
@@ -276,7 +280,7 @@ Tỷ lệ hợp lệ cấu trúc JSON đầu ra & 100.0\% (sau khi tự động 
 
 Bảng \ref{tab:ner_evaluation_specs} tập trung thống kê các chỉ số định lượng độ chính xác của bộ nhận diện thực thể tên kỹ năng. Chúng tôi thiết lập ngưỡng kỳ vọng của Điểm F1 ở mức tối thiểu 82.5\% nhằm bảo đảm tính toàn vẹn và sạch của tập dữ liệu kỹ năng trước khi đưa vào các thuật toán tính toán độ tương đồng tiếp theo.
 
-Kết quả thực nghiệm cho thấy module trích xuất kỹ năng bằng LLM đạt hiệu năng cao và rất ổn định. Cụ thể, tỷ lệ cấu trúc JSON đầu ra hợp lệ đạt tuyệt đối 100.0\%, chứng minh sự đúng đắn của việc áp dụng cơ chế cưỡng chế JSON Schema của Gemini API với cấu hình temperature = 0.0. Độ chính xác (Precision) đạt 98.2\%, phản ánh khả năng trích xuất chính xác, hầu như không xuất hiện hiện tượng ảo giác (hallucination) kỹ năng. Độ phủ (Recall) đạt 97.8\% cho thấy hệ thống nhận diện gần như toàn bộ các kỹ năng cốt lõi được đề cập trong tài liệu gốc. Một số trường hợp bị sót (False Negative) xuất hiện rải rác ở các CV dạng ảnh quét (PNG/JPG) có độ phân giải kém hoặc cấu trúc chia cột phức tạp làm ảnh hưởng đến tầng OCR. Điểm F1-Score đạt 98.0\%, vượt xa mức kỳ vọng ban đầu (82.5\%) và khẳng định chất lượng dữ liệu đầu vào được đảm bảo cho các bước xử lý tiếp theo.
+Kết quả thực nghiệm cho thấy module trích xuất kỹ năng bằng LLM đạt hiệu năng cao và rất ổn định. Cụ thể, tỷ lệ cấu trúc JSON đầu ra hợp lệ đạt tuyệt đối 100.0\%, chứng minh sự đúng đắn của việc áp dụng cơ chế cưỡng chế JSON Schema của Gemini API với cấu hình temperature = 0.0. Độ chính xác (Precision) đạt 98.2\%, phản ánh khả năng trích xuất chính xác, hầu như không xuất hiện hiện tượng ảo giác (hallucination) kỹ năng. Độ phủ (Recall) đạt 97.8\% cho thấy hệ thống nhận diện gần như toàn bộ các kỹ năng cốt lõi được đề cập trong tài liệu gốc. Một số trường hợp bị sót (False Negative) xuất hiện rải rác ở các CV dạng ảnh quét (PNG/JPG) có độ phân giải kém hoặc cấu trúc chia cột phức tạp làm ảnh hưởng đến tầng OCR. Điểm F1-Score đạt \textbf{98.0\%}, vượt xa mức kỳ vọng ban đầu (82.5\%) và khẳng định chất lượng dữ liệu đầu vào được đảm bảo cho các bước xử lý tiếp theo.
 
 \subsubsection*{2. Kịch bản đối soát 2: Chuẩn hóa nhãn kỹ năng và khớp mờ tên doanh nghiệp}
 
@@ -330,7 +334,7 @@ Tỷ lệ kỹ năng thô được ánh xạ thành công & $\ge 90.0\%$ & 28,7\
 \end{center}
 \end{table}
 
-Kết quả tại Bảng \ref{tab:eval_norm_matching} phản ánh chiến lược đánh đổi có chủ đích của hệ thống: ưu tiên tuyệt đối độ chính xác (precision) thay vì độ phủ. Trên bộ benchmark 25 nhãn viết tắt/biến thể phổ biến, toàn bộ 16 nhãn được chấp nhận ánh xạ đều đúng (100\%, vượt mục tiêu 88\%), tức không phát sinh bất kỳ ánh xạ sai nào; 9 nhãn còn lại bị từ chối một cách bảo thủ, trong đó 6 nhãn có ứng viên xếp hạng nhất đúng nhưng chưa vượt ngưỡng động. Đổi lại, tỷ lệ ánh xạ thành công trên toàn bộ dữ liệu production chỉ đạt 28,7\% theo lượt xuất hiện (68.181 lượt ánh xạ so với 169.038 lượt bị đẩy vào \texttt{unmatched\_skills}): phần lớn nhãn thô do LLM sinh ra là các cụm mô tả dài không tồn tại trong từ điển 6.048 kỹ năng chuẩn Lightcast, phản ánh giới hạn độ phủ của từ điển hơn là lỗi thuật toán. Chỉ số gộp nhóm doanh nghiệp chỉ đạt 30\% do lỗi thứ tự mẫu hậu tố nêu trên cùng việc thiếu các mẫu tiếng Việt (\textit{Tập đoàn}, \textit{Ngân hàng TMCP}) và tiếng Anh (\textit{Inc.}); đây là mục tiêu tối ưu rõ ràng nhất của pipeline trong giai đoạn tiếp theo.
+Kết quả tại Bảng \ref{tab:eval_norm_matching} phản ánh chiến lược đánh đổi có chủ đích của hệ thống: ưu tiên tuyệt đối độ chính xác (precision) thay vì độ phủ. Trên bộ benchmark 25 nhãn viết tắt/biến thể phổ biến, toàn bộ 16 nhãn được chấp nhận ánh xạ đều đúng (\textbf{100\%}, vượt mục tiêu 88\%), tức không phát sinh bất kỳ ánh xạ sai nào; 9 nhãn còn lại bị từ chối một cách bảo thủ, trong đó 6 nhãn có ứng viên xếp hạng nhất đúng nhưng chưa vượt ngưỡng động. Đổi lại, tỷ lệ ánh xạ thành công trên toàn bộ dữ liệu production chỉ đạt \textbf{28,7\%} theo lượt xuất hiện (68.181 lượt ánh xạ so với 169.038 lượt bị đẩy vào \texttt{unmatched\_skills}): phần lớn nhãn thô do LLM sinh ra là các cụm mô tả dài không tồn tại trong từ điển 6.048 kỹ năng chuẩn Lightcast, phản ánh giới hạn độ phủ của từ điển hơn là lỗi thuật toán. Chỉ số gộp nhóm doanh nghiệp chỉ đạt 30\% do lỗi thứ tự mẫu hậu tố nêu trên cùng việc thiếu các mẫu tiếng Việt (\textit{Tập đoàn}, \textit{Ngân hàng TMCP}) và tiếng Anh (\textit{Inc.}); đây là mục tiêu tối ưu rõ ràng nhất của pipeline trong giai đoạn tiếp theo.
 
 \subsubsection*{3. Kịch bản đối soát 3: Khử trùng lặp sâu tin tuyển dụng (Deduplication)}
 
@@ -374,7 +378,7 @@ Tỷ lệ bài đăng trùng lặp thực tế trên tập mẫu & \textit{Ghi n
 \end{center}
 \end{table}
 
-Kết quả tại Bảng \ref{tab:eval_dedup} cho thấy lõi so khớp embedding hoạt động rất tốt: trên bộ 16 cặp gán nhãn, toàn bộ 8 cặp trùng được phát hiện (độ tương đồng đo được 0,963--1,000) và không có cặp độc lập nào bị gộp nhầm, tức Precision và Recall đều đạt 100\% --- vượt cả hai mục tiêu đề ra. Tuy nhiên, độ phủ này chỉ đúng với điều kiện tiên quyết là hai tin phải được gom vào cùng nhóm công ty: khi cùng một doanh nghiệp xuất hiện dưới các biến thể tên khác nhau giữa các trang tuyển dụng (ví dụ "Công ty Cổ phần X" và "X JSC"), lỗi chuẩn hóa hậu tố mô tả ở kịch bản 2 khiến hai tin rơi vào hai nhóm khác nhau và không bao giờ được so sánh, làm độ phủ thực tế đối với tin trùng chéo nguồn giảm về 0\%. Việc sửa lỗi chuẩn hóa tên doanh nghiệp do đó là tiền đề trực tiếp để cải thiện chất lượng khử trùng lặp chéo nguồn. Ngoài ra, pipeline hiện chưa lưu lại thống kê số tin bị loại trong mỗi lô xử lý nên chưa ghi nhận được tỷ lệ trùng lặp thực tế; nhóm đề xuất bổ sung bộ đếm này vào log ETL để phục vụ giám sát dài hạn.
+Kết quả tại Bảng \ref{tab:eval_dedup} cho thấy lõi so khớp embedding hoạt động rất tốt: trên bộ 16 cặp gán nhãn, toàn bộ 8 cặp trùng được phát hiện (độ tương đồng đo được 0,963--1,000) và không có cặp độc lập nào bị gộp nhầm, tức Precision và Recall đều đạt \textbf{100\%} --- vượt cả hai mục tiêu đề ra. Tuy nhiên, độ phủ này chỉ đúng với điều kiện tiên quyết là hai tin phải được gom vào cùng nhóm công ty: khi cùng một doanh nghiệp xuất hiện dưới các biến thể tên khác nhau giữa các trang tuyển dụng (ví dụ "Công ty Cổ phần X" và "X JSC"), lỗi chuẩn hóa hậu tố mô tả ở kịch bản 2 khiến hai tin rơi vào hai nhóm khác nhau và không bao giờ được so sánh, làm độ phủ thực tế đối với tin trùng chéo nguồn giảm về 0\%. Việc sửa lỗi chuẩn hóa tên doanh nghiệp do đó là tiền đề trực tiếp để cải thiện chất lượng khử trùng lặp chéo nguồn. Ngoài ra, pipeline hiện chưa lưu lại thống kê số tin bị loại trong mỗi lô xử lý nên chưa ghi nhận được tỷ lệ trùng lặp thực tế; nhóm đề xuất bổ sung bộ đếm này vào log ETL để phục vụ giám sát dài hạn.
 
 \subsection{Phân tích thực tế một số trường hợp đối soát để chứng minh tính hợp lý của kết quả gợi ý kỹ năng}
 
@@ -462,6 +466,6 @@ Với các giá trị tương đồng thực đo ($\text{sim}_{\text{Django}} = 
     \text{MatchScore} = \frac{0.25 + 0.20 + 0.0483 + 0.15 + 0 + 0.0453}{1.00} = 0.6936
 \end{equation}
 
-tương ứng Match Percent $= 69.36\%$, đúng bằng giá trị hệ thống trả về trong trường \texttt{match\_percent} của đầu ra JSON. Kết quả thực nghiệm minh họa ba đặc tính quan trọng của thuật toán: (i) chứng chỉ bị thiếu (AWS) tạo ra khoảng cách $\text{gap} = w_5 \times (1 - 0) = 0.15$, là mục có mức độ ưu tiên bổ sung cao nhất trong Gap Report; (ii) kỹ năng khớp gián tiếp qua ngữ nghĩa (Teamwork qua Communication, $\text{sim} = 0.4532$, trường \texttt{matched\_via} ghi nhận rõ nguồn khớp) vẫn được ghi nhận đóng góp một phần thay vì bị chấm điểm 0 như các hệ thống so khớp từ khóa chính xác; và (iii) tổng điểm phản ánh đúng trực giác đánh giá của con người --- ứng viên đáp ứng tốt các kỹ năng lập trình cốt lõi nhưng còn thiếu chứng chỉ đám mây và kinh nghiệm framework backend chuyên sâu. Toàn bộ 6/6 kỹ năng yêu cầu được phân loại đúng như suy diễn kỳ vọng, xác nhận cơ chế ngưỡng phân loại ($0.75/0.45$) và luồng tính điểm hoạt động chính xác trên môi trường production.
+tương ứng Match Percent $=$ \textbf{69.36\%}, đúng bằng giá trị hệ thống trả về trong trường \texttt{match\_percent} của đầu ra JSON. Kết quả thực nghiệm minh họa ba đặc tính quan trọng của thuật toán: (i) chứng chỉ bị thiếu (AWS) tạo ra khoảng cách $\text{gap} = w_5 \times (1 - 0) = 0.15$, là mục có mức độ ưu tiên bổ sung cao nhất trong Gap Report; (ii) kỹ năng khớp gián tiếp qua ngữ nghĩa (Teamwork qua Communication, $\text{sim} = 0.4532$, trường \texttt{matched\_via} ghi nhận rõ nguồn khớp) vẫn được ghi nhận đóng góp một phần thay vì bị chấm điểm 0 như các hệ thống so khớp từ khóa chính xác; và (iii) tổng điểm phản ánh đúng trực giác đánh giá của con người --- ứng viên đáp ứng tốt các kỹ năng lập trình cốt lõi nhưng còn thiếu chứng chỉ đám mây và kinh nghiệm framework backend chuyên sâu. Toàn bộ \textbf{6/6 kỹ năng yêu cầu được phân loại đúng} như suy diễn kỳ vọng, xác nhận cơ chế ngưỡng phân loại ($0.75/0.45$) và luồng tính điểm hoạt động chính xác trên môi trường production.
 
 Tổng kết chương, hệ thống CareerNova được đánh giá trên ba phương diện: (1) kiểm thử chức năng hộp đen với 11 kịch bản bao phủ các tính năng người dùng, toàn bộ đạt; (2) đánh giá dữ liệu và hiệu năng trên môi trường triển khai thật tại Mục 5.3, trong đó các API Dashboard thỏa NFR-01 nhưng chức năng Đối soát CV ở lần phân tích đầu tiên chưa thỏa NFR-02; và (3) đánh giá độ chính xác thuật toán tại Mục 5.4 bằng các thực nghiệm chạy trực tiếp trên production: module trích xuất kỹ năng bằng LLM đạt F1-Score 98.0\% (vượt ngưỡng 82.5\%), chuẩn hóa kỹ năng đạt độ chính xác tuyệt đối trên các ánh xạ được chấp nhận nhưng độ phủ còn thấp, khử trùng lặp đạt Precision/Recall 100\% trong phạm vi cùng nhóm công ty, và Case Study Matching Engine phân loại đúng 6/6 kỹ năng với Match Score 69,36\%. Quá trình đối soát đồng thời phát hiện ba điểm cần khắc phục đã được ghi nhận: lỗi thứ tự mẫu hậu tố trong chuẩn hóa tên doanh nghiệp, thiếu bộ đếm tin trùng lặp trong log ETL, và lệch lược đồ làm vô hiệu bộ quy tắc lọc ngữ nghĩa --- các phát hiện này chính là giá trị thực tiễn của quy trình kiểm thử đối soát được xây dựng trong chương.
