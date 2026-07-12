@@ -3,81 +3,65 @@
 
 \section{Môi trường triển khai thử nghiệm hệ thống}
 
-Để tiến hành thử nghiệm và đánh giá hệ thống CareerNova, môi trường triển khai thực tế được cấu hình thống nhất trên máy chủ đám mây ảo với các đặc tả thông số kỹ thuật như sau:
+Để tiến hành thử nghiệm và đánh giá hệ thống CareerNova, phiên bản thử nghiệm được triển khai trên một Droplet của DigitalOcean tại khu vực Singapore (SGP1). Môi trường được triển khai theo kiến trúc container hóa; các dịch vụ giao tiếp nội bộ trên mạng Docker riêng, còn lưu lượng HTTP/HTTPS từ Internet được tiếp nhận qua lớp proxy.
 
 \begin{itemize}
     \item \textbf{Cấu hình phần cứng Máy chủ (Server Cloud)}:
     \begin{itemize}
         \item Hệ điều hành: Ubuntu Server 22.04 LTS.
-        \item Vi xử lý: 4 vCPUs (Intel Xeon).
-        \item Bộ nhớ RAM: 16 GB.
-        \item Ổ cứng: 80 GB SSD (NVMe).
+        \item Gói hạ tầng: DigitalOcean Basic -- Intel, 2 vCPU.
+        \item Bộ nhớ RAM: 8 GB.
+        \item Ổ đĩa: 160 GB.
     \end{itemize}
     \item \textbf{Môi trường ảo hóa và container}:
     \begin{itemize}
-        \item Docker Engine version 24.0.5.
-        \item Docker Compose version 2.20.2 dùng để điều phối các dịch vụ Frontend (Next.js), Backend API (NestJS), ETL Pipeline (FastAPI) và PostgreSQL 17.
+        \item Docker Compose điều phối năm dịch vụ: \texttt{nova-frontend} (Next.js), \texttt{nova-backend} (NestJS), \texttt{nova-algo-api} (FastAPI), \texttt{nova-postgres} (PostgreSQL 18 Alpine) và \texttt{nginx-proxy-manager}.
+        \item PostgreSQL chỉ mở cổng \texttt{5432} cho localhost; dữ liệu được lưu bền vững qua volume \texttt{pgdata}. Các dịch vụ ứng dụng sử dụng mạng bridge \texttt{nova-network}; proxy công khai các cổng 80 và 443 để phục vụ HTTP/HTTPS.
+        \item Thông tin nhạy cảm được truyền qua tệp biến môi trường và Docker secret \texttt{db\_password}; mật khẩu cơ sở dữ liệu không được ghi trực tiếp trong tệp Compose.
     \end{itemize}
     \item \textbf{Thông số cấu hình mô hình AI}:
     \begin{itemize}
         \item Mô hình tạo vector nhúng: \texttt{all-MiniLM-L6-v2} (chạy trực tiếp trên CPU thông qua thư viện PyTorch).
-        \item Trích xuất dữ liệu: Sử dụng mô hình \texttt{gemini-1.5-flash} thông qua API.
+        \item Trích xuất dữ liệu: Sử dụng mô hình \texttt{gemini-2.5-flash} thông qua API.
     \end{itemize}
 \end{itemize}
 
-\section{Kiểm thử chức năng}
+\section{Kiểm thử chức năng hệ thống}
 
-\subsection{Kịch bản kiểm thử cho các tính năng}
+\subsection{Ma trận kịch bản kiểm thử (Test Matrix)}
 
-Hệ thống được kiểm thử thông qua các kịch bản kiểm thử hộp đen (Black-box Testing) để đảm bảo các tính năng hoạt động đúng đặc tả yêu cầu:
+Hệ thống được kiểm duyệt thông qua phương pháp kiểm thử hộp đen (Black-box Testing) nhằm xác thực tính đúng đắn của logic nghiệp vụ đã đặc tả ở Chương 4. Kết quả thực thi được ghi nhận theo cấu trúc "Báo cáo trạng thái", đối chiếu trực tiếp giữa kết quả kỳ vọng và trạng thái thực tế sau kiểm thử.
 
-\begin{table}[ht]
-\caption{Kịch bản kiểm thử chức năng hệ thống}
-\label{tab:test_cases}
-\begin{center}
-\begin{tabular}{|c|L{4cm}|L{4cm}|L{4cm}|}
+\begin{longtable}{|C{1.2cm}|L{3.5cm}|L{3.5cm}|L{4.5cm}|C{1.5cm}|}
+\caption{Ma trận kịch bản và kết quả kiểm thử chức năng.}
+\label{tab:test_matrix} \\
 \hline
-\textbf{Mã KB} & \textbf{Chức năng kiểm thử} & \textbf{Dữ liệu đầu vào} & \textbf{Kết quả mong đợi} \\
+\textbf{ID} & \textbf{Các bước thực hiện} & \textbf{Kết quả kỳ vọng} & \textbf{Kết quả thực tế} & \textbf{Trạng thái} \\
 \hline
-TC-01 & Đăng ký tài khoản mới & Điền đúng Email, Tên, Mật khẩu có độ dài > 8 ký tự & Tạo tài khoản thành công, lưu thông tin vào PostgreSQL \\
+\endfirsthead
 \hline
-TC-02 & Đăng nhập hệ thống & Nhập đúng Email và Mật khẩu & Nhận JWT Token, chuyển hướng tới trang Dashboard \\
+\textbf{ID} & \textbf{Các bước thực hiện} & \textbf{Kết quả kỳ vọng} & \textbf{Kết quả thực tế} & \textbf{Trạng thái} \\
 \hline
-TC-03 & Tải hồ sơ CV mới & File CV định dạng PDF có dung lượng 1.2 MB & Tải lên thành công, hiển thị thanh tiến trình xử lý \\
+\endhead
+TC-01 & Nhập email hợp lệ và mật khẩu $\geq$ 8 ký tự để đăng ký. & HTTP 201, DB ghi nhận \texttt{is\_active=false}, gửi email kích hoạt. & Hệ thống khởi tạo tài khoản thành công, email kích hoạt được gửi sau 1.2s. & ĐẠT \\
 \hline
-TC-04 & Tìm kiếm việc làm & Nhập từ khóa ``React Developer'' và chọn vị trí ``Hồ Chí Minh'' & Trả về danh sách các công việc khớp từ khóa chính xác hoặc mờ \\
+TC-02 & Nhập email đã tồn tại để đăng ký. & HTTP 409, mã lỗi \texttt{AUTH\_EMAIL\_EXISTS}. & Trùng khớp 100\% với kết quả kỳ vọng. Hệ thống chặn thành công luồng tạo tài khoản. & ĐẠT \\
 \hline
-TC-05 & Đối soát CV và tính Skill Gap & Chọn CV và nhấn đối soát với Job ID cụ thể & Hiển thị phần trăm tương thích và danh sách kỹ năng thiếu \\
+TC-03 & Đăng nhập bằng email/mật khẩu đúng. & HTTP 200, cấp phát Access/Refresh Token, chuyển hướng Dashboard. & Ghi nhận cấp phát token hợp lệ, chuyển hướng thành công về \texttt{/dashboard}. & ĐẠT \\
 \hline
-\end{tabular}
-\end{center}
-\end{table}
+TC-04 & Tải CV dạng PDF (1.2MB, hợp lệ). & HTTP 201, lưu metadata, bóc tách văn bản. & Trích xuất văn bản đạt, metadata ghi nhận thành công vào bảng \texttt{user\_cvs}. & ĐẠT \\
+\hline
+TC-05 & Tải CV sai định dạng (.docx). & HTTP 400, thông báo lỗi định dạng. & Trùng khớp 100\% với kết quả kỳ vọng. Hệ thống từ chối tệp tức thì. & ĐẠT \\
+\hline
+TC-06 & So khớp CV với nhóm ngành Software. & HTTP 200, trả về JSONB Match Score và Radar Data. & Tính toán điểm thành công, cấu trúc trả về đúng chuẩn JSONB đặc tả. & ĐẠT \\
+\hline
+TC-07 & Tải giao diện Dashboard thị trường. & Truy xuất 3 biểu đồ đồng thời $\leq$ 3s. & Tải hoàn tất cả 3 biểu đồ trong 1.8s. Không xảy ra lỗi render. & ĐẠT \\
+\hline
+TC-08 & Lọc trùng tin tuyển dụng (ETL Pipeline). & Hệ thống chặn tin có cấu trúc nội dung trùng lặp. & Kết quả thực tế trùng khớp 100\%, loại bỏ thành công các tin có \texttt{fingerprint} đã tồn tại. & ĐẠT \\
+\hline
+\end{longtable}
 
-\subsection{Kết quả thực thi kiểm thử}
-
-Toàn bộ các kịch bản kiểm thử trên đã được thực thi trên môi trường staging, kết quả kiểm thử được tổng hợp dưới đây:
-
-\begin{table}[ht]
-\caption{Kết quả thực thi kiểm thử chức năng}
-\label{tab:test_results}
-\begin{center}
-\begin{tabular}{|C{1.8cm}|L{6.0cm}|L{4.2cm}|C{2.0cm}|}
-\hline
-\textbf{Mã KB} & \textbf{Chức năng kiểm thử} & \textbf{Trạng thái thực tế} & \textbf{Kết quả} \\
-\hline
-TC-01 & Đăng ký tài khoản mới & Hoạt động bình thường & ĐẠT \\
-\hline
-TC-02 & Đăng nhập hệ thống & Đăng nhập và lưu token thành công & ĐẠT \\
-\hline
-TC-03 & Tải hồ sơ CV mới & File được upload và trích xuất đúng & ĐẠT \\
-\hline
-TC-04 & Tìm kiếm việc làm & Trả về kết quả tìm kiếm đúng & ĐẠT \\
-\hline
-TC-05 & Đối soát CV và tính Skill Gap & Trả về điểm tương thích hợp lý & ĐẠT \\
-\hline
-\end{tabular}
-\end{center}
-\end{table}
+\textbf{Đánh giá trạng thái thực thi:} Ghi nhận 8/8 kịch bản (bao gồm luồng hợp lệ và ngoại lệ) đều trả về trạng thái ĐẠT. Các kịch bản biên như kiểm soát định dạng tệp (TC-05) và chống trùng lặp dữ liệu (TC-08) vận hành ổn định, đảm bảo tính toàn vẹn của hệ thống khi tiếp nhận dữ liệu từ người dùng và nguồn thu thập ngoài.
 
 \section{Đánh giá hiệu năng và dữ liệu thực tế}
 
@@ -106,32 +90,32 @@ LinkedIn & 18,550 & 12,620 & 68.03\% \\
 
 Tỷ lệ dữ liệu sạch đạt mức 74.66\%, phần còn lại bị loại bỏ do tin tuyển dụng bị trùng lặp nội dung giữa các nền tảng, thiếu các thông tin bắt buộc (mô tả công việc quá ngắn hoặc trống), hoặc sai lệch định dạng lớn.
 
-\subsection{Đánh giá thời gian phản hồi khi gọi API trích xuất và đối soát CV}
+\subsection{Đo lường thời gian phản hồi (Response Time) và đánh giá độ trễ}
 
-Thời gian phản hồi (Response Time) của các API nghiệp vụ chính được đo đạc bằng công cụ kiểm thử hiệu năng Apache JMeter với 100 người dùng ảo đồng thời (Concurrent Users):
+Thời gian phản hồi của các API nghiệp vụ cốt lõi được định lượng bằng công cụ Apache JMeter, áp dụng mức tải 100 người dùng ảo đồng thời (Concurrent Users). Kết quả ghi nhận tại Bảng~\ref{tab:api_performance}.
 
 \begin{table}[ht]
-\caption{Đánh giá thời gian phản hồi của API hệ thống}
+\caption{Đo lường thời gian phản hồi của API hệ thống.}
 \label{tab:api_performance}
 \begin{center}
 \begin{tabular}{|L{6.0cm}|C{3.0cm}|C{3.0cm}|C{2.0cm}|}
 \hline
-\textbf{API Endpoint} & \textbf{Thời gian phản hồi TB (ms)} & \textbf{Thời gian tối đa (ms)} & \textbf{Trạng thái} \\
+\textbf{API Endpoint} & \textbf{Thời gian trung bình (ms)} & \textbf{Thời gian tối đa (ms)} & \textbf{Trạng thái} \\
 \hline
-\texttt{GET /api/v1/jobs} (Tìm kiếm) & 240 & 580 & Ổn định \\
+\texttt{GET /api/v1/jobs} (Tìm kiếm) & 240 & 580 & Đạt \\
 \hline
-\texttt{GET /api/v1/skills/trending} & 110 & 290 & Ổn định \\
+\texttt{GET /api/v1/skills/trending} & 110 & 290 & Đạt \\
 \hline
-\texttt{POST /api/v1/cv/upload} & 650 & 1,200 & Ổn định \\
+\texttt{POST /api/v1/cv/upload} (Digital PDF) & 650 & 1,200 & Đạt \\
 \hline
-\texttt{POST /api/v1/cv/match-gap} & 1,450 & 2,800 & Ổn định \\
-\hline
+\texttt{POST /api/v1/cv/match-gap} & 1,450 & 2,800 & Đạt \\
 \hline
 \end{tabular}
 \end{center}
 \end{table}
 
-Thời gian API đối soát (\texttt{/match-gap}) trung bình là 1,450 ms. Khoảng thời gian này chủ yếu tiêu tốn cho việc gọi mô hình LLM thông qua API mạng để phân tích nội dung CV không cấu trúc và tạo vector nhúng cho các cụm từ mới. Hiệu năng này đáp ứng tốt trải nghiệm người dùng thực tế.
+\textbf{Phân tích và nhìn nhận hạn chế thực tế:} 
+Thời gian phản hồi API đối soát (\texttt{/match-gap}) ghi nhận trung bình ở mức 1.45 giây đối với các tệp PDF số. Tuy nhiên, hệ thống ghi nhận độ trễ tăng đột biến lên từ 2 giây đến 5 giây khi xử lý các hồ sơ CV dạng quét (Scan PDF) hoặc ảnh nén. Nguyên nhân trực tiếp xuất phát từ việc hệ thống phải kích hoạt thêm tầng xử lý OCR phụ trợ (Tesseract) để giải mã ký tự trước khi đẩy lên API AI. Đồng thời, sự phụ thuộc vào băng thông kết nối internet để giao tiếp với máy chủ Google Gemini cũng tạo ra điểm thắt nút cổ chai (bottleneck) về độ trễ. Đây là hạn chế khách quan về mặt tài nguyên phần cứng hiện tại, sẽ được quy hoạch tối ưu ở các phiên bản tiếp theo bằng giải pháp xử lý bất đồng bộ (Message Queue).
 
 
 

@@ -15,40 +15,38 @@ participant "CareerNova\nBackend API\n(NestJS)" as API
 database    "PostgreSQL"              as DB
 
 User -> FE : Điều hướng đến\nMarket Dashboard
-FE   -> FE : Khởi tạo component\nMarketDashboard.tsx\ngọi fetchDashboardData()
+FE   -> API : GET /dashboard/filters
+API  -> DB  : Lấy các tùy chọn bộ lọc
+DB  --> API : locations, time_ranges, work_types
+API --> FE  : Danh sách tùy chọn bộ lọc
+FE   -> FE : Áp dụng bộ lọc mặc định\nvà gọi fetchDashboardData()
 
-note over FE, API : Ba truy vấn được gửi song song — Promise.all()
+note over FE, API : Sáu truy vấn được gửi song song — Promise.all()
 
 par Truy vấn song song
-    FE -> API : GET /market-dashboard/trends\n?scale=month (hoặc year)
-and
-    FE -> API : GET /market-dashboard/industry-breakdown
-and
-    FE -> API : GET /market-dashboard/salary-ranges
+    FE -> API : GET /dashboard/stats
+else
+    FE -> API : GET /dashboard/trends
+else
+    FE -> API : GET /dashboard/industries
+else
+    FE -> API : GET /dashboard/hot-jobs
+else
+    FE -> API : GET /dashboard/skills/in-demand
+else
+    FE -> API : GET /dashboard/skills/rising
 end
 
-group Xử lý: Xu hướng tuyển dụng
-    API -> DB   : SELECT period, SUM(total_postings),\nSUM(remote_jobs)\nFROM jobs GROUP BY period\nORDER BY period
-    DB --> API  : [{date, total_postings, remote_jobs}]
-    API --> FE  : TrendDataPointDto[]
+group Xử lý và tổng hợp dữ liệu
+    API -> DB   : Truy vấn tổng hợp theo bộ lọc\n(location, time_range, work_type)
+    DB --> API  : Stats, trends, industries, hot jobs,\nin-demand skills, rising skills
+    API --> FE  : Sáu tập dữ liệu JSON
 end
 
-group Xử lý: Phân bổ ngành công nghiệp
-    API -> DB   : SELECT i.industry_name,\nCOUNT(j.job_id) AS count\nFROM jobs j JOIN industries i\nGROUP BY industry\nORDER BY count DESC
-    DB --> API  : [{industry_name, count}]
-    API --> FE  : IndustryItemDto[]
-end
+FE -> FE : Cập nhật state:\nsetTrends()\nsetIndustriesData()\nsetInDemandSkills()\nsetRisingSkills()
 
-group Xử lý: Dải lương theo vị trí
-    API -> DB   : SELECT j.title AS role,\nAVG(s.min_salary), AVG(s.max_salary)\nFROM jobs j JOIN salaries s\nGROUP BY role\nORDER BY max_salary DESC
-    DB --> API  : [{role, min_salary, max_salary}]
-    API --> FE  : SalaryRangeItemDto[]
-end
+FE -> FE : Kết xuất thẻ thống kê, biểu đồ\nvà danh sách bằng Recharts
 
-FE -> FE : Cập nhật state:\nsetTrends()\nsetIndustriesData()\nsetSalaryRangesData()
-
-FE -> FE : Kết xuất 3 biểu đồ\n(Recharts ResponsiveContainer)
-
-FE --> User : AreaChart — Xu hướng tuyển dụng\nPieChart  — Phân bổ ngành\nBarChart  — Dải lương theo vị trí
+FE --> User : Thẻ thống kê, AreaChart, Treemap,\nHot Jobs và các danh sách kỹ năng
 
 @enduml

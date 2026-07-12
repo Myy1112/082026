@@ -12,7 +12,7 @@ Việc lựa chọn công nghệ cho hệ thống CareerNova tuân theo nguyên 
     \item \textbf{Next.js 15 và React 19}: Khung phát triển ứng dụng web hiện đại trên nền React, sử dụng kiến trúc App Router. Next.js cho phép kết hợp linh hoạt giữa kết xuất phía máy chủ (Server-Side Rendering) cho các trang công khai và kết xuất phía trình duyệt (Client-Side Rendering) cho các trang dashboard tương tác, giúp tối ưu thời gian tải trang và trải nghiệm người dùng.
     \item \textbf{TypeScript}: Ngôn ngữ mở rộng của JavaScript bổ sung cơ chế kiểm soát kiểu dữ liệu tĩnh (static typing), giúp phát hiện lỗi sớm trong quá trình biên dịch và tăng độ tin cậy của mã nguồn khi hệ thống mở rộng.
     \item \textbf{Tailwind CSS và shadcn/ui}: Khung CSS tiện ích (utility-first) kết hợp bộ thành phần giao diện (component library) giúp xây dựng giao diện nhanh chóng, đảm bảo tính nhất quán của hệ thống thiết kế (Design System), hỗ trợ chế độ sáng/tối và thiết kế đáp ứng (Responsive).
-    \item \textbf{Recharts}: Thư viện trực quan hóa dữ liệu dựa trên SVG được tối ưu riêng cho React, dùng để vẽ các biểu đồ xu hướng tuyển dụng (AreaChart), phân bổ ngành (PieChart), dải lương (BarChart) và biểu đồ Radar so khớp kỹ năng (RadarChart).
+    \item \textbf{Recharts}: Thư viện trực quan hóa dữ liệu dựa trên SVG được tối ưu riêng cho React, dùng để vẽ biểu đồ xu hướng tuyển dụng (AreaChart), bản đồ cây phân bổ thị trường (Treemap), biểu đồ cột xếp hạng kỹ năng và biểu đồ Radar so khớp kỹ năng (RadarChart).
 \end{itemize}
 
 \subsection{Công nghệ Backend và Cơ sở dữ liệu}
@@ -229,16 +229,106 @@ Sau khi thu thập, dữ liệu thô được đưa vào quy trình xử lý là
 
 \section{Xây dựng chức năng cho các phân hệ người dùng}
 
+Phần này trình bày kết quả hiện thực theo hành trình của sinh viên: tạo tài khoản và thiết lập hồ sơ, khai thác dữ liệu thị trường, sau đó tìm kiếm cơ hội việc làm, quản lý CV và thực hiện đối soát. Các màn hình giao diện được trình bày ở Mục~\ref{sec:ui_design}; tại đây nội dung tập trung làm rõ chức năng đã cài đặt, dữ liệu đầu vào/đầu ra và ý nghĩa của từng bước trong kịch bản sử dụng.
+
 \subsection{Hiện thực hóa các tính năng Quản lý tài khoản, Đăng ký/Đăng nhập (Auth)}
 
-Module \texttt{auth} của NestJS quản lý toàn bộ luồng xác thực và phân quyền, được xây dựng theo cơ chế JWT stateless kết hợp refresh token:
+Module \texttt{auth} của NestJS quản lý toàn bộ luồng xác thực và phân quyền, được xây dựng theo cơ chế JWT stateless kết hợp refresh token. Các endpoint chính khai báo trong \texttt{AuthController} gồm: \texttt{POST /auth/register} (đăng ký tài khoản local), \texttt{POST /auth/login} (đăng nhập và cấp JWT), \texttt{GET /auth/verify-email} (xác thực email qua token), \texttt{POST /auth/forgot-password} và \texttt{POST /auth/reset-password} (quy trình đặt lại mật khẩu), \texttt{GET /auth/google} và \texttt{GET /auth/google/callback} (đăng nhập Google OAuth 2.0). Các chi tiết kỹ thuật cốt lõi bao gồm:
 \begin{itemize}
-    \item \textbf{Băm mật khẩu}: Khi đăng ký, mật khẩu người dùng được băm bằng thuật toán \texttt{bcrypt} trước khi lưu vào trường \texttt{password\_hash}; hệ thống không bao giờ lưu mật khẩu dạng plaintext.
-    \item \textbf{Xác thực email}: Sau đăng ký, hệ thống sinh \texttt{verify\_token} có thời hạn và gửi email kích hoạt; tài khoản chỉ chuyển sang trạng thái \texttt{is\_active = true} sau khi người dùng xác nhận.
-    \item \textbf{Cấp phát token}: Khi đăng nhập thành công, Backend cấp một \textit{access token} thời hạn ngắn (chứa \texttt{user\_id} và \texttt{role}) và một \textit{refresh token} thời hạn dài. Access token hết hạn được làm mới qua refresh token nhằm giảm thiểu rủi ro rò rỉ.
-    \item \textbf{Đăng nhập Google (SSO)}: Bên cạnh đăng nhập email/mật khẩu, hệ thống hỗ trợ đăng nhập một lần (Single Sign-On) qua Google OAuth; thông tin nhà cung cấp được lưu vào bảng \texttt{user\_auth\_providers}.
-    \item \textbf{Bảo vệ API}: Các route yêu cầu xác thực được bảo vệ bằng Guard của NestJS; Frontend đính kèm token trong header \texttt{Authorization: Bearer <token>} hoặc qua HTTP-only Cookie.
+    \item \textbf{Băm mật khẩu}: Khi đăng ký, mật khẩu người dùng được băm bằng thuật toán \texttt{bcrypt} (cost factor 10 vòng) trước khi lưu vào trường \texttt{password\_hash}; hệ thống không bao giờ lưu mật khẩu dạng plaintext ở bất kỳ tầng nào, kể cả nhật ký (log).
+    \item \textbf{Xác thực email}: Sau đăng ký, hệ thống tạo ngẫu nhiên \texttt{verify\_token} có thời hạn (lưu kèm \texttt{verify\_token\_expires}) và gửi email kích hoạt thông qua Nodemailer tích hợp Gmail SMTP. Tài khoản chỉ chuyển trạng thái \texttt{is\_active = true} sau khi người dùng nhấn liên kết xác nhận trong email; các tài khoản chưa xác thực bị từ chối đăng nhập với mã lỗi \texttt{AUTH\_ACCOUNT\_NOT\_ACTIVE}.
+    \item \textbf{Cấp phát token}: Khi đăng nhập thành công (cả email/mật khẩu lẫn Google OAuth), Backend cấp một \textit{access token} JWT thời hạn ngắn (payload chứa \texttt{user\_id}, \texttt{email} và \texttt{role}) và một \textit{refresh token} thời hạn dài. Khi access token hết hạn, Frontend gọi \texttt{POST /auth/refresh} với refresh token để nhận cặp token mới mà không cần đăng nhập lại, giảm thiểu rủi ro rò rỉ thông tin xác thực nhạy cảm.
+    \item \textbf{Đăng nhập Google (SSO)}: Hệ thống hỗ trợ đăng nhập một lần (Single Sign-On) qua Google OAuth 2.0; thông tin nhà cung cấp bao gồm \texttt{provider\_user\_id}, \texttt{provider\_email}, \texttt{provider\_name} và \texttt{provider\_avatar\_url} được lưu vào bảng \texttt{user\_auth\_providers}. Nếu email Google đã tồn tại trong hệ thống, tài khoản được liên kết tự động thay vì tạo mới.
+    \item \textbf{Bảo vệ API}: Các route thuộc nhóm \texttt{(user)} được bảo vệ bằng \texttt{JwtAuthGuard} của NestJS; Frontend đính kèm access token trong header \texttt{Authorization: Bearer <token>}. Khi token không hợp lệ hoặc hết hạn, Backend trả về mã lỗi \texttt{401 Unauthorized} và Frontend tự động thực hiện tái xác thực.
+    \item \textbf{Luồng Onboarding}: Sau khi tạo tài khoản và xác thực email thành công, người dùng trải qua quy trình onboarding ba bước khai báo thông tin năng lực ban đầu (kỹ năng hiện có, định hướng nghề nghiệp và mục tiêu học tập), quản lý bởi module \texttt{profile}. Dữ liệu onboarding phục vụ thuật toán gợi ý việc làm cá nhân hóa ở bước tiếp theo.
 \end{itemize}
+
+Trong kịch bản sử dụng, sinh viên đăng ký hoặc đăng nhập, xác thực địa chỉ email (đối với tài khoản local) và hoàn tất onboarding trước khi dùng các chức năng có dữ liệu cá nhân. Kết quả của bước này là một phiên làm việc đã xác thực, để các yêu cầu tiếp theo gửi kèm JWT và được gắn với đúng người dùng. Khi đăng nhập bằng Google, hệ thống liên kết tài khoản theo email thay vì tạo thêm một tài khoản trùng lặp.
+
+\subsection{Hiện thực hóa giao diện Dashboard trực quan hóa dữ liệu thị trường việc làm}
+
+Phân hệ Market Dashboard biến dữ liệu tuyển dụng đã chuẩn hóa thành các chỉ số dễ đọc trên giao diện. Frontend tải các tập dữ liệu độc lập song song, hiển thị trạng thái chờ hoặc thông báo khi chưa có dữ liệu, sau đó kết xuất biểu đồ đáp ứng theo kích thước màn hình. Cách hiện thực này giúp người dùng theo dõi đồng thời xu hướng, nhóm nhu cầu, vị trí tuyển dụng và kỹ năng đang được tuyển dụng mà không phải thao tác trên các bảng dữ liệu thô.
+
+\textbf{1. Phân tích yêu cầu (Requirements Analysis):}
+Hệ thống cần cung cấp cho người dùng bức tranh toàn cảnh về xu hướng thị trường IT. Nhu cầu nghiệp vụ được diễn đạt là: ``Người dùng muốn biết vị trí nào đang tuyển nhiều, công nghệ nào được yêu cầu và kỹ năng nào đang tăng nhanh''. Ở tầng xử lý, hệ thống thực thi các truy vấn \texttt{GROUP BY} theo nhóm kỹ năng, khoảng thời gian, khu vực, loại hình công việc và chức danh; các hàm tập hợp chủ yếu là \texttt{COUNT} và phép tính tỷ lệ tăng trưởng.
+
+\textbf{2. Sự kiện (Event):}
+Hành động thu thập và lưu trữ thành công một tin tuyển dụng mới (Job Post) từ ETL Pipeline vào bảng \texttt{jobs}.
+
+\textbf{3. Bối cảnh sự kiện (Event Context):}
+\begin{itemize}
+    \item \textit{Ai (Who):} Tiến trình tự động (Cronjob/Airflow worker) của hệ thống ETL.
+    \item \textit{Khi nào (When):} Tần suất chạy hàng ngày (Daily Batch Processing).
+    \item \textit{Cái gì (What):} Thông tin thô của tin tuyển dụng thu thập từ 4 nền tảng việc làm lớn.
+\end{itemize}
+
+\textbf{4. Đo lường (Measurement):}
+Các chỉ số phân tích được hệ thống trích xuất và đo lường gồm: tổng số tin tuyển dụng đang mở (\texttt{job\_count}), số công ty đang tuyển (\texttt{company\_count}), số cơ hội thực tập (\texttt{internship\_count}), số tin theo nhóm kỹ năng và tỷ lệ tăng trưởng theo khoảng thời gian đã chọn.
+
+\textbf{5. Mô hình hóa (Modeling):}
+API Dashboard tổng hợp dữ liệu từ các bảng \texttt{jobs}, \texttt{companies}, \texttt{industries} và \texttt{job\_skills}, rồi trả về các mảng JSON theo đúng cấu trúc mà các component Recharts sử dụng. Ở phía giao diện, các lời gọi API độc lập được thực hiện đồng thời bằng \texttt{Promise.all}; nhờ đó, thời gian chờ được quyết định bởi truy vấn chậm nhất thay vì tổng thời gian của các truy vấn. Khi quy mô dữ liệu tăng, lớp truy vấn này có thể bổ sung cache hoặc materialized view mà không thay đổi hợp đồng API với Frontend.
+
+\textbf{6. Mức chi tiết dữ liệu (Grain):}
+Hạt dữ liệu cơ sở (Grain) là một tin tuyển dụng riêng lẻ (\texttt{job\_id}) tại một thời điểm cụ thể, được đính kèm các chiều phân tích (Dimensions) gồm: Địa điểm (\texttt{location}), Loại hình (\texttt{work\_type}) và Nhóm ngành (\texttt{search\_group}).
+
+Mã nguồn minh họa một thành phần biểu đồ cột hiển thị mức độ phổ biến của kỹ năng, được kết xuất trực tiếp từ đầu ra của luồng xử lý trên:
+\begin{lstlisting}[language=XML, caption=Cau truc React component ve bieu do Top ky nang]
+import React from 'react';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+
+export const SkillsTrendingChart = ({ data }) => {
+  return (
+    <div className="chart-container">
+      <h3 className="text-lg font-semibold mb-4">Top 10 Most Demanded Skills</h3>
+      <ResponsiveContainer width="100%" height={300}>
+        <BarChart data={data} layout="vertical">
+          <XAxis type="number" />
+          <YAxis dataKey="name" type="category" width={100} />
+          <Tooltip />
+          <Bar dataKey="count" fill="#4f46e5" radius={[0, 4, 4, 0]} />
+        </BarChart>
+      </ResponsiveContainer>
+    </div>
+  );
+};
+\end{lstlisting}
+
+Kết quả hiển thị được đối chiếu với các màn hình Dashboard tại Hình~\ref{fig:ui_market_dashboard}, Hình~\ref{fig:ui_market_hot_jobs} và Hình~\ref{fig:ui_market_skills}. Theo kịch bản sử dụng, sinh viên chọn bộ lọc khu vực, khoảng thời gian và loại hình công việc; giao diện cập nhật các thẻ tổng quan, xu hướng tuyển dụng, nhóm kỹ năng được yêu cầu và kỹ năng tăng trưởng để hỗ trợ quyết định học tập hoặc ứng tuyển.
+
+\subsection{Hiện thực hóa chức năng Tìm kiếm job, Lưu job và Quản lý danh sách CV}
+
+\textbf{Tìm kiếm và lọc việc làm (Job Search):} Trang \texttt{/jobs} cho phép người dùng tìm kiếm tin tuyển dụng theo nhiều tiêu chí kết hợp. Backend module \texttt{job} xử lý qua \texttt{JobController.findAll()} nhận tham số truy vấn từ \texttt{GetJobsQueryDto}, bao gồm: từ khóa tự do (\texttt{keyword}), bộ lọc kỹ năng (\texttt{skills}), dải lương (\texttt{salary\_min}, \texttt{salary\_max}), địa điểm (\texttt{location}) và hình thức làm việc (\texttt{work\_type}). \texttt{JobService} thực thi truy vấn tổng hợp trên PostgreSQL thông qua Prisma ORM, kết hợp các mệnh đề \texttt{WHERE} động theo tham số nhận được. Nếu người dùng cung cấp \texttt{cv\_id}, hệ thống đính kèm điểm tương thích \texttt{match\_score} từ bảng \texttt{cv\_job\_matches} cho từng tin tuyển dụng, giúp người dùng ưu tiên ứng tuyển các vị trí phù hợp nhất năng lực hiện tại.
+
+\textbf{Lưu việc làm yêu thích (Save Job):} Người dùng có thể lưu bất kỳ tin tuyển dụng nào vào danh sách cá nhân bằng cách nhấn nút bookmark trên thẻ việc làm. Thao tác này gọi Backend lưu liên kết vào bảng \texttt{saved\_jobs} (khóa chính kết hợp \texttt{user\_id} + \texttt{job\_id}). Danh sách việc làm đã lưu được hiển thị tại trang \texttt{/recommendations}, cho phép người dùng theo dõi và thực hiện đối soát CV về sau.
+
+\textbf{Quản lý danh sách CV:} Trang \texttt{/cv-matching} cung cấp giao diện quản lý CV đa phiên bản. Endpoint \texttt{POST /cv/upload} nhận tệp tin qua \texttt{multipart/form-data}, kiểm tra định dạng (chỉ chấp nhận PDF, JPG, JPEG hoặc PNG) và giới hạn kích thước (tối đa 5 MB), sau đó lưu metadata vào bảng \texttt{user\_cvs} và chuyển tiếp tệp sang ETL Service để bóc tách văn bản. Người dùng có thể tải lên nhiều phiên bản CV khác nhau, đổi tên, xóa, hoặc chọn một CV làm mặc định (Active CV --- được hiển thị với viền màu xanh và badge đặc biệt) để sử dụng trong quá trình đối soát. Danh sách CV được truy xuất qua \texttt{GET /cv} (sắp xếp mới nhất lên đầu) và hiển thị với thông tin tóm tắt gồm tên tệp, ngày tải lên và số kỹ năng được trích xuất. Mã nguồn thực tế của controller xử lý tải lên CV:
+
+\begin{lstlisting}[language=XML, caption=NestJS Controller xu ly tai len va quan ly CV]
+@Post('upload')
+@UseInterceptors(FileInterceptor('file'))
+async uploadCv(
+  @Req() req: AuthenticatedRequest,
+  @UploadedFile() file: Express.Multer.File,
+) {
+  if (!file) throw new BadRequestException('File is required');
+
+  const allowedExtensions = ['pdf', 'jpg', 'jpeg', 'png'];
+  const fileExt = file.originalname.split('.').pop()?.toLowerCase();
+
+  if (!fileExt || !allowedExtensions.includes(fileExt)) {
+    throw new BadRequestException('Only PDF, JPG, and PNG are allowed');
+  }
+
+  if (file.size > 5 * 1024 * 1024) {
+    throw new BadRequestException('File size exceeds 5MB');
+  }
+
+  const result = await this.cvService.uploadCv(req.user.sub, file);
+  return { data: result };
+}
+\end{lstlisting}
+
+Kịch bản hoàn chỉnh của phân hệ bắt đầu khi sinh viên tìm kiếm và lọc danh sách việc làm, lưu các tin quan tâm, chọn CV mặc định hoặc tải CV mới rồi chạy đối soát với nhóm nghề hay một tin tuyển dụng cụ thể. Hệ thống trả về điểm phù hợp, Radar Chart và danh sách kỹ năng theo ba mức đáp ứng để người dùng quyết định ưu tiên học hoặc ứng tuyển. Kết quả giao diện của bước chọn CV, xem Radar Chart, Gap Report và gợi ý vai trò được trình bày lần lượt tại Hình~\ref{fig:ui_cv_matching}, Hình~\ref{fig:ui_cv_matching_radar} và Hình~\ref{fig:ui_cv_matching_roles}; phần phân tích chi tiết khoảng cách kỹ năng được thể hiện ở Hình~\ref{fig:ui_skill_gap}--Hình~\ref{fig:ui_skill_gap_roadmap}.
 
 \section{Xây dựng thuật toán phân tích kỹ năng năng lực}
 \label{sec:skill_algorithm}

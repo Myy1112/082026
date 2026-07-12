@@ -32,7 +32,7 @@ title Luồng dữ liệu từ CSDL đến các thành phần trực quan hóa �
 package "Tầng Dữ Liệu (Data Layer)" {
     database "PostgreSQL" as DB
     component "cv_job_matches\n(radar_data JSONB,\ngap_report JSONB)" as T_MATCH
-    component "jobs · salaries\nindustries · skills" as T_MARKET
+    component "jobs · companies\nindustries · skills" as T_MARKET
     DB -- T_MATCH
     DB -- T_MARKET
 }
@@ -43,7 +43,7 @@ package "Tầng Nghiệp Vụ (Business Logic Layer)" {
 }
 
 package "Tầng Trình Bày (Presentation Layer)" {
-    component "MarketDashboard\n────────────────\nAreaChart: Xu hướng tuyển dụng\nPieChart: Phân bổ ngành\nBarChart: Dải lương" as MD
+    component "MarketDashboard\n────────────────\nThẻ chỉ số · AreaChart: Xu hướng\nTreemap: Phân bổ thị trường\nBarChart: Xếp hạng kỹ năng" as MD
     component "SkillGapAnalysis\n────────────────\nRadarChart: So khớp kỹ năng\nGap Report (Biểu đồ phân kỳ)" as SGA
     component "PersonalDashboard\n────────────────\nRadarChart: Năng lực cá nhân" as PD
 }
@@ -53,7 +53,7 @@ actor "Người dùng\n(Sinh viên)" as User
 ETL -down-> DB       : Import JD đã crawl\nvà chuẩn hóa kỹ năng
 T_MARKET -right-> API : Query dữ liệu\nthị trường
 T_MATCH  -right-> API : Query radar_data\nvà gap_report JSON
-API -right-> MD  : Dữ liệu thị trường\n(trends, salary, industry)
+API -right-> MD  : Dữ liệu thị trường\n(stats, trends, skills, industry)
 API -right-> SGA : radar_data,\ngap_report
 API -right-> PD  : Kỹ năng cá nhân\n(user_score, market_score)
 MD  -down-> User : Hỗ trợ quyết định\nnghề nghiệp

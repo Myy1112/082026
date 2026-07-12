@@ -40,3 +40,6 @@ venv/
 
 # OS
 Thumbs.db
+data_evaluation/ner_evaluation.xlsx
+data_evaluation/~$ner_evaluation.xlsx
+main.pdf

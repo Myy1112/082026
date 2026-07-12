@@ -3,7 +3,7 @@
 
 \section{Bối cảnh và Lý do chọn đề tài}
 
-Trong bối cảnh cách mạng công nghiệp 4.0, sự chuyển đổi số đã làm thay đổi cơ bản cách thức tuyển dụng và quản lý nhân sự. Theo các báo cáo gần đây, thị trường lao động toàn cầu đang trải qua sự biến động lớn với:
+Trong kỷ nguyên số hóa, dữ liệu tuyển dụng trực tuyến ngày càng phong phú nhưng thường tồn tại dưới dạng rời rạc và không nhất quán, gây khó khăn cho sinh viên trong việc theo dõi và phân tích thực trạng thị trường lao động. Các nền tảng tuyển dụng hiện nay chủ yếu tập trung vào việc đăng tin và tìm kiếm ứng viên, trong khi khả năng tổng hợp và phân tích dữ liệu nhằm hỗ trợ người học đối chiếu năng lực cá nhân với yêu cầu thị trường vẫn còn nhiều hạn chế. 
 
 \begin{itemize}
     \item Sự phát triển nhanh chóng của các nền tảng tuyển dụng trực tuyến (LinkedIn, Vietnamworks, CareerViet, Itviec, v.v.) tạo ra khối lượng dữ liệu lớn chưa từng có.
@@ -15,9 +15,7 @@ Do đó, việc xây dựng một hệ thống thông minh có khả năng khai 
 
 \section{Phát biểu bài toán}
 
-\subsection{Thách thức trong việc quản lý và xử lý dữ liệu tuyển dụng}
-
-Dữ liệu tuyển dụng trên Web thường ở dạng không cấu trúc hoặc bán cấu trúc, phân tán trên nhiều nền tảng khác nhau. Các thách thức chính bao gồm:
+Bài toán cốt lõi mà luận văn giải quyết là sự thiếu hụt một công cụ đánh giá năng lực định lượng và chuẩn hóa ngữ nghĩa chuyên sâu cho thị trường lao động CNTT tại Việt Nam. Cụ thể, các thách thức kỹ thuật bao gồm:
 
 \begin{itemize}
     \item \textbf{Tính không đồng nhất}: Các nền tảng khác nhau sử dụng các định dạng, cấu trúc dữ liệu khác nhau để lưu trữ thông tin công việc.
@@ -65,7 +63,7 @@ Trong các nghiên cứu và ứng dụng thực tiễn, bài toán kết nối 
 
 \subsection{Mục tiêu đề tài}
 
-Mục tiêu chính của luận văn này là xây dựng một hệ thống thông minh có tên \textit{CareerNova} nhằm:
+Để hỗ trợ sinh viên trong việc phân tích dữ liệu tuyển dụng và định hướng nghề nghiệp, đề tài tập trung vào ba mục tiêu chính:
 
 \begin{enumerate}
     \item \textbf{Thu thập và chuẩn hóa dữ liệu}: Xây dựng khung công tác (framework) tự động thu thập dữ liệu tuyển dụng từ nhiều nền tảng Web, phát hiện và loại bỏ dữ liệu trùng lặp, chuẩn hóa các trường dữ liệu theo quy chuẩn chung.
@@ -75,9 +73,10 @@ Mục tiêu chính của luận văn này là xây dựng một hệ thống th�
     \item \textbf{Trực quan hóa dữ liệu}: Xây dựng giao diện người dùng cung cấp các dashboard, biểu đồ trực quan giúp các bên liên quan (nhà tuyển dụng, ứng viên, nhà hoạch định chính sách) hiểu rõ hơn về thị trường lao động.
 \end{enumerate}
 
-\subsection{Đối tượng và phạm vi nghiên cứu}
+\subsection{Phạm vi của đề tài}
 
-\textbf{Đối tượng nghiên cứu}:
+Đề tài ứng dụng tập trung trực quan hóa nhu cầu tuyển dụng và tự đánh giá kỹ năng. Phạm vi được cụ thể hóa như sau:
+
 \begin{itemize}
     \item Dữ liệu bài đăng tuyển dụng từ 4 nền tảng Web: LinkedIn, Vietnamworks, CareerViet, Itviec.
     \item Hồ sơ xin việc (CV) của ứng viên là sinh viên ngành IT năm cuối.
@@ -109,18 +108,13 @@ Mục tiêu chính của luận văn này là xây dựng một hệ thống th�
 
 \section{Cấu trúc cuốn luận văn}
 
-Ngoài chương Giới thiệu này, luận văn gồm 5 chương chính và các phần phụ trợ như sau:
-
+Ngoài chương Giới thiệu này, luận văn gồm 5 chương chính:
 \begin{itemize}
-    \item \textbf{Chương 2 - Cơ sở lý thuyết và Công nghệ}: Trình bày các khái niệm cơ bản về quy trình khai phá và kỹ nghệ dữ liệu trực tuyến (thu thập dữ liệu tự động, quy trình ETL, nguyên lý trực quan hóa), giải pháp so khớp hồ sơ (không gian vector, độ đo Cosine, khảo sát các công cụ hiện có), và trích xuất thực thể (bóc tách kỹ năng/vị trí công việc, ứng dụng LLM và Prompt).
-    
-    \item \textbf{Chương 3 - Phân tích và Thiết kế hệ thống}: Trình bày chi tiết về phân tích yêu cầu (nghiệp vụ, chức năng, phi chức năng), thiết kế hệ thống (kiến trúc tổng thể, sơ đồ ca sử dụng, sơ đồ tuần tự), thiết kế cơ sở dữ liệu (ERD và đặc tả bảng), thiết kế giao diện (Dashboard, quản lý CV), và thiết kế thuật toán phân tích khoảng cách năng lực.
-    
-    \item \textbf{Chương 4 - Xây dựng hệ thống}: Trình bày việc lựa chọn công nghệ (Frontend, Backend, Database, AI), xây dựng pipeline dữ liệu (crawler, làm sạch dữ liệu, lưu trữ PostgreSQL), xây dựng các chức năng phân hệ người dùng (Auth, Dashboard, tìm kiếm/lưu job/quản lý CV), và xây dựng thuật toán phân tích kỹ năng (prompts, tính toán độ phù hợp).
-    
-    \item \textbf{Chương 5 - Kiểm thử và Đánh giá}: Mô tả môi trường triển khai thử nghiệm, kiểm thử chức năng, đánh giá hiệu năng và dữ liệu thực tế, và đánh giá kết quả đầu ra của thuật toán (độ chính xác định dạng, phân tích trường hợp đối soát cụ thể).
-    
-    \item \textbf{Chương 6 - Kết luận}: Tổng kết các kết quả đạt được của hệ thống, chỉ ra những hạn chế còn tồn tại, và đề xuất hướng nghiên cứu, phát triển tương lai.
+    \item \textbf{Chương 2 - Cơ sở lý thuyết và Công nghệ}: Trình bày các khái niệm cơ bản về quy trình khai phá dữ liệu, nguyên lý trực quan hóa, và nền tảng các mô hình AI (LLM, SBERT) ứng dụng trong chuẩn hóa và đối soát.
+    \item \textbf{Chương 3 - Phân tích và Thiết kế hệ thống}: Trình bày chi tiết phân tích yêu cầu, thiết kế kiến trúc, sơ đồ cơ sở dữ liệu, và quy trình xử lý luồng dữ liệu (ETL pipeline).
+    \item \textbf{Chương 4 - Xây dựng hệ thống}: Đặc tả các khía cạnh kỹ thuật trong quá trình hiện thực hóa hệ thống, bao gồm thuật toán làm sạch, kỹ thuật Prompting, và logic tính toán độ tương đồng (Cosine Similarity).
+    \item \textbf{Chương 5 - Kiểm thử và Đánh giá}: Đánh giá định lượng hiệu suất hệ thống, chất lượng dữ liệu, và kết quả kiểm thử trên các kịch bản sử dụng (Test Matrix).
+    \item \textbf{Chương 6 - Kết luận}: Tổng kết kết quả, bài học kinh nghiệm và định hướng phát triển tương lai.
 \end{itemize}
 
 Các phần phụ trợ bao gồm: Danh mục chữ viết tắt, Danh sách hình vẽ, Danh sách bảng biểu, Tóm tắt khóa luận (Abstract), Danh sách tài liệu tham khảo, và Phụ lục chứa các hình vẽ, bảng biểu chi tiết.
