@@ -6,13 +6,13 @@
 Luận văn này đã nghiên cứu, thiết kế và hiện thực hóa thành công hệ thống CareerNova, đạt được các kết quả chính sau:
 
 \begin{enumerate}
-    \item \textbf{Xây dựng hoàn chỉnh khung dữ liệu đa nguồn}: Phát triển thành công hệ thống thu thập dữ liệu tin tuyển dụng tự động từ bốn nền tảng lớn tại Việt Nam (ITViec, VietnamWorks, CareerViet, LinkedIn) theo cơ chế dự phòng hai tầng (cào tĩnh ưu tiên, cào động dự phòng), cài đặt các module tiền xử lý dữ liệu và thuật toán khử trùng lặp hiệu quả trước khi lưu trữ tập trung. Đến thời điểm nghiệm thu, kho dữ liệu đã tích lũy 6.729 tin tuyển dụng sạch, trong đó 942 tin đang mở được trực quan hóa theo thời gian thực trên Dashboard.
+    \item \textbf{Xây dựng hoàn chỉnh khung dữ liệu đa nguồn}: Phát triển thành công hệ thống thu thập dữ liệu tin tuyển dụng tự động từ bốn nền tảng lớn tại Việt Nam (ITViec, VietnamWorks, CareerViet, LinkedIn) theo cơ chế dự phòng hai tầng (cào tĩnh ưu tiên, cào động dự phòng), cài đặt các module tiền xử lý dữ liệu và thuật toán khử trùng lặp trước khi lưu trữ tập trung. Số lượng dữ liệu tích lũy và tin đang mở được ghi nhận theo snapshot cơ sở dữ liệu tại thời điểm kiểm thử trong Mục 5.3.1.
 
     \item \textbf{Ứng dụng thành công công nghệ AI tiên tiến}: Áp dụng mô hình ngôn ngữ lớn Gemini để trích xuất thông tin kỹ năng và vị trí công việc từ văn bản phi cấu trúc thông qua kỹ thuật Prompt Engineering có cấu trúc (Structured Outputs kết hợp JSON Schema) và cơ chế hậu kiểm chống ảo giác dựa trên bằng chứng. Kết quả thực nghiệm trên tập dữ liệu đối soát cho thấy module trích xuất đạt Precision 98.2\%, Recall 97.8\% và F1-Score 98.0\%, vượt xa ngưỡng kỳ vọng 82.5\% đặt ra ban đầu.
 
     \item \textbf{Đề xuất giải thuật đối soát và phân tích khoảng cách kỹ năng thông minh}: Kết hợp so khớp ngữ nghĩa bằng vector nhúng SBERT cục bộ (\texttt{all-MiniLM-L6-v2}) với trọng số TF-IDF được tính động từ dữ liệu thị trường thực tế và bộ sáu quy tắc lọc ngữ nghĩa theo metadata phân loại kỹ năng, giúp định lượng hóa chính xác mức độ tương thích giữa hồ sơ CV của ứng viên và yêu cầu tuyển dụng, đồng thời phân loại kỹ năng thành ba nhóm hành động được (đã có, cần bổ sung, thiếu hoàn toàn).
 
-    \item \textbf{Hiện thực hóa và triển khai ứng dụng Web hoàn chỉnh}: Triển khai hệ thống thực tế tại địa chỉ \texttt{career-nova.online} trên hạ tầng đám mây, cung cấp đầy đủ các phân hệ: xác thực người dùng (email và Google SSO), Dashboard trực quan hóa xu hướng thị trường lao động (thời gian phản hồi dưới 1 giây, thỏa mãn yêu cầu phi chức năng), quản lý CV, tìm kiếm và lưu việc làm, phân tích đối soát CV với biểu đồ Radar, báo cáo khoảng cách kỹ năng và gợi ý lộ trình học tập cá nhân hóa theo kỹ năng thiếu hụt. Toàn bộ 11 kịch bản kiểm thử chức năng hộp đen đều đạt.
+    \item \textbf{Hiện thực hóa và triển khai ứng dụng Web hoàn chỉnh}: Triển khai hệ thống thực tế tại địa chỉ \texttt{career-nova.online} trên hạ tầng đám mây, cung cấp đầy đủ các phân hệ: xác thực người dùng (email và Google SSO), Dashboard trực quan hóa xu hướng thị trường lao động, quản lý CV, tìm kiếm và lưu việc làm, phân tích đối soát CV với biểu đồ Radar, báo cáo khoảng cách kỹ năng và gợi ý lộ trình học tập cá nhân hóa theo kỹ năng thiếu hụt. Kết quả kiểm thử chức năng và số liệu hiệu năng được tổng hợp tại Chương 5.
 \end{enumerate}
 
 \section{Hạn chế còn tồn tại của đề tài}
@@ -20,7 +20,7 @@ Luận văn này đã nghiên cứu, thiết kế và hiện thực hóa thành 
 Mặc dù hệ thống đã hoạt động ổn định và đạt các chỉ số đánh giá tốt, đề tài vẫn còn một số hạn chế cần khắc phục:
 
 \begin{itemize}
-    \item \textbf{Phạm vi dữ liệu}: Thử nghiệm thực tế mới chỉ tập trung chủ yếu vào nhóm ngành Công nghệ Thông tin (IT) và Khoa học Dữ liệu tại thị trường Việt Nam, chưa mở rộng sang các lĩnh vực ngành nghề phi kỹ thuật khác. Quy mô dữ liệu tích lũy (6.729 tin) đủ cho các phân tích xu hướng ngắn hạn nhưng chưa đủ dày để phân tích chu kỳ tuyển dụng theo mùa qua nhiều năm.
+    \item \textbf{Phạm vi dữ liệu}: Thử nghiệm thực tế mới chỉ tập trung chủ yếu vào nhóm ngành Công nghệ Thông tin (IT) và Khoa học Dữ liệu tại thị trường Việt Nam, chưa mở rộng sang các lĩnh vực ngành nghề phi kỹ thuật khác. Quy mô dữ liệu tích lũy đủ phục vụ phân tích xu hướng ngắn hạn trong phạm vi triển khai, nhưng chưa đủ dày để phân tích chu kỳ tuyển dụng theo mùa qua nhiều năm.
 
     \item \textbf{Hiệu năng thời gian thực}: Thời gian phản hồi của tính năng đối soát và phân tích khoảng cách kỹ năng vẫn còn phụ thuộc vào độ trễ của API mô hình ngôn ngữ lớn bên ngoài (trong trường hợp cache miss) và thời điểm hệ thống đồng bộ dữ liệu tuyển dụng. Hai endpoint thống kê kỹ năng của Dashboard (\texttt{in-demand}, \texttt{rising}) chậm hơn đáng kể các endpoint còn lại do truy vấn tổng hợp trên bảng liên kết lớn, cần tối ưu bằng chỉ mục bổ sung hoặc materialized view.
 

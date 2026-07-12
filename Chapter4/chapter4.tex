@@ -73,7 +73,7 @@ Sau khi thu thập, dữ liệu thô được đưa vào quy trình làm sạch,
     \item \textbf{Khử trùng lặp nội bộ}: so sánh các tin cùng công ty bằng Cosine Similarity để bỏ qua các bản tin trùng lặp trước khi gửi sang bước trích xuất AI.
     \item \textbf{Trích xuất thực thể}: dùng Gemini API để bóc tách chức danh, kỹ năng và các trường thông tin chính; mọi kết quả phải có độ tin cậy đủ ngưỡng và có bằng chứng xuất hiện trực tiếp trong văn bản gốc.
     \item \textbf{Chuẩn hóa kỹ năng}: ánh xạ nhãn kỹ năng về từ điển chuẩn bằng FAISS và Lightcast Taxonomy.
-    \item \textbf{Khử trùng sâu}: tính TF-IDF trên dữ liệu của cùng một công ty trong 30 ngày để phát hiện các bản tin gần như giống hệt nhau.
+    \item \textbf{Khử trùng sâu}: gom nhóm tin theo khóa tên công ty đã chuẩn hóa (loại bỏ hậu tố pháp lý), mã hóa nội dung tin bằng vector nhúng \texttt{all-MiniLM-L6-v2} và tính Cosine Similarity giữa các tin trong cùng nhóm; cặp tin vượt ngưỡng 0,9 bị coi là trùng lặp (kể cả trùng chéo nguồn) và chỉ giữ lại tin cũ hơn.
     \item \textbf{Nạp vào PostgreSQL}: dữ liệu được ghi theo lô, theo cơ chế giao dịch nguyên tử, vào các bảng \texttt{jobs}, \texttt{companies}, \texttt{skills} và bảng liên kết \texttt{job\_skills}.
 \end{itemize}
 
@@ -128,7 +128,7 @@ Dựa trên thiết kế trực quan ở Chương 3, biểu đồ xu hướng đ
 \subsection{Hiện thực hóa chức năng Tìm kiếm job, Lưu job và Quản lý danh sách CV}
 
 \begin{itemize}
-    \item \textbf{Tìm kiếm Job}: Hệ thống truy vấn trực tiếp trên PostgreSQL thông qua Prisma ORM, kết hợp lọc theo từ khóa, kỹ năng, mức lương và địa điểm. Ở cấp độ kỹ năng, việc đối sánh ngữ nghĩa được hỗ trợ bởi chỉ mục vector FAISS, giúp tìm các tin tuyển dụng có kỹ năng tương đồng về ngữ nghĩa thay vì chỉ khớp từ khóa chính xác.
+    \item \textbf{Tìm kiếm Job}: Hệ thống truy vấn trực tiếp trên PostgreSQL thông qua Prisma ORM, kết hợp lọc theo từ khóa, kỹ năng và địa điểm; kết quả có thể được sắp xếp theo thời gian đăng, mức lương hoặc mức độ phù hợp. Việc so khớp ngữ nghĩa giữa CV và yêu cầu tuyển dụng được thực hiện ở phân hệ Matching Service, tách biệt với thao tác tìm kiếm danh sách việc làm.
     \item \textbf{Lưu Job}: Người dùng có thể lưu các tin tuyển dụng yêu thích vào danh sách cá nhân để theo dõi, phục vụ việc so khớp về sau.
     \item \textbf{Quản lý danh sách CV}: Người dùng có thể tải lên nhiều phiên bản CV, đổi tên, xóa, hoặc chọn một CV làm mặc định (Active CV) để sử dụng trong quá trình đối soát. Metadata CV được lưu trong bảng \texttt{user\_cvs}.
 \end{itemize}

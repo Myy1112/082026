@@ -65,7 +65,7 @@ UC-11 & Sinh viên & Xem Gap Report: báo cáo chi tiết kỹ năng đạt yêu
 \hline
 \multicolumn{3}{|l|}{\textit{Nhóm chức năng: Khám phá việc làm}} \\
 \hline
-UC-12 & Sinh viên & Tìm kiếm và lọc tin tuyển dụng theo từ khóa, kỹ năng, mức lương và địa điểm. \\
+UC-12 & Sinh viên & Tìm kiếm và lọc tin tuyển dụng theo từ khóa, kỹ năng và địa điểm; hỗ trợ sắp xếp kết quả theo thời gian đăng, mức lương hoặc mức độ phù hợp. \\
 \hline
 UC-13 & Sinh viên & Xem chi tiết tin tuyển dụng bao gồm mô tả công việc và yêu cầu kỹ năng. \\
 \hline
@@ -110,7 +110,7 @@ NFR-01 & Hiệu năng & Thời gian phản hồi của API Backend không vượ
 \hline
 NFR-02 & Hiệu năng & Toàn bộ quy trình so khớp CV (bóc tách kỹ năng qua Mô hình ngôn ngữ lớn (LLM API), tính điểm Mô hình nhúng (Embedding), tạo Gap Report) hoàn thành trong vòng 30 giây kể từ thời điểm người dùng gửi yêu cầu. \\
 \hline
-NFR-03 & Hiệu năng & Tìm kiếm ngữ nghĩa trên chỉ mục vector FAISS đạt độ trễ dưới 100ms cho tập dữ liệu hàng triệu bản ghi, nhờ cơ chế tính trước (precompute) và lưu cache vector nhúng. \\
+NFR-03 & Hiệu năng & API tìm kiếm việc làm phải hỗ trợ phân trang, giới hạn kích thước mỗi trang kết quả và chỉ truy vấn các trường dữ liệu cần thiết, nhằm tránh tải toàn bộ dữ liệu tuyển dụng về giao diện trong một lần yêu cầu. \\
 \hline
 NFR-04 & Bảo mật & Xác thực người dùng được thực hiện theo cơ chế JWT stateless; access token có thời hạn ngắn và được làm mới qua refresh token để giảm thiểu rủi ro rò rỉ. \\
 \hline
@@ -827,7 +827,6 @@ Luồng tương tác đầy đủ của người dùng từ bước tải CV đ�
 
 \begin{figure}[H]
     \centering
-    % TODO (BẮT BUỘC trước khi nộp): ảnh hiện tại là PLACEHOLDER. Đăng nhập career-nova.online/skill-gap → chờ load → chụp màn hình RadarChart + Gap Report → ghi đè images/ui_skill_gap.png
     \includegraphics[width=0.95\textwidth,height=0.82\textheight,keepaspectratio]{ui_skill_gap}
     \caption{Giao diện trang Skill Gap Analysis: biểu đồ Radar so khớp kỹ năng và Gap Report phân loại kỹ năng theo danh mục.}
     \label{fig:ui_skill_gap}
