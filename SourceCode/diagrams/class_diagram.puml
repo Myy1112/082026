@@ -1,0 +1,86 @@
+@startuml
+skinparam shadowing false
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+hide empty members
+
+class User {
+  +user_id: UUID
+  +email: String
+  +full_name: String
+  +role: String
+  +default_cv_id: UUID?
+}
+
+class UserCv {
+  +cv_id: UUID
+  +file_name: String
+  +file_url: String
+  +extracted_text: Text
+}
+
+class Skill {
+  +skill_id: Int
+  +skill_name: String
+  +category: String?
+  +type: String?
+}
+
+class UserCvSkill {
+  +cv_id: UUID
+  +skill_id: Int
+  +raw_skill: String?
+}
+
+class Company {
+  +company_id: BigInt
+  +name: String
+  +city: String?
+}
+
+class Job {
+  +job_id: BigInt
+  +title: String
+  +location: String?
+  +expiry_time: DateTime?
+  +search_group: String?
+}
+
+class JobSkill {
+  +job_id: BigInt
+  +skill_id: Int
+  +similarity_score: Decimal?
+  +raw_skill_name: String?
+}
+
+class CvJobMatch {
+  +match_id: UUID
+  +match_type: String
+  +match_score: Decimal?
+  +radar_data: JSONB?
+  +gap_report: JSONB?
+}
+
+class SavedJob {
+  +saved_job_id: UUID
+  +created_at: DateTime
+}
+
+User "1" -- "0..*" UserCv : sở hữu
+UserCv "1" -- "0..*" UserCvSkill
+Skill "1" -- "0..*" UserCvSkill
+Company "1" -- "0..*" Job : đăng tuyển
+Job "1" -- "0..*" JobSkill
+Skill "1" -- "0..*" JobSkill
+UserCv "1" -- "0..*" CvJobMatch : được đối soát
+Job "0..1" -- "0..*" CvJobMatch : mục tiêu
+User "1" -- "0..*" SavedJob
+Job "1" -- "0..*" SavedJob
+User ..> UserCv : CV mặc định (0..1)
+
+note bottom of CvJobMatch
+Kết quả đã tính trước:
+điểm phù hợp, radar,
+và báo cáo khoảng cách kỹ năng
+end note
+@enduml

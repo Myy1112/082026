@@ -12,6 +12,9 @@
 \usepackage[T5]{fontenc}
 \usepackage[utf8]{inputenc}
 \DeclareTextSymbolDefault{\DH}{T1}
+% Font Times New Roman theo quy định của trường (cỡ chữ 14pt)
+\usepackage{mathptmx}
+
 
 % Tài liệu tham khảo
 %\usepackage[
@@ -19,6 +22,8 @@
 %	backend=biber,
 %    style=ieee
 %	defernumbers=true]{biblatex}
+% Phải đặt trước biblatex để tránh conflict url package
+\PassOptionsToPackage{hyphens}{url}
 \usepackage[style=ieee]{biblatex}
 \usepackage[unicode]{hyperref} % Bookmark tiếng Việt
 \addbibresource{References/references.bib}
@@ -31,10 +36,10 @@
 \def\blx@maxline{77}
 \makeatother
 
-% Chèn hình, các hình trong luận văn được để trong thư mục Images/
+% Chèn hình, các hình trong luận văn được để trong thư mục images/
 \usepackage{graphicx}
 \usepackage{subcaption}
-\graphicspath{ {Images/} }
+\graphicspath{ {images/} }
 
 % Chèn và định dạng mã nguồn
 \usepackage{listings}
@@ -104,14 +109,19 @@
 % Thụt vào đầu dòng
 \usepackage{indentfirst}
 
-% Canh lề
+% Canh lề (Theo quy định: trên 3cm, dưới 3.5cm, trái 3.5cm, phải 2cm)
 \usepackage[
   top=30mm,
-  bottom=25mm,
-  left=30mm,
+  bottom=35mm,
+  left=35mm,
   right=20mm,
   includefoot]{geometry}
-  
+
+% Chống tràn dòng (Overfull hbox)
+\emergencystretch=3em           % Cho phép giãn thêm tối đa 3em khi cần
+\hbadness=10000                 % Tắt cảnh báo Underfull hbox
+
+
 % Trang bìa
 \usepackage{tikz}
 \usetikzlibrary{calc}
@@ -204,20 +214,15 @@
 
 
 
-%\printbibliography
-
-\printbibliography[heading=subbibliography, title={Tiếng Việt}, keyword=Viet, resetnumbers=true]
-
 \DeclareNameAlias{sortname}{last-first}
 \DeclareNameAlias{default}{last-first}
 
-\printbibliography[heading=subbibliography, title={Tiếng Anh}, notkeyword=Viet, resetnumbers=4] 
-% ===================================================================== %
-% CHÚ Ý: phải gán lại resetnumbers=số tài liệu tham khảo tiếng Việt + 1 %
-% ===================================================================== %
+\printbibliography[heading=none]
 
 % Phần phụ lục
-\include{Appendix/appendix1}
-\include{Appendix/appendix2}
+% CHÚ Ý: Hai file phụ lục mẫu bên dưới đang chứa nội dung template ("Đây là phụ lục").
+% Bỏ comment và điền nội dung thật (hình vẽ, bảng biểu chi tiết) trước khi nộp nếu cần phụ lục.
+% \include{Appendix/appendix1}
+% \include{Appendix/appendix2}
 
-\end{document} 
+\end{document}

@@ -34,9 +34,9 @@ Phân hệ thu thập và xử lý trí tuệ nhân tạo (AI) được thiết 
         \item \textit{Tầng 1 (Cào tĩnh)}: Hệ thống sử dụng thư viện \texttt{requests} kết hợp \texttt{cloudscraper} để giả lập các phiên kết nối HTTP ở mức socket, giúp vượt qua các thử thách chống bot cơ bản (như Cloudflare Challenge) với tốc độ xử lý tối đa và tiêu tốn ít tài nguyên.
         \item \textit{Tầng 2 (Trình duyệt tự động)}: Khi gặp các trang web chặn IP hoặc kết xuất hoàn toàn bằng JavaScript ở phía client, hệ thống tự động kích hoạt trình duyệt ẩn danh \texttt{Selenium} (Headless Chrome) để mô phỏng hành vi cuộn trang và tải dữ liệu động.
     \end{itemize}
-    \item \textbf{Google Gemini API (Mô hình ngôn ngữ lớn làm bộ bóc tách cấu trúc)}: Sử dụng mô hình \texttt{gemini-2.5-flash} hoặc \texttt{gemini-2.0-flash} thông qua tính năng \textit{Structured Outputs}. Để đảm bảo tính ổn định tối đa của dữ liệu trích xuất và triệt tiêu hoàn toàn hiện tượng ảo giác (hallucination) dữ liệu, hệ thống thiết lập tham số nhiệt độ phát sinh bằng không ($\text{temperature} = 0.0$). Bằng cách định nghĩa trước một JSON Schema chặt chẽ trên API, hệ thống ép buộc mô hình trả về dữ liệu định dạng JSON chuẩn xác 100\%, loại bỏ hoàn toàn các văn bản thừa hay định dạng sai.
+    \item \textbf{Google Gemini API (Mô hình ngôn ngữ lớn làm bộ bóc tách cấu trúc)}: Môi trường triển khai thử nghiệm sử dụng mô hình \texttt{gemini-2.5-flash} thông qua tính năng \textit{Structured Outputs}. Hệ thống thiết lập $\text{temperature} = 0.0$ và JSON Schema để giảm sai lệch định dạng đầu ra; đồng thời áp dụng bước hậu kiểm dựa trên bằng chứng xuất hiện trong văn bản gốc để giảm nguy cơ sinh kỹ năng không có căn cứ. Các cơ chế này hỗ trợ tính nhất quán của dữ liệu, nhưng kết quả vẫn được đánh giá thực nghiệm tại Chương 5.
     \item \textbf{Sentence-Transformers (\texttt{all-MiniLM-L6-v2})}: Mô hình sinh vector nhúng (embedding generator) nhận đầu vào là các nhãn kỹ năng và mã hóa chúng thành các vector phân tán 384 chiều biểu diễn ngữ nghĩa trong không gian Hilbert thực. Các vector đầu ra đều được chuẩn hóa độ dài L2 ($\|\mathbf{e}\|_2 = 1$), cho phép tối ưu hóa hiệu năng tính toán độ đo tương đồng Cosine thành phép tính tích vô hướng trực tiếp giữa hai vector nhúng.
-    \item \textbf{FAISS (Facebook AI Similarity Search)}: Thư viện tối ưu hóa tìm kiếm vector lân cận gần nhất (Nearest Neighbors). FAISS lập chỉ mục cho hơn 30.000 kỹ năng công nghệ chuẩn hóa từ hệ thống Lightcast/O*NET. Hệ thống sử dụng cấu trúc chỉ mục tích vô hướng phẳng (\texttt{IndexFlatIP}) kết hợp với việc chuẩn hóa L2 trước đó để tính toán tích vô hướng chính xác tuyệt đối, giúp tìm kiếm và ánh xạ nhanh kỹ năng từ CV/JD vào từ điển chuẩn hóa với độ trễ dưới 5 mili-giây.
+    \item \textbf{FAISS (Facebook AI Similarity Search)}: Thư viện tối ưu hóa tìm kiếm vector lân cận gần nhất (Nearest Neighbors). FAISS lập chỉ mục cho tập kỹ năng công nghệ chuẩn hóa dựa trên hệ thống phân loại Lightcast/O*NET (từ điển hệ thống hiện có hơn 6.000 kỹ năng). Hệ thống sử dụng cấu trúc chỉ mục tích vô hướng phẳng (\texttt{IndexFlatIP}) kết hợp với việc chuẩn hóa L2 trước đó để tính toán tích vô hướng chính xác tuyệt đối, giúp tìm kiếm và ánh xạ nhanh kỹ năng từ CV/JD vào từ điển chuẩn hóa với độ trễ dưới 5 mili-giây.
     \item \textbf{Bộ ba pdfplumber, pdf2image và pytesseract (Xử lý CV đa định dạng)}:
     \begin{itemize}
         \item Ưu tiên sử dụng \texttt{pdfplumber} để đọc trực tiếp lớp văn bản số (text layer) của tệp tin PDF gốc.
@@ -74,6 +74,7 @@ Bên cạnh cơ chế dự phòng theo công cụ, hệ thống còn quản lý 
 Mỗi tin tuyển dụng sau khi tải về được bóc tách thành các trường có cấu trúc như tiêu đề, công ty, địa điểm, mô tả, mức lương, ngày đăng. Dữ liệu đầu ra được gắn thêm \texttt{source\_name} và \texttt{source\_id} để truy vết nguồn gốc, đồng thời đưa vào bước lọc trùng trước khi nạp vào PostgreSQL.
 
 \subsection{Quy trình làm sạch dữ liệu, xử lý trùng lặp và lưu trữ vào PostgreSQL}
+\label{sec:dedup}
 
 Sau khi thu thập, dữ liệu thô được đưa vào quy trình làm sạch, khử trùng và chuẩn hóa trước khi nạp vào PostgreSQL. Hệ thống ưu tiên các bước xử lý sau:
 
@@ -140,7 +141,7 @@ Dựa trên thiết kế trực quan ở Chương 3, biểu đồ xu hướng đ
 </AreaChart>
 \end{lstlisting}
 
-Kết quả hiển thị được đối chiếu với các màn hình Dashboard tại Hình~\ref{fig:ui_market_dashboard}, Hình~\ref{fig:ui_market_hot_jobs} và Hình~\ref{fig:ui_market_skills}. Theo kịch bản sử dụng, sinh viên chọn bộ lọc khu vực, khoảng thời gian và loại hình công việc; giao diện cập nhật các thẻ tổng quan, xu hướng tuyển dụng, nhóm kỹ năng được yêu cầu và kỹ năng tăng trưởng để hỗ trợ quyết định học tập hoặc ứng tuyển.
+Kết quả hiển thị được đối chiếu với màn hình Dashboard tại Hình~\ref{fig:ui_market_dashboard}. Theo kịch bản sử dụng, sinh viên chọn bộ lọc khu vực, khoảng thời gian và loại hình công việc; giao diện cập nhật các thẻ tổng quan, xu hướng tuyển dụng, nhóm kỹ năng được yêu cầu và kỹ năng tăng trưởng để hỗ trợ quyết định học tập hoặc ứng tuyển.
 
 \subsection{Hiện thực hóa chức năng Tìm kiếm job, Lưu job và Quản lý danh sách CV}
 
@@ -177,7 +178,6 @@ Thuật toán phân tích kỹ năng năng lực đóng vai trò cốt lõi tron
   }
 ]
 \end{verbatim}
-\end{itemize}
 \vspace{2mm}
 \hrule
 \end{minipage}
