@@ -6,18 +6,18 @@
 Để tiến hành thử nghiệm và đánh giá hệ thống CareerNova, phiên bản thử nghiệm được triển khai trên một Droplet của DigitalOcean tại khu vực Singapore (SGP1). Môi trường được triển khai theo kiến trúc container hóa; các dịch vụ giao tiếp nội bộ trên mạng Docker riêng, còn lưu lượng HTTP/HTTPS từ Internet được tiếp nhận qua lớp proxy.
 
 \begin{itemize}
-    \item \textbf{Cấu hình phần cứng Máy chủ (Server Cloud)}:
+    \item \textbf{Cấu hình phần cứng máy chủ (Server Cloud)}:
     \begin{itemize}
-        \item Hệ điều hành: Ubuntu Server 22.04 LTS.
-        \item Gói hạ tầng: DigitalOcean Basic -- Intel, 2 vCPU.
+        \item Hệ điều hành: Ubuntu 22.04 LTS x64.
+        \item Máy chủ ảo: DigitalOcean Droplet \texttt{nova-vps} tại khu vực SGP1.
+        \item Vi xử lý: 2 vCPU (Intel).
         \item Bộ nhớ RAM: 8 GB.
-        \item Ổ đĩa: 160 GB.
+        \item Ổ cứng: 160 GB.
     \end{itemize}
     \item \textbf{Môi trường ảo hóa và container}:
     \begin{itemize}
-        \item Docker Compose điều phối năm dịch vụ: \texttt{nova-frontend} (Next.js), \texttt{nova-backend} (NestJS), \texttt{nova-algo-api} (FastAPI), \texttt{nova-postgres} (PostgreSQL 18 Alpine) và \texttt{nginx-proxy-manager}.
-        \item PostgreSQL chỉ mở cổng \texttt{5432} cho localhost; dữ liệu được lưu bền vững qua volume \texttt{pgdata}. Các dịch vụ ứng dụng sử dụng mạng bridge \texttt{nova-network}; proxy công khai các cổng 80 và 443 để phục vụ HTTP/HTTPS.
-        \item Thông tin nhạy cảm được truyền qua tệp biến môi trường và Docker secret \texttt{db\_password}; mật khẩu cơ sở dữ liệu không được ghi trực tiếp trong tệp Compose.
+        \item Docker Compose dùng để điều phối các dịch vụ Frontend (Next.js), Backend API (NestJS), ETL Pipeline (FastAPI), PostgreSQL và Nginx Proxy Manager.
+        \item Cụm dịch vụ triển khai thực tế gồm \texttt{nova-frontend}, \texttt{nova-backend}, \texttt{nova-algo-api}, \texttt{nova-postgres} và \texttt{nginx-proxy-manager}.
     \end{itemize}
     \item \textbf{Thông số cấu hình mô hình AI}:
     \begin{itemize}
@@ -30,11 +30,13 @@
 
 \subsection{Ma trận kịch bản kiểm thử (Test Matrix)}
 
-Hệ thống được kiểm duyệt thông qua phương pháp kiểm thử hộp đen (Black-box Testing) nhằm xác thực tính đúng đắn của logic nghiệp vụ đã đặc tả ở Chương 4. Kết quả thực thi được ghi nhận theo cấu trúc "Báo cáo trạng thái", đối chiếu trực tiếp giữa kết quả kỳ vọng và trạng thái thực tế sau kiểm thử.
+Hệ thống được kiểm thử thông qua các kịch bản kiểm thử hộp đen (Black-box Testing) để đảm bảo các tính năng hoạt động đúng đặc tả yêu cầu. Các kịch bản được xây dựng theo hành trình sử dụng thực tế của vai trò người dùng sinh viên/ứng viên --- từ lúc tạo tài khoản, quản lý hồ sơ CV, phân tích đối soát cho đến khai thác dữ liệu thị trường --- và bám sát đúng các chức năng đang có trên hệ thống. Bảng~\ref{tab:test_cases} liệt kê 11 ca kiểm thử cùng dữ liệu đầu vào và kết quả mong đợi tương ứng.
 
-\begin{longtable}{|C{1.2cm}|L{3.5cm}|L{3.5cm}|L{4.5cm}|C{1.5cm}|}
-\caption{Ma trận kịch bản và kết quả kiểm thử chức năng.}
-\label{tab:test_matrix} \\
+\begin{table}[ht]
+\caption{Kịch bản kiểm thử chức năng hệ thống}
+\label{tab:test_cases}
+\begin{center}
+\begin{tabular}{|c|L{4.1cm}|L{4.1cm}|L{4.1cm}|}
 \hline
 \textbf{ID} & \textbf{Các bước thực hiện} & \textbf{Kết quả kỳ vọng} & \textbf{Kết quả thực tế} & \textbf{Trạng thái} \\
 \hline
@@ -42,12 +44,23 @@ Hệ thống được kiểm duyệt thông qua phương pháp kiểm thử hộ
 \hline
 \textbf{ID} & \textbf{Các bước thực hiện} & \textbf{Kết quả kỳ vọng} & \textbf{Kết quả thực tế} & \textbf{Trạng thái} \\
 \hline
-\endhead
-TC-01 & Nhập email hợp lệ và mật khẩu $\geq$ 8 ký tự để đăng ký. & HTTP 201, DB ghi nhận \texttt{is\_active=false}, gửi email kích hoạt. & Hệ thống khởi tạo tài khoản thành công, email kích hoạt được gửi sau 1.2s. & ĐẠT \\
+TC-03 & Quên mật khẩu & Nhập đúng email đã đăng ký & Gửi email đặt lại mật khẩu và chuyển tới trang xác nhận \\
 \hline
-TC-02 & Nhập email đã tồn tại để đăng ký. & HTTP 409, mã lỗi \texttt{AUTH\_EMAIL\_EXISTS}. & Trùng khớp 100\% với kết quả kỳ vọng. Hệ thống chặn thành công luồng tạo tài khoản. & ĐẠT \\
+TC-04 & Xác thực email & Mở liên kết xác thực từ email & Tài khoản được xác thực và chuyển hướng đăng nhập thành công \\
 \hline
-TC-03 & Đăng nhập bằng email/mật khẩu đúng. & HTTP 200, cấp phát Access/Refresh Token, chuyển hướng Dashboard. & Ghi nhận cấp phát token hợp lệ, chuyển hướng thành công về \texttt{/dashboard}. & ĐẠT \\
+TC-05 & Tải lên CV hợp lệ & File CV định dạng PDF/JPG/JPEG/PNG, dung lượng \(\le\) 5 MB & Tải lên thành công và xuất hiện trong danh sách CV của người dùng \\
+\hline
+TC-06 & Từ chối file sai định dạng hoặc quá dung lượng & File DOCX/TXT hoặc file ảnh vượt quá 5 MB & Hệ thống trả về lỗi hợp lệ và không lưu file \\
+\hline
+TC-07 & Quản lý CV mặc định và xóa CV & Chọn một CV khác làm mặc định hoặc xóa một CV đã lưu & CV mặc định được cập nhật hoặc CV bị xóa khỏi danh sách \\
+\hline
+TC-08 & Đối soát CV và tính Skill Gap & Chọn CV và nhấn đối soát với nhóm nghề hoặc URL công việc & Hiển thị phần trăm tương thích, radar kỹ năng và danh sách kỹ năng thiếu \\
+\hline
+TC-09 & Xem Dashboard thống kê thị trường việc làm & Truy cập trang Dashboard và chọn bộ lọc khu vực/thời gian/loại hình & Hiển thị đúng xu hướng, phân bổ thị trường và chỉ số tổng quan theo bộ lọc \\
+\hline
+TC-10 & Tìm kiếm việc làm & Nhập từ khóa và bộ lọc vị trí/ngành nghề phù hợp & Trả về danh sách việc làm đúng tiêu chí tìm kiếm \\
+\hline
+TC-11 & Lưu và hủy lưu việc làm & Bấm lưu trên một tin tuyển dụng và sau đó hủy lưu & Công việc được thêm vào và xóa khỏi danh sách đã lưu tương ứng \\
 \hline
 TC-04 & Tải CV dạng PDF (1.2MB, hợp lệ). & HTTP 201, lưu metadata, bóc tách văn bản. & Trích xuất văn bản đạt, metadata ghi nhận thành công vào bảng \texttt{user\_cvs}. & ĐẠT \\
 \hline
@@ -61,81 +74,150 @@ TC-08 & Lọc trùng tin tuyển dụng (ETL Pipeline). & Hệ thống chặn ti
 \hline
 \end{longtable}
 
-\textbf{Đánh giá trạng thái thực thi:} Ghi nhận 8/8 kịch bản (bao gồm luồng hợp lệ và ngoại lệ) đều trả về trạng thái ĐẠT. Các kịch bản biên như kiểm soát định dạng tệp (TC-05) và chống trùng lặp dữ liệu (TC-08) vận hành ổn định, đảm bảo tính toàn vẹn của hệ thống khi tiếp nhận dữ liệu từ người dùng và nguồn thu thập ngoài.
+Mười một kịch bản trong Bảng~\ref{tab:test_cases} bao phủ bốn nhóm chức năng theo trình tự trải nghiệm người dùng: nhóm xác thực tài khoản (TC-01 đến TC-04), nhóm quản lý hồ sơ CV (TC-05 đến TC-07), nhóm phân tích đối soát năng lực (TC-08) và nhóm khai thác dữ liệu thị trường (TC-09 đến TC-11). Trong đó, TC-06 được thiết kế riêng để kiểm tra biên từ chối dữ liệu không hợp lệ (định dạng và dung lượng tệp), còn TC-08 là kịch bản phức tạp nhất vì đi xuyên qua toàn bộ chuỗi xử lý AI của hệ thống.
+
+\subsection{Kết quả thực thi kiểm thử}
+
+Toàn bộ các kịch bản kiểm thử trên đã được thực thi trên môi trường chạy thật tại địa chỉ \texttt{career-nova.online}. Kết quả từng ca được tổng hợp trong Bảng~\ref{tab:test_results} theo dạng đạt/không đạt để phản ánh nhanh mức độ hoàn thành chức năng:
+
+\begin{table}[ht]
+\caption{Kết quả thực thi kiểm thử chức năng}
+\label{tab:test_results}
+\begin{center}
+\begin{tabular}{|C{1.8cm}|L{6.0cm}|L{4.2cm}|C{2.0cm}|}
+\hline
+\textbf{Mã KB} & \textbf{Chức năng kiểm thử} & \textbf{Trạng thái thực tế} & \textbf{Kết quả} \\
+\hline
+TC-01 & Đăng ký tài khoản mới & Hoạt động bình thường & ĐẠT \\
+\hline
+TC-02 & Đăng nhập hệ thống & Đăng nhập và lưu token thành công & ĐẠT \\
+\hline
+TC-03 & Quên mật khẩu & Email đặt lại mật khẩu được gửi và truy cập đúng trang xác nhận & ĐẠT \\
+\hline
+TC-04 & Xác thực email & Liên kết xác thực hoạt động đúng và tài khoản được kích hoạt & ĐẠT \\
+\hline
+TC-05 & Tải lên CV hợp lệ & File được upload thành công và xuất hiện trong danh sách & ĐẠT \\
+\hline
+TC-06 & Từ chối file sai định dạng hoặc quá dung lượng & Hệ thống trả lỗi đúng quy định và không nhận file & ĐẠT \\
+\hline
+TC-07 & Quản lý CV mặc định và xóa CV & Đặt CV mặc định mới và xóa CV cũ thành công & ĐẠT \\
+\hline
+TC-08 & Đối soát CV và tính Skill Gap & Trả về điểm tương thích và gợi ý kỹ năng hợp lý & ĐẠT \\
+\hline
+TC-09 & Xem Dashboard thống kê thị trường việc làm & Biểu đồ và bộ lọc hiển thị đúng theo dữ liệu hiện có & ĐẠT \\
+\hline
+TC-10 & Tìm kiếm việc làm & Kết quả tìm kiếm đúng với từ khóa và bộ lọc & ĐẠT \\
+\hline
+TC-11 & Lưu và hủy lưu việc làm & Danh sách đã lưu cập nhật đúng khi thêm/xóa & ĐẠT \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+Theo Bảng~\ref{tab:test_results}, toàn bộ \textbf{11/11 kịch bản đạt (100\%)}, xác nhận các chức năng cốt lõi vận hành đúng đặc tả trên môi trường triển khai thật. Đáng chú ý, hai ca có rủi ro cao nhất đều vượt qua: TC-06 chứng minh tầng kiểm tra dữ liệu đầu vào từ chối đúng các tệp sai định dạng hoặc vượt 5 MB mà không để lọt dữ liệu rác vào hệ thống lưu trữ, và TC-08 xác nhận chuỗi xử lý AI nhiều bước (trích xuất --- chuẩn hóa --- so khớp) trả về kết quả nhất quán từ đầu đến cuối. Kiểm thử chức năng vì vậy chỉ trả lời câu hỏi ``hệ thống có chạy đúng hay không''; các khía cạnh định lượng về tốc độ và độ chính xác được đo riêng tại Mục 5.3 và 5.4.
 
 \section{Đánh giá hiệu năng và dữ liệu thực tế}
 
 \subsection{Thống kê số lượng dữ liệu bài đăng tuyển dụng đã thu thập và xử lý thành công}
 
-Hệ thống crawler đã được vận hành thử nghiệm liên tục trong vòng 30 ngày để thu thập tin tuyển dụng thực tế. Số lượng dữ liệu thu thập và làm sạch thành công được thống kê chi tiết trong bảng sau:
+Số lượng dữ liệu tuyển dụng của hệ thống không cố định theo ngày vì phụ thuộc vào biến động thị trường và lịch đồng bộ từ các nguồn khác nhau. Do đó, báo cáo này sử dụng ảnh chụp trạng thái (snapshot) của cơ sở dữ liệu và Dashboard tại thời điểm kiểm thử gần nhất (ngày 13/07/2026), trình bày trong Bảng~\ref{tab:data_stats}, để phản ánh đúng tình hình dữ liệu:
 
 \begin{table}[ht]
-\caption{Thống kê dữ liệu tin tuyển dụng thực tế}
+\caption{Snapshot dữ liệu tuyển dụng tại thời điểm kiểm thử (13/07/2026)}
 \label{tab:data_stats}
 \begin{center}
-\begin{tabular}{|L{4.5cm}|C{3.0cm}|C{3.0cm}|C{3.5cm}|}
+\begin{tabular}{|L{6.0cm}|C{3.0cm}|L{5.0cm}|}
 \hline
-\textbf{Nguồn thu thập} & \textbf{Số tin cào thô} & \textbf{Số tin sau lọc trùng} & \textbf{Tỷ lệ dữ liệu sạch} \\
+\textbf{Chỉ số} & \textbf{Giá trị} & \textbf{Ghi chú} \\
 \hline
-ITViec & 9,800 & 8,150 & 83.16\% \\
-VietnamWorks & 15,400 & 11,900 & 77.27\% \\
-CareerViet & 13,200 & 9,850 & 74.62\% \\
-LinkedIn & 18,550 & 12,620 & 68.03\% \\
+Tổng số tin đã thu thập và xử lý thành công & 6.872 & Tổng số bản ghi sạch trong bảng \texttt{jobs} sau khi khử trùng lặp, tích lũy từ 4 nguồn (ITViec, VietnamWorks, CareerViet, LinkedIn) \\
 \hline
-\textbf{Tổng cộng} & \textbf{56,950} & \textbf{42,520} & \textbf{74.66\%} \\
+Tin tuyển dụng đang mở & 1.050 & Số tin còn hiệu lực hiển thị trên Dashboard thị trường (bộ lọc 30 ngày gần nhất) \\
+\hline
+Công ty đang tuyển & 716 & Số lượng nhà tuyển dụng đang có tin hoạt động \\
+\hline
+Vị trí thực tập & 13 & Nhóm cơ hội phù hợp sinh viên được gắn nhãn riêng \\
+\hline
+Nguồn dữ liệu & Cập nhật định kỳ & Pipeline ETL chạy theo lô hằng ngày; số liệu thay đổi theo thời điểm đồng bộ \\
 \hline
 \end{tabular}
 \end{center}
 \end{table}
 
-Tỷ lệ dữ liệu sạch đạt mức 74.66\%, phần còn lại bị loại bỏ do tin tuyển dụng bị trùng lặp nội dung giữa các nền tảng, thiếu các thông tin bắt buộc (mô tả công việc quá ngắn hoặc trống), hoặc sai lệch định dạng lớn.
+Số liệu đáng chú ý nhất trong Bảng~\ref{tab:data_stats} là sự chênh lệch giữa tổng số tin tích lũy (\textbf{6.872}) và số tin đang mở (\textbf{1.050}): mức chênh khoảng 6,5 lần này phản ánh đúng đặc thù của dữ liệu tuyển dụng --- các tin hết hạn nộp hồ sơ vẫn được giữ lại trong kho dữ liệu để phục vụ phân tích xu hướng dài hạn và tính trọng số TF-IDF, trong khi Dashboard chỉ trực quan hóa các tin còn hiệu lực theo bộ lọc thời gian của người dùng. Bên cạnh đó, 1.050 tin đang mở đến từ \textbf{716} nhà tuyển dụng khác nhau (trung bình chưa tới 1,5 tin/công ty) cho thấy dữ liệu phân tán rộng trên thị trường thay vì tập trung vào một số ít doanh nghiệp lớn, giúp các thống kê thị trường ít bị lệch theo một nguồn tuyển dụng đơn lẻ.
 
 \subsection{Đo lường thời gian phản hồi (Response Time) và đánh giá độ trễ}
 
-Thời gian phản hồi của các API nghiệp vụ cốt lõi được định lượng bằng công cụ Apache JMeter, áp dụng mức tải 100 người dùng ảo đồng thời (Concurrent Users). Kết quả ghi nhận tại Bảng~\ref{tab:api_performance}.
+Để đánh giá thời gian phản hồi một cách nhất quán và dễ lặp lại, hệ thống được kiểm thử theo 5 lượt cho mỗi API đại diện trên môi trường triển khai thật. Thời gian được lấy từ trường \textit{Duration} của yêu cầu trong tab \textit{Network} của trình duyệt, tính từ lúc trình duyệt gửi yêu cầu đến khi nhận đủ phản hồi HTTP. Cách đo này loại trừ sai số do thao tác bấm giờ thủ công và phản ánh trực tiếp độ trễ của dịch vụ.
+
+\begin{itemize}
+    \item \textbf{Dashboard}: sử dụng endpoint có độ trễ lớn nhất trong sáu API dữ liệu Dashboard là \texttt{GET /dashboard/skills/rising}, với bộ lọc 30 ngày gần nhất.
+    \item \textbf{Upload CV}: sử dụng yêu cầu \texttt{POST /cv/upload} với cùng một tệp PDF hợp lệ (CV mẫu Backend Developer, 1 trang, dung lượng 21 KB) trong cả 5 lượt đo.
+    \item \textbf{Đối soát CV}: sử dụng yêu cầu \texttt{POST /matching/analyze} với cùng nhóm nghề mục tiêu (\textit{backend developer}). Để tách bạch hai chế độ hoạt động của hệ thống, phép đo gồm 5 lượt phân tích lần đầu trên 5 bản CV tải lên độc lập (buộc thực thi toàn bộ pipeline gồm trích xuất kỹ năng qua Gemini API --- cache miss) và 3 lượt phân tích lặp lại trên cùng một CV (tái sử dụng kỹ năng đã trích xuất --- cache hit).
+\end{itemize}
+
+Với mỗi chức năng, các chỉ số tổng hợp gồm: số lần gọi, thời gian trung bình, P95, thời gian lớn nhất và tỷ lệ lỗi. Do đợt đo ban đầu chỉ gồm 5 lượt cho mỗi chức năng, P95 thực nghiệm được lấy bằng giá trị lớn nhất trong mẫu. Khi nghiệm thu chính thức, nên tăng số lượt đo lên tối thiểu 20 lượt cho mỗi chức năng để chỉ số P95 có ý nghĩa đại diện hơn.
+
+Trước hết, sáu endpoint dữ liệu của Dashboard thị trường được đo trực tiếp trên môi trường triển khai thật (\texttt{career-nova.online}, máy chủ DigitalOcean SGP1) bằng 5 lượt gọi HTTPS liên tiếp cho mỗi endpoint với bộ lọc 30 ngày. Kết quả được trình bày trong Bảng~\ref{tab:api_performance_dashboard}.
 
 \begin{table}[ht]
-\caption{Đo lường thời gian phản hồi của API hệ thống.}
-\label{tab:api_performance}
+\caption{Thời gian phản hồi thực đo của sáu API Dashboard thị trường (đo ngày 13/07/2026)}
+\label{tab:api_performance_dashboard}
 \begin{center}
-\begin{tabular}{|L{6.0cm}|C{3.0cm}|C{3.0cm}|C{2.0cm}|}
+\begin{tabular}{|L{4.1cm}|C{1.5cm}|C{2.0cm}|C{2.0cm}|C{2.0cm}|C{1.5cm}|}
 \hline
-\textbf{API Endpoint} & \textbf{Thời gian trung bình (ms)} & \textbf{Thời gian tối đa (ms)} & \textbf{Trạng thái} \\
+\textbf{Endpoint} & \textbf{Số lần gọi} & \textbf{Trung bình (ms)} & \textbf{P95 (ms)} & \textbf{Lớn nhất (ms)} & \textbf{Tỷ lệ lỗi} \\
 \hline
-\texttt{GET /api/v1/jobs} (Tìm kiếm) & 240 & 580 & Đạt \\
+\texttt{/dashboard/stats} & 5 & 301 & 384 & 384 & 0\% \\
 \hline
-\texttt{GET /api/v1/skills/trending} & 110 & 290 & Đạt \\
+\texttt{/dashboard/trends} & 5 & 307 & 428 & 428 & 0\% \\
 \hline
-\texttt{POST /api/v1/cv/upload} (Digital PDF) & 650 & 1,200 & Đạt \\
+\texttt{/dashboard/industries} & 5 & 468 & 522 & 522 & 0\% \\
 \hline
-\texttt{POST /api/v1/cv/match-gap} & 1,450 & 2,800 & Đạt \\
+\texttt{/dashboard/hot-jobs} & 5 & 302 & 380 & 380 & 0\% \\
+\hline
+\texttt{/dashboard/skills/in-demand} & 5 & 785 & 946 & 946 & 0\% \\
+\hline
+\texttt{/dashboard/skills/rising} & 5 & 914 & 977 & 977 & 0\% \\
 \hline
 \end{tabular}
 \end{center}
 \end{table}
 
-\textbf{Phân tích và nhìn nhận hạn chế thực tế:} 
-Thời gian phản hồi API đối soát (\texttt{/match-gap}) ghi nhận trung bình ở mức 1.45 giây đối với các tệp PDF số. Tuy nhiên, hệ thống ghi nhận độ trễ tăng đột biến lên từ 2 giây đến 5 giây khi xử lý các hồ sơ CV dạng quét (Scan PDF) hoặc ảnh nén. Nguyên nhân trực tiếp xuất phát từ việc hệ thống phải kích hoạt thêm tầng xử lý OCR phụ trợ (Tesseract) để giải mã ký tự trước khi đẩy lên API AI. Đồng thời, sự phụ thuộc vào băng thông kết nối internet để giao tiếp với máy chủ Google Gemini cũng tạo ra điểm thắt nút cổ chai (bottleneck) về độ trễ. Đây là hạn chế khách quan về mặt tài nguyên phần cứng hiện tại, sẽ được quy hoạch tối ưu ở các phiên bản tiếp theo bằng giải pháp xử lý bất đồng bộ (Message Queue).
+Kết quả cho thấy toàn bộ 30 lượt gọi đều thành công (tỷ lệ lỗi \textbf{0\%}) và mọi endpoint đều phản hồi dưới 1 giây. Do Frontend gửi sáu truy vấn song song bằng \texttt{Promise.all}, thời gian chờ dữ liệu của toàn trang Dashboard về nguyên tắc bị chi phối bởi endpoint chậm nhất (\texttt{skills/rising}, trung bình \textbf{914ms}), thay vì tổng thời gian sáu truy vấn tuần tự (khoảng 3,1 giây). Kết quả này xác nhận các API Dashboard thỏa NFR-01 ở mức đo API. Hai endpoint nhóm kỹ năng (\texttt{in-demand} và \texttt{rising}) chậm hơn đáng kể so với nhóm còn lại vì phải thực hiện truy vấn tổng hợp (aggregation) trên bảng liên kết \texttt{job\_skills} có số bản ghi lớn nhất; đây là điểm tối ưu tiềm năng bằng chỉ mục bổ sung hoặc materialized view trong tương lai.
 
+Đối với hai chức năng yêu cầu phiên đăng nhập và dữ liệu người dùng thật (Upload CV và Đối soát CV), thời gian của hai API tương ứng được ghi nhận theo phương pháp nêu trên. Kết quả tổng hợp được trình bày trong Bảng~\ref{tab:api_performance_auth}.
 
+\begin{table}[ht]
+\caption{Bảng tổng hợp thời gian phản hồi theo thao tác người dùng (đo ngày 13/07/2026)}
+\label{tab:api_performance_auth}
+\begin{center}
+\begin{tabular}{|L{3.0cm}|C{1.6cm}|C{2.1cm}|C{2.1cm}|C{2.1cm}|C{1.6cm}|}
+\hline
+\textbf{Chức năng} & \textbf{Số lần đo} & \textbf{Trung bình (s)} & \textbf{P95 (s)} & \textbf{Lớn nhất (s)} & \textbf{Tỷ lệ lỗi} \\
+\hline
+Dashboard (API \texttt{skills/rising}) & 5 & 0,914 & 0,977 & 0,977 & 0\% \\
+\hline
+Upload CV & 5 & 1,58 & 1,94 & 1,94 & 0\% \\
+\hline
+Đối soát CV (lần đầu --- cache miss) & 5 & 43,8 & 55,9 & 55,9 & 0\% \\
+\hline
+Đối soát CV (lặp lại --- cache hit) & 3 & 0,22 & 0,29 & 0,29 & 0\% \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
 
-
-
-
-
-
-
-
-
+Kết quả đo cho thấy sự phân hóa rõ rệt giữa hai chế độ hoạt động của chức năng Đối soát CV. Ở lượt phân tích lần đầu (cache miss), toàn bộ pipeline được thực thi tuần tự: tải văn bản CV, gọi Gemini API trích xuất kỹ năng, chuẩn hóa qua FAISS trên CPU và tính điểm so khớp, dẫn đến thời gian trung bình \textbf{43,8 giây} (lớn nhất 55,9 giây) --- \textbf{vượt ngưỡng 30 giây của NFR-02}, dù toàn bộ 5 lượt đều trả về kết quả thành công và điểm số ổn định (0,34--0,35). Nguyên nhân chính là độ trễ của lượt gọi Gemini API bên ngoài cộng với chi phí tính vector nhúng trên máy chủ chỉ có 2 vCPU không GPU. Ngược lại, các lượt phân tích lặp lại trên cùng CV (cache hit) chỉ mất trung bình \textbf{0,22 giây} --- nhanh hơn khoảng 200 lần --- do kỹ năng đã trích xuất được tái sử dụng từ bảng \texttt{user\_cv\_skills}. Như vậy NFR-02 hiện chỉ được thỏa ở chế độ cache hit; đối với lần phân tích đầu tiên, các hướng cải thiện khả thi gồm: trích xuất kỹ năng bất đồng bộ ngay sau khi upload CV (thay vì chờ đến lúc người dùng bấm phân tích), hiển thị tiến trình từng bước trên giao diện, hoặc nâng cấp hạ tầng suy luận vector nhúng.
 
 \section{Kiểm thử độ chính xác và Đánh giá kết quả đầu ra thuật toán (Algorithm Accuracy Evaluation)}
 \label{sec:algorithm_evaluation}
 
-Nhằm kiểm chứng tính đúng đắn và độ chính xác của các thuật toán xử lý dữ liệu trong hệ thống, bao gồm bóc tách dữ liệu bằng LLM, chuẩn hóa kỹ năng bằng FAISS, khớp mờ doanh nghiệp bằng Jaccard, khử trùng lặp sâu bài đăng bằng TF-IDF và thuật toán so khớp Matching Engine, chúng tôi xây dựng bộ kịch bản đối soát thực tế và khung chỉ số đánh giá hiệu năng. Quy trình đánh giá được thực hiện trên tập dữ liệu mẫu chuẩn gồm 100 bài đăng (50 hồ sơ CV ứng viên và 50 bản mô tả công việc JD) thu thập thực tế từ thị trường công nghệ thông tin tại Việt Nam. Toàn bộ các thực nghiệm đối soát đều được định lượng hóa, so sánh trực quan dữ liệu đầu vào và đầu ra để chứng minh tính đúng đắn của thuật toán.
+Nhằm kiểm chứng tính đúng đắn và độ chính xác của các thuật toán xử lý dữ liệu trong hệ thống, bao gồm bóc tách dữ liệu bằng LLM, chuẩn hóa kỹ năng hai tầng (khớp chuỗi và tìm kiếm ngữ nghĩa trên embedding), gộp nhóm doanh nghiệp bằng chuẩn hóa hậu tố pháp lý, khử trùng lặp sâu bài đăng bằng vector nhúng kết hợp Cosine Similarity và thuật toán so khớp Matching Engine, chúng tôi xây dựng bộ kịch bản đối soát thực tế và khung chỉ số đánh giá hiệu năng. Quy trình đánh giá được thực hiện trên tập dữ liệu mẫu chuẩn gồm 100 bài đăng (50 hồ sơ CV ứng viên và 50 bản mô tả công việc JD) thu thập thực tế từ thị trường công nghệ thông tin tại Việt Nam. Toàn bộ các thực nghiệm đối soát đều được định lượng hóa, so sánh trực quan dữ liệu đầu vào và đầu ra để chứng minh tính đúng đắn của thuật toán.
 
 \subsection{Đánh giá độ chính xác của định dạng dữ liệu trả về từ mô hình và các thuật toán tiền xử lý}
 
-Phần này trình bày các kịch bản đối soát thực tế và khung chỉ số đánh giá chất lượng cho các thuật toán xử lý dữ liệu đầu vào, bao gồm bóc tách dữ liệu bán cấu trúc bằng mô hình ngôn ngữ lớn (LLM), chuẩn hóa kỹ năng bằng FAISS, khớp mờ doanh nghiệp bằng Jaccard và khử trùng sâu tin đăng bằng TF-IDF kết hợp Cosine Similarity.
+Phần này trình bày các kịch bản đối soát thực tế và khung chỉ số đánh giá chất lượng cho các thuật toán xử lý dữ liệu đầu vào, bao gồm bóc tách dữ liệu bán cấu trúc bằng mô hình ngôn ngữ lớn (LLM), chuẩn hóa kỹ năng hai tầng, gộp nhóm doanh nghiệp và khử trùng sâu tin đăng bằng vector nhúng kết hợp Cosine Similarity. Các thực nghiệm dưới đây được thực thi trực tiếp trên môi trường triển khai thật (container \texttt{nova-algo-api} và cơ sở dữ liệu production, ngày 13/07/2026).
 
 \subsubsection*{1. Kịch bản đối soát 1: Trích xuất thực thể và Structured Output từ CV/JD thô}
 
@@ -363,9 +445,9 @@ Bảng phân tích đối soát chi tiết thực tế của trường hợp th�
 \caption{Biểu mẫu phân tích chi tiết kết quả so khớp và gợi ý kỹ năng thực tế (Case Study)}
 \label{tab:matching_case_study_template}
 \begin{center}
-\begin{tabular}{|L{3.5cm}|C{2.8cm}|C{2.8cm}|L{5.0cm}|}
+\begin{tabular}{|L{6.0cm}|C{4.0cm}|C{4.0cm}|}
 \hline
-\textbf{Kỹ năng yêu cầu} & \textbf{Trạng thái khớp} & \textbf{Hệ số tương đồng} & \textbf{Giải thích / Gợi ý hành động} \\
+\textbf{Chỉ số đánh giá dữ liệu (Metric)} & \textbf{Mục tiêu kỳ vọng} & \textbf{Kết quả thực tế} \\
 \hline
 Python Programming & \textit{[Chờ test]} & \textit{[Chờ điền]} & \textit{[Chờ phân tích kết quả thực tế]} \\
 \hline

@@ -1,65 +1,68 @@
 @startuml usecase_diagram
 !theme plain
 left to right direction
-skinparam defaultFontSize 10
+skinparam defaultFontSize 12
 skinparam defaultFontName Arial
 skinparam backgroundColor #FFFFFF
 skinparam actorStyle awesome
 skinparam usecase {
     BackgroundColor #EEF2FF
     BorderColor #3F51B5
-    FontSize 10
+    FontSize 12
+}
+skinparam package {
+    BackgroundColor #FDFDFD
+    BorderColor #999999
 }
 
-title Sơ đồ ca sử dụng tổng quát — Hệ thống CareerNova
+title Sơ đồ Use Case tổng quát — Hệ thống CareerNova
 
 actor "Sinh viên" as SV
-actor "Admin" as ADMIN
 actor "Hệ thống ETL\n(Tự động)" as ETL
 
 rectangle "CareerNova System" {
-
-    package "Quản lý tài khoản" {
-        usecase "UC-01\nĐăng ký tài khoản" as UC01
-        usecase "UC-02\nĐăng nhập\n(Email / Google OAuth)" as UC02
-        usecase "UC-03\nXác thực email" as UC03
-        usecase "UC-05\nOnboarding" as UC05
-        usecase "UC-06\nCập nhật hồ sơ" as UC06
-        usecase "UC-07\nCài đặt tài khoản" as UC07
+    package "Quản lý tài khoản" as P1 {
+        usecase "UC-01: Đăng ký" as UC01
+        usecase "UC-02: Đăng nhập" as UC02
+        usecase "UC-03: Xác thực email" as UC03
+        usecase "UC-05: Onboarding" as UC05
+        usecase "UC-06: Cập nhật hồ sơ" as UC06
+        usecase "UC-07: Cài đặt tài khoản" as UC07
     }
 
-    package "Quản lý CV và So khớp" {
-        usecase "UC-08\nTải lên / quản lý CV" as UC08
-        usecase "UC-09\nSo khớp CV với\ntin tuyển dụng" as UC09
-        usecase "UC-10\nXem biểu đồ Radar\nkỹ năng" as UC10
-        usecase "UC-11\nXem Gap Report" as UC11
+    package "Khám phá việc làm" as P2 {
+        usecase "UC-12: Tìm việc làm" as UC12
+        usecase "UC-13: Xem JD chi tiết" as UC13
+        usecase "UC-14: Lưu việc làm" as UC14
+        usecase "UC-15: Đề xuất việc làm" as UC15
+        usecase "UC-18: Lộ trình học" as UC18
     }
 
-    package "Khám phá việc làm" {
-        usecase "UC-12\nTìm kiếm việc làm" as UC12
-        usecase "UC-13\nXem chi tiết JD" as UC13
-        usecase "UC-14\nLưu việc làm\nyêu thích" as UC14
-        usecase "UC-15\nXem đề xuất\nviệc làm" as UC15
-        usecase "UC-18\nXem lộ trình\nhọc tập" as UC18
+    package "Quản lý CV & So khớp" as P3 {
+        usecase "UC-08: Quản lý CV" as UC08
+        usecase "UC-09: So khớp CV với JD" as UC09
+        usecase "UC-10: Biểu đồ Radar" as UC10
+        usecase "UC-11: Gap Report" as UC11
     }
 
-    package "Trực quan hóa & Phân tích" {
-        usecase "UC-16\nXem Dashboard\nthị trường" as UC16
-        usecase "UC-17\nXem Dashboard\ncá nhân" as UC17
+    package "Trực quan hóa" as P4 {
+        usecase "UC-16: Dashboard thị trường" as UC16
+        usecase "UC-17: Dashboard cá nhân" as UC17
     }
 
-    package "Quản trị hệ thống" {
-        usecase "UC-19\nQuản lý người dùng" as UC19
-        usecase "UC-20\nXem báo cáo\nhệ thống" as UC20
-    }
-
-    package "Thu thập dữ liệu (tự động)" {
-        usecase "UC-21\nThu thập JD\ntự động" as UC21
-        usecase "UC-22\nChuẩn hóa và\nnạp vào PostgreSQL" as UC22
+    package "Thu thập dữ liệu" as P5 {
+        usecase "UC-21: Thu thập JD tự động" as UC21
+        usecase "UC-22: Chuẩn hóa dữ liệu" as UC22
     }
 }
 
-' Sinh viên
+' Grouping packages to balance the layout horizontally
+P1 -[hidden]down-> P3
+P3 -[hidden]down-> P4
+
+P2 -[hidden]down-> P5
+
+' Connections
 SV --> UC01
 SV --> UC02
 SV --> UC05
@@ -75,20 +78,13 @@ SV --> UC16
 SV --> UC17
 SV --> UC18
 
-' include / extend
-UC01 .right.> UC03 : <<include>>
-UC09 .right.> UC10 : <<include>>
-UC09 .right.> UC11 : <<include>>
-UC11 .down.> UC18  : <<extend>>
-UC17 .up.>   UC10  : <<extend>>
-
-' Admin
-ADMIN --> UC02
-ADMIN --> UC19
-ADMIN --> UC20
-
-' ETL
 ETL --> UC21
-UC21 .right.> UC22 : <<include>>
+
+UC01 .> UC03 : <<include>>
+UC09 .> UC10 : <<include>>
+UC09 .> UC11 : <<include>>
+UC11 .> UC18  : <<extend>>
+UC17 .> UC10  : <<extend>>
+UC21 .> UC22 : <<include>>
 
 @enduml

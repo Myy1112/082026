@@ -1,0 +1,38 @@
+@startuml image2_3
+!theme plain
+skinparam defaultFontName Arial
+skinparam defaultFontSize 12
+skinparam backgroundColor #FFFFFF
+
+title Kiến trúc SBERT (Siamese Network) trong suy luận tính điểm tương đồng ngữ nghĩa
+
+rectangle "Câu / Kỹ năng A\n(ví dụ: "ReactJS")" as sa #F0F0F0
+rectangle "Câu / Kỹ năng B\n(ví dụ: "React.js Framework")" as sb #F0F0F0
+
+rectangle "BERT / MiniLM\n(6 tầng Transformer)\n**chia sẻ trọng số**" as bert1 #E8F4FD
+rectangle "BERT / MiniLM\n(6 tầng Transformer)\n**chia sẻ trọng số**" as bert2 #E8F4FD
+
+rectangle "Mean Pooling" as pool1 #FDF2E8
+rectangle "Mean Pooling" as pool2 #FDF2E8
+
+rectangle "Vector nhúng u\n(384 chiều, chuẩn hóa L2)" as u #E8FDE8
+rectangle "Vector nhúng v\n(384 chiều, chuẩn hóa L2)" as v #E8FDE8
+
+rectangle "Cosine Similarity\ncosine(u, v) = u · v" as cos #FFF3CD
+
+sa -down-> bert1
+sb -down-> bert2
+bert1 -down-> pool1
+bert2 -down-> pool2
+pool1 -down-> u
+pool2 -down-> v
+u -down-> cos
+v -down-> cos
+
+bert1 .right. bert2 : chia sẻ\ntham số
+
+note bottom of cos
+  Giá trị [-1, 1]: mức độ tương đồng ngữ nghĩa
+  giữa hai kỹ năng / câu văn
+end note
+@enduml

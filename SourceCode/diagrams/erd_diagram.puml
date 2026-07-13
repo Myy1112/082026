@@ -1,0 +1,197 @@
+@startuml erd_diagram
+!theme plain
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam backgroundColor #FFFFFF
+skinparam linetype ortho
+hide circle
+skinparam class {
+    BackgroundColor #F8FAFC
+    BorderColor #334155
+    ArrowColor #64748B
+}
+
+title Sơ đồ mối quan hệ thực thể (ERD) hệ thống CareerNova
+
+' ===== NHÓM NGƯỜI DÙNG & CV =====
+entity "users" as users {
+    * user_id : uuid <<PK>>
+    --
+    email : varchar <<UNIQUE>>
+    password_hash : text
+    role : varchar
+    is_active : boolean
+    default_cv_id : uuid <<FK>>
+    default_match_id : uuid <<FK>>
+}
+
+entity "user_auth_providers" as uap {
+    * auth_provider_id : uuid <<PK>>
+    --
+    user_id : uuid <<FK>>
+    provider : varchar
+    provider_user_id : varchar
+}
+
+entity "user_cvs" as cvs {
+    * cv_id : uuid <<PK>>
+    --
+    user_id : uuid <<FK>>
+    file_name : varchar
+    extracted_text : text
+}
+
+entity "user_cv_skills" as ucs {
+    * cv_id : uuid <<PK,FK>>
+    * skill_id : int <<PK,FK>>
+    --
+    raw_skill : varchar
+}
+
+entity "cv_job_matches" as matches {
+    * match_id : uuid <<PK>>
+    --
+    cv_id : uuid <<FK>>
+    job_id : bigint <<FK>>
+    match_type : varchar
+    search_group : varchar
+    match_score : numeric
+    radar_data : jsonb
+    gap_report : jsonb
+}
+
+' ===== NHÓM DỮ LIỆU TUYỂN DỤNG =====
+entity "companies" as comp {
+    * company_id : bigint <<PK>>
+    --
+    name : varchar
+    industry : varchar
+    city : varchar
+}
+
+entity "jobs" as jobs {
+    * job_id : bigint <<PK>>
+    --
+    company_id : bigint <<FK>>
+    title : varchar
+    is_remote : boolean
+    search_group : text
+    source_name : varchar
+    fingerprint : varchar <<UNIQUE>>
+}
+
+entity "skills" as skills {
+    * skill_id : int <<PK>>
+    --
+    skill_name : varchar <<UNIQUE>>
+    category : varchar
+    type : varchar
+    is_software : boolean
+    is_language : boolean
+    category_name : varchar
+}
+
+entity "job_skills" as js {
+    * job_id : bigint <<PK,FK>>
+    * skill_id : int <<PK,FK>>
+    --
+    similarity_score : numeric
+    reason : varchar
+}
+
+entity "job_group_skill_weights" as jgsw {
+    * search_group : varchar <<PK>>
+    * skill_id : int <<PK,FK>>
+    --
+    weight_wi : numeric
+}
+
+entity "salaries" as sal {
+    * salary_id : int <<PK>>
+    --
+    job_id : bigint <<FK>>
+    min_salary : numeric
+    max_salary : numeric
+}
+
+entity "saved_jobs" as sj {
+    * saved_job_id : uuid <<PK>>
+    --
+    user_id : uuid <<FK>>
+    job_id : bigint <<FK>>
+}
+
+entity "unmatched_skills" as us {
+    * unmatched_id : int <<PK>>
+    --
+    raw_skill_name : varchar <<UNIQUE>>
+    occurrence_count : int
+    top_candidate_skill_id : int <<FK>>
+}
+
+entity "search_group_keywords" as sgk {
+    * id : int <<PK>>
+    --
+    group_key : varchar
+    keyword : varchar <<UNIQUE>>
+}
+
+' ===== NHÓM KHÓA HỌC & LỘ TRÌNH =====
+entity "learning_paths" as lp {
+    * path_id : uuid <<PK>>
+    --
+    skill_key : varchar
+    path_level : varchar
+}
+
+entity "courses" as courses {
+    * course_id : uuid <<PK>>
+    --
+    course_title : varchar
+    provider_name : varchar
+    skills_tags : text[]
+}
+
+entity "path_courses" as pc {
+    * path_id : uuid <<PK,FK>>
+    * course_id : uuid <<PK,FK>>
+    --
+    sort_order : int
+}
+
+' ===== NHÓM THÔNG BÁO =====
+entity "notifications" as notif {
+    * notification_id : uuid <<PK>>
+    --
+    user_id : uuid <<FK>>
+    type : varchar
+    is_read : boolean
+}
+
+entity "notification_templates" as ntpl {
+    * template_id : uuid <<PK>>
+    --
+    template_code : varchar <<UNIQUE>>
+    is_active : boolean
+}
+
+' ===== QUAN HỆ =====
+users ||--o{ uap : "1 - N"
+users ||--o{ cvs : "1 - N"
+users ||--o{ sj : "1 - N"
+users ||--o{ notif : "1 - N"
+cvs ||--o{ ucs : "1 - N"
+cvs ||--o{ matches : "1 - N"
+skills ||--o{ ucs : "1 - N"
+skills ||--o{ js : "1 - N"
+skills ||--o{ jgsw : "1 - N"
+skills ||--o{ us : "0 - N"
+comp ||--o{ jobs : "1 - N"
+jobs ||--o{ js : "1 - N"
+jobs ||--o{ sal : "1 - N"
+jobs ||--o{ sj : "1 - N"
+jobs ||--o{ matches : "0 - N"
+lp ||--o{ pc : "1 - N"
+courses ||--o{ pc : "1 - N"
+
+@enduml

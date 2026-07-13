@@ -1,6 +1,6 @@
 @startuml dashboard_sequence
 !theme plain
-skinparam defaultFontSize 10
+skinparam defaultFontSize 11
 skinparam defaultFontName Arial
 skinparam backgroundColor #FFFFFF
 skinparam sequenceArrowThickness 1.5
@@ -9,44 +9,46 @@ skinparam sequenceBoxBackgroundColor #F5F5F5
 
 title Sơ đồ tuần tự: Xem Dashboard thống kê thị trường việc làm
 
-actor       "Người dùng"              as User
-participant "Next.js\nFrontend"       as FE
-participant "CareerNova\nBackend API\n(NestJS)" as API
-database    "PostgreSQL"              as DB
+actor       "Sinh viên"              as User
+participant "Trình duyệt\n(Frontend)"       as FE
+participant "Core API"               as API
+database    "Cơ sở dữ liệu"          as DB
+
+autonumber
 
 User -> FE : Điều hướng đến\nMarket Dashboard
-FE   -> API : GET /dashboard/filters
-API  -> DB  : Lấy các tùy chọn bộ lọc
-DB  --> API : locations, time_ranges, work_types
-API --> FE  : Danh sách tùy chọn bộ lọc
-FE   -> FE : Áp dụng bộ lọc mặc định\nvà gọi fetchDashboardData()
+FE   -> FE : Khởi tạo giao diện\nvà yêu cầu dữ liệu
 
-note over FE, API : Sáu truy vấn được gửi song song — Promise.all()
+note over FE, API : Truy vấn song song (Promise.all)
 
 par Truy vấn song song
-    FE -> API : GET /dashboard/stats
+    FE -> API : Yêu cầu Xu hướng tuyển dụng
 else
-    FE -> API : GET /dashboard/trends
+    FE -> API : Yêu cầu Phân bổ ngành
 else
-    FE -> API : GET /dashboard/industries
-else
-    FE -> API : GET /dashboard/hot-jobs
-else
-    FE -> API : GET /dashboard/skills/in-demand
-else
-    FE -> API : GET /dashboard/skills/rising
+    FE -> API : Yêu cầu Dải lương theo vị trí
 end
 
-group Xử lý và tổng hợp dữ liệu
-    API -> DB   : Truy vấn tổng hợp theo bộ lọc\n(location, time_range, work_type)
-    DB --> API  : Stats, trends, industries, hot jobs,\nin-demand skills, rising skills
-    API --> FE  : Sáu tập dữ liệu JSON
+group Xử lý Xu hướng tuyển dụng
+    API -> DB   : Truy vấn lượng tin tuyển dụng\nvà việc làm từ xa theo thời gian
+    DB --> API  : Dữ liệu thời gian thực
 end
 
-FE -> FE : Cập nhật state:\nsetTrends()\nsetIndustriesData()\nsetInDemandSkills()\nsetRisingSkills()
+group Xử lý Phân bổ ngành
+    API -> DB   : Đếm số tin theo từng ngành
+    DB --> API  : Dữ liệu phân bổ
+end
 
-FE -> FE : Kết xuất thẻ thống kê, biểu đồ\nvà danh sách bằng Recharts
+group Xử lý Dải lương
+    API -> DB   : Tính trung bình lương (Min/Max)\nnhóm theo vị trí
+    DB --> API  : Dữ liệu lương trung bình
+end
 
-FE --> User : Thẻ thống kê, AreaChart, Treemap,\nHot Jobs và các danh sách kỹ năng
+API --> FE : Tập hợp toàn bộ kết quả\n(JSON)
 
+FE -> FE : Xử lý dữ liệu và\ncập nhật trạng thái (State)
+
+FE -> FE : Kết xuất biểu đồ\n(Xu hướng, Phân bổ, Dải lương)
+
+FE --> User : Hiển thị Dashboard hoàn chỉnh
 @enduml
