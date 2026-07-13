@@ -42,4 +42,6 @@ venv/
 Thumbs.db
 data_evaluation/ner_evaluation.xlsx
 data_evaluation/~$ner_evaluation.xlsx
+data_evaluation/
 main.pdf
+scratch/
