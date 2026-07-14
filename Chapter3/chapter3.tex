@@ -1,6 +1,8 @@
 \chapter{Phân tích và thiết kế hệ thống}
 \label{Chapter3}
 
+Chương này chuyển hóa mục tiêu nghiên cứu thành các yêu cầu nghiệp vụ, yêu cầu chức năng và yêu cầu phi chức năng của CareerNova. Trên nền tảng đó, chương trình bày thiết kế kiến trúc, dữ liệu, các luồng xử lý và giao diện làm cơ sở cho việc xây dựng hệ thống.
+
 % ================================================================
 \section{Phân tích yêu cầu hệ thống}
 
@@ -135,6 +137,32 @@ NFR-13 & Bảo trì & Tầng Xử lý nghiệp vụ phải được tổ chức 
 NFR-14 & Bảo trì & Hệ thống ưu tiên sử dụng các ngôn ngữ lập trình có kiểu dữ liệu tĩnh và tường minh, giúp phát hiện lỗi tại thời điểm biên dịch, giảm thiểu lỗi runtime và hỗ trợ tái cấu trúc mã nguồn an toàn. \\
 \hline
 \end{longtable}
+
+\subsection{Ma trận truy vết yêu cầu đến kiểm thử}
+
+Để bảo đảm các yêu cầu không chỉ dừng lại ở mức đặc tả, các chức năng cốt lõi được liên kết với thành phần thiết kế, vị trí hiện thực và ca kiểm thử tương ứng. Ma trận trong Bảng~\ref{tab:traceability_matrix} cho phép đối chiếu theo chiều dọc từ nhu cầu người dùng đến bằng chứng đánh giá ở Chương~5; các yêu cầu còn lại được kiểm thử theo cùng nguyên tắc trong ma trận kiểm thử đầy đủ.
+
+\begin{table}[H]
+\caption{Ma trận truy vết một số yêu cầu cốt lõi từ thiết kế đến kiểm thử}
+\label{tab:traceability_matrix}
+\begin{center}
+\begin{tabular}{|L{2.0cm}|L{3.6cm}|L{4.3cm}|L{3.7cm}|}
+\hline
+\textbf{Yêu cầu} & \textbf{Thành phần thiết kế} & \textbf{Hiện thực / dữ liệu chính} & \textbf{Bằng chứng kiểm thử} \\
+\hline
+UC-01--UC-04 & Use Case tổng quát; luồng xác thực tại Core API & Phân hệ Auth, bảng \texttt{users} và \texttt{user\_auth\_providers} & TC-01 đến TC-04, Bảng~\ref{tab:test_results} \\
+\hline
+UC-08--UC-11 & Sơ đồ tuần tự tải CV và so khớp; sơ đồ lớp miền nghiệp vụ & \texttt{user\_cvs}, \texttt{user\_cv\_skills}, \texttt{cv\_job\_matches} và Data Processing Engine & TC-05 đến TC-08; Hình~\ref{fig:test_cv_matching} \\
+\hline
+UC-12--UC-15 & Use Case khám phá việc làm; thiết kế giao diện danh sách việc làm & \texttt{jobs}, \texttt{job\_skills}, \texttt{saved\_jobs} và phân hệ Job & TC-10 và TC-11, Bảng~\ref{tab:test_results} \\
+\hline
+UC-16 & Sơ đồ tuần tự Dashboard; thiết kế Dashboard thị trường & Dữ liệu \texttt{jobs}, \texttt{companies}, \texttt{skills} và API tổng hợp thị trường & TC-09; Hình~\ref{fig:test_market_dashboard}; Mục~5.3 \\
+\hline
+UC-19--UC-20 & Kiến trúc Data Processing Engine & Pipeline crawl, chuẩn hóa, trích xuất kỹ năng và nạp PostgreSQL & Số liệu dữ liệu thực tế và đánh giá đầu ra thuật toán, Mục~5.3--5.4 \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
 
 % ================================================================
 \section{Thiết kế hệ thống}

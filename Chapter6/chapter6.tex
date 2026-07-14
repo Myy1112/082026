@@ -1,6 +1,8 @@
 \chapter{Kết luận}
 \label{Chapter6}
 
+Đề tài hướng đến xây dựng một hệ thống hỗ trợ sinh viên CNTT phân tích dữ liệu tuyển dụng và đánh giá khoảng cách kỹ năng so với nhu cầu thị trường. Bằng cách kết hợp quy trình ETL, trích xuất có cấu trúc bằng LLM, so khớp ngữ nghĩa SBERT--TF-IDF và trực quan hóa dữ liệu, CareerNova đã được hiện thực hóa và kiểm thử trên môi trường triển khai thực tế. Phần còn lại của chương tổng kết các kết quả đạt được, những hạn chế và định hướng phát triển tiếp theo.
+
 \section{Các kết quả đã đạt được của hệ thống ứng dụng}
 
 Luận văn này đã nghiên cứu, phân tích và hiện thực hóa thành công hệ thống CareerNova --- một nền tảng hỗ trợ sinh viên ngành Công nghệ thông tin đánh giá khoảng cách năng lực và khám phá thị trường lao động thông qua trực quan hóa dữ liệu. Kết thúc quá trình xây dựng và thử nghiệm, đề tài đã đạt được các kết quả chính sau đây:
@@ -26,7 +28,7 @@ Hệ thống đã được triển khai và kiểm thử trên môi trường th
 \begin{itemize}
     \item \textbf{Phạm vi dữ liệu}: Thử nghiệm thực tế mới chỉ tập trung chủ yếu vào nhóm ngành Công nghệ Thông tin (IT) và Khoa học Dữ liệu tại thị trường Việt Nam, chưa mở rộng sang các lĩnh vực ngành nghề phi kỹ thuật khác. Quy mô dữ liệu tích lũy đủ phục vụ phân tích xu hướng ngắn hạn trong phạm vi triển khai, nhưng chưa đủ dày để phân tích chu kỳ tuyển dụng theo mùa qua nhiều năm.
 
-    \item \textbf{Hiệu năng lần đối soát đầu tiên}: Khi cache miss, thời gian đối soát CV thực đo trung bình là 43,8 giây và lớn nhất là 55,9 giây (đạt mục tiêu dưới 60 giây của NFR-02). Tuy nhiên, con số này vẫn tương đối cao ở góc độ trải nghiệm người dùng. Nguyên nhân chủ yếu là độ trễ của Gemini API bên ngoài và chi phí tính vector trên máy chủ 2 vCPU không GPU. Hai endpoint thống kê kỹ năng của Dashboard (\texttt{in-demand}, \texttt{rising}) cũng chậm hơn các endpoint còn lại do truy vấn tổng hợp trên bảng liên kết lớn, cần tối ưu bằng chỉ mục bổ sung hoặc materialized view.
+    \item \textbf{Hiệu năng lần đối soát đầu tiên}: Khi cache miss, thời gian đối soát CV thực đo trung bình là 41,9 giây và lớn nhất là 55,1 giây (đạt mục tiêu dưới 60 giây của NFR-02). Tuy nhiên, con số này vẫn tương đối cao ở góc độ trải nghiệm người dùng. Nguyên nhân chủ yếu là độ trễ của Gemini API bên ngoài và chi phí tính vector trên máy chủ 2 vCPU không GPU. Hai endpoint thống kê kỹ năng của Dashboard (\texttt{in-demand}, \texttt{rising}) cũng chậm hơn các endpoint còn lại do truy vấn tổng hợp trên bảng liên kết lớn, cần tối ưu bằng chỉ mục bổ sung hoặc materialized view.
 
     \item \textbf{Sự phụ thuộc vào chất lượng dữ liệu thô}: Kết quả trích xuất kỹ năng có thể bị ảnh hưởng nếu tệp CV của ứng viên được trình bày quá cẩu thả, ảnh quét có độ phân giải kém hoặc sử dụng các định dạng thiết kế cột phức tạp mà tầng OCR không đọc đúng thứ tự dòng.
 

@@ -1,63 +1,27 @@
 \chapter{Giới thiệu}
 \label{Chapter1}
 
+Chương này trình bày bối cảnh, vấn đề và động lực xây dựng hệ thống CareerNova nhằm hỗ trợ sinh viên CNTT phân tích dữ liệu tuyển dụng và tự đánh giá năng lực. Trên cơ sở đó, chương xác định mục tiêu, phạm vi, đối tượng nghiên cứu và phương pháp tiếp cận của đề tài.
+
 \section{Bối cảnh và Lý do chọn đề tài}
 
-Trong kỷ nguyên số hóa, dữ liệu tuyển dụng trực tuyến ngày càng phong phú nhưng thường tồn tại dưới dạng rời rạc và không nhất quán, gây khó khăn cho sinh viên trong việc theo dõi và phân tích thực trạng thị trường lao động. Các nền tảng tuyển dụng hiện nay chủ yếu tập trung vào việc đăng tin và tìm kiếm ứng viên, trong khi khả năng tổng hợp và phân tích dữ liệu nhằm hỗ trợ người học đối chiếu năng lực cá nhân với yêu cầu thị trường vẫn còn nhiều hạn chế. 
-
-\begin{itemize}
-    \item Sự phát triển nhanh chóng của các nền tảng tuyển dụng trực tuyến (LinkedIn, VietnamWorks, CareerViet, ITViec, v.v.) tạo ra khối lượng dữ liệu lớn chưa từng có.
-    \item Nhu cầu cấp thiết về việc chuẩn hóa và phân tích dữ liệu việc làm từ nhiều nguồn khác nhau.
-    \item Khó khăn trong việc kết nối hiệu quả giữa các nhu cầu nhân sự của doanh nghiệp và những kỹ năng thực tế của ứng viên.
-\end{itemize}
-
-Do đó, việc xây dựng một hệ thống thông minh có khả năng khai phá, chuẩn hóa và phân tích dữ liệu tuyển dụng từ nhiều nguồn trở thành một nhu cầu cấp thiết, giúp sinh viên ngành Công nghệ Thông tin (IT) năm cuối định hình và bù đắp khoảng cách năng lực trước khi bước vào thị trường lao động.
+Trong kỷ nguyên số hóa, dữ liệu tuyển dụng trực tuyến ngày càng phong phú nhưng thường tồn tại dưới dạng rời rạc và không nhất quán, gây khó khăn cho sinh viên trong việc theo dõi và phân tích thực trạng thị trường lao động. Sự phát triển của các nền tảng như LinkedIn, VietnamWorks, CareerViet và ITviec tạo ra lượng dữ liệu lớn, song cũng đặt ra nhu cầu chuẩn hóa và phân tích thông tin từ nhiều nguồn. Các nền tảng này chủ yếu phục vụ đăng tin và tìm kiếm ứng viên, trong khi việc kết nối có hệ thống giữa yêu cầu nhân sự và kỹ năng thực tế của sinh viên vẫn còn hạn chế. Do đó, một hệ thống có khả năng khai phá, chuẩn hóa và phân tích dữ liệu tuyển dụng sẽ giúp sinh viên CNTT năm cuối định hình và bù đắp khoảng cách năng lực trước khi bước vào thị trường lao động.
 
 \section{Phát biểu bài toán}
 
-Bài toán cốt lõi mà luận văn giải quyết là sự thiếu hụt một công cụ đánh giá năng lực định lượng và chuẩn hóa ngữ nghĩa chuyên sâu cho thị trường lao động CNTT tại Việt Nam. Cụ thể, các thách thức kỹ thuật bao gồm:
-
-\begin{itemize}
-    \item \textbf{Tính không đồng nhất}: Các nền tảng khác nhau sử dụng các định dạng, cấu trúc dữ liệu khác nhau để lưu trữ thông tin công việc.
-    \item \textbf{Dữ liệu trùng lặp}: Một công việc có thể được đăng trên nhiều nền tảng tuyển dụng khác nhau, dẫn đến sự trùng lặp dữ liệu thô.
-    \item \textbf{Dữ liệu không đầy đủ}: Thông tin công việc trên các trang Web có thể thiếu những trường quan trọng hoặc không được chuẩn hóa.
-    \item \textbf{Khó khăn trong trích xuất thông tin}: Thông tin kỹ năng, yêu cầu công việc thường nhúng trong mô tả công việc (Job Description --- JD) dạng văn bản tự do, gây khó khăn cho việc trích xuất tự động.
-\end{itemize}
+Bài toán cốt lõi mà luận văn giải quyết là sự thiếu hụt một công cụ đánh giá năng lực định lượng và chuẩn hóa ngữ nghĩa chuyên sâu cho thị trường lao động CNTT tại Việt Nam. Dữ liệu từ các nền tảng khác nhau có định dạng và cấu trúc không đồng nhất; cùng một công việc có thể xuất hiện lặp lại ở nhiều nguồn, trong khi một số trường thông tin lại thiếu hoặc chưa được chuẩn hóa. Đặc biệt, yêu cầu kỹ năng thường nằm trong mô tả công việc (Job Description --- JD) dạng văn bản tự do, làm cho việc trích xuất tự động trở nên khó khăn.
 
 \subsection{Vấn đề chuẩn hóa thực thể và đánh giá khoảng cách năng lực ứng viên}
 
-Ngay cả khi dữ liệu được thu thập, vấn đề tiếp theo là chuẩn hóa các thực thể (như kỹ năng, vị trí công việc, công ty, v.v.) và so sánh chúng một cách có ý nghĩa:
-
-\begin{itemize}
-    \item \textbf{Chuẩn hóa kỹ năng}: Cùng một kỹ năng có thể được gọi bằng nhiều tên hoặc biến thể viết tắt khác nhau (ví dụ: ``Python Programming'', ``Python Development'', ``Python Coding'').
-    \item \textbf{Hiểu biết ngữ nghĩa}: Cần hiểu được các mối quan hệ tương đồng hoặc tương đương ngữ nghĩa (ví dụ: ``Machine Learning'' có liên quan mật thiết đến ``Data Science'' hoặc ``Artificial Intelligence'').
-    \item \textbf{Đánh giá khoảng cách}: Cần một phương pháp tính toán định lượng khách quan để so sánh tập kỹ năng yêu cầu của công việc với tập kỹ năng hiện có trên hồ sơ ứng viên (CV), từ đó đưa ra báo cáo chi tiết.
-\end{itemize}
+Ngay cả khi dữ liệu được thu thập, hệ thống cần chuẩn hóa các thực thể như kỹ năng, vị trí công việc và công ty trước khi có thể so sánh chúng. Một kỹ năng có thể được diễn đạt bằng nhiều biến thể, chẳng hạn ``Python Programming'', ``Python Development'' hoặc ``Python Coding'', và các kỹ năng còn có thể tương đồng hoặc liên quan về ngữ nghĩa. Vì vậy, cần một phương pháp định lượng có khả năng đối chiếu tập kỹ năng yêu cầu với tập kỹ năng trong CV để tạo báo cáo khoảng cách có ý nghĩa cho ứng viên.
 
 \section{Khảo sát các giải pháp hiện tại và Hạn chế}
 
-Trong các nghiên cứu và ứng dụng thực tiễn, bài toán kết nối hồ sơ năng lực với yêu cầu tuyển dụng đã được giải quyết qua một số thế hệ công nghệ chính:
-
-\begin{itemize}
-    \item \textbf{Hệ thống ATS truyền thống (Rule-based \& Keyword Matching)}: Hoạt động dựa trên việc so khớp từ khóa chính xác thông qua các biểu thức chính quy (Regex). 
-    \\* \textit{Hạn chế}: Hoàn toàn bỏ sót các từ đồng nghĩa hoặc các kỹ năng tương đương ngữ nghĩa (như không nhận diện được ``Git'' liên quan đến ``Version Control''), đồng thời dễ bị gian lận bằng kỹ thuật nhồi từ khóa (keyword stuffing) trong CV.
-    
-    \item \textbf{Giải pháp học máy truyền thống}: Sử dụng mô hình túi từ (Bag of Words) hoặc các biểu diễn vector thưa như TF-IDF tĩnh từ từ vựng để tính toán độ tương đồng.
-    \\* \textit{Hạn chế}: Bỏ qua trật tự từ và ngữ cảnh câu văn, dẫn đến hiệu quả so khớp thấp đối với các cụm từ kỹ năng phức tạp.
-    
-    \item \textbf{Giải pháp sử dụng mô hình ngôn ngữ lớn (LLM API) thuần túy}: Sử dụng các API thương mại của các mô hình ngôn ngữ lớn để đọc hiểu và đánh giá trực tiếp hồ sơ ứng viên.
-    \\* \textit{Hạn chế}: Chi phí gọi API rất cao khi xử lý hàng loạt, độ trễ phản hồi (latency) lớn (vài giây), không thể đáp ứng nhu cầu tìm kiếm, phân tích dữ liệu lớn và trực quan hóa thời gian thực trên giao diện người dùng.
-\end{itemize}
+Trong các nghiên cứu và ứng dụng thực tiễn, hệ thống ATS truyền thống thường đối soát từ khóa bằng biểu thức chính quy. Cách làm này dễ bỏ sót từ đồng nghĩa hoặc kỹ năng tương đương, chẳng hạn quan hệ giữa ``Git'' và ``Version Control'', đồng thời có thể bị ảnh hưởng bởi hiện tượng nhồi từ khóa trong CV. Các giải pháp học máy sử dụng Bag of Words hoặc TF-IDF tĩnh cải thiện khả năng biểu diễn văn bản nhưng vẫn hạn chế khi xử lý trật tự từ và ngữ cảnh của các cụm kỹ năng phức tạp. Ngược lại, việc dùng LLM API thuần túy có khả năng đọc hiểu ngữ cảnh tốt hơn nhưng tạo ra chi phí và độ trễ đáng kể khi phải xử lý hàng loạt, nên chưa phù hợp với yêu cầu tìm kiếm, phân tích và trực quan hóa gần thời gian thực.
 
 \section{Giải pháp đề xuất và Cách tiếp cận}
 
-Để giải quyết triệt để các hạn chế nêu trên, đề tài đề xuất hệ thống \textit{CareerNova} --- một nền tảng thông minh áp dụng mô hình lai kết hợp giữa sức mạnh hiểu ngữ cảnh của Generative AI và tốc độ của mô hình biểu diễn ngữ nghĩa cục bộ:
-
-\begin{itemize}
-    \item \textbf{Khâu tiền xử lý và cấu trúc hóa dữ liệu (ETL Pipeline)}: Hệ thống tích hợp thư viện cào dữ liệu để thu thập tin tuyển dụng. Ở tầng biến đổi, hệ thống gọi mô hình ngôn ngữ lớn Gemini API thông qua cấu hình Pydantic Schema (Structured Outputs) để bóc tách thông tin thô thành các trường dữ liệu JSON cấu trúc. Để loại bỏ hiện tượng ảo giác (hallucination) của LLM, cơ chế hậu kiểm dựa trên bằng chứng (evidence-based validation) được triển khai để kiểm chứng thực thể kỹ năng.
-    
-    \item \textbf{Khâu so khớp và phân tích khoảng cách năng lực (Matching Engine)}: Sử dụng mô hình Sentence-BERT cục bộ (\texttt{all-MiniLM-L6-v2}) để chuyển đổi các thực thể kỹ năng chuẩn hóa thành vector nhúng 384 chiều, kết hợp thư viện FAISS của Meta để lập chỉ mục ngữ nghĩa và tìm kiếm siêu tốc. Thuật toán so khớp áp dụng công thức tính điểm tương đồng Cosine có trọng số TF-IDF động (Inverse Document Frequency được tính toán thực tế từ cơ sở dữ liệu thị trường Việt Nam) để đảm bảo các kỹ năng khan hiếm có tiếng nói quyết định hơn các kỹ năng đại trà.
-\end{itemize}
+Để giải quyết các hạn chế trên, đề tài đề xuất hệ thống \textit{CareerNova}, áp dụng mô hình lai giữa khả năng hiểu ngữ cảnh của Generative AI và tốc độ của mô hình biểu diễn ngữ nghĩa cục bộ. Ở tầng ETL, hệ thống thu thập tin tuyển dụng, dùng Gemini API với Pydantic Schema và \textit{Structured Outputs} để chuyển dữ liệu thô thành JSON có cấu trúc, rồi hậu kiểm từng thực thể kỹ năng bằng bằng chứng xuất hiện trong văn bản gốc. Ở tầng Matching Engine, các kỹ năng đã chuẩn hóa được mã hóa bằng Sentence-BERT cục bộ (\texttt{all-MiniLM-L6-v2}), lập chỉ mục bằng FAISS và so khớp bằng Cosine Similarity có trọng số TF-IDF động tính từ dữ liệu thị trường Việt Nam.
 
 \section{Mục tiêu và Đối tượng nghiên cứu}
 
@@ -75,46 +39,16 @@ Trong các nghiên cứu và ứng dụng thực tiễn, bài toán kết nối 
 
 \subsection{Phạm vi của đề tài}
 
-Đề tài ứng dụng tập trung trực quan hóa nhu cầu tuyển dụng và tự đánh giá kỹ năng. Phạm vi được cụ thể hóa như sau:
-
-\begin{itemize}
-    \item Dữ liệu bài đăng tuyển dụng từ 4 nền tảng Web: LinkedIn, VietnamWorks, CareerViet, ITViec.
-    \item Hồ sơ xin việc (CV) của ứng viên là sinh viên ngành IT năm cuối.
-    \item Thông tin yêu cầu kỹ năng của các tin tuyển dụng.
-\end{itemize}
-
-\textbf{Phạm vi nghiên cứu}:
-\begin{itemize}
-    \item Tập trung vào các bài đăng tuyển dụng lĩnh vực Công nghệ Thông tin (IT).
-    \item Khoảng thời gian dữ liệu: Năm 2025--2026.
-    \item Phạm vi địa lý: Chủ yếu tập trung vào thị trường Việt Nam.
-\end{itemize}
+Đề tài ứng dụng tập trung trực quan hóa nhu cầu tuyển dụng và tự đánh giá kỹ năng. Đầu vào gồm các bài đăng tuyển dụng từ LinkedIn, VietnamWorks, CareerViet và ITviec, cùng CV của sinh viên CNTT năm cuối và thông tin yêu cầu kỹ năng trong các tin đăng. Phạm vi nghiên cứu giới hạn ở các vị trí CNTT trên thị trường Việt Nam, với dữ liệu trong giai đoạn 2025--2026.
 
 \section{Ý nghĩa khoa học và thực tiễn (Đóng góp của đề tài)}
 
-\textbf{Ý nghĩa khoa học (Đóng góp về phương pháp \& dữ liệu):}
-\begin{itemize}
-    \item Thiết lập một quy trình ETL lai tối ưu: Kết hợp trích xuất thực thể bằng Generative AI (chống ảo giác bằng hậu kiểm) và so khớp ngữ nghĩa bằng SBERT cục bộ cùng chỉ mục FAISS, giải quyết đồng thời ba yếu tố: độ chính xác ngữ nghĩa, chi phí vận hành và tốc độ phản hồi thời gian thực.
-    \item Xây dựng tập dữ liệu thị trường việc làm ngành IT tại Việt Nam với quy mô 6.872 tin tuyển dụng sạch được xử lý và lưu trữ trong cơ sở dữ liệu hệ thống, chủ yếu thu thập trong năm 2026.
-    \item Xây dựng bộ dữ liệu đối soát chuẩn (Ground Truth) gồm 100 tài liệu ngẫu nhiên (50 CV, 50 JD) được gán nhãn thực tế bởi nhóm thực hiện đề tài để phục vụ kiểm chứng thực tế.
-\end{itemize}
+Về phương pháp và dữ liệu, đề tài thiết lập quy trình ETL lai kết hợp trích xuất thực thể bằng Generative AI có hậu kiểm với so khớp ngữ nghĩa bằng SBERT cục bộ và chỉ mục FAISS. Cách tiếp cận này hướng đến cân bằng độ chính xác ngữ nghĩa, chi phí vận hành và tốc độ phản hồi. Hệ thống đồng thời xây dựng tập dữ liệu 7.245 tin tuyển dụng CNTT sạch, chủ yếu thu thập trong năm 2026, cùng bộ đối soát gồm 100 tài liệu được gán nhãn thủ công (50 CV và 50 JD) để kiểm chứng thực nghiệm.
 
-\textbf{Ý nghĩa thực tiễn (Đóng góp ứng dụng):}
-\begin{itemize}
-    \item \textbf{Cho sinh viên IT năm cuối (Ứng viên)}: Giúp sinh viên tự đánh giá mức độ tương thích của bản thân với nhu cầu tuyển dụng thực tế của thị trường năm 2026. Biểu đồ trực quan (Radar chart) và Báo cáo khoảng cách kỹ năng (Gap report) giúp sinh viên nhận diện rõ các kỹ năng còn thiếu, định hướng học tập và bổ sung kịp thời để đáp ứng tiêu chuẩn tuyển dụng. Đồng thời hỗ trợ sinh viên định hình bức tranh toàn cảnh về thị trường việc làm IT thông qua các bảng thống kê trực quan (dashboard).
-    \item \textbf{Cho nhà tuyển dụng}: Cung cấp cái nhìn sâu sắc về nhu cầu kỹ năng thực tế, hỗ trợ quá trình sàng lọc hồ sơ ứng viên dựa trên độ đo tương đồng ngữ nghĩa chính xác hơn.
-    \item \textbf{Cho cơ sở đào tạo}: Dữ liệu phân tích từ hệ thống có thể giúp các khoa chuyên ngành tham khảo để điều chỉnh chương trình đào tạo sát hơn với nhu cầu thực tiễn của doanh nghiệp.
-\end{itemize}
+Về ứng dụng, CareerNova giúp sinh viên CNTT năm cuối đối chiếu năng lực với nhu cầu tuyển dụng thông qua biểu đồ Radar, báo cáo khoảng cách kỹ năng và Dashboard thị trường. Kết quả phân tích cũng có thể cung cấp thêm góc nhìn cho nhà tuyển dụng khi sàng lọc hồ sơ, cũng như cho cơ sở đào tạo khi tham khảo nhu cầu kỹ năng thực tế để cập nhật chương trình học.
 
 \section{Cấu trúc cuốn luận văn}
 
-Ngoài chương Giới thiệu này, luận văn gồm 5 chương chính:
-\begin{itemize}
-    \item \textbf{Chương 2 - Cơ sở lý thuyết và Công nghệ}: Trình bày các khái niệm cơ bản về quy trình khai phá dữ liệu, nguyên lý trực quan hóa, và nền tảng các mô hình AI (LLM, SBERT) ứng dụng trong chuẩn hóa và đối soát.
-    \item \textbf{Chương 3 - Phân tích và Thiết kế hệ thống}: Trình bày chi tiết phân tích yêu cầu, thiết kế kiến trúc, sơ đồ cơ sở dữ liệu, và quy trình xử lý luồng dữ liệu (ETL pipeline).
-    \item \textbf{Chương 4 - Xây dựng hệ thống}: Đặc tả các khía cạnh kỹ thuật trong quá trình hiện thực hóa hệ thống, bao gồm thuật toán làm sạch, kỹ thuật Prompting, và logic tính toán độ tương đồng (Cosine Similarity).
-    \item \textbf{Chương 5 - Kiểm thử và Đánh giá}: Đánh giá định lượng hiệu suất hệ thống, chất lượng dữ liệu, và kết quả kiểm thử trên các kịch bản sử dụng (Test Matrix).
-    \item \textbf{Chương 6 - Kết luận}: Tổng kết kết quả, bài học kinh nghiệm và định hướng phát triển tương lai.
-\end{itemize}
+Ngoài chương Giới thiệu này, Chương 2 trình bày các hệ thống, công nghệ và nền tảng lý thuyết liên quan; Chương 3 phân tích yêu cầu và thiết kế kiến trúc, cơ sở dữ liệu, giao diện cùng luồng ETL; Chương 4 mô tả quá trình hiện thực hóa các phân hệ và thuật toán; Chương 5 kiểm thử, đo hiệu năng và đánh giá kết quả; còn Chương 6 tổng kết các kết quả, hạn chế và định hướng phát triển.
 
 Các phần phụ trợ bao gồm: Danh mục chữ viết tắt, Danh sách hình vẽ, Danh sách bảng biểu, Tóm tắt khóa luận (Abstract) và Danh sách tài liệu tham khảo.

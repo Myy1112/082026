@@ -1,10 +1,73 @@
 \chapter{Cơ sở lý thuyết và công nghệ}
 
+Chương này tổng hợp các nghiên cứu liên quan, các nguyên lý thu thập và xử lý dữ liệu tuyển dụng, cùng các công nghệ phục vụ hệ thống CareerNova. Những cơ sở này được dùng để lý giải lựa chọn kiến trúc ETL, mô hình ngôn ngữ lớn, biểu diễn ngữ nghĩa và trực quan hóa dữ liệu trong các chương sau.
+
 \section{Các nghiên cứu và hệ thống liên quan}
 
 \subsection{Tổng quan về các nền tảng tuyển dụng và hệ thống gợi ý hiện tại}
 
 Trên thị trường hiện nay, có nhiều nền tảng tuyển dụng lớn đang hoạt động như LinkedIn, TopCV, VietnamWorks, hay Indeed. Hầu hết các hệ thống này tập trung vào chức năng đăng tải thông tin việc làm và cung cấp bộ lọc tìm kiếm cơ bản dựa trên chức danh, địa điểm và một số kỹ năng cốt lõi. Trong những năm gần đây, một số hệ thống đã bắt đầu tích hợp các thuật toán học máy cơ bản để gợi ý công việc cho ứng viên dựa trên từ khóa có trong hồ sơ (Resume/CV Matching) \cite{li2020competence}.
+
+Để xác định vị trí của CareerNova trong bối cảnh các sản phẩm đang được sử dụng, Bảng~\ref{tab:related_platforms} đối chiếu các tính năng xoay quanh hai chức năng chính của đề tài: phân tích dữ liệu tuyển dụng và đối soát năng lực từ CV. Việc đối chiếu dựa trên các chức năng công khai được khảo sát trên LinkedIn, TopCV, ITviec và Glints \cite{linkedinjobs,topcv,itviec,glints}; ký hiệu $\bullet$ thể hiện hỗ trợ toàn diện hoặc tự động, $\circleddash$ thể hiện hỗ trợ một phần hoặc cần thao tác thủ công, còn $\circ$ thể hiện không xác định được chức năng tương ứng trong phạm vi khảo sát. Bảng này nhằm làm rõ phạm vi thiết kế, không dùng để xếp hạng chất lượng hay đánh giá thương mại các nền tảng.
+
+\newcommand{\supportfull}{\(\bullet\)}
+\newcommand{\supportpartial}{\(\circleddash\)}
+\newcommand{\supportnone}{\(\circ\)}
+
+\begin{landscape}
+\footnotesize
+\begin{spacing}{1.0}
+\begin{longtable}{|L{2.6cm}|L{6.3cm}|C{1.7cm}|C{1.7cm}|C{1.7cm}|C{1.7cm}|C{1.7cm}|}
+\caption{Ma trận so sánh tính năng của các hệ thống liên quan.}
+\label{tab:related_platforms} \\
+\hline
+\textbf{Nhóm chức năng cốt lõi} & \textbf{Tiêu chí đánh giá chi tiết} & \scalebox{0.82}{\textbf{LinkedIn}} & \textbf{TopCV} & \textbf{ITviec} & \textbf{Glints} & \textbf{\shortstack{Career\\Nova}} \\
+\hline
+\endfirsthead
+\hline
+\textbf{Nhóm chức năng cốt lõi} & \textbf{Tiêu chí đánh giá chi tiết} & \scalebox{0.82}{\textbf{LinkedIn}} & \textbf{TopCV} & \textbf{ITviec} & \textbf{Glints} & \textbf{\shortstack{Career\\Nova}} \\
+\hline
+\endhead
+\hline
+\endfoot
+\multicolumn{7}{|l|}{\textbf{1. Phân tích dữ liệu thị trường}} \\
+\hline
+& Tự động thu thập dữ liệu tuyển dụng đa nguồn & \supportnone & \supportnone & \supportnone & \supportnone & \supportfull \\
+\hline
+& Trích xuất kỹ năng ẩn và biến thể đồng nghĩa bằng LLM & \supportnone & \supportnone & \supportnone & \supportnone & \supportfull \\
+\hline
+& Chuẩn hóa kỹ năng theo từ điển Lightcast/O*NET & \supportpartial & \supportnone & \supportnone & \supportnone & \supportfull \\
+\hline
+\multicolumn{7}{|l|}{\textbf{2. Phân tích và bóc tách CV}} \\
+\hline
+& Lưu trữ và tải CV & \supportfull & \supportfull & \supportfull & \supportfull & \supportfull \\
+\hline
+& Bóc tách thông tin kỹ năng từ CV bằng quy tắc hoặc từ khóa & \supportpartial & \supportfull & \supportpartial & \supportpartial & \supportfull \\
+\hline
+& Phân tích ngữ cảnh và trích xuất kỹ năng bằng LLM & \supportnone & \supportnone & \supportnone & \supportnone & \supportfull \\
+\hline
+\multicolumn{7}{|l|}{\textbf{3. Đối soát năng lực}} \\
+\hline
+& Chấm điểm phù hợp dựa trên từ khóa & \supportpartial & \supportfull & \supportnone & \supportpartial & \supportnone \\
+\hline
+& Chấm điểm tương đồng ngữ nghĩa bằng vector nhúng & \supportpartial & \supportnone & \supportnone & \supportnone & \supportfull \\
+\hline
+& Tính trọng số kỹ năng theo TF-IDF động từ dữ liệu thị trường & \supportnone & \supportnone & \supportnone & \supportnone & \supportfull \\
+\hline
+& Định lượng khoảng cách kỹ năng bằng Cosine Similarity & \supportnone & \supportnone & \supportnone & \supportnone & \supportfull \\
+\hline
+\multicolumn{7}{|l|}{\textbf{4. Trực quan hóa và định hướng}} \\
+\hline
+& Biểu đồ xu hướng kỹ năng của thị trường & \supportnone & \supportnone & \supportnone & \supportnone & \supportfull \\
+\hline
+& Biểu đồ Radar đối chiếu năng lực với yêu cầu thị trường & \supportnone & \supportnone & \supportnone & \supportnone & \supportfull \\
+\hline
+& Gap Report phân nhóm kỹ năng cần bổ sung & \supportnone & \supportnone & \supportnone & \supportnone & \supportfull \\
+\hline
+\end{longtable}
+\end{spacing}
+\normalsize
+\end{landscape}
 
 Tuy nhiên, phần lớn các thuật toán đối soát trên các nền tảng này vẫn vận hành dựa trên cơ chế So khớp từ khóa chính xác (Exact Keyword Matching) hoặc các mô hình Boolean truyền thống. Phương pháp này yêu cầu CV của ứng viên phải chứa chính xác các chuỗi ký tự được định nghĩa trong mô tả công việc (Job Description - JD). Điều này bộc lộ nhiều hạn chế nghiêm trọng trong thực tế:
 
@@ -16,7 +79,7 @@ Tuy nhiên, phần lớn các thuật toán đối soát trên các nền tảng
 
 \subsection{Khoảng trống nghiên cứu và Giải pháp đề xuất}
 
-Qua phân tích các nghiên cứu và hệ thống hiện có, luận văn nhận thấy tồn tại một \textbf{khoảng trống nghiên cứu (Research Gap)} rõ rệt: Chưa có một giải pháp toàn diện nào kết hợp khả năng thu thập dữ liệu thị trường tự động, chuẩn hóa dữ liệu bằng trí tuệ nhân tạo tạo sinh, và đánh giá định lượng khoảng cách năng lực dựa trên ngữ nghĩa chuyên sâu dành riêng cho sinh viên ngành CNTT tại Việt Nam.
+Từ Bảng~\ref{tab:related_platforms} và các nghiên cứu đã khảo sát, luận văn xác định khoảng trống ở việc kết hợp thu thập dữ liệu thị trường tự động, chuẩn hóa dữ liệu bằng trí tuệ nhân tạo tạo sinh và đánh giá định lượng khoảng cách năng lực dựa trên ngữ nghĩa cho sinh viên CNTT tại Việt Nam. Đây là khoảng trống về phạm vi mục tiêu của đề tài, không phải khẳng định rằng các nền tảng thương mại không cung cấp các tính năng hỗ trợ nghề nghiệp khác.
 
 Để lấp đầy khoảng trống này, hệ thống \textit{CareerNova} được đề xuất với một cách tiếp cận hoàn toàn mới:
 \begin{enumerate}

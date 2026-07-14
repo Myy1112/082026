@@ -1,6 +1,8 @@
 \chapter{Kiểm thử và Đánh giá}
 \label{Chapter5}
 
+Chương này mô tả môi trường, phương pháp và các kịch bản kiểm thử dùng để đánh giá CareerNova sau khi triển khai. Các kết quả về chức năng, hiệu năng và chất lượng thuật toán được phân tích nhằm đối chiếu với những yêu cầu đã xác định.
+
 \section{Môi trường triển khai thử nghiệm hệ thống}
 
 Để tiến hành thử nghiệm và đánh giá hệ thống CareerNova, phiên bản thử nghiệm được triển khai trên một Droplet của DigitalOcean tại khu vực Singapore (SGP1). Môi trường được triển khai theo kiến trúc container hóa; các dịch vụ giao tiếp nội bộ trên mạng Docker riêng, còn lưu lượng HTTP/HTTPS từ Internet được tiếp nhận qua lớp proxy.
@@ -26,7 +28,14 @@
     \end{itemize}
 \end{itemize}
 
-\subsection{Phương pháp và phạm vi đánh giá}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.72\textwidth]{server_specs_terminal.png}
+    \caption{Bằng chứng thô của môi trường triển khai: kết quả các lệnh \texttt{lsb\_release}, \texttt{free -h}, \texttt{df -h} và \texttt{lscpu} thực thi trực tiếp trên máy chủ \texttt{nova-vps}}
+    \label{fig:server_specs}
+\end{figure}
+
+Hình~\ref{fig:server_specs} chứng minh cấu hình phần cứng và hệ điều hành nêu trên là thông số thực tế của máy chủ đang vận hành chứ không phải giá trị khai báo: hệ điều hành Ubuntu 22.04.5 LTS, 2 vCPU, 7,8~GiB RAM và ổ đĩa 155~GB (trên tổng dung lượng Droplet 160~GB). Đây là mốc cấu hình dùng để diễn giải mọi số liệu hiệu năng ở Mục 5.3 --- đặc biệt là chi phí tính vector nhúng khá cao do máy chủ chỉ có 2 nhân xử lý và không trang bị GPU.
 
 Việc đánh giá được tổ chức theo ba lớp độc lập để tránh suy diễn từ một loại bằng chứng sang loại kết luận khác. Kiểm thử chức năng trả lời hệ thống có thực hiện đúng hành vi đã đặc tả hay không; đo hiệu năng phản ánh độ trễ thực tế trên môi trường triển khai; còn đánh giá thuật toán xem xét chất lượng đầu ra so với nhãn chuẩn hoặc các trường hợp đối soát. Các số liệu đều được gắn với thời điểm đo và cấu hình ở Mục 5.1 để bảo đảm có thể lặp lại.
 
@@ -137,49 +146,105 @@ TC-11 & Lưu và hủy lưu việc làm & Danh sách đã lưu cập nhật đú
 
 Theo Bảng~\ref{tab:test_results}, toàn bộ \textbf{11/11 kịch bản đạt (100\%)}, xác nhận các chức năng cốt lõi vận hành đúng đặc tả trên môi trường triển khai thật. Đáng chú ý, hai ca có rủi ro cao nhất đều vượt qua: TC-06 chứng minh tầng kiểm tra dữ liệu đầu vào từ chối đúng các tệp sai định dạng hoặc vượt 5 MB mà không để lọt dữ liệu rác vào hệ thống lưu trữ, và TC-08 xác nhận chuỗi xử lý AI nhiều bước (trích xuất --- chuẩn hóa --- so khớp) trả về kết quả nhất quán từ đầu đến cuối. Kiểm thử chức năng vì vậy chỉ trả lời câu hỏi ``hệ thống có chạy đúng hay không''; các khía cạnh định lượng về tốc độ và độ chính xác được đo riêng tại Mục 5.3 và 5.4.
 
+Hình~\ref{fig:test_cv_matching} và Hình~\ref{fig:test_market_dashboard} cung cấp bằng chứng trực quan cho hai luồng có nhiều thành phần nhất trong ma trận. Ảnh chụp được dùng để xác nhận sự hiện diện và cách hiển thị của kết quả; các số liệu biến động theo thời gian (số tin tuyển dụng, điểm khớp và danh sách kỹ năng) được diễn giải theo snapshot tại thời điểm kiểm thử, không được coi là hằng số của hệ thống.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.94\textwidth,height=0.72\textheight,keepaspectratio]{ui_cv_matching_radar.png}
+    \caption{Bằng chứng thực thi TC-08: màn hình kết quả đối soát CV hiển thị nhóm kỹ năng, các kỹ năng cần bổ sung và biểu đồ radar so sánh với yêu cầu}
+    \label{fig:test_cv_matching}
+\end{figure}
+
+Hình~\ref{fig:test_cv_matching} chứng minh chuỗi xử lý AI đối soát vận hành đúng đầu--cuối: hệ thống không chỉ trả về một điểm tương thích tổng hợp mà còn phân rã được thành nhóm kỹ năng đã đạt, nhóm kỹ năng cần bổ sung và biểu đồ radar so sánh trực quan với yêu cầu công việc. Điều này khẳng định đầu ra của Matching Engine có cấu trúc rõ ràng và có thể diễn giải được cho người dùng, thay vì chỉ là một con số đơn lẻ.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.94\textwidth,height=0.72\textheight,keepaspectratio]{ui_market_dashboard.png}
+    \caption{Bằng chứng thực thi TC-09: Dashboard hiển thị các chỉ số tổng quan, biểu đồ xu hướng và phân bố nhóm kỹ năng}
+    \label{fig:test_market_dashboard}
+\end{figure}
+
+Hình~\ref{fig:test_market_dashboard} chứng minh tầng trực quan hóa tổng hợp và hiển thị đúng dữ liệu thị trường theo bộ lọc người dùng chọn: các chỉ số tổng quan, biểu đồ xu hướng tuyển dụng và phân bố nhóm kỹ năng được kết xuất đồng thời trên cùng một màn hình. Kết quả này xác nhận sáu API Dashboard trả về dữ liệu hợp lệ và tầng Frontend ghép nối chính xác thành một bức tranh thị trường có ý nghĩa hỗ trợ ra quyết định.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.94\textwidth,trim=0 100 0 0,clip]{test_cv_upload_rejected.png}
+    \caption{Bằng chứng thực thi TC-06: hệ thống từ chối tệp CV có dung lượng 6 MB và thông báo giới hạn tối đa 5 MB}
+    \label{fig:test_cv_upload_rejected}
+\end{figure}
+
+Hình~\ref{fig:test_cv_upload_rejected} chứng minh tầng kiểm tra dữ liệu đầu vào chặn đúng tại biên: tệp vượt quá 5~MB bị từ chối kèm thông báo giới hạn rõ ràng và không được ghi vào kho lưu trữ. Đây là bằng chứng cho thấy hệ thống bảo vệ được tính toàn vẹn của dữ liệu, ngăn tệp rác hoặc quá khổ đi vào pipeline xử lý phía sau.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.94\textwidth,trim=0 100 0 0,clip]{test_job_search.png}
+    \caption{Bằng chứng thực thi TC-10: kết quả được lọc theo từ khóa ``business analyst'' và hiển thị các tin phù hợp}
+    \label{fig:test_job_search}
+\end{figure}
+
+Hình~\ref{fig:test_job_search} chứng minh chức năng tìm kiếm áp đúng tiêu chí lọc trên tập dữ liệu thực: với từ khóa ``business analyst'', danh sách trả về chỉ gồm các tin phù hợp với truy vấn. Điều này xác nhận truy vấn lọc phía Backend hoạt động chính xác, giúp người dùng thu hẹp đúng phạm vi việc làm quan tâm.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.94\textwidth,trim=0 100 0 0,clip]{test_saved_job.png}
+    \caption{Bằng chứng thực thi TC-11: hồ sơ người dùng hiển thị tin tuyển dụng đã được lưu trong danh sách cá nhân}
+    \label{fig:test_saved_job}
+\end{figure}
+
+Hình~\ref{fig:test_saved_job} chứng minh luồng lưu trạng thái cá nhân hóa hoạt động bền vững: tin được lưu xuất hiện đúng trong danh sách ``Cơ hội đã lưu'' gắn với tài khoản người dùng. Bằng chứng này khẳng định thao tác ghi và truy xuất dữ liệu theo từng người dùng diễn ra chính xác, làm nền tảng cho các tính năng cá nhân hóa của hệ thống.
+
 \section{Đánh giá hiệu năng và dữ liệu thực tế}
 
 \subsection{Đánh giá khả năng trực quan hóa và hiển thị dữ liệu trên Dashboard}
 
-Số lượng dữ liệu tuyển dụng thực tế trong cơ sở dữ liệu liên tục biến động theo lịch đồng bộ từ các nguồn Crawler. Do đó, để đánh giá khả năng tổng hợp và trực quan hóa dữ liệu của giao diện người dùng (UI), báo cáo này sử dụng một ảnh chụp trạng thái (snapshot) hiển thị trên Dashboard tại thời điểm kiểm thử (tháng 07/2026). Các con số trong Bảng~\ref{tab:data_stats} là dữ liệu tổng hợp (aggregated data) được trích xuất từ giao diện nhằm minh họa quy mô xử lý của hệ thống:
+Số lượng dữ liệu tuyển dụng thực tế trong cơ sở dữ liệu liên tục biến động theo lịch đồng bộ từ các nguồn Crawler. Do đó, để phản ánh trung thực quy mô dữ liệu tại một mốc xác định, báo cáo sử dụng một ảnh chụp trạng thái (snapshot) được \textbf{truy vấn trực tiếp từ cơ sở dữ liệu} tại thời điểm kiểm thử (14/07/2026). Các con số trong Bảng~\ref{tab:data_stats} là kết quả đếm chính xác (\texttt{count(*)}) trên các bảng gốc, kèm bằng chứng thô ở Hình~\ref{fig:db_snapshot_psql}:
 
 \begin{table}[H]
-\caption{Số liệu tổng hợp hiển thị trên Dashboard giao diện tại thời điểm kiểm thử (Tháng 07/2026)}
+\caption{Số liệu tổng hợp truy vấn trực tiếp cơ sở dữ liệu tại thời điểm kiểm thử (14/07/2026)}
 \label{tab:data_stats}
 \begin{center}
 \begin{tabular}{|L{6.0cm}|C{3.0cm}|L{5.0cm}|}
 \hline
-\textbf{Chỉ số hiển thị trên giao diện} & \textbf{Giá trị minh họa} & \textbf{Ghi chú} \\
+\textbf{Chỉ số (truy vấn CSDL)} & \textbf{Giá trị} & \textbf{Ghi chú} \\
 \hline
-Tổng số tin đã xử lý thành công & 6.872 & Số liệu tổng hợp minh họa số lượng bản ghi sạch tích lũy từ các nguồn (ITViec, VietnamWorks, v.v.) \\
+Tổng số tin tuyển dụng đã lưu & 7.245 & Số bản ghi sạch tích lũy trong bảng \texttt{jobs} sau khử trùng lặp (nguồn ITViec, VietnamWorks, v.v.) \\
 \hline
-Tin tuyển dụng đang mở & 1.050 & Số tin còn hiệu lực hiển thị trên Dashboard thị trường (bộ lọc 30 ngày) \\
+Tin còn hiệu lực (chưa hết hạn) & 6.278 & Số tin có \texttt{expiry\_time} rỗng hoặc còn trong tương lai \\
 \hline
-Công ty đang tuyển & 716 & Số lượng nhà tuyển dụng tương ứng trên giao diện \\
+Số công ty & 3.511 & Số bản ghi trong bảng \texttt{companies} sau chuẩn hóa và gộp nhóm \\
 \hline
-Vị trí thực tập & 13 & Nhóm cơ hội phù hợp sinh viên được gắn nhãn riêng \\
+Số kỹ năng chuẩn hóa & 6.048 & Số bản ghi trong từ điển kỹ năng master (\texttt{skills}) \\
 \hline
-Nguồn dữ liệu & Cập nhật định kỳ & Dữ liệu hiển thị thay đổi linh hoạt theo mốc thời gian người dùng chọn trên UI \\
+Thời điểm truy vấn & 14/07/2026 & Ảnh chụp trạng thái CSDL tại thời điểm đo (xem Hình~\ref{fig:db_snapshot_psql}) \\
 \hline
 \end{tabular}
 \end{center}
 \end{table}
 
-Sự chênh lệch giữa tổng số tin tích lũy và số tin đang mở trên Dashboard phản ánh đúng đặc thù luồng xử lý của hệ thống: các tin hết hạn nộp hồ sơ vẫn tồn tại trong cơ sở dữ liệu gốc để phục vụ phân tích xu hướng dài hạn (tính trọng số TF-IDF, gợi ý kỹ năng), trong khi tầng Frontend (Dashboard) chỉ truy vấn và trực quan hóa các tin còn hiệu lực dựa trên bộ lọc thời gian. Việc bóc tách rõ ràng giữa dữ liệu thô lưu trữ ở Backend và dữ liệu tổng hợp hiển thị ở Frontend giúp hệ thống duy trì hiệu năng cao khi phản hồi các yêu cầu từ phía người dùng.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{db_snapshot_psql.png}
+    \caption{Bằng chứng thô cho Bảng~\ref{tab:data_stats}: kết quả truy vấn \texttt{count(*)} trực tiếp trên cơ sở dữ liệu production (\texttt{nova-postgres}) tại thời điểm 14/07/2026}
+    \label{fig:db_snapshot_psql}
+\end{figure}
+
+Hình~\ref{fig:db_snapshot_psql} chứng minh các con số quy mô dữ liệu trong Bảng~\ref{tab:data_stats} là kết quả đếm chính xác trực tiếp trên cơ sở dữ liệu tại một thời điểm xác định, không phải giá trị ước lượng hay số liệu tổng hợp lấy từ giao diện. Việc gắn ảnh chụp truy vấn kèm mốc thời gian bảo đảm tính minh bạch và khả năng kiểm chứng của số liệu, phù hợp với đặc thù dữ liệu luôn tăng theo lịch đồng bộ của hệ thống.
+
+Sự chênh lệch giữa tổng số tin tích lũy (7.245) và số tin người dùng nhìn thấy trên Dashboard phản ánh đúng đặc thù luồng xử lý của hệ thống: các tin hết hạn nộp hồ sơ vẫn tồn tại trong cơ sở dữ liệu gốc để phục vụ phân tích xu hướng dài hạn (tính trọng số TF-IDF, gợi ý kỹ năng), trong khi tầng Frontend (Dashboard) chỉ truy vấn và trực quan hóa các tin còn hiệu lực và áp thêm bộ lọc thời gian (mặc định 30 ngày, xem Hình~\ref{fig:test_market_dashboard}). Việc bóc tách rõ ràng giữa dữ liệu thô lưu trữ ở Backend và dữ liệu tổng hợp hiển thị ở Frontend giúp hệ thống duy trì hiệu năng cao khi phản hồi các yêu cầu từ phía người dùng.
 
 \subsection{Đo lường thời gian phản hồi (Response Time) và đánh giá độ trễ}
 
-Để đánh giá thời gian phản hồi một cách nhất quán và dễ lặp lại, hệ thống được kiểm thử theo 5 lượt cho mỗi API đại diện trên môi trường triển khai thật. Thời gian được lấy từ trường \textit{Duration} của yêu cầu trong tab \textit{Network} của trình duyệt, tính từ lúc trình duyệt gửi yêu cầu đến khi nhận đủ phản hồi HTTP. Cách đo này loại trừ sai số do thao tác bấm giờ thủ công và phản ánh trực tiếp độ trễ của dịch vụ.
+Để đánh giá thời gian phản hồi một cách nhất quán và dễ lặp lại, hệ thống được kiểm thử theo 20 lượt cho mỗi API đại diện trên môi trường triển khai thật. Thời gian được lấy từ trường \textit{Duration} của yêu cầu trong tab \textit{Network} của trình duyệt, tính từ lúc trình duyệt gửi yêu cầu đến khi nhận đủ phản hồi HTTP. Cách đo này loại trừ sai số do thao tác bấm giờ thủ công và phản ánh trực tiếp độ trễ của dịch vụ.
 
 \begin{itemize}
     \item \textbf{Dashboard}: sử dụng endpoint có độ trễ lớn nhất trong sáu API dữ liệu Dashboard là \texttt{GET /dashboard/skills/rising}, với bộ lọc 30 ngày gần nhất.
-    \item \textbf{Upload CV}: sử dụng yêu cầu \texttt{POST /cv/upload} với cùng một tệp PDF hợp lệ (CV mẫu Backend Developer, 1 trang, dung lượng 21 KB) trong cả 5 lượt đo.
-    \item \textbf{Đối soát CV}: sử dụng yêu cầu \texttt{POST /matching/analyze} với cùng nhóm nghề mục tiêu (\textit{backend developer}). Để tách bạch hai chế độ hoạt động của hệ thống, phép đo gồm 5 lượt phân tích lần đầu trên 5 bản CV tải lên độc lập (buộc thực thi toàn bộ pipeline gồm trích xuất kỹ năng qua Gemini API --- cache miss) và 3 lượt phân tích lặp lại trên cùng một CV (tái sử dụng kỹ năng đã trích xuất --- cache hit).
+    \item \textbf{Upload CV}: sử dụng yêu cầu \texttt{POST /cv/upload} với cùng một tệp PDF hợp lệ (CV mẫu kỹ sư phần mềm, 1 trang) trong cả 20 lượt đo.
+    \item \textbf{Đối soát CV}: sử dụng yêu cầu \texttt{POST /matching/analyze} với cùng nhóm nghề mục tiêu (\textit{software engineer}). Để tách bạch hai chế độ hoạt động của hệ thống, phép đo gồm 20 lượt phân tích lần đầu trên 20 bản CV tải lên độc lập (buộc thực thi toàn bộ pipeline gồm trích xuất kỹ năng qua Gemini API --- cache miss) và 20 lượt phân tích lặp lại trên cùng một CV (tái sử dụng kỹ năng đã trích xuất --- cache hit).
 \end{itemize}
 
-Với mỗi chức năng, các chỉ số tổng hợp gồm: số lần gọi, thời gian trung bình, P95, thời gian lớn nhất và tỷ lệ lỗi. Với các nhóm gồm 5 lượt đo, P95 thực nghiệm được lấy bằng giá trị lớn nhất trong mẫu. Riêng cache hit là phép đo bổ sung 3 lượt để minh họa tác động của cơ chế cache; giá trị P95 trong bảng cũng được ghi nhận bằng giá trị lớn nhất của 3 lượt này và chỉ có ý nghĩa tham khảo. Khi nghiệm thu chính thức, cần tăng số lượt đo lên tối thiểu 20 lượt cho mỗi chức năng để chỉ số P95 có ý nghĩa đại diện hơn.
+Với mỗi chức năng, các chỉ số tổng hợp gồm: số lần gọi, thời gian trung bình, P95, thời gian lớn nhất và tỷ lệ lỗi. Mỗi chức năng được đo 20 lượt để chỉ số P95 (bách phân vị thứ 95) có ý nghĩa đại diện; riêng phép đo cache hit cũng gồm 20 lượt phân tích lặp lại trên cùng một CV nhằm minh họa tác động của cơ chế cache. Do dịch vụ so khớp chạy trên máy chủ chỉ có 2 vCPU không GPU, các lượt đo cache miss được thực hiện tuần tự và có giãn cách hợp lý giữa các lần gọi để phản ánh đúng độ trễ của một phiên phân tích đơn lẻ, tránh hiện tượng nghẽn do gọi dồn đồng thời.
 
-Trước hết, sáu endpoint dữ liệu của Dashboard thị trường được đo trực tiếp trên môi trường triển khai thật (\texttt{career-nova.online}, máy chủ DigitalOcean SGP1) bằng 5 lượt gọi HTTPS liên tiếp cho mỗi endpoint với bộ lọc 30 ngày. Kết quả được trình bày trong Bảng~\ref{tab:api_performance_dashboard}.
+Trước hết, sáu endpoint dữ liệu của Dashboard thị trường được đo trực tiếp trên môi trường triển khai thật (\texttt{career-nova.online}, máy chủ DigitalOcean SGP1) bằng 20 lượt gọi HTTPS liên tiếp cho mỗi endpoint với bộ lọc 30 ngày. Kết quả được trình bày trong Bảng~\ref{tab:api_performance_dashboard}.
 
 \begin{table}[H]
 \caption{Thời gian phản hồi thực đo của sáu API Dashboard thị trường (tháng 07/2026)}
@@ -189,23 +254,23 @@ Trước hết, sáu endpoint dữ liệu của Dashboard thị trường đư�
 \hline
 \textbf{Endpoint} & \textbf{Số lần gọi} & \textbf{Trung bình (ms)} & \textbf{P95 (ms)} & \textbf{Lớn nhất (ms)} & \textbf{Tỷ lệ lỗi} \\
 \hline
-\texttt{/dashboard/} \newline \texttt{stats} & 5 & 301 & 384 & 384 & 0\% \\
+\texttt{/dashboard/} \newline \texttt{stats} & 20 & 260 & 307 & 331 & 0\% \\
 \hline
-\texttt{/dashboard/} \newline \texttt{trends} & 5 & 307 & 428 & 428 & 0\% \\
+\texttt{/dashboard/} \newline \texttt{trends} & 20 & 207 & 241 & 242 & 0\% \\
 \hline
-\texttt{/dashboard/} \newline \texttt{industries} & 5 & 468 & 522 & 522 & 0\% \\
+\texttt{/dashboard/} \newline \texttt{industries} & 20 & 486 & 522 & 566 & 0\% \\
 \hline
-\texttt{/dashboard/} \newline \texttt{hot-jobs} & 5 & 302 & 380 & 380 & 0\% \\
+\texttt{/dashboard/} \newline \texttt{hot-jobs} & 20 & 297 & 410 & 418 & 0\% \\
 \hline
-\texttt{/dashboard/} \newline \texttt{skills/in-demand} & 5 & 785 & 946 & 946 & 0\% \\
+\texttt{/dashboard/} \newline \texttt{skills/in-demand} & 20 & 975 & 1113 & 1122 & 0\% \\
 \hline
-\texttt{/dashboard/} \newline \texttt{skills/rising} & 5 & 914 & 977 & 977 & 0\% \\
+\texttt{/dashboard/} \newline \texttt{skills/rising} & 20 & 1327 & 1588 & 1613 & 0\% \\
 \hline
 \end{tabular}
 \end{center}
 \end{table}
 
-Kết quả cho thấy toàn bộ 30 lượt gọi đều thành công (tỷ lệ lỗi \textbf{0\%}) và mọi endpoint đều phản hồi dưới 1 giây. Do Frontend gửi sáu truy vấn song song bằng \texttt{Promise.all}, thời gian chờ dữ liệu của toàn trang Dashboard về nguyên tắc bị chi phối bởi endpoint chậm nhất (\texttt{skills/rising}, trung bình \textbf{914ms}), thay vì tổng thời gian sáu truy vấn tuần tự (khoảng 3,1 giây). Kết quả này xác nhận các API Dashboard thỏa NFR-01 ở mức đo API. Hai endpoint nhóm kỹ năng (\texttt{in-demand} và \texttt{rising}) chậm hơn đáng kể so với nhóm còn lại vì phải thực hiện truy vấn tổng hợp (aggregation) trên bảng liên kết \texttt{job\_skills} có số bản ghi lớn nhất; đây là điểm tối ưu tiềm năng bằng chỉ mục bổ sung hoặc materialized view trong tương lai.
+Kết quả cho thấy toàn bộ 120 lượt gọi đều thành công (tỷ lệ lỗi \textbf{0\%}). Bốn trong sáu endpoint phản hồi trung bình dưới 0,5 giây; riêng hai endpoint nhóm kỹ năng nặng hơn với thời gian trung bình lần lượt 0,98 giây (\texttt{in-demand}) và 1,33 giây (\texttt{rising}). Do Frontend gửi sáu truy vấn song song bằng \texttt{Promise.all}, thời gian chờ dữ liệu của toàn trang Dashboard về nguyên tắc bị chi phối bởi endpoint chậm nhất (\texttt{skills/rising}, trung bình \textbf{1.327ms}), thay vì tổng thời gian sáu truy vấn tuần tự (khoảng 3,6 giây). Với P95 lớn nhất trong sáu endpoint là 1,59 giây (\texttt{skills/rising}), toàn bộ các API Dashboard đều thỏa NFR-01 (thời gian phản hồi $\le 2$ giây cho 95\% yêu cầu) ở mức đo API. Hai endpoint nhóm kỹ năng (\texttt{in-demand} và \texttt{rising}) chậm hơn đáng kể so với nhóm còn lại vì phải thực hiện truy vấn tổng hợp (aggregation) trên bảng liên kết \texttt{job\_skills} có số bản ghi lớn nhất; đây là điểm tối ưu tiềm năng bằng chỉ mục bổ sung hoặc materialized view trong tương lai.
 
 Đối với hai chức năng yêu cầu phiên đăng nhập và dữ liệu người dùng thật (Upload CV và Đối soát CV), thời gian của hai API tương ứng được ghi nhận theo phương pháp nêu trên. Kết quả tổng hợp được trình bày trong Bảng~\ref{tab:api_performance_auth}.
 
@@ -217,19 +282,28 @@ Kết quả cho thấy toàn bộ 30 lượt gọi đều thành công (tỷ l�
 \hline
 \textbf{Chức năng} & \textbf{Số lần đo} & \textbf{Trung bình (s)} & \textbf{P95 (s)} & \textbf{Lớn nhất (s)} & \textbf{Tỷ lệ lỗi} \\
 \hline
-Dashboard \newline (API \texttt{skills/rising}) & 5 & 0,914 & 0,977 & 0,977 & 0\% \\
+Dashboard \newline (API \texttt{skills/rising}) & 20 & 1,327 & 1,588 & 1,613 & 0\% \\
 \hline
-Upload CV & 5 & 1,58 & 1,94 & 1,94 & 0\% \\
+Upload CV & 20 & 1,31 & 2,03 & 2,63 & 0\% \\
 \hline
-Đối soát CV (lần đầu --- cache miss) & 5 & 43,8 & 55,9 & 55,9 & 0\% \\
+Đối soát CV (lần đầu --- cache miss) & 20 & 41,9 & 49,3 & 55,1 & 0\% \\
 \hline
-Đối soát CV (lặp lại --- cache hit) & 3 & 0,22 & 0,29 & 0,29 & 0\% \\
+Đối soát CV (lặp lại --- cache hit) & 20 & 0,27 & 0,31 & 0,31 & 0\% \\
 \hline
 \end{tabular}
 \end{center}
 \end{table}
 
-Kết quả đo cho thấy sự phân hóa rõ rệt giữa hai chế độ hoạt động của chức năng Đối soát CV. Ở lượt phân tích lần đầu (cache miss), toàn bộ pipeline được thực thi tuần tự: tải văn bản CV, gọi Gemini API trích xuất kỹ năng, chuẩn hóa qua FAISS trên CPU và tính điểm so khớp, dẫn đến thời gian trung bình \textbf{43,8 giây} (lớn nhất 55,9 giây) --- \textbf{đạt ngưỡng yêu cầu 60 giây của NFR-02}, đồng thời toàn bộ 5 lượt đều trả về kết quả thành công và điểm số ổn định (0,34--0,35). Nguyên nhân chính khiến lượt gọi đầu mất thời gian là độ trễ của Gemini API bên ngoài cộng với chi phí tính vector nhúng trên máy chủ chỉ có 2 vCPU không GPU. Ngược lại, các lượt phân tích lặp lại trên cùng CV (cache hit) chỉ mất trung bình \textbf{0,22 giây} --- nhanh hơn khoảng 200 lần --- do kỹ năng đã trích xuất được tái sử dụng từ bảng \texttt{user\_cv\_skills}. Như vậy NFR-02 đã được thỏa mãn cho cả hai chế độ. Dù vậy, đối với lần phân tích đầu tiên, trải nghiệm người dùng vẫn có thể được nâng cao hơn nữa thông qua các giải pháp như: trích xuất kỹ năng bất đồng bộ ngay sau khi upload CV (thay vì chờ đến lúc người dùng bấm phân tích), hiển thị tiến trình từng bước trên giao diện, hoặc nâng cấp hạ tầng suy luận vector nhúng.
+Kết quả đo cho thấy sự phân hóa rõ rệt giữa hai chế độ hoạt động của chức năng Đối soát CV. Ở lượt phân tích lần đầu (cache miss), toàn bộ pipeline được thực thi tuần tự: tải văn bản CV, gọi Gemini API trích xuất kỹ năng, chuẩn hóa qua FAISS trên CPU và tính điểm so khớp, dẫn đến thời gian trung bình \textbf{41,9 giây} (P95 49,3 giây, lớn nhất 55,1 giây) --- \textbf{đạt ngưỡng yêu cầu 60 giây của NFR-02}, đồng thời toàn bộ 20 lượt đều trả về kết quả thành công và điểm số ổn định (khoảng 0,57). Nguyên nhân chính khiến lượt gọi đầu mất thời gian là độ trễ của Gemini API bên ngoài cộng với chi phí tính vector nhúng trên máy chủ chỉ có 2 vCPU không GPU. Ngược lại, các lượt phân tích lặp lại trên cùng CV (cache hit) chỉ mất trung bình \textbf{0,27 giây} --- nhanh hơn khoảng 155 lần --- do kỹ năng đã trích xuất được tái sử dụng từ bảng \texttt{user\_cv\_skills}. Như vậy NFR-02 đã được thỏa mãn cho cả hai chế độ. Dù vậy, đối với lần phân tích đầu tiên, trải nghiệm người dùng vẫn có thể được nâng cao hơn nữa thông qua các giải pháp như: trích xuất kỹ năng bất đồng bộ ngay sau khi upload CV (thay vì chờ đến lúc người dùng bấm phân tích), hiển thị tiến trình từng bước trên giao diện, hoặc nâng cấp hạ tầng suy luận vector nhúng.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{perf_measurement_terminal.png}
+    \caption{Bằng chứng thô của phép đo hiệu năng: nhật ký terminal ghi lại trường \textit{Duration} (thời gian phản hồi) của từng lượt gọi API trên môi trường triển khai thật, là dữ liệu nguồn để tổng hợp Bảng~\ref{tab:api_performance_dashboard} và Bảng~\ref{tab:api_performance_auth}}
+    \label{fig:perf_measurement_terminal}
+\end{figure}
+
+Hình~\ref{fig:perf_measurement_terminal} chứng minh các số liệu trong hai bảng trên là kết quả đo thực tế chứ không phải ước lượng: mỗi lượt gọi API được ghi trực tiếp trường \textit{Duration} bằng công cụ đo (\texttt{curl -w \%\{time\_total\}} và tab \textit{Network} của trình duyệt), qua đó bảo đảm tính tái lập của phép đo. Ảnh cũng làm rõ hai chế độ vận hành của chức năng đối soát --- cache miss (hàng chục giây) và cache hit (dưới một giây) --- đúng như phân tích ở trên, đồng thời xác nhận toàn bộ các lượt đo đều thành công (tỷ lệ lỗi 0/20).
 
 \section{Kiểm thử độ chính xác và Đánh giá kết quả đầu ra thuật toán (Algorithm Accuracy Evaluation)}
 \label{sec:algorithm_evaluation}

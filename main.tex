@@ -38,6 +38,7 @@
 
 % Chèn hình, các hình trong luận văn được để trong thư mục images/
 \usepackage{graphicx}
+\usepackage{pdfpages}
 \usepackage{subcaption}
 \graphicspath{ {images/} }
 
@@ -48,7 +49,20 @@
 \definecolor{codegray}{rgb}{0.5,0.5,0.5}
 \definecolor{codepurple}{rgb}{0.58,0,0.82}
 \definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+\lstdefinelanguage{TypeScript}{
+    keywords={abstract,as,async,await,break,case,catch,class,const,continue,
+    debugger,declare,default,delete,do,else,enum,export,extends,false,finally,
+    for,from,function,if,implements,import,in,instanceof,interface,keyof,let,
+    namespace,new,null,private,protected,public,readonly,return,static,super,
+    switch,this,throw,true,try,type,typeof,var,void,while,with,yield},
+    sensitive=true,
+    morecomment=[l]{//},
+    morecomment=[s]{/*}{*/},
+    morestring=[b]",
+    morestring=[b]'
+}
 \lstdefinestyle{mystyle}{
+    language=TypeScript,
     backgroundcolor=\color{backcolour},   
     commentstyle=\color{codegreen},
     keywordstyle=\color{magenta},
@@ -67,6 +81,8 @@
     tabsize=2
 }
 \lstset{style=mystyle}
+\renewcommand{\lstlistingname}{Mã nguồn}
+\renewcommand{\lstlistlistingname}{Danh sách mã nguồn}
 
 % Chèn và định dạng mã giả
 \usepackage{amsmath}
@@ -81,6 +97,7 @@
 \usepackage{multirow}
 \usepackage{array}
 \usepackage{longtable}
+\usepackage{pdflscape}
 \newcolumntype{L}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
 \newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
 \newcolumntype{R}[1]{>{\raggedleft\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
@@ -164,13 +181,13 @@
 \addcontentsline{toc}{chapter}{Đề cương}
 \include{Appendix/proposal}
 
+% Mục lục, danh sách chữ viết tắt, hình và bảng
+\addcontentsline{toc}{chapter}{Mục lục}
+\tableofcontents
+
+\cleardoublepage
 \addcontentsline{toc}{chapter}{Danh mục các chữ viết tắt}
 \include{Appendix/abbreviations}
-
-% Mục lục, danh sách hình, danh sách bảng
-\addcontentsline{toc}{chapter}{Mục lục}
-
-\tableofcontents
 
 %\listoffigures
 \cleardoublepage

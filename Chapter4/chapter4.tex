@@ -1,54 +1,29 @@
 \chapter{Xây dựng hệ thống}
 \label{Chapter4}
 
+Chương này trình bày quá trình hiện thực hóa thiết kế đã đề xuất thành hệ thống CareerNova có thể vận hành. Nội dung tập trung vào các lựa chọn công nghệ, cách xây dựng từng phân hệ và cơ chế tích hợp luồng dữ liệu, phân tích ngữ nghĩa và giao diện người dùng.
+
 \section{Lựa chọn công nghệ}
 
 Việc lựa chọn công nghệ cho hệ thống CareerNova tuân theo nguyên tắc phân tách trách nhiệm rõ ràng giữa ba thành phần triển khai độc lập --- ứng dụng Frontend, dịch vụ Backend API và Pipeline ETL --- đồng thời ưu tiên các nền tảng có hệ sinh thái trưởng thành, hỗ trợ kiểu dữ liệu tường minh (TypeScript/Python type hints) và thuận tiện cho việc đóng gói thành container Docker. Toàn bộ ngăn xếp công nghệ được mô tả trong các tiểu mục dưới đây tương ứng với mã nguồn thực tế của hệ thống.
 
 \subsection{Công nghệ Frontend}
 
-Để phát triển giao diện người dùng có tính tương tác cao và phản hồi nhanh, các công nghệ sau đã được lựa chọn:
-\begin{itemize}
-    \item \textbf{Next.js 15 và React 19}: Khung phát triển ứng dụng web hiện đại trên nền React, sử dụng kiến trúc App Router. Next.js cho phép kết hợp linh hoạt giữa kết xuất phía máy chủ (Server-Side Rendering) cho các trang công khai và kết xuất phía trình duyệt (Client-Side Rendering) cho các trang dashboard tương tác, giúp tối ưu thời gian tải trang và trải nghiệm người dùng.
-    \item \textbf{TypeScript}: Ngôn ngữ mở rộng của JavaScript bổ sung cơ chế kiểm soát kiểu dữ liệu tĩnh (static typing), giúp phát hiện lỗi sớm trong quá trình biên dịch và tăng độ tin cậy của mã nguồn khi hệ thống mở rộng.
-    \item \textbf{Tailwind CSS và shadcn/ui}: Khung CSS tiện ích (utility-first) kết hợp bộ thành phần giao diện (component library) giúp xây dựng giao diện nhanh chóng, đảm bảo tính nhất quán của hệ thống thiết kế (Design System), hỗ trợ chế độ sáng/tối và thiết kế đáp ứng (Responsive).
-    \item \textbf{Recharts}: Thư viện trực quan hóa dữ liệu dựa trên SVG được tối ưu riêng cho React, dùng để vẽ các biểu đồ xu hướng tuyển dụng (AreaChart), phân bổ thị trường (Treemap), chỉ báo xếp hạng (BarChart) và biểu đồ Radar so khớp kỹ năng (RadarChart).
-\end{itemize}
+Giao diện được xây dựng bằng Next.js 15 và React 19 theo kiến trúc App Router. Next.js cho phép kết hợp kết xuất phía máy chủ cho các trang công khai với kết xuất phía trình duyệt cho Dashboard tương tác. TypeScript được dùng để kiểm soát kiểu dữ liệu tĩnh, giúp phát hiện lỗi sớm và hỗ trợ mở rộng mã nguồn an toàn. Về trình bày, Tailwind CSS và shadcn/ui duy trì tính nhất quán của hệ thống thiết kế, khả năng đáp ứng và chế độ sáng/tối; Recharts được dùng để vẽ biểu đồ xu hướng, phân bổ, xếp hạng và Radar.
 
 \subsection{Công nghệ Backend và Cơ sở dữ liệu}
 
-\begin{itemize}
-    \item \textbf{NestJS (Node.js 20)}: Khung phát triển Backend dựa trên TypeScript, tổ chức theo kiến trúc module hóa (auth, profile, job, matching, skill-gap, market-dashboard, v.v.). NestJS đóng vai trò cổng dịch vụ chính, điều phối toàn bộ luồng yêu cầu từ Frontend, xử lý xác thực, phân quyền và tổng hợp dữ liệu.
-    \item \textbf{Prisma ORM}: Bộ ánh xạ quan hệ - đối tượng (ORM) thế hệ mới cho Node.js, cung cấp truy vấn an toàn kiểu (type-safe) tới PostgreSQL, đồng thời quản lý lược đồ và migration cơ sở dữ liệu một cách tường minh.
-    \item \textbf{PostgreSQL 17}: Cơ sở dữ liệu quan hệ mạnh mẽ, lưu trữ toàn bộ dữ liệu hệ thống bao gồm tài khoản người dùng, hồ sơ CV, kho dữ liệu tuyển dụng, từ điển kỹ năng và kết quả so khớp. Hệ thống tận dụng kiểu dữ liệu JSONB của PostgreSQL để lưu trước (precompute) các cấu trúc \texttt{radar\_data} và \texttt{gap\_report}, tối ưu hóa hiệu năng truy vấn thời gian thực.
-    \item \textbf{FastAPI (Python)}: Khung phát triển web bất đồng bộ hiệu năng cao trên nền ASGI, được sử dụng để xây dựng dịch vụ ETL Matching Service. Dịch vụ này tiếp nhận yêu cầu so khớp từ NestJS Backend qua giao thức HTTP và thực thi toàn bộ luồng xử lý AI nặng (trích xuất, chuẩn hóa, tính điểm).
-\end{itemize}
+Backend sử dụng NestJS trên Node.js 20 và được tổ chức theo các module như \texttt{auth}, \texttt{profile}, \texttt{job}, \texttt{matching}, \texttt{skill-gap} và \texttt{market-dashboard}. NestJS là cổng dịch vụ chính, điều phối yêu cầu từ Frontend, xác thực, phân quyền và tổng hợp dữ liệu. Prisma ORM cung cấp truy vấn an toàn kiểu và quản lý lược đồ PostgreSQL. PostgreSQL 17 lưu tài khoản, CV, dữ liệu tuyển dụng, từ điển kỹ năng và kết quả so khớp; các cấu trúc \texttt{radar\_data} và \texttt{gap\_report} được lưu sẵn dưới dạng JSONB để tối ưu truy vấn. Các tác vụ AI nặng được tách sang dịch vụ FastAPI, nhận yêu cầu từ NestJS qua HTTP để trích xuất, chuẩn hóa và tính điểm kỹ năng.
 
 \subsection{Công nghệ Thu thập và Xử lý AI}
 
-Phân hệ thu thập và xử lý trí tuệ nhân tạo (AI) được thiết kế nhằm giải quyết bài toán bóc tách thông tin phi cấu trúc từ các trang tuyển dụng và hồ sơ ứng viên (CV), sau đó quy chuẩn chúng về không gian vector ngữ nghĩa. Các cấu hình tham số và công nghệ cốt lõi được lựa chọn bao gồm:
+Phân hệ thu thập và AI bóc tách thông tin phi cấu trúc từ tin tuyển dụng và CV, sau đó quy chuẩn chúng về không gian vector ngữ nghĩa. Luồng thu thập ưu tiên \texttt{requests} kết hợp \texttt{cloudscraper} để giảm chi phí tài nguyên; khi gặp trang chặn truy cập hoặc kết xuất hoàn toàn bằng JavaScript, hệ thống chuyển sang Selenium Headless Chrome để tải nội dung động. Trong môi trường thử nghiệm, Gemini API với mô hình \texttt{gemini-2.5-flash} được gọi qua \textit{Structured Outputs}, đặt $\text{temperature} = 0.0$ và JSON Schema. Đầu ra tiếp tục được hậu kiểm theo bằng chứng xuất hiện trong văn bản gốc để giảm rủi ro sinh kỹ năng không có căn cứ.
 
-\begin{itemize}
-    \item \textbf{Requests, cloudscraper và Selenium (Cơ chế thu thập dự phòng hai tầng)}:
-    \begin{itemize}
-        \item \textit{Tầng 1 (Cào tĩnh)}: Hệ thống sử dụng thư viện \texttt{requests} kết hợp \texttt{cloudscraper} để giả lập các phiên kết nối HTTP ở mức socket, giúp vượt qua các thử thách chống bot cơ bản (như Cloudflare Challenge) với tốc độ xử lý tối đa và tiêu tốn ít tài nguyên.
-        \item \textit{Tầng 2 (Trình duyệt tự động)}: Khi gặp các trang web chặn IP hoặc kết xuất hoàn toàn bằng JavaScript ở phía client, hệ thống tự động kích hoạt trình duyệt ẩn danh \texttt{Selenium} (Headless Chrome) để mô phỏng hành vi cuộn trang và tải dữ liệu động.
-    \end{itemize}
-    \item \textbf{Google Gemini API (Mô hình ngôn ngữ lớn làm bộ bóc tách cấu trúc)}: Môi trường triển khai thử nghiệm sử dụng mô hình \texttt{gemini-2.5-flash} thông qua tính năng \textit{Structured Outputs}. Hệ thống thiết lập $\text{temperature} = 0.0$ và JSON Schema để giảm sai lệch định dạng đầu ra; đồng thời áp dụng bước hậu kiểm dựa trên bằng chứng xuất hiện trong văn bản gốc để giảm nguy cơ sinh kỹ năng không có căn cứ. Các cơ chế này hỗ trợ tính nhất quán của dữ liệu, nhưng kết quả vẫn được đánh giá thực nghiệm tại Chương 5.
-    \item \textbf{Sentence-Transformers (\texttt{all-MiniLM-L6-v2})}: Mô hình sinh vector nhúng (embedding generator) nhận đầu vào là các nhãn kỹ năng và mã hóa chúng thành các vector phân tán 384 chiều biểu diễn ngữ nghĩa trong không gian Hilbert thực. Các vector đầu ra đều được chuẩn hóa độ dài L2 ($\|\mathbf{e}\|_2 = 1$), cho phép tối ưu hóa hiệu năng tính toán độ đo tương đồng Cosine thành phép tính tích vô hướng trực tiếp giữa hai vector nhúng.
-    \item \textbf{FAISS (Facebook AI Similarity Search)}: Thư viện tối ưu hóa tìm kiếm vector lân cận gần nhất (Nearest Neighbors). FAISS lập chỉ mục cho tập kỹ năng công nghệ chuẩn hóa dựa trên hệ thống phân loại Lightcast/O*NET (từ điển hệ thống hiện có hơn 6.000 kỹ năng). Hệ thống sử dụng cấu trúc chỉ mục tích vô hướng phẳng (\texttt{IndexFlatIP}) kết hợp với việc chuẩn hóa L2 trước đó để tính toán tích vô hướng chính xác tuyệt đối, giúp tìm kiếm và ánh xạ nhanh kỹ năng từ CV/JD vào từ điển chuẩn hóa với độ trễ dưới 5 mili-giây.
-    \item \textbf{Bộ ba pdfplumber, pdf2image và pytesseract (Xử lý CV đa định dạng)}:
-    \begin{itemize}
-        \item Ưu tiên sử dụng \texttt{pdfplumber} để đọc trực tiếp lớp văn bản số (text layer) của tệp tin PDF gốc.
-        \item Đối với CV dạng ảnh chụp hoặc PDF quét (scan), hệ thống tự động chuyển đổi trang tài liệu sang ảnh độ phân giải cao bằng \texttt{pdf2image} và chạy OCR bằng công cụ nguồn mở \texttt{pytesseract} (Tesseract OCR).
-    \end{itemize}
-\end{itemize}
+Các nhãn kỹ năng được Sentence-Transformers \texttt{all-MiniLM-L6-v2} mã hóa thành vector 384 chiều và chuẩn hóa L2, nhờ đó Cosine Similarity được tính hiệu quả bằng tích vô hướng. FAISS sử dụng chỉ mục \texttt{IndexFlatIP} để tìm và ánh xạ kỹ năng vào từ điển Lightcast/O*NET. Với CV, hệ thống ưu tiên \texttt{pdfplumber} khi tệp có lớp văn bản số; đối với ảnh hoặc PDF quét, \texttt{pdf2image} và \texttt{pytesseract} được dùng để thực hiện OCR.
 
 \subsection{Hạ tầng và công cụ triển khai}
 
-\begin{itemize}
-    \item \textbf{Docker và Docker Compose}: Mỗi thành phần (Frontend, Backend API, ETL Pipeline, PostgreSQL) được đóng gói độc lập thành container. Tệp \texttt{docker-compose.yml} điều phối toàn bộ dịch vụ, trong đó container PostgreSQL 17 lưu dữ liệu bền vững qua Docker named volume và được cấu hình \texttt{restart: unless-stopped}. Các image ứng dụng dựa trên Node 20-Alpine, chạy dưới tài khoản non-root nhằm tuân thủ nguyên tắc đặc quyền tối thiểu.
-\end{itemize}
+Docker và Docker Compose đóng gói độc lập Frontend, Backend API, ETL Pipeline và PostgreSQL. Tệp \texttt{docker-compose.yml} điều phối các dịch vụ; PostgreSQL 17 lưu dữ liệu qua Docker named volume và được cấu hình \texttt{restart: unless-stopped}. Các image ứng dụng dùng Node 20-Alpine và chạy bằng tài khoản không có đặc quyền quản trị.
 
 \section{Kiến trúc tích hợp và xử lý luồng dữ liệu}
 
@@ -56,37 +31,16 @@ Pipeline dữ liệu (ETL Pipeline) hoạt động theo cơ chế xử lý theo 
 
 \subsection{Cài đặt các module thu thập dữ liệu tin tuyển dụng tự động}
 
-Quy trình thu thập được thực thi trên bốn nền tảng tuyển dụng lớn tại Việt Nam gồm ITViec, LinkedIn, VietnamWorks và CareerViet. Hệ thống áp dụng cơ chế dự phòng hai tầng để đảm bảo tính liên tục:
-
-\begin{itemize}
-    \item \textbf{Tầng 1 (Cào tĩnh)}: ưu tiên \texttt{Requests} kết hợp \texttt{cloudscraper} để vượt các thử thách chống bot cơ bản với chi phí tài nguyên thấp.
-    \item \textbf{Tầng 2 (Cào động)}: khi trang đích kết xuất bằng JavaScript hoặc chặn truy cập ở mức WAF, hệ thống tự động chuyển sang \texttt{Selenium} headless để lấy nội dung động.
-\end{itemize}
-
-Bên cạnh cơ chế dự phòng theo công cụ, hệ thống còn quản lý theo chiến lược dữ liệu:
-
-\begin{enumerate}
-    \item \textbf{Date cutoff}: chỉ thu thập các tin đăng mới hơn một mốc thời gian giới hạn, giúp giảm băng thông và tránh cào lại dữ liệu cũ.
-    \item \textbf{Keyword rotation}: danh sách 199 từ khóa IT cốt lõi được xoay vòng theo ngày, mỗi chu kỳ chỉ lấy một nhóm từ khóa tiếp theo để mở rộng độ phủ thị trường mà không gửi quá nhiều yêu cầu trùng lặp.
-    \item \textbf{Bypass dữ liệu động}: với nguồn có payload động kiểu RSC, hệ thống giải mã trực tiếp luồng trả về để lấy phần mô tả gốc thay vì mở toàn bộ trình duyệt nếu không cần thiết.
-\end{enumerate}
+Quy trình thu thập được thực thi trên ITviec, LinkedIn, VietnamWorks và CareerViet. Hệ thống ưu tiên \texttt{requests} kết hợp \texttt{cloudscraper} để giảm chi phí tài nguyên, rồi tự động chuyển sang Selenium headless khi trang đích kết xuất bằng JavaScript hoặc bị WAF chặn. Để hạn chế yêu cầu không cần thiết, hệ thống chỉ thu thập các tin mới hơn mốc \textit{date cutoff}; danh sách 199 từ khóa IT được xoay vòng theo ngày để tăng độ phủ. Với nguồn trả về payload RSC, hệ thống giải mã trực tiếp luồng dữ liệu để lấy mô tả gốc khi có thể, thay vì luôn khởi chạy trình duyệt.
 
 Mỗi tin tuyển dụng sau khi tải về được bóc tách thành các trường có cấu trúc như tiêu đề, công ty, địa điểm, mô tả, mức lương, ngày đăng. Dữ liệu đầu ra được gắn thêm \texttt{source\_name} và \texttt{source\_id} để truy vết nguồn gốc, đồng thời đưa vào bước lọc trùng trước khi nạp vào PostgreSQL.
 
 \subsection{Quy trình làm sạch dữ liệu, xử lý trùng lặp và lưu trữ vào PostgreSQL}
 \label{sec:dedup}
 
-Sau khi thu thập, dữ liệu thô được đưa vào quy trình làm sạch, khử trùng và chuẩn hóa trước khi nạp vào PostgreSQL. Hệ thống ưu tiên các bước xử lý sau:
+Sau khi thu thập, dữ liệu thô được làm sạch bằng cách loại bỏ HTML rác, ký tự thừa và chuẩn hóa khoảng trắng; các tin quá ngắn, lỗi định dạng hoặc thiếu trường bắt buộc bị loại ở \textit{quality gate}. Hệ thống khử trùng lặp nội bộ giữa các tin cùng công ty trước khi gọi AI. Gemini API tiếp tục bóc tách chức danh, kỹ năng và các trường chính, với điều kiện kết quả đạt ngưỡng tin cậy và có bằng chứng trong văn bản gốc; các nhãn kỹ năng sau đó được ánh xạ về từ điển chuẩn bằng FAISS và Lightcast Taxonomy.
 
-\begin{itemize}
-    \item \textbf{Làm sạch văn bản}: loại bỏ HTML rác, ký tự thừa và chuẩn hóa khoảng trắng.
-    \item \textbf{Quality gate}: loại bỏ các bản tin quá ngắn, lỗi định dạng hoặc thiếu các trường bắt buộc.
-    \item \textbf{Khử trùng lặp nội bộ}: so sánh các tin cùng công ty bằng Cosine Similarity để bỏ qua các bản tin trùng lặp trước khi gửi sang bước trích xuất AI.
-    \item \textbf{Trích xuất thực thể}: dùng Gemini API để bóc tách chức danh, kỹ năng và các trường thông tin chính; mọi kết quả phải có độ tin cậy đủ ngưỡng và có bằng chứng xuất hiện trực tiếp trong văn bản gốc.
-    \item \textbf{Chuẩn hóa kỹ năng}: ánh xạ nhãn kỹ năng về từ điển chuẩn bằng FAISS và Lightcast Taxonomy.
-    \item \textbf{Khử trùng sâu}: gom nhóm tin theo khóa tên công ty đã chuẩn hóa (loại bỏ hậu tố pháp lý), mã hóa nội dung tin bằng vector nhúng \texttt{all-MiniLM-L6-v2} và tính Cosine Similarity giữa các tin trong cùng nhóm; cặp tin vượt ngưỡng 0,9 bị coi là trùng lặp (kể cả trùng chéo nguồn) và chỉ giữ lại tin cũ hơn.
-    \item \textbf{Nạp vào PostgreSQL}: dữ liệu được ghi theo lô, theo cơ chế giao dịch nguyên tử, vào các bảng \texttt{jobs}, \texttt{companies}, \texttt{skills} và bảng liên kết \texttt{job\_skills}.
-\end{itemize}
+Ở bước khử trùng sâu, tin được nhóm theo tên công ty đã chuẩn hóa, mã hóa nội dung bằng \texttt{all-MiniLM-L6-v2} và đối chiếu Cosine Similarity trong từng nhóm. Cặp tin vượt ngưỡng 0,9, kể cả trùng chéo nguồn, được xem là trùng lặp và chỉ giữ lại tin cũ hơn. Cuối cùng, dữ liệu được ghi theo lô và giao dịch nguyên tử vào các bảng \texttt{jobs}, \texttt{companies}, \texttt{skills} và bảng liên kết \texttt{job\_skills}.
 
 Nhờ cách tổ chức này, hệ thống không chỉ giảm trùng lặp mà còn giữ được tính nhất quán khi dữ liệu thị trường thay đổi theo thời gian.
 
@@ -96,15 +50,7 @@ Phần này trình bày kết quả hiện thực theo hành trình của sinh v
 
 \subsection{Hiện thực hóa các tính năng Quản lý tài khoản, Đăng ký/Đăng nhập (Auth)}
 
-Module \texttt{auth} của NestJS quản lý toàn bộ luồng xác thực và phân quyền, được xây dựng theo cơ chế JWT stateless kết hợp refresh token. Các endpoint chính khai báo trong \texttt{AuthController} gồm: \texttt{POST /auth/register} (đăng ký tài khoản local), \texttt{POST /auth/login} (đăng nhập và cấp JWT), \texttt{GET /auth/verify-email} (xác thực email qua token), \texttt{POST /auth/forgot-password} và \texttt{POST /auth/reset-password} (quy trình đặt lại mật khẩu), \texttt{GET /auth/google} và \texttt{GET /auth/google/callback} (đăng nhập Google OAuth 2.0). Các chi tiết kỹ thuật cốt lõi bao gồm:
-\begin{itemize}
-    \item \textbf{Băm mật khẩu}: Khi đăng ký, mật khẩu người dùng được băm bằng thuật toán \texttt{bcrypt} (cost factor 10 vòng) trước khi lưu vào trường \texttt{password\_hash}; hệ thống không bao giờ lưu mật khẩu dạng plaintext ở bất kỳ tầng nào, kể cả nhật ký (log).
-    \item \textbf{Xác thực email}: Sau đăng ký, hệ thống tạo ngẫu nhiên \texttt{verify\_token} có thời hạn (lưu kèm \texttt{verify\_token\_expires}) và gửi email kích hoạt thông qua Nodemailer tích hợp Gmail SMTP. Tài khoản chỉ chuyển trạng thái \texttt{is\_active = true} sau khi người dùng nhấn liên kết xác nhận trong email; các tài khoản chưa xác thực bị từ chối đăng nhập với mã lỗi \texttt{AUTH\_ACCOUNT\_NOT\_ACTIVE}.
-    \item \textbf{Cấp phát token}: Khi đăng nhập thành công (cả email/mật khẩu lẫn Google OAuth), Backend cấp một \textit{access token} JWT thời hạn ngắn (payload chứa \texttt{user\_id}, \texttt{email} và \texttt{role}) và một \textit{refresh token} thời hạn dài. Khi access token hết hạn, Frontend gọi \texttt{POST /auth/refresh} với refresh token để nhận cặp token mới mà không cần đăng nhập lại, giảm thiểu rủi ro rò rỉ thông tin xác thực nhạy cảm.
-    \item \textbf{Đăng nhập Google (SSO)}: Hệ thống hỗ trợ đăng nhập một lần (Single Sign-On) qua Google OAuth 2.0; thông tin nhà cung cấp bao gồm \texttt{provider\_user\_id}, \texttt{provider\_email}, \texttt{provider\_name} và \texttt{provider\_avatar\_url} được lưu vào bảng \texttt{user\_auth\_providers}. Nếu email Google đã tồn tại trong hệ thống, tài khoản được liên kết tự động thay vì tạo mới.
-    \item \textbf{Bảo vệ API}: Các route thuộc nhóm \texttt{(user)} được bảo vệ bằng \texttt{JwtAuthGuard} của NestJS; Frontend đính kèm access token trong header \texttt{Authorization: Bearer <token>}. Khi token không hợp lệ hoặc hết hạn, Backend trả về mã lỗi \texttt{401 Unauthorized} và Frontend tự động thực hiện tái xác thực.
-    \item \textbf{Luồng Onboarding}: Sau khi tạo tài khoản và xác thực email thành công, người dùng trải qua quy trình onboarding ba bước khai báo thông tin năng lực ban đầu (kỹ năng hiện có, định hướng nghề nghiệp và mục tiêu học tập), quản lý bởi module \texttt{profile}. Dữ liệu onboarding phục vụ thuật toán gợi ý việc làm cá nhân hóa ở bước tiếp theo.
-\end{itemize}
+Module \texttt{auth} của NestJS quản lý xác thực và phân quyền bằng JWT stateless kết hợp refresh token. \texttt{AuthController} cung cấp đăng ký, đăng nhập, xác thực email, đặt lại mật khẩu và đăng nhập Google OAuth 2.0. Khi đăng ký, mật khẩu được băm bằng \texttt{bcrypt} trước khi lưu tại \texttt{password\_hash}; hệ thống tạo \texttt{verify\_token} có thời hạn và chỉ kích hoạt tài khoản sau khi người dùng xác nhận email. Khi đăng nhập thành công, Backend cấp access token ngắn hạn và refresh token dài hạn; Frontend gọi \texttt{POST /auth/refresh} khi access token hết hạn. Các route có dữ liệu cá nhân được \texttt{JwtAuthGuard} bảo vệ. Với Google SSO, thông tin nhà cung cấp được lưu tại \texttt{user\_auth\_providers} và liên kết với tài khoản sẵn có theo email để tránh tạo bản ghi trùng.
 
 Trong kịch bản sử dụng, sinh viên đăng ký hoặc đăng nhập, xác thực địa chỉ email (đối với tài khoản local) và hoàn tất onboarding trước khi dùng các chức năng có dữ liệu cá nhân. Kết quả của bước này là một phiên làm việc đã xác thực, để các yêu cầu tiếp theo gửi kèm JWT và được gắn với đúng người dùng. Khi đăng nhập bằng Google, hệ thống liên kết tài khoản theo email thay vì tạo thêm một tài khoản trùng lặp.
 
@@ -145,11 +91,7 @@ Kết quả hiển thị được đối chiếu với màn hình Dashboard tạ
 
 \subsection{Hiện thực hóa chức năng Tìm kiếm job, Lưu job và Quản lý danh sách CV}
 
-\begin{itemize}
-    \item \textbf{Tìm kiếm Job}: Hệ thống truy vấn trực tiếp trên PostgreSQL thông qua Prisma ORM, kết hợp lọc theo từ khóa, kỹ năng và địa điểm; kết quả có thể được sắp xếp theo thời gian đăng, mức lương hoặc mức độ phù hợp. Việc so khớp ngữ nghĩa giữa CV và yêu cầu tuyển dụng được thực hiện ở phân hệ Matching Service, tách biệt với thao tác tìm kiếm danh sách việc làm.
-    \item \textbf{Lưu Job}: Người dùng có thể lưu các tin tuyển dụng yêu thích vào danh sách cá nhân để theo dõi, phục vụ việc so khớp về sau.
-    \item \textbf{Quản lý danh sách CV}: Người dùng có thể tải lên nhiều phiên bản CV, đổi tên, xóa, hoặc chọn một CV làm mặc định (Active CV) để sử dụng trong quá trình đối soát. Metadata CV được lưu trong bảng \texttt{user\_cvs}.
-\end{itemize}
+Sau khi xem Dashboard, sinh viên có thể tìm việc theo từ khóa, kỹ năng và địa điểm; PostgreSQL được truy vấn qua Prisma ORM, còn kết quả có thể sắp xếp theo thời gian đăng, mức lương hoặc mức độ phù hợp. Người dùng có thể lưu tin quan tâm để theo dõi, sau đó tải lên, đổi tên, xóa hoặc chọn một CV mặc định trong danh sách \texttt{user\_cvs}. Khi chọn CV và công việc hoặc nhóm việc mục tiêu, yêu cầu được chuyển sang Matching Service để phân tích ngữ nghĩa, tách biệt với thao tác tìm kiếm danh sách việc làm. Chuỗi thao tác này tạo thành kịch bản sử dụng xuyên suốt từ khám phá thị trường, lựa chọn cơ hội đến nhận báo cáo đối soát năng lực.
 
 \section{Xây dựng thuật toán phân tích kỹ năng năng lực}
 \label{sec:skill_algorithm}
@@ -169,7 +111,7 @@ Thuật toán phân tích kỹ năng năng lực đóng vai trò cốt lõi tron
 \hrule
 \vspace{2mm}
 Đọc văn bản thô từ CV hoặc JD và trích xuất danh sách kỹ năng theo đúng cấu trúc JSON sau. Mỗi kỹ năng phải đi kèm cụm từ bằng chứng được trích nguyên văn từ văn bản gốc:
-\begin{verbatim}
+\begin{lstlisting}
 [
   {
     "skill": "React.js",
@@ -177,7 +119,7 @@ Thuật toán phân tích kỹ năng năng lực đóng vai trò cốt lõi tron
     "confidence": 0.95
   }
 ]
-\end{verbatim}
+\end{lstlisting}
 \vspace{2mm}
 \hrule
 \end{minipage}
@@ -269,7 +211,7 @@ Sau khi kỹ năng được chuẩn hóa, bộ máy so khớp (Matching Engine) 
     \end{itemize}
     \item \textbf{Cấu trúc đầu ra (JSON kết quả)}:
     Kỹ năng được phân loại theo các ngưỡng giá trị $\text{MaxSim}(J_i)$ và lưu vào bảng \texttt{public.cv\_job\_matches} dưới dạng JSONB gồm hai trường \texttt{radar\_data} và \texttt{gap\_report}:
-\begin{verbatim}
+\begin{lstlisting}
 {
   "match_score": 0.7852,
   "radar_data": {
@@ -303,7 +245,7 @@ Sau khi kỹ năng được chuẩn hóa, bộ máy so khớp (Matching Engine) 
     ]
   }
 }
-\end{verbatim}
+\end{lstlisting}
 \end{itemize}
 \vspace{2mm}
 \hrule
