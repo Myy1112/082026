@@ -306,12 +306,12 @@ Hình~\ref{fig:dashboard_sequence} cho thấy các yêu cầu được khởi t�
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.9\textwidth]{dashboard_sequence}
+    \includegraphics[width=0.9\textwidth]{dashboard_sequence_current}
     \caption{Sơ đồ tuần tự luồng xem Dashboard thống kê thị trường việc làm.}
     \label{fig:dashboard_sequence}
 \end{figure}
 
-Khi người dùng điều hướng đến MarketDashboard, Giao diện người dùng (Frontend) khởi tạo sáu truy vấn API song song (Promise.all) để lấy dữ liệu thống kê tổng quan, xu hướng tuyển dụng, phân bổ thị trường, top vị trí hot, top kỹ năng được yêu cầu và kỹ năng tăng trưởng. Core API thực hiện các truy vấn tổng hợp (aggregation) trực tiếp trên Cơ sở dữ liệu (Database) và trả về JSON cho từng thành phần trực quan hóa. Giao diện người dùng (Frontend) cập nhật state qua \texttt{setStats()}, \texttt{setTrends()}, \texttt{setIndustriesData()}, \texttt{setHotJobsData()}, \texttt{setInDemandSkillsData()} và \texttt{setRisingSkillsData()}, rồi kết xuất đồng thời AreaChart, Treemap, BarChart và các khối thống kê bằng thư viện biểu đồ trực quan, mang lại trải nghiệm tải trang nhanh và phản hồi tương tác tức thì.
+Khi người dùng điều hướng đến MarketDashboard, Giao diện người dùng (Frontend) áp dụng các bộ lọc thời gian, khu vực và loại công việc, rồi khởi tạo sáu truy vấn API song song (\texttt{Promise.all}): \texttt{/dashboard/stats}, \texttt{/dashboard/trends}, \texttt{/dashboard/industries}, \texttt{/dashboard/hot-jobs}, \texttt{/dashboard/skills/in-demand} và \texttt{/dashboard/skills/rising}. Core API thực hiện các truy vấn tổng hợp trực tiếp trên Cơ sở dữ liệu (Database) và trả về JSON cho từng thành phần trực quan hóa. Giao diện người dùng (Frontend) cập nhật state qua \texttt{setStats()}, \texttt{setTrends()}, \texttt{setIndustriesData()}, \texttt{setHotJobsData()}, \texttt{setInDemandSkillsData()} và \texttt{setRisingSkillsData()}, rồi kết xuất đồng thời các thẻ thống kê, AreaChart, Treemap và BarChart. Luồng này không sử dụng dữ liệu lương.
 
 % ================================================================
 \section{Thiết kế cơ sở dữ liệu}
@@ -815,7 +815,7 @@ Hai bảng phụ trợ phục vụ vận hành và cải thiện chất lượng
 % ----------------------------------------------------------------
 \subsection{Trang chủ và Dashboard thống kê thị trường việc làm}
 
-Hệ thống CareerNova được thiết kế với hai điểm vào chính cho người dùng: trang chủ (Landing Page) dành cho khách chưa xác thực và trang Dashboard thị trường dành cho người dùng đã đăng nhập.
+Hệ thống CareerNova có hai điểm vào chính: trang chủ (Landing Page) dành cho khách chưa xác thực và Dashboard thị trường tại route \texttt{/dashboard}. Dashboard thị trường là chức năng công khai, không yêu cầu đăng nhập; người dùng đã đăng nhập chỉ được bổ sung Personal Insight Banner dựa trên dữ liệu cá nhân.
 
 \textbf{Trang chủ (Landing Page)} là giao diện đầu tiên người dùng tiếp cận khi truy cập hệ thống. Phần đầu trang (hero section) trình bày thông điệp giá trị cốt lõi của nền tảng cùng hai nút hành động chính: \textit{``Bắt đầu miễn phí''} (dẫn đến trang đăng ký) và \textit{``Xem Thông tin Thị trường''} (dẫn đến Dashboard). Tiếp theo, bốn tính năng chủ đạo được trình bày dưới dạng lưới (so khớp CV, đề xuất việc làm, phân tích kỹ năng, dashboard thị trường) kèm luồng sử dụng bốn bước trực quan để định hướng người dùng mới. Hình~\ref{fig:ui_landing} chỉ minh họa bố cục và vị trí của các thành phần vừa mô tả.
 
@@ -827,19 +827,19 @@ Hệ thống CareerNova được thiết kế với hai điểm vào chính cho 
     \label{fig:ui_landing}
 \end{figure}
 
-\textbf{Dashboard thống kê thị trường} (route \texttt{/dashboard}) là trang phân tích thị trường trung tâm, được tổ chức theo cấu trúc thông tin từ tổng quan đến chi tiết. Phần trên cùng hiển thị thanh lọc ba chiều (khu vực, khoảng thời gian, loại hình công việc) và ba thẻ thống kê tóm tắt: số tin tuyển dụng đang mở (kèm badge phần trăm tăng trưởng so với kỳ trước), số công ty đang tuyển và số vị trí thực tập phù hợp với sinh viên. Mỗi thẻ đồng thời là liên kết điều hướng sang trang tìm kiếm việc làm với bộ lọc tương ứng được giữ nguyên. Khu vực biểu đồ chính bao gồm hai thành phần bố trí trên cùng một hàng:
+\textbf{Dashboard thống kê thị trường} là trang phân tích thị trường trung tâm, được tổ chức theo cấu trúc thông tin từ tổng quan đến chi tiết. Khi khởi tạo, giao diện tải danh sách lựa chọn cho ba bộ lọc (khu vực, khoảng thời gian và loại hình công việc), đồng thời gọi sáu API để nhận số liệu tổng quan, xu hướng tuyển dụng, phân bổ theo nhóm kỹ năng, vị trí hot, kỹ năng được yêu cầu và kỹ năng tăng trưởng. Phần trên cùng hiển thị ba thẻ thống kê tóm tắt: số tin tuyển dụng đang mở (kèm badge phần trăm tăng trưởng so với kỳ trước), số công ty đang tuyển và số vị trí thực tập phù hợp với sinh viên. Mỗi thẻ là liên kết điều hướng sang trang tìm kiếm việc làm với bộ lọc tương ứng được giữ nguyên. Khu vực biểu đồ chính bao gồm hai thành phần bố trí trên cùng một hàng:
 
 \begin{itemize}
     \item \textbf{AreaChart ``Xu hướng tin tuyển dụng''} (chiếm 2/3 chiều rộng): biểu diễn tổng số tin tuyển dụng (đường xanh dương) và số vị trí làm việc từ xa (đường xanh lá) theo thời gian, với trục X là nhãn ngày/tháng (tự động chuyển thang đo theo khoảng thời gian lọc) và trục Y là số lượng tin.
     \item \textbf{Treemap ``Phân bổ thị trường''} (1/3 chiều rộng): biểu đồ treemap thể hiện tỷ trọng công việc theo nhóm kỹ năng hoặc danh mục ngành, giúp so sánh nhanh nhóm nào chiếm diện tích lớn hơn và phù hợp với dữ liệu có nhiều danh mục hơn.
 \end{itemize}
 
-Phía dưới các biểu đồ, danh sách \textit{``Top 5 vị trí được tuyển nhiều nhất tuần này''} (Hot Jobs) và hai lưới kỹ năng (\textit{``Top 10 Kỹ năng được yêu cầu''} và \textit{``Kỹ năng tăng trưởng nhanh''}) cung cấp thông tin thị trường chi tiết theo từng vị trí và từng kỹ năng. Trước khi xem giao diện hiện thực, người đọc cần theo dõi ba thao tác chính trong Hình~\ref{fig:ui_dashboard_flow}: người dùng chọn bộ lọc, hệ thống cập nhật dữ liệu tương ứng và người dùng tiếp tục xem chi tiết từ các thẻ hoặc biểu đồ.
+Phía dưới các biểu đồ, danh sách \textit{``Top 5 vị trí được tuyển nhiều nhất''} (Hot Jobs) và hai lưới kỹ năng (\textit{``Top 10 Kỹ năng được yêu cầu''} và \textit{``Kỹ năng tăng trưởng nhanh''}) cung cấp thông tin thị trường chi tiết theo từng vị trí và từng kỹ năng. Khi người dùng đổi bộ lọc, sáu API được gọi lại với tham số mới để cập nhật toàn bộ dữ liệu. Người dùng có thể chọn một thẻ chỉ số để mở danh sách việc làm theo bộ lọc tương ứng hoặc chọn một Hot Job để mở danh sách theo \texttt{search\_group}. Hình~\ref{fig:ui_dashboard_flow} khái quát luồng tương tác này.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.85\textwidth]{ui_dashboard_flow}
-    \caption{Sơ đồ hoạt động mô tả luồng tương tác người dùng với Dashboard thị trường: bắt đầu từ chọn bộ lọc, cập nhật dữ liệu, rồi xem chi tiết từ các thành phần hiển thị.}
+    \includegraphics[width=0.85\textwidth]{ui_dashboard_flow_current}
+    \caption{Sơ đồ hoạt động luồng tương tác người dùng với Dashboard thị trường.}
     \label{fig:ui_dashboard_flow}
 \end{figure}
 

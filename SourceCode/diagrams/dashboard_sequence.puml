@@ -17,38 +17,34 @@ database    "Cơ sở dữ liệu"          as DB
 autonumber
 
 User -> FE : Điều hướng đến\nMarket Dashboard
-FE   -> FE : Khởi tạo giao diện\nvà yêu cầu dữ liệu
+FE   -> FE : Áp dụng bộ lọc\n(thời gian, khu vực, loại việc)
 
 note over FE, API : Truy vấn song song (Promise.all)
 
 par Truy vấn song song
-    FE -> API : Yêu cầu Xu hướng tuyển dụng
+    FE -> API : GET /dashboard/stats
 else
-    FE -> API : Yêu cầu Phân bổ ngành
+    FE -> API : GET /dashboard/trends
 else
-    FE -> API : Yêu cầu Dải lương theo vị trí
+    FE -> API : GET /dashboard/industries
+else
+    FE -> API : GET /dashboard/hot-jobs
+else
+    FE -> API : GET /dashboard/skills/in-demand
+else
+    FE -> API : GET /dashboard/skills/rising
 end
 
-group Xử lý Xu hướng tuyển dụng
-    API -> DB   : Truy vấn lượng tin tuyển dụng\nvà việc làm từ xa theo thời gian
-    DB --> API  : Dữ liệu thời gian thực
+group Xử lý dữ liệu Dashboard
+    API -> DB   : Tổng hợp số liệu, xu hướng,\nnhóm kỹ năng, vị trí hot\nvà kỹ năng tăng trưởng
+    DB --> API  : Sáu tập dữ liệu theo bộ lọc
 end
 
-group Xử lý Phân bổ ngành
-    API -> DB   : Đếm số tin theo từng ngành
-    DB --> API  : Dữ liệu phân bổ
-end
+API --> FE : Sáu phản hồi JSON
 
-group Xử lý Dải lương
-    API -> DB   : Tính trung bình lương (Min/Max)\nnhóm theo vị trí
-    DB --> API  : Dữ liệu lương trung bình
-end
+FE -> FE : Cập nhật State\nsetStats, setTrends, setIndustriesData,\nsetHotJobsData, setInDemandSkillsData,\nsetRisingSkillsData
 
-API --> FE : Tập hợp toàn bộ kết quả\n(JSON)
-
-FE -> FE : Xử lý dữ liệu và\ncập nhật trạng thái (State)
-
-FE -> FE : Kết xuất biểu đồ\n(Xu hướng, Phân bổ, Dải lương)
+FE -> FE : Kết xuất Stats Cards, AreaChart,\nTreemap và các BarChart
 
 FE --> User : Hiển thị Dashboard hoàn chỉnh
 @enduml

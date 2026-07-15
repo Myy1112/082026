@@ -17,42 +17,33 @@ title Sơ đồ hoạt động: Tương tác người dùng với Dashboard th�
 
 start
 
-:Người dùng truy cập\ntrang chủ (Landing Page);
+:Người dùng truy cập\nMarket Dashboard (/dashboard);
 
-if (Đã đăng nhập?) then (Có)
-    :Hiển thị Personal Insight Banner\n(việc phù hợp, kỹ năng thiếu, % hồ sơ);
-else (Chưa)
-    :Hiển thị CTA đăng ký\nvà thống kê thị trường công khai;
-endif
-
-:Điều hướng đến\nMarket Dashboard (/dashboard);
-
-:Tải bộ lọc từ API\n(Địa điểm · Khoảng thời gian · Loại công việc);
-
-:Áp dụng bộ lọc mặc định\nvà gọi đồng thời các API Dashboard;
+:Khởi tạo bộ lọc mặc định\n(30 ngày · tất cả khu vực · tất cả loại việc);
 
 fork
-    :Tải xu hướng tuyển dụng\n→ Render AreaChart;
+    :GET /dashboard/filter-options;
+    :Hiển thị ba bộ lọc\n(khu vực · thời gian · loại việc);
 fork again
-    :Tải phân bổ thị trường\n→ Render Treemap;
-fork again
-    :Tải vị trí nổi bật và kỹ năng\n→ Render danh sách, BarChart;
+    :Gọi đồng thời sáu API\nqua Promise.all;
+    :Nhận stats · trends · industries · hot-jobs\n· in-demand skills · rising skills;
+    :Cập nhật state và kết xuất\n3 thẻ chỉ số, AreaChart, Treemap,\nHot Jobs và hai lưới kỹ năng;
 end fork
 
-:Hiển thị 3 thẻ thống kê\n(Tin đang mở · Công ty · Cơ hội thực tập);
-
-:Hiển thị danh sách Hot Jobs\nvà Top 10 kỹ năng;
-
 if (Người dùng thay đổi bộ lọc?) then (Có)
-    :Gọi lại API với tham số mới;
-    :Cập nhật state và re-render các biểu đồ;
+    :Cập nhật tham số lọc;
+    :Gọi lại sáu API và render lại Dashboard;
 else (Không)
 endif
 
-if (Người dùng click "Phân tích kỹ năng"?) then (Có)
-    :Điều hướng sang\n/skill-gap;
+if (Nhấn thẻ chỉ số?) then (Có)
+    :Điều hướng /jobs\nkèm bộ lọc tương ứng;
 else (Không)
-    :Tiếp tục khám phá dashboard;
+    if (Nhấn một Hot Job?) then (Có)
+        :Điều hướng /jobs\nkèm search_group và bộ lọc hiện tại;
+    else (Không)
+        :Tiếp tục xem dữ liệu thị trường;
+    endif
 endif
 
 stop
