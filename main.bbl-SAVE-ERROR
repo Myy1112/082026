@@ -1,0 +1,726 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.3 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{none/global//global/global/global}
+    \entry{li2020competence}{inproceedings}{}{}
+      \name{author}{6}{}{%
+        {{hash=4e10366b0550a375b1a2c6411d2d88fc}{%
+           family={Li},
+           familyi={L\bibinitperiod},
+           given={Changmao},
+           giveni={C\bibinitperiod}}}%
+        {{hash=c71db1b1bf6fdffacd134dbea150bc52}{%
+           family={Fisher},
+           familyi={F\bibinitperiod},
+           given={Elaine},
+           giveni={E\bibinitperiod}}}%
+        {{hash=4416f309879141eed4d53cc89cd11a07}{%
+           family={Thomas},
+           familyi={T\bibinitperiod},
+           given={Rebecca},
+           giveni={R\bibinitperiod}}}%
+        {{hash=c9c6bf6597f1873861912c43ee62ad90}{%
+           family={Pittard},
+           familyi={P\bibinitperiod},
+           given={Steve},
+           giveni={S\bibinitperiod}}}%
+        {{hash=92948f24c281b4c505dc21635ba831c8}{%
+           family={Hertzberg},
+           familyi={H\bibinitperiod},
+           given={Vicki},
+           giveni={V\bibinitperiod}}}%
+        {{hash=138c57b682af61f34a47460287cd4cb5}{%
+           family={Choi},
+           familyi={C\bibinitperiod},
+           given={Jinho\bibnamedelima D.},
+           giveni={J\bibinitperiod\bibinitdelim D\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Association for Computational Linguistics}%
+      }
+      \strng{namehash}{835c662dd7552f3eedb5eba68d04b938}
+      \strng{fullhash}{780d53c8f11ec1f2367794f361b1d935}
+      \strng{fullhashraw}{780d53c8f11ec1f2367794f361b1d935}
+      \strng{bibnamehash}{780d53c8f11ec1f2367794f361b1d935}
+      \strng{authorbibnamehash}{780d53c8f11ec1f2367794f361b1d935}
+      \strng{authornamehash}{835c662dd7552f3eedb5eba68d04b938}
+      \strng{authorfullhash}{780d53c8f11ec1f2367794f361b1d935}
+      \strng{authorfullhashraw}{780d53c8f11ec1f2367794f361b1d935}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Proceedings of the 2020 Conference on Empirical Methods in Natural Language Processing}
+      \field{title}{Competence-Level Prediction and Resume \& Job Description Matching Using Context-Aware Transformer Models}
+      \field{urlday}{13}
+      \field{urlmonth}{7}
+      \field{urlyear}{2026}
+      \field{year}{2020}
+      \field{urldateera}{ce}
+      \field{pages}{8456\bibrangedash 8466}
+      \range{pages}{11}
+      \verb{doi}
+      \verb 10.18653/v1/2020.emnlp-main.679
+      \endverb
+      \verb{urlraw}
+      \verb https://aclanthology.org/2020.emnlp-main.679/
+      \endverb
+      \verb{url}
+      \verb https://aclanthology.org/2020.emnlp-main.679/
+      \endverb
+    \endentry
+    \entry{linkedinjobs}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=e884c507c5198a4578a84498f7a323e2}{%
+           family={{LinkedIn}},
+           familyi={L\bibinitperiod}}}%
+      }
+      \strng{namehash}{e884c507c5198a4578a84498f7a323e2}
+      \strng{fullhash}{e884c507c5198a4578a84498f7a323e2}
+      \strng{fullhashraw}{e884c507c5198a4578a84498f7a323e2}
+      \strng{bibnamehash}{e884c507c5198a4578a84498f7a323e2}
+      \strng{authorbibnamehash}{e884c507c5198a4578a84498f7a323e2}
+      \strng{authornamehash}{e884c507c5198a4578a84498f7a323e2}
+      \strng{authorfullhash}{e884c507c5198a4578a84498f7a323e2}
+      \strng{authorfullhashraw}{e884c507c5198a4578a84498f7a323e2}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{LinkedIn Job Search}
+      \field{urlday}{14}
+      \field{urlmonth}{7}
+      \field{urlyear}{2026}
+      \field{year}{2026}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://www.linkedin.com/jobs/
+      \endverb
+      \verb{url}
+      \verb https://www.linkedin.com/jobs/
+      \endverb
+    \endentry
+    \entry{topcv}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=86a414a703f31eeb209d9e5135ba0933}{%
+           family={{TopCV Vietnam}},
+           familyi={T\bibinitperiod}}}%
+      }
+      \strng{namehash}{86a414a703f31eeb209d9e5135ba0933}
+      \strng{fullhash}{86a414a703f31eeb209d9e5135ba0933}
+      \strng{fullhashraw}{86a414a703f31eeb209d9e5135ba0933}
+      \strng{bibnamehash}{86a414a703f31eeb209d9e5135ba0933}
+      \strng{authorbibnamehash}{86a414a703f31eeb209d9e5135ba0933}
+      \strng{authornamehash}{86a414a703f31eeb209d9e5135ba0933}
+      \strng{authorfullhash}{86a414a703f31eeb209d9e5135ba0933}
+      \strng{authorfullhashraw}{86a414a703f31eeb209d9e5135ba0933}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{TopCV --- CV xịn, việc làm chất}
+      \field{urlday}{14}
+      \field{urlmonth}{7}
+      \field{urlyear}{2026}
+      \field{year}{2026}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://www.topcv.vn/
+      \endverb
+      \verb{url}
+      \verb https://www.topcv.vn/
+      \endverb
+    \endentry
+    \entry{itviec}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=c96c87497fe67fc408bc36f65692818c}{%
+           family={{ITviec}},
+           familyi={I\bibinitperiod}}}%
+      }
+      \strng{namehash}{c96c87497fe67fc408bc36f65692818c}
+      \strng{fullhash}{c96c87497fe67fc408bc36f65692818c}
+      \strng{fullhashraw}{c96c87497fe67fc408bc36f65692818c}
+      \strng{bibnamehash}{c96c87497fe67fc408bc36f65692818c}
+      \strng{authorbibnamehash}{c96c87497fe67fc408bc36f65692818c}
+      \strng{authornamehash}{c96c87497fe67fc408bc36f65692818c}
+      \strng{authorfullhash}{c96c87497fe67fc408bc36f65692818c}
+      \strng{authorfullhashraw}{c96c87497fe67fc408bc36f65692818c}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{ITviec --- Top IT Jobs for You}
+      \field{urlday}{14}
+      \field{urlmonth}{7}
+      \field{urlyear}{2026}
+      \field{year}{2026}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://itviec.com/
+      \endverb
+      \verb{url}
+      \verb https://itviec.com/
+      \endverb
+    \endentry
+    \entry{glints}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=c7a377f1783a6e8c23771b7c7495f708}{%
+           family={{Glints}},
+           familyi={G\bibinitperiod}}}%
+      }
+      \strng{namehash}{c7a377f1783a6e8c23771b7c7495f708}
+      \strng{fullhash}{c7a377f1783a6e8c23771b7c7495f708}
+      \strng{fullhashraw}{c7a377f1783a6e8c23771b7c7495f708}
+      \strng{bibnamehash}{c7a377f1783a6e8c23771b7c7495f708}
+      \strng{authorbibnamehash}{c7a377f1783a6e8c23771b7c7495f708}
+      \strng{authornamehash}{c7a377f1783a6e8c23771b7c7495f708}
+      \strng{authorfullhash}{c7a377f1783a6e8c23771b7c7495f708}
+      \strng{authorfullhashraw}{c7a377f1783a6e8c23771b7c7495f708}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Glints --- Kênh Tuyển Dụng và Tìm Kiếm Việc Làm}
+      \field{urlday}{14}
+      \field{urlmonth}{7}
+      \field{urlyear}{2026}
+      \field{year}{2026}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://glints.com/vn
+      \endverb
+      \verb{url}
+      \verb https://glints.com/vn
+      \endverb
+    \endentry
+    \entry{olston2010web}{article}{}{}
+      \name{author}{2}{}{%
+        {{hash=cc5efd5277c8def4433f72bd6f2279e5}{%
+           family={Olston},
+           familyi={O\bibinitperiod},
+           given={Christopher},
+           giveni={C\bibinitperiod}}}%
+        {{hash=e5898bbeb851c12f12a38b5ee1aa98ec}{%
+           family={Najork},
+           familyi={N\bibinitperiod},
+           given={Marc},
+           giveni={M\bibinitperiod}}}%
+      }
+      \strng{namehash}{c1d24b564f0efcf292181792aeaece2e}
+      \strng{fullhash}{c1d24b564f0efcf292181792aeaece2e}
+      \strng{fullhashraw}{c1d24b564f0efcf292181792aeaece2e}
+      \strng{bibnamehash}{c1d24b564f0efcf292181792aeaece2e}
+      \strng{authorbibnamehash}{c1d24b564f0efcf292181792aeaece2e}
+      \strng{authornamehash}{c1d24b564f0efcf292181792aeaece2e}
+      \strng{authorfullhash}{c1d24b564f0efcf292181792aeaece2e}
+      \strng{authorfullhashraw}{c1d24b564f0efcf292181792aeaece2e}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Foundations and Trends in Information Retrieval}
+      \field{number}{3}
+      \field{title}{Web Crawling}
+      \field{volume}{4}
+      \field{year}{2010}
+      \field{pages}{175\bibrangedash 246}
+      \range{pages}{72}
+      \verb{doi}
+      \verb 10.1561/1500000017
+      \endverb
+    \endentry
+    \entry{requestsdocs}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=1fc021f4fa3dc375d965f38b8ae5fe06}{%
+           family={Reitz},
+           familyi={R\bibinitperiod},
+           given={Kenneth},
+           giveni={K\bibinitperiod}}}%
+      }
+      \strng{namehash}{1fc021f4fa3dc375d965f38b8ae5fe06}
+      \strng{fullhash}{1fc021f4fa3dc375d965f38b8ae5fe06}
+      \strng{fullhashraw}{1fc021f4fa3dc375d965f38b8ae5fe06}
+      \strng{bibnamehash}{1fc021f4fa3dc375d965f38b8ae5fe06}
+      \strng{authorbibnamehash}{1fc021f4fa3dc375d965f38b8ae5fe06}
+      \strng{authornamehash}{1fc021f4fa3dc375d965f38b8ae5fe06}
+      \strng{authorfullhash}{1fc021f4fa3dc375d965f38b8ae5fe06}
+      \strng{authorfullhashraw}{1fc021f4fa3dc375d965f38b8ae5fe06}
+      \field{sortinit}{8}
+      \field{sortinithash}{a231b008ebf0ecbe0b4d96dcc159445f}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Requests: HTTP for Humans --- Documentation}
+      \field{urlday}{13}
+      \field{urlmonth}{7}
+      \field{urlyear}{2026}
+      \field{year}{2026}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://requests.readthedocs.io/
+      \endverb
+      \verb{url}
+      \verb https://requests.readthedocs.io/
+      \endverb
+    \endentry
+    \entry{webdriver}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=bdea812935506778c291249971f80655}{%
+           family={{World Wide Web Consortium}},
+           familyi={W\bibinitperiod}}}%
+      }
+      \strng{namehash}{bdea812935506778c291249971f80655}
+      \strng{fullhash}{bdea812935506778c291249971f80655}
+      \strng{fullhashraw}{bdea812935506778c291249971f80655}
+      \strng{bibnamehash}{bdea812935506778c291249971f80655}
+      \strng{authorbibnamehash}{bdea812935506778c291249971f80655}
+      \strng{authornamehash}{bdea812935506778c291249971f80655}
+      \strng{authorfullhash}{bdea812935506778c291249971f80655}
+      \strng{authorfullhashraw}{bdea812935506778c291249971f80655}
+      \field{sortinit}{9}
+      \field{sortinithash}{0a5ebc79d83c96b6579069544c73c7d4}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{WebDriver}
+      \field{urlday}{13}
+      \field{urlmonth}{7}
+      \field{urlyear}{2026}
+      \field{year}{2018}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://www.w3.org/TR/webdriver1/
+      \endverb
+      \verb{url}
+      \verb https://www.w3.org/TR/webdriver1/
+      \endverb
+    \endentry
+    \entry{cloudflarebots}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=1d212a7f3bda1d4cb8714d06bc601ab6}{%
+           family={{Cloudflare, Inc.}},
+           familyi={C\bibinitperiod}}}%
+      }
+      \strng{namehash}{1d212a7f3bda1d4cb8714d06bc601ab6}
+      \strng{fullhash}{1d212a7f3bda1d4cb8714d06bc601ab6}
+      \strng{fullhashraw}{1d212a7f3bda1d4cb8714d06bc601ab6}
+      \strng{bibnamehash}{1d212a7f3bda1d4cb8714d06bc601ab6}
+      \strng{authorbibnamehash}{1d212a7f3bda1d4cb8714d06bc601ab6}
+      \strng{authornamehash}{1d212a7f3bda1d4cb8714d06bc601ab6}
+      \strng{authorfullhash}{1d212a7f3bda1d4cb8714d06bc601ab6}
+      \strng{authorfullhashraw}{1d212a7f3bda1d4cb8714d06bc601ab6}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Bot Management --- Cloudflare Documentation}
+      \field{urlday}{13}
+      \field{urlmonth}{7}
+      \field{urlyear}{2026}
+      \field{year}{2026}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://developers.cloudflare.com/bots/
+      \endverb
+      \verb{url}
+      \verb https://developers.cloudflare.com/bots/
+      \endverb
+    \endentry
+    \entry{cloudscraper}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=52594882d61b378c28ccde497f678839}{%
+           family={VeNoMouS},
+           familyi={V\bibinitperiod}}}%
+      }
+      \strng{namehash}{52594882d61b378c28ccde497f678839}
+      \strng{fullhash}{52594882d61b378c28ccde497f678839}
+      \strng{fullhashraw}{52594882d61b378c28ccde497f678839}
+      \strng{bibnamehash}{52594882d61b378c28ccde497f678839}
+      \strng{authorbibnamehash}{52594882d61b378c28ccde497f678839}
+      \strng{authornamehash}{52594882d61b378c28ccde497f678839}
+      \strng{authorfullhash}{52594882d61b378c28ccde497f678839}
+      \strng{authorfullhashraw}{52594882d61b378c28ccde497f678839}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{cloudscraper: A Python Module to Bypass Cloudflare's Anti-bot Page}
+      \field{urlday}{13}
+      \field{urlmonth}{7}
+      \field{urlyear}{2026}
+      \field{year}{2026}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://github.com/VeNoMouS/cloudscraper
+      \endverb
+      \verb{url}
+      \verb https://github.com/VeNoMouS/cloudscraper
+      \endverb
+    \endentry
+    \entry{kimballcaserta}{book}{}{}
+      \name{author}{2}{}{%
+        {{hash=6ec3b140429bc59ad63c593b172f665c}{%
+           family={Kimball},
+           familyi={K\bibinitperiod},
+           given={Ralph},
+           giveni={R\bibinitperiod}}}%
+        {{hash=3d8b446c0d13f71dfa7e049f774ceec0}{%
+           family={Caserta},
+           familyi={C\bibinitperiod},
+           given={Joe},
+           giveni={J\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Wiley}%
+      }
+      \strng{namehash}{1b50b53fb37370ce776642af48f4ec8c}
+      \strng{fullhash}{1b50b53fb37370ce776642af48f4ec8c}
+      \strng{fullhashraw}{1b50b53fb37370ce776642af48f4ec8c}
+      \strng{bibnamehash}{1b50b53fb37370ce776642af48f4ec8c}
+      \strng{authorbibnamehash}{1b50b53fb37370ce776642af48f4ec8c}
+      \strng{authornamehash}{1b50b53fb37370ce776642af48f4ec8c}
+      \strng{authorfullhash}{1b50b53fb37370ce776642af48f4ec8c}
+      \strng{authorfullhashraw}{1b50b53fb37370ce776642af48f4ec8c}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{The Data Warehouse ETL Toolkit: Practical Techniques for Extracting, Cleaning, Conforming, and Delivering Data}
+      \field{year}{2004}
+    \endentry
+    \entry{geministructured}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=8b36e9207c24c76e6719268e49201d94}{%
+           family={{Google}},
+           familyi={G\bibinitperiod}}}%
+      }
+      \strng{namehash}{8b36e9207c24c76e6719268e49201d94}
+      \strng{fullhash}{8b36e9207c24c76e6719268e49201d94}
+      \strng{fullhashraw}{8b36e9207c24c76e6719268e49201d94}
+      \strng{bibnamehash}{8b36e9207c24c76e6719268e49201d94}
+      \strng{authorbibnamehash}{8b36e9207c24c76e6719268e49201d94}
+      \strng{authornamehash}{8b36e9207c24c76e6719268e49201d94}
+      \strng{authorfullhash}{8b36e9207c24c76e6719268e49201d94}
+      \strng{authorfullhashraw}{8b36e9207c24c76e6719268e49201d94}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Structured Outputs --- Gemini API Documentation}
+      \field{urlday}{13}
+      \field{urlmonth}{7}
+      \field{urlyear}{2026}
+      \field{year}{2026}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://ai.google.dev/gemini-api/docs/structured-output
+      \endverb
+      \verb{url}
+      \verb https://ai.google.dev/gemini-api/docs/structured-output
+      \endverb
+    \endentry
+    \entry{reimers2019}{inproceedings}{}{}
+      \name{author}{2}{}{%
+        {{hash=da9947b27b0d1c4c912e2b391426d443}{%
+           family={Reimers},
+           familyi={R\bibinitperiod},
+           given={Nils},
+           giveni={N\bibinitperiod}}}%
+        {{hash=ea70b44be1920f6e8c379706bc7d047a}{%
+           family={Gurevych},
+           familyi={G\bibinitperiod},
+           given={Iryna},
+           giveni={I\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Association for Computational Linguistics}%
+      }
+      \strng{namehash}{2466af6376c9c5e3658dcc6692351f3e}
+      \strng{fullhash}{2466af6376c9c5e3658dcc6692351f3e}
+      \strng{fullhashraw}{2466af6376c9c5e3658dcc6692351f3e}
+      \strng{bibnamehash}{2466af6376c9c5e3658dcc6692351f3e}
+      \strng{authorbibnamehash}{2466af6376c9c5e3658dcc6692351f3e}
+      \strng{authornamehash}{2466af6376c9c5e3658dcc6692351f3e}
+      \strng{authorfullhash}{2466af6376c9c5e3658dcc6692351f3e}
+      \strng{authorfullhashraw}{2466af6376c9c5e3658dcc6692351f3e}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Proceedings of the 2019 Conference on Empirical Methods in Natural Language Processing and the 9th International Joint Conference on Natural Language Processing}
+      \field{title}{Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks}
+      \field{urlday}{13}
+      \field{urlmonth}{7}
+      \field{urlyear}{2026}
+      \field{year}{2019}
+      \field{urldateera}{ce}
+      \field{pages}{3982\bibrangedash 3992}
+      \range{pages}{11}
+      \verb{doi}
+      \verb 10.18653/v1/D19-1410
+      \endverb
+      \verb{urlraw}
+      \verb https://aclanthology.org/D19-1410/
+      \endverb
+      \verb{url}
+      \verb https://aclanthology.org/D19-1410/
+      \endverb
+    \endentry
+    \entry{card1999readings}{book}{}{}
+      \name{author}{3}{}{%
+        {{hash=8a77110e452e26554c7c2b09868876c0}{%
+           family={Card},
+           familyi={C\bibinitperiod},
+           given={Stuart\bibnamedelima K.},
+           giveni={S\bibinitperiod\bibinitdelim K\bibinitperiod}}}%
+        {{hash=a7acbc93172ff11ebe499a3f0ca83686}{%
+           family={Mackinlay},
+           familyi={M\bibinitperiod},
+           given={Jock\bibnamedelima D.},
+           giveni={J\bibinitperiod\bibinitdelim D\bibinitperiod}}}%
+        {{hash=39afccc0f55ae7821df79ffd677c90b0}{%
+           family={Shneiderman},
+           familyi={S\bibinitperiod},
+           given={Ben},
+           giveni={B\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {San Francisco, CA}%
+      }
+      \list{publisher}{1}{%
+        {Morgan Kaufmann}%
+      }
+      \strng{namehash}{d9e5923d370475ce0a82f392b2557706}
+      \strng{fullhash}{bf4b89988843985aac047efedf5000a7}
+      \strng{fullhashraw}{bf4b89988843985aac047efedf5000a7}
+      \strng{bibnamehash}{bf4b89988843985aac047efedf5000a7}
+      \strng{authorbibnamehash}{bf4b89988843985aac047efedf5000a7}
+      \strng{authornamehash}{d9e5923d370475ce0a82f392b2557706}
+      \strng{authorfullhash}{bf4b89988843985aac047efedf5000a7}
+      \strng{authorfullhashraw}{bf4b89988843985aac047efedf5000a7}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Readings in Information Visualization: Using Vision to Think}
+      \field{year}{1999}
+    \endentry
+    \entry{shneiderman1996eyes}{inproceedings}{}{}
+      \name{author}{1}{}{%
+        {{hash=39afccc0f55ae7821df79ffd677c90b0}{%
+           family={Shneiderman},
+           familyi={S\bibinitperiod},
+           given={Ben},
+           giveni={B\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {IEEE Computer Society}%
+      }
+      \strng{namehash}{39afccc0f55ae7821df79ffd677c90b0}
+      \strng{fullhash}{39afccc0f55ae7821df79ffd677c90b0}
+      \strng{fullhashraw}{39afccc0f55ae7821df79ffd677c90b0}
+      \strng{bibnamehash}{39afccc0f55ae7821df79ffd677c90b0}
+      \strng{authorbibnamehash}{39afccc0f55ae7821df79ffd677c90b0}
+      \strng{authornamehash}{39afccc0f55ae7821df79ffd677c90b0}
+      \strng{authorfullhash}{39afccc0f55ae7821df79ffd677c90b0}
+      \strng{authorfullhashraw}{39afccc0f55ae7821df79ffd677c90b0}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Proceedings of the 1996 IEEE Symposium on Visual Languages}
+      \field{title}{The Eyes Have It: A Task by Data Type Taxonomy for Information Visualizations}
+      \field{year}{1996}
+      \field{pages}{336\bibrangedash 343}
+      \range{pages}{8}
+      \verb{doi}
+      \verb 10.1109/VL.1996.545307
+      \endverb
+    \endentry
+    \entry{tufte2001visual}{book}{}{}
+      \name{author}{1}{}{%
+        {{hash=41187f886abb9d98f33e5b3f52276d12}{%
+           family={Tufte},
+           familyi={T\bibinitperiod},
+           given={Edward\bibnamedelima R.},
+           giveni={E\bibinitperiod\bibinitdelim R\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Cheshire, CT}%
+      }
+      \list{publisher}{1}{%
+        {Graphics Press}%
+      }
+      \strng{namehash}{41187f886abb9d98f33e5b3f52276d12}
+      \strng{fullhash}{41187f886abb9d98f33e5b3f52276d12}
+      \strng{fullhashraw}{41187f886abb9d98f33e5b3f52276d12}
+      \strng{bibnamehash}{41187f886abb9d98f33e5b3f52276d12}
+      \strng{authorbibnamehash}{41187f886abb9d98f33e5b3f52276d12}
+      \strng{authornamehash}{41187f886abb9d98f33e5b3f52276d12}
+      \strng{authorfullhash}{41187f886abb9d98f33e5b3f52276d12}
+      \strng{authorfullhashraw}{41187f886abb9d98f33e5b3f52276d12}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{edition}{2}
+      \field{title}{The Visual Display of Quantitative Information}
+      \field{year}{2001}
+    \endentry
+    \entry{few2006dashboard}{book}{}{}
+      \name{author}{1}{}{%
+        {{hash=0225846e9c16b1e8389734ceaa2c3c34}{%
+           family={Few},
+           familyi={F\bibinitperiod},
+           given={Stephen},
+           giveni={S\bibinitperiod}}}%
+      }
+      \list{location}{1}{%
+        {Sebastopol, CA}%
+      }
+      \list{publisher}{1}{%
+        {O'Reilly Media}%
+      }
+      \strng{namehash}{0225846e9c16b1e8389734ceaa2c3c34}
+      \strng{fullhash}{0225846e9c16b1e8389734ceaa2c3c34}
+      \strng{fullhashraw}{0225846e9c16b1e8389734ceaa2c3c34}
+      \strng{bibnamehash}{0225846e9c16b1e8389734ceaa2c3c34}
+      \strng{authorbibnamehash}{0225846e9c16b1e8389734ceaa2c3c34}
+      \strng{authornamehash}{0225846e9c16b1e8389734ceaa2c3c34}
+      \strng{authorfullhash}{0225846e9c16b1e8389734ceaa2c3c34}
+      \strng{authorfullhashraw}{0225846e9c16b1e8389734ceaa2c3c34}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Information Dashboard Design: The Effective Visual Communication of Data}
+      \field{year}{2006}
+    \endentry
+    \entry{minilmmodel}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=78769ea0c2d3192a7a749a86f01e56b2}{%
+           family={{Sentence Transformers}},
+           familyi={S\bibinitperiod}}}%
+      }
+      \strng{namehash}{78769ea0c2d3192a7a749a86f01e56b2}
+      \strng{fullhash}{78769ea0c2d3192a7a749a86f01e56b2}
+      \strng{fullhashraw}{78769ea0c2d3192a7a749a86f01e56b2}
+      \strng{bibnamehash}{78769ea0c2d3192a7a749a86f01e56b2}
+      \strng{authorbibnamehash}{78769ea0c2d3192a7a749a86f01e56b2}
+      \strng{authornamehash}{78769ea0c2d3192a7a749a86f01e56b2}
+      \strng{authorfullhash}{78769ea0c2d3192a7a749a86f01e56b2}
+      \strng{authorfullhashraw}{78769ea0c2d3192a7a749a86f01e56b2}
+      \field{sortinit}{5}
+      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{all-MiniLM-L6-v2 Model Card}
+      \field{urlday}{13}
+      \field{urlmonth}{7}
+      \field{urlyear}{2026}
+      \field{year}{2026}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2
+      \endverb
+      \verb{url}
+      \verb https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2
+      \endverb
+    \endentry
+    \entry{salton1983}{book}{}{}
+      \name{author}{2}{}{%
+        {{hash=7cce77040cccf3822126400b46318ab3}{%
+           family={Salton},
+           familyi={S\bibinitperiod},
+           given={Gerard},
+           giveni={G\bibinitperiod}}}%
+        {{hash=6dec49470eeb15031645516e1562e50e}{%
+           family={McGill},
+           familyi={M\bibinitperiod},
+           given={Michael\bibnamedelima J.},
+           giveni={M\bibinitperiod\bibinitdelim J\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {McGraw-Hill}%
+      }
+      \strng{namehash}{314a2413199608c4b35d6b4ec4b050bf}
+      \strng{fullhash}{314a2413199608c4b35d6b4ec4b050bf}
+      \strng{fullhashraw}{314a2413199608c4b35d6b4ec4b050bf}
+      \strng{bibnamehash}{314a2413199608c4b35d6b4ec4b050bf}
+      \strng{authorbibnamehash}{314a2413199608c4b35d6b4ec4b050bf}
+      \strng{authornamehash}{314a2413199608c4b35d6b4ec4b050bf}
+      \strng{authorfullhash}{314a2413199608c4b35d6b4ec4b050bf}
+      \strng{authorfullhashraw}{314a2413199608c4b35d6b4ec4b050bf}
+      \field{sortinit}{6}
+      \field{sortinithash}{b33bc299efb3c36abec520a4c896a66d}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Introduction to Modern Information Retrieval}
+      \field{year}{1983}
+    \endentry
+    \entry{manning2008}{book}{}{}
+      \name{author}{3}{}{%
+        {{hash=2214edb8305f7ccd7cdc310b3a8ae1b4}{%
+           family={Manning},
+           familyi={M\bibinitperiod},
+           given={Christopher\bibnamedelima D.},
+           giveni={C\bibinitperiod\bibinitdelim D\bibinitperiod}}}%
+        {{hash=68f523934985e2f967ab2b15f4ded07c}{%
+           family={Raghavan},
+           familyi={R\bibinitperiod},
+           given={Prabhakar},
+           giveni={P\bibinitperiod}}}%
+        {{hash=9a80de0e5ec6df57363aaf321a5d05be}{%
+           family={Schütze},
+           familyi={S\bibinitperiod},
+           given={Hinrich},
+           giveni={H\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Cambridge University Press}%
+      }
+      \strng{namehash}{74f8a4742e6176570536838efea19700}
+      \strng{fullhash}{56b44e50eec2e98e36ad6aa3a5e7af9b}
+      \strng{fullhashraw}{56b44e50eec2e98e36ad6aa3a5e7af9b}
+      \strng{bibnamehash}{56b44e50eec2e98e36ad6aa3a5e7af9b}
+      \strng{authorbibnamehash}{56b44e50eec2e98e36ad6aa3a5e7af9b}
+      \strng{authornamehash}{74f8a4742e6176570536838efea19700}
+      \strng{authorfullhash}{56b44e50eec2e98e36ad6aa3a5e7af9b}
+      \strng{authorfullhashraw}{56b44e50eec2e98e36ad6aa3a5e7af9b}
+      \field{sortinit}{6}
+      \field{sortinithash}{b33bc299efb3c36abec520a4c896a66d}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Introduction to Information Retrieval}
+      \field{urlday}{13}
+      \field{urlmonth}{7}
+      \field{urlyear}{2026}
+      \field{year}{2008}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://nlp.stanford.edu/IR-book/
+      \endverb
+      \verb{url}
+      \verb https://nlp.stanford.edu/IR-book/
+      \endverb
+    \endentry
+  \enddatalist
+  \missing{sec:skill_algorithm}
+\endrefsection
+\endinput
+
