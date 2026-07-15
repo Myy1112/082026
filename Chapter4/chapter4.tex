@@ -102,9 +102,7 @@ Thuật toán phân tích kỹ năng năng lực đóng vai trò cốt lõi tron
 
 Để hiện thực hóa yêu cầu phân tích ngữ nghĩa, hệ thống tích hợp API của mô hình ngôn ngữ lớn Gemini kết hợp cơ chế \textit{Structured Outputs}. Mô hình được ràng buộc trả về đúng một đối tượng JSON tuân theo JSON Schema định nghĩa trước, giúp loại bỏ các trường hợp mô hình trả về văn bản giải thích hoặc định dạng sai.
 
-\begin{center}
-\begin{minipage}{0.95\textwidth}
-\hrule
+\noindent\hrule
 \vspace{2mm}
 \textbf{Cấu hình trích xuất thực thể kỹ năng:}
 \vspace{2mm}
@@ -122,8 +120,6 @@ Thuật toán phân tích kỹ năng năng lực đóng vai trò cốt lõi tron
 \end{lstlisting}
 \vspace{2mm}
 \hrule
-\end{minipage}
-\end{center}
 
 \subsection{Cài đặt Matching Engine tính độ phù hợp và liệt kê các kỹ năng còn thiếu}
 
@@ -133,44 +129,42 @@ Sau khi kỹ năng được chuẩn hóa, bộ máy so khớp (Matching Engine) 
 \centering
 \begin{tikzpicture}[
     align=center,
-    input/.style={rectangle, draw=blue!70!black, fill=blue!5, thick, text width=3.5cm, minimum height=0.8cm, rounded corners, font=\small},
-    process/.style={rectangle, draw=gray!70!black, fill=gray!5, thick, text width=4.5cm, minimum height=0.8cm, rounded corners, font=\small},
-    filter/.style={rectangle, draw=orange!70!black, fill=orange!5, thick, text width=4.5cm, minimum height=0.8cm, rounded corners, font=\small},
-    exclude/.style={rectangle, draw=red!70!black, fill=red!5, thick, text width=3.5cm, minimum height=0.8cm, rounded corners, font=\small},
-    database/.style={rectangle, draw=green!70!black, fill=green!5, thick, text width=4.5cm, minimum height=0.8cm, rounded corners, font=\small}
+    input/.style={rectangle, draw=blue!70!black, fill=blue!5, thick, text width=3.5cm, minimum height=1.0cm, rounded corners, font=\small},
+    process/.style={rectangle, draw=gray!70!black, fill=gray!5, thick, text width=5.0cm, minimum height=1.0cm, rounded corners, font=\small},
+    filter/.style={rectangle, draw=orange!70!black, fill=orange!5, thick, text width=5.0cm, minimum height=1.0cm, rounded corners, font=\small},
+    exclude/.style={rectangle, draw=red!70!black, fill=red!5, thick, text width=3.5cm, minimum height=1.0cm, rounded corners, font=\small},
+    database/.style={rectangle, draw=green!70!black, fill=green!5, thick, text width=5.0cm, minimum height=1.0cm, rounded corners, font=\small}
 ]
     % Nodes
-    \node (cv_skill) [input] at (-3,0.8) {Kỹ năng CV};
-    \node (job_skill) [input] at (3,0.8) {Kỹ năng Nhóm Việc\\(Weights)};
+    \node (cv_skill) [input] at (-3.4,0) {Kỹ năng CV};
+    \node (job_skill) [input] at (3.4,0) {Kỹ năng Nhóm Việc\\(Weights)};
     
-    \node (embed) [process] at (0,-0.4) {Nhận diện Vector Nhúng};
-    \node (cosine) [process] at (0,-1.6) {Tính Cosine Similarity};
-    \node (filter) [filter] at (0,-2.8) {Áp dụng 6 bộ luật lọc ngữ nghĩa};
-    \node (exclude) [exclude] at (5.2,-2.8) {Loại trừ các cặp\\khớp sai bản chất};
+    \node (embed) [process] at (0,-1.8) {Nhận diện Vector Nhúng};
+    \node (cosine) [process] at (0,-3.4) {Tính Cosine Similarity};
+    \node (filter) [filter] at (0,-5.0) {Áp dụng 6 bộ luật lọc ngữ nghĩa};
+    \node (exclude) [exclude] at (6.0,-5.0) {Loại trừ các cặp\\khớp sai bản chất};
     
-    \node (max_sim) [process] at (0,-4.1) {Tìm Max Similarity};
-    \node (weight_score) [process] at (0,-5.3) {Tính toán điểm số\\Weighted Score};
-    \node (classify) [process] at (0,-6.5) {Phân loại thành 3 nhóm kỹ năng};
-    \node (save_db) [database] at (0,-7.7) {Lưu JSONB\\radar\_data \& gap\_report};
+    \node (max_sim) [process] at (0,-6.6) {Tìm Max Similarity};
+    \node (weight_score) [process] at (0,-8.2) {Tính toán điểm số\\Weighted Score};
+    \node (classify) [process] at (0,-9.8) {Phân loại thành 3 nhóm kỹ năng};
+    \node (save_db) [database] at (0,-11.4) {Lưu JSONB\\radar\_data \& gap\_report};
     
     % Connections
-    \draw [thick, ->, >=stealth] (cv_skill.south) |- (embed.west);
-    \draw [thick, ->, >=stealth] (job_skill.south) |- (embed.east);
-    \draw [thick, ->, >=stealth] (embed) -- (cosine);
-    \draw [thick, ->, >=stealth] (cosine) -- (filter);
-    \draw [thick, ->, >=stealth] (filter) -- (exclude);
-    \draw [thick, ->, >=stealth] (filter) -- (max_sim);
-    \draw [thick, ->, >=stealth] (max_sim) -- (weight_score);
-    \draw [thick, ->, >=stealth] (weight_score) -- (classify);
-    \draw [thick, ->, >=stealth] (classify) -- (save_db);
+    \draw [thick, ->, >=stealth] (cv_skill.south) -- ++(0,-0.9) |- (embed.west);
+    \draw [thick, ->, >=stealth] (job_skill.south) -- ++(0,-0.9) |- (embed.east);
+    \draw [thick, ->, >=stealth] (embed.south) -- (cosine.north);
+    \draw [thick, ->, >=stealth] (cosine.south) -- (filter.north);
+    \draw [thick, ->, >=stealth] (filter.east) -- (exclude.west);
+    \draw [thick, ->, >=stealth] (filter.south) -- (max_sim.north);
+    \draw [thick, ->, >=stealth] (max_sim.south) -- (weight_score.north);
+    \draw [thick, ->, >=stealth] (weight_score.south) -- (classify.north);
+    \draw [thick, ->, >=stealth] (classify.south) -- (save_db.north);
 \end{tikzpicture}
 \caption{Quy trình tính điểm so khớp kỹ năng (Matching Engine)}
 \label{fig:matching_engine_process}
 \end{figure}
 
-\begin{center}
-\begin{minipage}{0.95\textwidth}
-\hrule
+\noindent\hrule
 \vspace{2mm}
 \textbf{Phân rã logic cấu trúc Matching Engine:}
 \begin{itemize}
@@ -254,8 +248,6 @@ Sau khi kỹ năng được chuẩn hóa, bộ máy so khớp (Matching Engine) 
 \end{itemize}
 \vspace{2mm}
 \hrule
-\end{minipage}
-\end{center}
 
 Trong trường hợp gọi LLM thất bại hoặc cạn hạn ngạch, hệ thống kích hoạt bộ đối sánh từ khóa thô (Keyword Match Fallback) trực tiếp với từ điển trong bảng \texttt{skills} bằng biểu thức chính quy có ranh giới từ.
 

@@ -25,7 +25,7 @@ API  -> API  : Xác thực Token\nKiểm tra định dạng
 API  -> DB   : Lưu metadata CV
 DB  --> API  : Trả về CV_ID
 
-API  -> ETL  : Yêu cầu xử lý đối soát\n{CV_ID, Job_ID}
+API  -> ETL  : Yêu cầu xử lý đối soát\n{CV_ID, search_group}
 
 group Bóc tách kỹ năng
     ETL -> ETL    : Trích xuất văn bản từ CV

@@ -67,7 +67,7 @@ UC-11 & Sinh viên & Xem Gap Report: báo cáo chi tiết kỹ năng đạt yêu
 \hline
 \multicolumn{3}{|l|}{\textit{Nhóm chức năng: Khám phá việc làm}} \\
 \hline
-UC-12 & Sinh viên & Tìm kiếm và lọc tin tuyển dụng theo từ khóa, kỹ năng và địa điểm; hỗ trợ sắp xếp kết quả theo thời gian đăng, mức lương hoặc mức độ phù hợp. \\
+UC-12 & Sinh viên & Tìm kiếm và lọc tin tuyển dụng theo từ khóa; hỗ trợ sắp xếp kết quả theo thời gian đăng, mức lương hoặc mức độ phù hợp. \\
 \hline
 UC-13 & Sinh viên & Xem chi tiết tin tuyển dụng bao gồm mô tả công việc và yêu cầu kỹ năng. \\
 \hline
@@ -174,10 +174,12 @@ Hệ thống CareerNova được xây dựng theo kiến trúc đa tầng (multi
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.95\textwidth]{system_architecture}
+    \includegraphics[width=0.95\textwidth]{system_architecture_algorithm}
     \caption{Sơ đồ kiến trúc tổng thể hệ thống CareerNova.}
     \label{fig:system_architecture}
 \end{figure}
+
+Matching Engine tại dịch vụ \texttt{JobVisualization\_BE} thực hiện đối sánh kỹ năng bằng cosine có trọng số kết hợp các luật lọc ngữ nghĩa trước khi trả kết quả cho hệ thống.
 
 \textbf{Tầng Trình Bày (Presentation Layer)} bao gồm ứng dụng web đơn trang (Single-Page Application). Tầng này đảm nhận toàn bộ việc hiển thị giao diện và tương tác người dùng, bao gồm các trang xác thực (đăng nhập, đăng ký, SSO), luồng định hướng (onboarding), trang quản lý CV, và các thành phần trực quan hóa cốt lõi. Giao tiếp với tầng nghiệp vụ được thiết kế qua giao thức REST API sử dụng HTTPS và cơ chế xác thực không trạng thái (stateless authentication).
 
@@ -291,12 +293,12 @@ Hậu điều kiện & Sinh viên nắm được xu hướng tuyển dụng, cá
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.95\textwidth,height=0.82\textheight,keepaspectratio]{cv_upload_sequence}
+    \includegraphics[width=0.95\textwidth,height=0.82\textheight,keepaspectratio]{cv_upload_sequence_search_group}
     \caption{Sơ đồ tuần tự luồng tải lên CV và so khớp kỹ năng.}
     \label{fig:cv_upload_sequence}
 \end{figure}
 
-Luồng xử lý bắt đầu khi người dùng gửi tệp CV từ Giao diện người dùng (Frontend). Core API tiếp nhận, lưu metadata và chuyển tiếp sang Data Processing Engine qua HTTP. Tại đây, văn bản CV được bóc tách (OCR nếu cần), kỹ năng được trích xuất qua Mô hình ngôn ngữ lớn (LLM API) với cơ chế kiểm chứng chống ảo giác (\texttt{evidence\_text}), sau đó mã hóa thành vector 384 chiều bằng mô hình nhúng (Embedding) và tính điểm tương đồng Cosine có trọng số TF-IDF thị trường. Kết quả \texttt{radar\_data} và \texttt{gap\_report} JSONB được lưu vào bảng \texttt{cv\_job\_matches} trong cơ sở dữ liệu và trả về Giao diện người dùng (Frontend) để kết xuất biểu đồ Radar và Gap Report.
+Luồng xử lý bắt đầu khi người dùng gửi tệp CV từ Giao diện người dùng (Frontend). Core API tiếp nhận, lưu metadata và chuyển tiếp sang Data Processing Engine qua HTTP kèm \texttt{CV\_ID} và \texttt{search\_group}; nhóm này xác định tập trọng số kỹ năng dùng cho đối sánh. Tại đây, văn bản CV được bóc tách (OCR nếu cần), kỹ năng được trích xuất qua Mô hình ngôn ngữ lớn (LLM API) với cơ chế kiểm chứng chống ảo giác (\texttt{evidence\_text}), sau đó mã hóa thành vector 384 chiều bằng mô hình nhúng (Embedding) và tính điểm tương đồng Cosine có trọng số TF-IDF thị trường. Kết quả \texttt{radar\_data} và \texttt{gap\_report} JSONB được lưu vào bảng \texttt{cv\_job\_matches} trong cơ sở dữ liệu và trả về Giao diện người dùng (Frontend) để kết xuất biểu đồ Radar và Gap Report.
 
 \subsubsection*{Luồng xem Dashboard thị trường}
 

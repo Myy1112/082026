@@ -33,7 +33,7 @@ package "Tầng Trình Bày  (Presentation Layer)" as PL #E3F2FD {
 package "Tầng Nghiệp Vụ  (Business Logic Layer)" as BL #E8F5E9 {
     component "CareerNova Backend API\n(NestJS · Node 20 · Prisma ORM)\n────────────────────────────\nauth · profile · cv · matching\nskill-gap · market-dashboard\nrecommendation · learning-roadmap" as API
 
-    component "ETL Pipeline\n(Python · FastAPI · Uvicorn)\n────────────────────────────\nCrawl  (Selenium · Requests · cloudscraper)\nClean  (Gemini API · Regex · Pydantic)\nNormalize  (SBERT · FAISS · cosine)\nImport  (SQLAlchemy · Psycopg2)" as ETL
+    component "ETL Pipeline\n(Python · FastAPI · Uvicorn)\n────────────────────────────\nCrawl  (Selenium · Requests · cloudscraper)\nClean  (Gemini API · Regex · Pydantic)\nNormalize  (SBERT · FAISS · cosine)\nMatching Engine  (Cosine có trọng số · 6 luật lọc)\nImport  (SQLAlchemy · Psycopg2)" as ETL
 }
 
 package "Tầng Dữ Liệu  (Data Layer)" as DL #FFF3E0 {

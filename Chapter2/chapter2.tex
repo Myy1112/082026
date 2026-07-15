@@ -137,6 +137,7 @@ Vì vậy, trong hệ thống đề xuất, sự kết hợp giữa cào tĩnh (
 Sau khi dữ liệu tuyển dụng được thu thập về, một thách thức nghiệp vụ tiếp theo được đặt ra: dữ liệu thô từ nhiều nguồn khác nhau (ITViec, VietnamWorks, LinkedIn...) có định dạng HTML và cấu trúc nội dung hoàn toàn không đồng nhất. Dữ liệu này cần được chuẩn hóa và tổ chức vào một cấu trúc nhất quán để phục vụ cho các module phân tích và trực quan hóa ở tầng trên. Yêu cầu nghiệp vụ cụ thể bao gồm:
 \begin{itemize}
     \item Loại bỏ các thẻ HTML rác, ký tự đặc biệt, khoảng trắng thừa từ văn bản thô.
+    \item Hệ thống tự động phát hiện và tránh các tin tuyển dụng trùng lặp, chỉ giữ một tin đại diện.
     \item Trích xuất các trường thông tin có cấu trúc (chức danh, kỹ năng, mức lương, địa điểm) từ mô tả công việc dạng tự do.
     \item Chuẩn hóa các biến thể tên gọi kỹ năng về một từ điển thống nhất (ví dụ: ``ReactJS'', ``React.js'', ``React'' đều cùng một thực thể).
     \item Lưu trữ kết quả vào cơ sở dữ liệu quan hệ để phục vụ truy vấn và trực quan hóa tức thời.
@@ -181,7 +182,7 @@ Tufte (2001) nhấn mạnh rằng thiết kế đồ họa xuất sắc phải t
 \textbf{Ứng dụng vào hệ thống CareerNova:} Dựa trên các nguyên lý trên và giao diện hiện tại của hệ thống, các thành phần trực quan hóa được lựa chọn theo câu hỏi ra quyết định cụ thể của sinh viên:
 
 \begin{enumerate}
-    \item \textbf{Thẻ chỉ số tổng quan:} Hiển thị số tin đang mở, số công ty đang tuyển và số cơ hội thực tập theo bộ lọc. Đây là lớp ``overview first'', giúp người dùng nắm quy mô thị trường trước khi xem biểu đồ chi tiết.
+    \item \textbf{Thẻ chỉ số tổng quan:} Hiển thị số tin đang mở, số công ty đang tuyển và số cơ hội thực tập theo bộ lọc. Đây là lớp tổng quan, giúp người dùng nắm quy mô thị trường trước khi xem biểu đồ chi tiết.
 
     \item \textbf{Biểu đồ vùng (AreaChart):} Thể hiện xu hướng số tin tuyển dụng theo thời gian, đồng thời so sánh tổng số tin với số vị trí làm việc từ xa. Người dùng quan sát được biến động nhu cầu tuyển dụng và xác định giai đoạn nên ưu tiên tìm việc.
 
