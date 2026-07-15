@@ -8,12 +8,9 @@
 
 \documentclass[oneside,a4paper,14pt]{extreport}
 
-% Font tiếng Việt
-\usepackage[T5]{fontenc}
-\usepackage[utf8]{inputenc}
-\DeclareTextSymbolDefault{\DH}{T1}
-% Font Times New Roman theo quy định của trường (cỡ chữ 14pt)
-\usepackage{mathptmx}
+% Font Times New Roman hỗ trợ đầy đủ tiếng Việt (biên dịch bằng XeLaTeX)
+\usepackage{fontspec}
+\setmainfont{Times New Roman}
 
 
 % Tài liệu tham khảo
@@ -24,7 +21,7 @@
 %	defernumbers=true]{biblatex}
 % Phải đặt trước biblatex để tránh conflict url package
 \PassOptionsToPackage{hyphens}{url}
-\usepackage[style=ieee]{biblatex}
+\usepackage[backend=bibtex,style=ieee]{biblatex}
 \usepackage[unicode]{hyperref} % Bookmark tiếng Việt
 \addbibresource{References/references.bib}
 %\bibliographystyle{IEEEtran}

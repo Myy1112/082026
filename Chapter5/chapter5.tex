@@ -35,7 +35,7 @@ Chương này mô tả môi trường, phương pháp và các kịch bản ki�
     \label{fig:server_specs}
 \end{figure}
 
-Hình~\ref{fig:server_specs} chứng minh cấu hình phần cứng và hệ điều hành nêu trên là thông số thực tế của máy chủ đang vận hành chứ không phải giá trị khai báo: hệ điều hành Ubuntu 22.04.5 LTS, 2 vCPU, 7,8~GiB RAM và ổ đĩa 155~GB (trên tổng dung lượng Droplet 160~GB). Đây là mốc cấu hình dùng để diễn giải mọi số liệu hiệu năng ở Mục 5.3 --- đặc biệt là chi phí tính vector nhúng khá cao do máy chủ chỉ có 2 nhân xử lý và không trang bị GPU.
+Hình~\ref{fig:server_specs} chứng minh cấu hình phần cứng và hệ điều hành nêu trên là thông số thực tế của máy chủ đang vận hành chứ không phải giá trị khai báo: hệ điều hành Ubuntu 22.04.5 LTS, 2 vCPU, 7,8~GiB RAM và ổ đĩa 155~GB (trên tổng dung lượng Droplet 160~GB). Đây là mốc cấu hình dùng để diễn giải mọi số liệu hiệu năng ở Mục 5.3, đặc biệt là chi phí tính vector nhúng khá cao do máy chủ chỉ có 2 nhân xử lý và không trang bị GPU.
 
 Việc đánh giá được tổ chức theo ba lớp độc lập để tránh suy diễn từ một loại bằng chứng sang loại kết luận khác. Kiểm thử chức năng trả lời hệ thống có thực hiện đúng hành vi đã đặc tả hay không; đo hiệu năng phản ánh độ trễ thực tế trên môi trường triển khai; còn đánh giá thuật toán xem xét chất lượng đầu ra so với nhãn chuẩn hoặc các trường hợp đối soát. Các số liệu đều được gắn với thời điểm đo và cấu hình ở Mục 5.1 để bảo đảm có thể lặp lại.
 
@@ -51,7 +51,7 @@ Chức năng hoạt động đúng & Kiểm thử hộp đen theo hành trình n
 \hline
 Phản hồi đủ nhanh & Đo trường \textit{Duration} trong Chrome DevTools Network, lặp lại theo từng API đại diện & Trung bình, P95, lớn nhất và tỷ lệ lỗi; phân biệt cache miss và cache hit (Mục 5.3). \\
 \hline
-Đầu ra thuật toán hợp lý & Đối chiếu nhãn thủ công khi có Ground Truth; với phần chưa gán nhãn, chỉ công bố ngưỡng chấp nhận và ca minh họa & Precision, Recall, F1 cho NER; các chỉ số FAISS, dedup và Pearson chỉ được ghi số thực sau khi hoàn thành gán nhãn tập mẫu (Mục 5.4). \\
+Đầu ra thuật toán hợp lý & Đối chiếu nhãn thủ công (Ground Truth) do nhóm gán trên từng tập mẫu & Precision, Recall, F1 cho NER; độ chính xác chuẩn hóa/lọc nhiễu; Precision/Recall/F1 cho khử trùng lặp; và Precision@K, MRR cho gợi ý việc làm (Mục 5.4). \\
 \hline
 \end{tabular}
 \end{center}
@@ -61,7 +61,7 @@ Phản hồi đủ nhanh & Đo trường \textit{Duration} trong Chrome DevTools
 
 \subsection{Ma trận kịch bản kiểm thử (Test Matrix)}
 
-Hệ thống được kiểm thử thông qua các kịch bản kiểm thử hộp đen (Black-box Testing) để đảm bảo các tính năng hoạt động đúng đặc tả yêu cầu. Các kịch bản được xây dựng theo hành trình sử dụng thực tế của vai trò người dùng sinh viên/ứng viên --- từ lúc tạo tài khoản, quản lý hồ sơ CV, phân tích đối soát cho đến khai thác dữ liệu thị trường --- và bám sát đúng các chức năng đang có trên hệ thống. Bảng~\ref{tab:test_cases} liệt kê 11 ca kiểm thử cùng dữ liệu đầu vào và kết quả mong đợi tương ứng.
+Hệ thống được kiểm thử thông qua các kịch bản kiểm thử hộp đen (Black-box Testing) để đảm bảo các tính năng hoạt động đúng đặc tả yêu cầu. Các kịch bản được xây dựng theo hành trình sử dụng thực tế của vai trò người dùng sinh viên/ứng viên, từ lúc tạo tài khoản, quản lý hồ sơ CV, phân tích đối soát đến khai thác dữ liệu thị trường, và bám sát các chức năng đang có trên hệ thống. Bảng~\ref{tab:test_cases} liệt kê 11 ca kiểm thử cùng dữ liệu đầu vào và kết quả mong đợi tương ứng.
 
 \begin{longtable}{|c|L{3.0cm}|L{3.5cm}|L{3.5cm}|C{1.5cm}|}
 \caption{Kịch bản kiểm thử chức năng hệ thống}
@@ -144,7 +144,7 @@ TC-11 & Lưu và hủy lưu việc làm & Danh sách đã lưu cập nhật đú
 \end{center}
 \end{table}
 
-Theo Bảng~\ref{tab:test_results}, toàn bộ \textbf{11/11 kịch bản đạt (100\%)}, xác nhận các chức năng cốt lõi vận hành đúng đặc tả trên môi trường triển khai thật. Đáng chú ý, hai ca có rủi ro cao nhất đều vượt qua: TC-06 chứng minh tầng kiểm tra dữ liệu đầu vào từ chối đúng các tệp sai định dạng hoặc vượt 5 MB mà không để lọt dữ liệu rác vào hệ thống lưu trữ, và TC-08 xác nhận chuỗi xử lý AI nhiều bước (trích xuất --- chuẩn hóa --- so khớp) trả về kết quả nhất quán từ đầu đến cuối. Kiểm thử chức năng vì vậy chỉ trả lời câu hỏi ``hệ thống có chạy đúng hay không''; các khía cạnh định lượng về tốc độ và độ chính xác được đo riêng tại Mục 5.3 và 5.4.
+Theo Bảng~\ref{tab:test_results}, toàn bộ \textbf{11/11 kịch bản đạt (100\%)}, xác nhận các chức năng cốt lõi vận hành đúng đặc tả trên môi trường triển khai thật. Đáng chú ý, hai ca có rủi ro cao nhất đều vượt qua: TC-06 chứng minh tầng kiểm tra dữ liệu đầu vào từ chối đúng các tệp sai định dạng hoặc vượt 5 MB mà không để lọt dữ liệu rác vào hệ thống lưu trữ, và TC-08 xác nhận chuỗi xử lý AI nhiều bước gồm trích xuất, chuẩn hóa và so khớp trả về kết quả nhất quán từ đầu đến cuối. Kiểm thử chức năng vì vậy chỉ trả lời câu hỏi ``hệ thống có chạy đúng hay không''; các khía cạnh định lượng về tốc độ và độ chính xác được đo riêng tại Mục 5.3 và 5.4.
 
 Hình~\ref{fig:test_cv_matching} và Hình~\ref{fig:test_market_dashboard} cung cấp bằng chứng trực quan cho hai luồng có nhiều thành phần nhất trong ma trận. Ảnh chụp được dùng để xác nhận sự hiện diện và cách hiển thị của kết quả; các số liệu biến động theo thời gian (số tin tuyển dụng, điểm khớp và danh sách kỹ năng) được diễn giải theo snapshot tại thời điểm kiểm thử, không được coi là hằng số của hệ thống.
 
@@ -239,7 +239,7 @@ Sự chênh lệch giữa tổng số tin tích lũy (7.245) và số tin ngư�
 \begin{itemize}
     \item \textbf{Dashboard}: sử dụng endpoint có độ trễ lớn nhất trong sáu API dữ liệu Dashboard là \texttt{GET /dashboard/skills/rising}, với bộ lọc 30 ngày gần nhất.
     \item \textbf{Upload CV}: sử dụng yêu cầu \texttt{POST /cv/upload} với cùng một tệp PDF hợp lệ (CV mẫu kỹ sư phần mềm, 1 trang) trong cả 20 lượt đo.
-    \item \textbf{Đối soát CV}: sử dụng yêu cầu \texttt{POST /matching/analyze} với cùng nhóm nghề mục tiêu (\textit{software engineer}). Để tách bạch hai chế độ hoạt động của hệ thống, phép đo gồm 20 lượt phân tích lần đầu trên 20 bản CV tải lên độc lập (buộc thực thi toàn bộ pipeline gồm trích xuất kỹ năng qua Gemini API --- cache miss) và 20 lượt phân tích lặp lại trên cùng một CV (tái sử dụng kỹ năng đã trích xuất --- cache hit).
+    \item \textbf{Đối soát CV}: sử dụng yêu cầu \texttt{POST /matching/analyze} với cùng nhóm nghề mục tiêu (\textit{software engineer}). Để tách bạch hai chế độ hoạt động của hệ thống, phép đo gồm 20 lượt phân tích lần đầu trên 20 bản CV tải lên độc lập (buộc thực thi toàn bộ pipeline gồm trích xuất kỹ năng qua Gemini API, tương ứng cache miss) và 20 lượt phân tích lặp lại trên cùng một CV (tái sử dụng kỹ năng đã trích xuất, tương ứng cache hit).
 \end{itemize}
 
 Với mỗi chức năng, các chỉ số tổng hợp gồm: số lần gọi, thời gian trung bình, P95, thời gian lớn nhất và tỷ lệ lỗi. Mỗi chức năng được đo 20 lượt để chỉ số P95 (bách phân vị thứ 95) có ý nghĩa đại diện; riêng phép đo cache hit cũng gồm 20 lượt phân tích lặp lại trên cùng một CV nhằm minh họa tác động của cơ chế cache. Do dịch vụ so khớp chạy trên máy chủ chỉ có 2 vCPU không GPU, các lượt đo cache miss được thực hiện tuần tự và có giãn cách hợp lý giữa các lần gọi để phản ánh đúng độ trễ của một phiên phân tích đơn lẻ, tránh hiện tượng nghẽn do gọi dồn đồng thời.
@@ -286,15 +286,15 @@ Dashboard \newline (API \texttt{skills/rising}) & 20 & 1,327 & 1,588 & 1,613 & 0
 \hline
 Upload CV & 20 & 1,31 & 2,03 & 2,63 & 0\% \\
 \hline
-Đối soát CV (lần đầu --- cache miss) & 20 & 41,9 & 49,3 & 55,1 & 0\% \\
+Đối soát CV (lần đầu, cache miss) & 20 & 41,9 & 49,3 & 55,1 & 0\% \\
 \hline
-Đối soát CV (lặp lại --- cache hit) & 20 & 0,27 & 0,31 & 0,31 & 0\% \\
+Đối soát CV (lặp lại, cache hit) & 20 & 0,27 & 0,31 & 0,31 & 0\% \\
 \hline
 \end{tabular}
 \end{center}
 \end{table}
 
-Kết quả đo cho thấy sự phân hóa rõ rệt giữa hai chế độ hoạt động của chức năng Đối soát CV. Ở lượt phân tích lần đầu (cache miss), toàn bộ pipeline được thực thi tuần tự: tải văn bản CV, gọi Gemini API trích xuất kỹ năng, chuẩn hóa qua FAISS trên CPU và tính điểm so khớp, dẫn đến thời gian trung bình \textbf{41,9 giây} (P95 49,3 giây, lớn nhất 55,1 giây) --- \textbf{đạt ngưỡng yêu cầu 60 giây của NFR-02}, đồng thời toàn bộ 20 lượt đều trả về kết quả thành công và điểm số ổn định (khoảng 0,57). Nguyên nhân chính khiến lượt gọi đầu mất thời gian là độ trễ của Gemini API bên ngoài cộng với chi phí tính vector nhúng trên máy chủ chỉ có 2 vCPU không GPU. Ngược lại, các lượt phân tích lặp lại trên cùng CV (cache hit) chỉ mất trung bình \textbf{0,27 giây} --- nhanh hơn khoảng 155 lần --- do kỹ năng đã trích xuất được tái sử dụng từ bảng \texttt{user\_cv\_skills}. Như vậy NFR-02 đã được thỏa mãn cho cả hai chế độ. Dù vậy, đối với lần phân tích đầu tiên, trải nghiệm người dùng vẫn có thể được nâng cao hơn nữa thông qua các giải pháp như: trích xuất kỹ năng bất đồng bộ ngay sau khi upload CV (thay vì chờ đến lúc người dùng bấm phân tích), hiển thị tiến trình từng bước trên giao diện, hoặc nâng cấp hạ tầng suy luận vector nhúng.
+Kết quả đo cho thấy sự phân hóa rõ rệt giữa hai chế độ hoạt động của chức năng Đối soát CV. Ở lượt phân tích lần đầu (cache miss), toàn bộ pipeline được thực thi tuần tự: tải văn bản CV, gọi Gemini API trích xuất kỹ năng, chuẩn hóa qua FAISS trên CPU và tính điểm so khớp, dẫn đến thời gian trung bình \textbf{41,9 giây} (P95 49,3 giây, lớn nhất 55,1 giây), \textbf{đạt ngưỡng yêu cầu 60 giây của NFR-02}. Đồng thời, toàn bộ 20 lượt đều trả về kết quả thành công và điểm số ổn định (khoảng 0,57). Nguyên nhân chính khiến lượt gọi đầu mất thời gian là độ trễ của Gemini API bên ngoài cộng với chi phí tính vector nhúng trên máy chủ chỉ có 2 vCPU không GPU. Ngược lại, các lượt phân tích lặp lại trên cùng CV (cache hit) chỉ mất trung bình \textbf{0,27 giây}, nhanh hơn khoảng 155 lần do kỹ năng đã trích xuất được tái sử dụng từ bảng \texttt{user\_cv\_skills}. Như vậy NFR-02 đã được thỏa mãn cho cả hai chế độ. Cần nhấn mạnh rằng toàn bộ số liệu hiệu năng ở mục này được đo theo chế độ \textit{đơn phiên} (một người dùng, các lượt gọi tuần tự và có giãn cách hợp lý), nên chỉ phản ánh độ trễ của một phiên phân tích riêng lẻ, \textbf{chưa phản ánh hành vi khi nhiều người dùng truy cập đồng thời}. Với hạ tầng chỉ 2 vCPU không GPU, khi số phiên đối soát đồng thời tăng lên, thời gian đối soát lần đầu (cache miss) có nguy cơ vượt ngưỡng 60 giây của NFR-02 do tranh chấp tài nguyên CPU khi tính vector nhúng. Do đó, kiểm thử tải (load/stress test) và đánh giá khả năng mở rộng theo chiều ngang chưa được thực hiện trong phạm vi đề tài và được nhìn nhận là một hạn chế ở Mục~6.2. Dù vậy, ngay cả ở chế độ đơn phiên, trải nghiệm lần phân tích đầu tiên vẫn có thể được nâng cao thông qua các giải pháp như: trích xuất kỹ năng bất đồng bộ ngay sau khi upload CV (thay vì chờ đến lúc người dùng bấm phân tích), hiển thị tiến trình từng bước trên giao diện, hoặc nâng cấp hạ tầng suy luận vector nhúng.
 
 \begin{figure}[H]
     \centering
@@ -303,12 +303,23 @@ Kết quả đo cho thấy sự phân hóa rõ rệt giữa hai chế độ ho�
     \label{fig:perf_measurement_terminal}
 \end{figure}
 
-Hình~\ref{fig:perf_measurement_terminal} chứng minh các số liệu trong hai bảng trên là kết quả đo thực tế chứ không phải ước lượng: mỗi lượt gọi API được ghi trực tiếp trường \textit{Duration} bằng công cụ đo (\texttt{curl -w \%\{time\_total\}} và tab \textit{Network} của trình duyệt), qua đó bảo đảm tính tái lập của phép đo. Ảnh cũng làm rõ hai chế độ vận hành của chức năng đối soát --- cache miss (hàng chục giây) và cache hit (dưới một giây) --- đúng như phân tích ở trên, đồng thời xác nhận toàn bộ các lượt đo đều thành công (tỷ lệ lỗi 0/20).
+Hình~\ref{fig:perf_measurement_terminal} chứng minh các số liệu trong hai bảng trên là kết quả đo thực tế chứ không phải ước lượng: mỗi lượt gọi API được ghi trực tiếp trường \textit{Duration} bằng công cụ đo (\texttt{curl -w \%\{time\_total\}} và tab \textit{Network} của trình duyệt), qua đó bảo đảm tính tái lập của phép đo. Ảnh cũng làm rõ hai chế độ vận hành của chức năng đối soát, gồm cache miss (hàng chục giây) và cache hit (dưới một giây), đúng như phân tích ở trên, đồng thời xác nhận toàn bộ các lượt đo đều thành công (tỷ lệ lỗi 0/20).
 
 \section{Kiểm thử độ chính xác và Đánh giá kết quả đầu ra thuật toán (Algorithm Accuracy Evaluation)}
 \label{sec:algorithm_evaluation}
 
-Nhằm kiểm chứng tính đúng đắn và độ chính xác của các thuật toán xử lý dữ liệu trong hệ thống, bao gồm bóc tách dữ liệu bằng LLM, chuẩn hóa kỹ năng hai tầng (khớp chuỗi và tìm kiếm ngữ nghĩa trên embedding), gộp nhóm doanh nghiệp bằng chuẩn hóa hậu tố pháp lý, khử trùng lặp sâu bài đăng bằng vector nhúng kết hợp Cosine Similarity và thuật toán so khớp Matching Engine, chúng tôi xây dựng bộ kịch bản đối soát thực tế và khung chỉ số đánh giá hiệu năng. Quy trình đánh giá được thực hiện trên tập dữ liệu mẫu chuẩn gồm 100 bài đăng (50 hồ sơ CV ứng viên và 50 bản mô tả công việc JD) thu thập thực tế từ thị trường công nghệ thông tin tại Việt Nam. Với mỗi thuật toán, chúng tôi trình bày kết quả thực đo trên các trường hợp đối soát cụ thể (so sánh trực quan dữ liệu đầu vào và đầu ra) kèm khung tiêu chí (ngưỡng chấp nhận) mà thuật toán được thiết kế để đạt được; riêng bộ chỉ số trích xuất kỹ năng (NER) đã được định lượng đầy đủ trên tập mẫu.
+Nhằm kiểm chứng tính đúng đắn và độ chính xác của các thuật toán xử lý dữ liệu trong hệ thống, bao gồm bóc tách dữ liệu bằng LLM, chuẩn hóa kỹ năng hai tầng (khớp chuỗi và tìm kiếm ngữ nghĩa trên embedding), gộp nhóm doanh nghiệp bằng chuẩn hóa hậu tố pháp lý, khử trùng lặp sâu bài đăng bằng vector nhúng kết hợp Cosine Similarity và thuật toán so khớp Matching Engine, chúng tôi xây dựng bộ kịch bản đối soát thực tế và khung chỉ số đánh giá hiệu năng. % ==========================================================================
+% GHI CHÚ PHẢN BIỆN (A2 - ĐÃ KHỚP SỐ THẬT, xong):
+%   Cỡ mẫu đã được khớp với artifact trong KiemThu/: NER 20 JD + 20 CV; chuẩn hóa 758 mẫu
+%   (312 mapping + 446 reject) + 24 DN; dedup 17 tin/52 cặp; gợi ý việc làm 10 CV.
+%   Câu "100 bài đăng (50 CV + 50 JD)" đã được thay ở mở đầu 5.4, Mục 5.4.2 và Chương 1.
+%   (Tùy chọn) Có thể thêm 1 bảng "Tổng quan bộ dữ liệu đánh giá" liệt kê gọn 4 cỡ mẫu trên.
+% GHI CHÚ PHẢN BIỆN (A4 - THIẾU BASELINE, còn tồn):
+%   Bổ sung tối thiểu một bảng ablation: (i) chỉ khớp từ khóa, (ii) SBERT không TF-IDF,
+%   (iii) SBERT + TF-IDF + 6 luật lọc (đầy đủ) — trên cùng tập nhãn (20 JD + 20 CV).
+%   Đây là bằng chứng định lượng cho tuyên bố "giải pháp lai tốt hơn" ở Chương 1-2.
+% ==========================================================================
+Mỗi kịch bản kiểm thử sử dụng tập dữ liệu gán nhãn riêng phù hợp với thuật toán tương ứng, đều thu thập thực tế từ thị trường công nghệ thông tin tại Việt Nam: trích xuất thực thể (NER) trên 20 JD và 20 CV; chuẩn hóa kỹ năng trên 758 mẫu kỹ năng thô và 24 doanh nghiệp; khử trùng lặp trên 17 tin (52 cặp đối soát); và gợi ý việc làm trên 10 CV mẫu (chi tiết cỡ mẫu của từng kịch bản được nêu tại mục tương ứng). Với mỗi thuật toán, chúng tôi trình bày kết quả thực đo trên các trường hợp đối soát cụ thể (so sánh trực quan dữ liệu đầu vào và đầu ra) kèm khung tiêu chí (ngưỡng chấp nhận) mà thuật toán được thiết kế để đạt được; riêng bộ chỉ số trích xuất kỹ năng (NER) đã được định lượng đầy đủ trên tập mẫu.
 
 \subsection{Đánh giá độ chính xác của định dạng dữ liệu trả về từ mô hình và các thuật toán tiền xử lý}
 
@@ -337,6 +348,15 @@ Trong đó:
     \item $\text{FN}$ (False Negatives): Số kỹ năng thực tế có trong văn bản nhưng mô hình bỏ sót.
 \end{itemize}
 
+Quy trình nạp dữ liệu đối soát (20 bản ghi JD, 20 bản ghi CV và tập nhãn chuẩn tương ứng) phục vụ kiểm chứng chéo được minh họa qua Hình~\ref{fig:kb1_load}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.72\textwidth]{image_KB1/cell3_KB1.png}
+    \caption{Kết quả thực thi ô nạp dữ liệu đối soát NER: 20 bản ghi JD, 20 bản ghi CV và tập nhãn chuẩn (Ground Truth) tương ứng.}
+    \label{fig:kb1_load}
+\end{figure}
+
 Dưới đây là biểu mẫu đối soát cấu trúc dữ liệu kỹ năng được trích xuất từ CV/JD mẫu:
 
 Bảng \ref{tab:match_extraction_details} cung cấp khung đối soát trực quan giữa nhãn thô và thực thể bóc tách tương ứng kèm theo bằng chứng chuỗi ký tự tự động từ mô hình LLM. Qua bảng này, hội đồng phản biện có thể trực tiếp đánh giá khả năng hiểu ngữ cảnh văn bản và mức độ trung thực của thông tin trích xuất, triệt tiêu khả năng phát sinh ảo giác của mô hình ngôn ngữ lớn.
@@ -349,17 +369,31 @@ Bảng \ref{tab:match_extraction_details} cung cấp khung đối soát trực q
 \hline
 \textbf{Tập dữ liệu} & \textbf{Số lượng} & \textbf{TP} & \textbf{FP} & \textbf{FN} & \textbf{Precision} & \textbf{Recall} & \textbf{F1-Score} \\
 \hline
-Tin tuyển dụng (JD) & 20 & 277 & 39 & 77 & 87.7\% & 78.3\% & 82.7\% \\
+Tin tuyển dụng (JD) & 20 & 421 & 5 & 58 & 98.8\% & 87.9\% & 93.0\% \\
 \hline
 Hồ sơ ứng viên (CV) & 20 & 103 & 17 & 34 & 85.8\% & 75.2\% & 80.2\% \\
 \hline
-\textbf{Tổng cộng} & \textbf{40} & \textbf{380} & \textbf{56} & \textbf{111} & \textbf{87.2\%} & \textbf{77.4\%} & \textbf{82.0\%} \\
+\textbf{Tổng cộng} & \textbf{40} & \textbf{524} & \textbf{22} & \textbf{92} & \textbf{96.0\%} & \textbf{85.1\%} & \textbf{90.2\%} \\
 \hline
 \end{tabular}
 \end{center}
 \end{table}
 
-Kết quả trong Bảng~\ref{tab:match_extraction_details} được thực đo trên 40 tài liệu (20 JD tuyển dụng công nghệ thông tin và 20 hồ sơ CV ứng viên thực tế) được bóc tách và đối sánh trực tiếp với nhãn chuẩn do con người xác nhận.
+Kết quả trong Bảng~\ref{tab:match_extraction_details} được thực đo trên 40 tài liệu (20 JD tuyển dụng công nghệ thông tin và 20 hồ sơ CV ứng viên thực tế) được bóc tách và đối sánh trực tiếp với nhãn chuẩn do con người xác nhận. Bảng đối soát chi tiết (Confusion Matrix) cho từng tài liệu mẫu được trích xuất trực tiếp từ Jupyter Notebook, minh họa qua Hình~\ref{fig:kb1_jd_table} (tập JD) và Hình~\ref{fig:kb1_cv_table} (tập CV).
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{image_KB1/cell4_KB1.png}
+    \caption{Bảng đối soát chi tiết TP/FP/FN của tập tin tuyển dụng (JD) trên Jupyter Notebook; hàng TỔNG đạt 421/5/58 (Precision 98,8\%, Recall 87,9\%, F1 93,0\%).}
+    \label{fig:kb1_jd_table}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{image_KB1/Cell5_KB1.png}
+    \caption{Bảng đối soát chi tiết TP/FP/FN của tập hồ sơ ứng viên (CV); hàng TỔNG đạt 103/17/34 (85,8\%/75,2\%/80,2\%). Có thể thấy rõ 15 tệp CV dạng ảnh (\texttt{.png}/\texttt{.jpg}) cho kết quả 0 do OCR chưa đọc được nội dung.}
+    \label{fig:kb1_cv_table}
+\end{figure}
 
 Bảng \ref{tab:ner_evaluation_specs} tập trung thống kê các chỉ số định lượng độ chính xác của bộ nhận diện thực thể tên kỹ năng. Chúng tôi thiết lập ngưỡng kỳ vọng của Điểm F1 ở mức tối thiểu 82.5\% cho JD và CV nhằm bảo đảm chất lượng dữ liệu đầu vào.
 
@@ -373,21 +407,42 @@ Bảng \ref{tab:ner_evaluation_specs} tập trung thống kê các chỉ số đ
 \hline
 Tỷ lệ hợp lệ cấu trúc JSON đầu ra & 100.0\% (sau khi tự động retry) & 100.0\% \\
 \hline
-Độ chính xác (Precision) của NER & $\ge 85.0\%$ & 87.2\% \\
+Độ chính xác (Precision) của NER & $\ge 85.0\%$ & 96.0\% \\
 \hline
-Độ phủ (Recall) của NER & $\ge 80.0\%$ & 77.4\% \\
+Độ phủ (Recall) của NER & $\ge 80.0\%$ & 85.1\% \\
 \hline
-Điểm F1 (F1-Score) của NER & $\ge 82.5\%$ & 82.0\% \\
+Điểm F1 (F1-Score) của NER & $\ge 82.5\%$ & 90.2\% \\
 \hline
 \end{tabular}
 \end{center}
 \end{table}
 
+Việc so sánh trực tiếp các chỉ số thực đo với ngưỡng kỳ vọng, in ra từ notebook, được minh họa ở Hình~\ref{fig:kb1_compare}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{image_KB1/Cell6_KB1.png}
+    \caption{So sánh các chỉ số Precision/Recall/F1 thực đo với ngưỡng kỳ vọng: tập JD đạt cả ba chỉ tiêu ở cả chế độ Exact và Fuzzy Match, trong khi tập CV xét riêng có Recall và F1 chưa đạt ngưỡng (đã phân tích ở phần dưới).}
+    \label{fig:kb1_compare}
+\end{figure}
+
 Kết quả thực nghiệm cho thấy module trích xuất kỹ năng bằng LLM đạt hiệu năng cao và rất ổn định. Cụ thể, tỷ lệ cấu trúc JSON đầu ra hợp lệ đạt tuyệt đối 100.0\%, chứng minh tính đúng đắn khi áp dụng cơ chế cưỡng chế JSON Schema của Gemini API với cấu hình temperature = 0.0.
 
-Độ chính xác (Precision) toàn phần đạt 87.2\% (trong đó JD đạt 87.7\% và CV đạt 85.8\%). Kết quả này phản ánh khả năng nhận dạng thực thể chính xác, hạn chế tối đa việc phát sinh ảo giác (hallucination) kỹ năng không có trong tài liệu. Đối với tin tuyển dụng (JD), việc loại bỏ các từ khóa vĩ mô quá chung chung (như "computer science", "information technology") và đối soát toàn bộ văn bản thô đầy đủ giúp giảm đáng kể lỗi FP oan do AI trích xuất các công nghệ phụ trợ nằm ở nửa sau văn bản dài.
+Độ chính xác (Precision) toàn phần đạt 96.0\% (trong đó JD đạt 98.8\% và CV đạt 85.8\%), \textbf{vượt ngưỡng kỳ vọng 85\%}. Kết quả này phản ánh khả năng nhận dạng thực thể chính xác, hạn chế tối đa việc phát sinh ảo giác (hallucination) kỹ năng không có trong tài liệu. Đối với tin tuyển dụng (JD), sau khi loại bỏ các từ khóa vĩ mô quá chung chung (như ``computer science'', ``information technology'') và sửa lỗi cắt cụt văn bản gốc, số lỗi FP thực tế giảm chỉ còn 5 trường hợp trên toàn bộ 20 JD, đưa Precision JD lên 98.8\%.
 
-Độ phủ (Recall) toàn phần đạt 77.4\% (trong đó JD đạt 78.3\% và CV đạt 75.2\%). Điểm số này tiệm cận sát ngưỡng kỳ vọng 80\% ban đầu. Lỗi bỏ sót (False Negative) xuất hiện do hai nguyên nhân chính: (1) Ứng viên trình bày kỹ năng trong CV bằng các cụm từ hành văn tự do, phi chính quy tiếng Việt (như ``phân tích và viết báo cáo khoa học'', ``thuật toán xử lý ảnh y khoa'') khiến việc so khớp mờ với nhãn chuẩn hóa tiếng Anh bị lệch pha; (2) Sự chênh lệch về cấp độ phân loại ngữ nghĩa thô (như Pipeline trích ``restful api'' nhưng Ground Truth gán ``api design'') do chưa đi qua bước chuẩn hóa ngữ nghĩa (Normalize) của kịch bản tiếp theo. Điểm F1-Score toàn phần đạt 82.0\%, khẳng định chất lượng dữ liệu đầu vào ổn định để cung cấp cho các module chuẩn hóa và gợi ý việc làm phía sau.
+Độ phủ (Recall) toàn phần đạt 85.1\% (trong đó JD đạt 87.9\% và CV đạt 75.2\%), \textbf{đạt ngưỡng kỳ vọng 80\%}. Tuy vậy, cần lưu ý riêng tập CV: Recall chỉ đạt 75.2\% và một phần đáng kể là do đặc thù dữ liệu kiểm thử --- trong 20 CV có 15 tệp ở dạng ảnh (\texttt{.png}/\texttt{.jpg}) mà luồng OCR chưa đọc được nội dung nên không sinh được thực thể; do đó các chỉ số của tập CV thực chất được tính chủ yếu trên khoảng 5 CV dạng văn bản số có nội dung. Ngoài ra, lỗi bỏ sót (False Negative) trên CV còn đến từ: (1) ứng viên trình bày kỹ năng bằng các cụm từ hành văn tự do, phi chính quy tiếng Việt khiến so khớp mờ với nhãn chuẩn hóa tiếng Anh bị lệch pha; (2) chênh lệch cấp độ phân loại ngữ nghĩa thô (Pipeline trích ``restful api'' nhưng Ground Truth gán ``api design'') do chưa đi qua bước chuẩn hóa ngữ nghĩa của kịch bản tiếp theo. Điểm F1-Score toàn phần đạt 90.2\%, \textbf{vượt ngưỡng kỳ vọng 82.5\%}. Như vậy, cả bốn chỉ tiêu tự đặt ở Bảng~\ref{tab:ner_evaluation_specs} đều đạt; tuy nhiên kết quả tập CV cần được diễn giải thận trọng do hạn chế OCR nêu trên, và tác động của việc bỏ sót kỹ năng CV tới đầu ra khoảng cách kỹ năng được nhìn nhận lại như một hạn chế ở Mục~6.2.
+% GHI CHÚ PHẢN BIỆN (Nhóm 2 - ĐÃ CẬP NHẬT SỐ THẬT): NER JD đổi từ 277/39/77 (cũ) sang 421/5/58
+% (nguồn: KiemThu/KiemThu_LLM_Extract, fuzzy match). Tổng 40 tài liệu -> 524/22/92 = 96.0/85.1/90.2, đạt cả 3 chỉ tiêu.
+% Đã thêm cảnh báo trung thực: 15/20 CV là ảnh cho 0/0/0, chỉ ~5 CV có nội dung thực.
+
+Danh sách chi tiết một số lỗi thực tế (FP -- trích thừa, FN -- bỏ sót) của tập JD ở chế độ Fuzzy Match, do notebook liệt kê tự động, được minh họa ở Hình~\ref{fig:kb1_errors}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{image_KB1/Cell8_KB1.png}
+    \caption{Danh sách chi tiết một số lỗi FP (trích thừa) và FN (bỏ sót) trên tập JD ở chế độ Fuzzy Match; các nhãn Ground Truth ``gán thiếu'' được miễn trừ khỏi lỗi FP.}
+    \label{fig:kb1_errors}
+\end{figure}
 
 \subsubsection*{2. Kịch bản đối soát 2: Chuẩn hóa nhãn kỹ năng và khớp mờ tên doanh nghiệp}
 
@@ -397,7 +452,7 @@ Mục tiêu kiểm chứng của kịch bản này bao gồm: (1) Đánh giá kh
 J(A, B) = \frac{|A \cap B|}{|A \cup B|}
 \end{equation}
 
-Phương pháp kiểm chứng được thực hiện bằng cách chuẩn bị một tập dữ liệu thử nghiệm độc lập gồm \textbf{300 kỹ năng thô} viết lệch/viết tắt thu được từ thực tế và \textbf{100 từ khóa rác/dị biệt} tự sinh. Đối với phân hệ doanh nghiệp, chuẩn bị 20 cặp tên doanh nghiệp chứa các biến thể hậu tố pháp lý khác nhau. Dữ liệu thử nghiệm được chạy trực tiếp thông qua luồng xử lý (pipeline) chuẩn hóa của mã nguồn hệ thống hiện tại. Kết quả đầu ra thực tế (quyết định ánh xạ nhãn chuẩn hoặc chuyển sang bảng tạm phê duyệt thủ công) được đối soát trực tiếp với nhãn Ground Truth đã được chuẩn bị bởi nhóm thực hiện đề tài.
+Phương pháp kiểm chứng được thực hiện bằng cách chuẩn bị một tập dữ liệu thử nghiệm gồm \textbf{758 mẫu kỹ năng thô} (viết lệch, viết tắt, viết thường và một số cụm từ nhiễu) trích từ 20 JD và 20 CV thực tế; trong đó \textbf{312 mẫu} có ý nghĩa chuyên môn được dùng để đo độ chính xác chuẩn hóa và \textbf{446 mẫu} nhiễu/dị biệt được dùng để đo độ chính xác lọc nhiễu. Đối với phân hệ doanh nghiệp, chuẩn bị \textbf{24 doanh nghiệp} có tên chứa các biến thể hậu tố pháp lý khác nhau. Dữ liệu thử nghiệm được chạy trực tiếp thông qua luồng xử lý (pipeline) chuẩn hóa của mã nguồn hệ thống hiện tại. Kết quả đầu ra thực tế (quyết định ánh xạ nhãn chuẩn hoặc chuyển sang bảng tạm phê duyệt thủ công) được đối soát trực tiếp với nhãn Ground Truth đã được chuẩn bị bởi nhóm thực hiện đề tài.
 
 Bảng \ref{tab:match_normalization_details} đối soát cơ chế chuẩn hóa hai tầng của hệ thống. Chúng tôi phân tích cụ thể hành vi của thuật toán đối với cả các kỹ năng viết sai, viết tắt, và các kỹ năng dị biệt (như ``xyz123''). Dữ liệu đối soát chứng minh bộ lọc theo ngưỡng tương đồng động hoạt động hiệu quả để đẩy nhãn lỗi sang bảng phê duyệt thay vì ánh xạ sai lệch vào cơ sở dữ liệu chính.
 
@@ -421,7 +476,29 @@ Công ty Cổ phần VNG & Doanh nghiệp & VNG & Khớp chính xác sau chuẩn
 \end{center}
 \end{table}
 
-Bảng \ref{tab:eval_norm_matching} thiết lập khung tiêu chí đánh giá chất lượng chuẩn hóa của hệ thống dựa trên hai chỉ số chính được định nghĩa cụ thể như sau:
+Kết quả chạy thực nghiệm chuẩn hóa kỹ năng trên tập JD và CV, cùng kết quả gộp nhóm doanh nghiệp, in trực tiếp từ notebook được minh họa ở Hình~\ref{fig:kb2_jd}, Hình~\ref{fig:kb2_cv} và Hình~\ref{fig:kb2_company}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{image_KB1/Hinh1_KB2.png}
+    \caption{Kết quả chuẩn hóa kỹ năng trên tập JD: Mapping Accuracy 68,44\% (167/244), Reject Accuracy 66,87\% (224/335).}
+    \label{fig:kb2_jd}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{image_KB1/Hinh2_KB2.png}
+    \caption{Kết quả chuẩn hóa kỹ năng trên tập CV: Mapping Accuracy 64,71\% (44/68), Reject Accuracy 76,58\% (85/111).}
+    \label{fig:kb2_cv}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{image_KB1/Hinh3_KB2.png}
+    \caption{Kết quả gộp nhóm doanh nghiệp sau khi loại bỏ hậu tố pháp lý: Company Match Accuracy 83,33\% (20/24).}
+    \label{fig:kb2_company}
+\end{figure}
+
 Bảng \ref{tab:eval_norm_matching} thiết lập khung tiêu chí đánh giá chất lượng chuẩn hóa của hệ thống dựa trên hai chỉ số chính được định nghĩa cụ thể như sau:
 \begin{itemize}
     \item \textbf{Độ chính xác chuẩn hóa (Mapping Accuracy):} Được định nghĩa là tỷ lệ phần trăm các kỹ năng thô (có ý nghĩa chuyên môn thực tế nhưng bị viết lệch, viết tắt hoặc viết thường) được thuật toán ánh xạ chính xác về nhãn thực thể chuẩn trong từ điển. Chỉ số này được đo lường trên quy mô đầu vào đối soát thủ công gồm \textbf{312 mẫu kỹ năng} (lọc ra từ tập \textbf{758 mẫu kỹ năng thô} của 20 JD và 20 CV).
@@ -446,6 +523,15 @@ Bảng \ref{tab:eval_norm_matching} thiết lập khung tiêu chí đánh giá c
 \end{center}
 \end{table}
 
+Kết quả tổng hợp các chỉ số chuẩn hóa và một số mẫu đối soát tiêu biểu được in trực tiếp từ notebook tại Hình~\ref{fig:kb2_summary}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{image_KB1/Hinh4_KB2.png}
+    \caption{Tổng hợp kết quả đối soát chuẩn hóa: Mapping Accuracy 67,63\%, Reject Accuracy 69,28\% và Company Match Accuracy 83,33\%.}
+    \label{fig:kb2_summary}
+\end{figure}
+
 Kết quả thực đo trong Bảng~\ref{tab:eval_norm_matching} cho thấy hệ thống CareerNova đạt hiệu năng chuẩn hóa rất tốt và vượt các ngưỡng kỳ vọng ban đầu. Cụ thể:
 
 Độ chính xác chuẩn hóa (Mapping Accuracy) đạt trung bình chung cuộc \textbf{67.6\%} (trong đó tập JD đạt 68.4\% và tập CV đạt 64.7\%). Qua phân tích sâu các trường hợp lỗi (FN), nguyên nhân chính không phải do hệ thống chuẩn hóa sai ngữ nghĩa mà do \textbf{sự lệch pha về mặt chuỗi ký tự} giữa kết quả hệ thống và nhãn Ground Truth (ví dụ: hệ thống chuẩn hóa ``postgres'' thành ``PostgreSQL'' nhưng Ground Truth mong đợi nhãn viết đầy đủ hậu tố kỹ thuật có trong từ điển hệ thống là ``PostgreSQL (Database Management System)'', tương tự đối với ``CSS'' thành ``Cascading Style Sheets (CSS)'' hoặc ngược lại đối với ``Java'' thành ``Java (Programming Language)''). Thực chất, về mặt ngữ nghĩa nghiệp vụ, hệ thống đã ánh xạ hoàn toàn đúng thực thể kỹ năng, chứng minh chất lượng của thuật toán Hybrid (FAISS Dense Vector + Jaccard Sparse Penalty) hoạt động hiệu quả trên các biến thể viết tắt và viết thường.
@@ -458,7 +544,14 @@ Khả năng gộp nhóm doanh nghiệp (Company Match Accuracy) đạt kết qu�
 
 Mục tiêu của kịch bản này là kiểm chứng hiệu năng của bộ lọc trùng lặp tin tuyển dụng (Deduplication) tại lớp Import của hệ thống ETL. Hệ thống sử dụng thuật toán \textbf{TF-IDF kết hợp độ tương đồng Cosine (Cosine Similarity)} với ngưỡng phân loại $\theta = 0.8$ và hai chốt chặn tiền xử lý (độ dài văn bản tối thiểu $> 50$ ký tự và so khớp trong cửa sổ 30 ngày) để phát hiện và loại bỏ các bài đăng tuyển dụng bị trùng lặp trong cùng một nhóm doanh nghiệp (sau khi chuẩn hóa tên và gộp nhóm doanh nghiệp), kể cả trùng lặp chéo giữa các nguồn khác nhau.
 
-Phương pháp kiểm chứng được thực hiện bằng cách xây dựng tập dữ liệu thử nghiệm gồm 17 tin tuyển dụng gốc của các doanh nghiệp lớn có tần suất tuyển dụng cao: FPT Software (ID 357 - 6 tin gốc từ CSDL + 2 tin giả lập chéo nguồn), Techcombank (ID 546 - 6 tin gốc từ CSDL + 1 tin giả lập chéo nguồn), và Công ty Sữa Quốc Tế Lof (ID 552 - 2 tin chéo nguồn thực tế từ CSDL gồm ID 13489 và 14725). Từ tập dữ liệu này, hệ thống sinh ra \textbf{52 cặp so sánh đối soát} (trong đó gồm 17 cặp cùng nguồn Same-Source và 35 cặp đa nguồn Cross-Source). Các cặp bài đăng này được tiến hành thẩm định và gán nhãn thủ công (Ground Truth) bởi nhóm thực hiện đề tài để đối chiếu trực tiếp với quyết định phân loại của hệ thống.
+Phương pháp kiểm chứng được thực hiện bằng cách xây dựng tập dữ liệu thử nghiệm gồm 17 tin tuyển dụng gốc của các doanh nghiệp lớn có tần suất tuyển dụng cao: FPT Software (ID 357 - 6 tin gốc từ CSDL + 2 tin giả lập chéo nguồn), Techcombank (ID 546 - 6 tin gốc từ CSDL + 1 tin giả lập chéo nguồn), và Công ty Sữa Quốc Tế Lof (ID 552 - 2 tin chéo nguồn thực tế từ CSDL gồm ID 13489 và 14725). Từ tập dữ liệu này, hệ thống sinh ra \textbf{52 cặp so sánh đối soát} (trong đó gồm 17 cặp cùng nguồn Same-Source và 35 cặp đa nguồn Cross-Source). Các cặp bài đăng này được tiến hành thẩm định và gán nhãn thủ công (Ground Truth) bởi nhóm thực hiện đề tài để đối chiếu trực tiếp với quyết định phân loại của hệ thống. Hình~\ref{fig:kb3_load} ghi lại kết quả nạp và phân nhóm tập đối soát.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\textwidth]{image_KB1/Hinh1_KB3.png}
+    \caption{Kết quả nạp dữ liệu đối soát khử trùng lặp: 52 cặp, gồm 17 cặp cùng nguồn và 35 cặp đa nguồn.}
+    \label{fig:kb3_load}
+\end{figure}
 
 Bảng \ref{tab:match_deduplication_details} trình bày kết quả đối soát các trường hợp tiêu biểu trong quá trình thực nghiệm phát hiện trùng lặp tin tuyển dụng.
 
@@ -480,6 +573,15 @@ Bảng \ref{tab:match_deduplication_details} trình bày kết quả đối soá
 \end{center}
 \end{table}
 
+Các cặp đối soát đa nguồn và quyết định phân loại tương ứng được in trực tiếp từ notebook tại Hình~\ref{fig:kb3_pairs}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{image_KB1/Hinh3_KB3.png}
+    \caption{Bảng đối soát các cặp tin đa nguồn: bốn cặp trùng lặp đều được hệ thống phân loại đúng (TP).}
+    \label{fig:kb3_pairs}
+\end{figure}
+
 Bảng \ref{tab:eval_dedup} tổng hợp kết quả đánh giá hiệu năng thực tế của thuật toán lọc trùng lặp trên toàn bộ 52 cặp đối soát thử nghiệm.
 
 \begin{table}[H]
@@ -490,17 +592,30 @@ Bảng \ref{tab:eval_dedup} tổng hợp kết quả đánh giá hiệu năng th
 \hline
 \textbf{Chỉ số đánh giá dữ liệu (Metric)} & \textbf{Mục tiêu} & \textbf{Cùng nguồn} & \textbf{Đa nguồn} & \textbf{Chung cuộc} \\
 \hline
-Độ chính xác phát hiện trùng (Precision) & $\ge 90.0\%$ & 100.0\% & 100.0\% & \textbf{100.0\%} \\
+Độ chính xác phát hiện trùng (Precision) & $\ge 90.0\%$ & Không áp dụng & 100.0\% & \textbf{100.0\%} \\
 \hline
-Độ phủ phát hiện trùng (Recall) & $\ge 85.0\%$ & 100.0\% & 100.0\% & \textbf{100.0\%} \\
+Độ phủ phát hiện trùng (Recall) & $\ge 85.0\%$ & Không áp dụng & 100.0\% & \textbf{100.0\%} \\
 \hline
-Điểm số F1-Score & $\ge 87.5\%$ & 100.0\% & 100.0\% & \textbf{100.0\%} \\
+Điểm số F1-Score & $\ge 87.5\%$ & Không áp dụng & 100.0\% & \textbf{100.0\%} \\
 \hline
 \end{tabular}
 \end{center}
 \end{table}
 
-Kết quả thực nghiệm trong Bảng~\ref{tab:eval_dedup} ghi nhận hiệu năng hoàn hảo của bộ lọc trùng lặp trên cả hai kịch bản cùng nguồn và đa nguồn, đạt tỷ lệ tuyệt đối 100\% trên tất cả các chỉ số đánh giá. Qua phân tích chi tiết:
+Hình~\ref{fig:kb3_metrics} là đầu ra notebook của phép tính trên: nhóm cùng nguồn không có cặp dương tính (TP = FP = FN = 0), nên Precision/Recall/F1 không xác định; nhóm đa nguồn có bốn cặp dương tính và đều được phân loại đúng.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{image_KB1/Hinh2_KB3.png}
+    \caption{Kết quả đánh giá khử trùng lặp: nhóm đa nguồn và toàn bộ tập đều đạt 100\%; nhóm cùng nguồn không có cặp trùng lặp dương tính để tính các chỉ số.}
+    \label{fig:kb3_metrics}
+\end{figure}
+
+% GHI CHÚ PHẢN BIỆN (A3): Kết quả 100% đạt được trên tập RẤT NHỎ (52 cặp từ 17 tin), trong đó
+% có cặp "giả lập" (nhân tạo). KHÔNG tuyên bố đây là hiệu năng tổng quát. Nên: (1) gọi rõ đây là
+% kiểm chứng sanity-check trên tập nhỏ; (2) nêu số cặp thực vs giả lập; (3) nếu được, bổ sung
+% các cặp thực tế khó (cùng công ty, khác vị trí, mô tả gần giống) để test khả năng khái quát.
+Kết quả thực nghiệm trong Bảng~\ref{tab:eval_dedup} ghi nhận bộ lọc trùng lặp phân loại đúng toàn bộ 52 cặp đối soát trong tập kiểm thử nhỏ này. Trên toàn bộ tập và riêng nhóm đa nguồn, các chỉ số Precision, Recall và F1 đều đạt 100\%; nhóm cùng nguồn không có cặp trùng lặp dương tính nên không đủ cơ sở để tính các chỉ số này. Do tập kiểm thử có quy mô nhỏ và bao gồm một số cặp giả lập, kết quả này mang tính kiểm chứng tính đúng đắn của cơ chế lọc hơn là ước lượng hiệu năng tổng quát trên toàn thị trường. Qua phân tích chi tiết:
 
 Độ chính xác phát hiện trùng lặp đạt tuyệt đối (Precision = 100.0\%, không ghi nhận trường hợp gộp nhầm False Positive nào). Kết quả này chứng minh khả năng tách biệt ngữ nghĩa cực kỳ hiệu quả của thuật toán TF-IDF đối với các vị trí tuyển dụng độc lập của cùng một công ty (ví dụ: các vị trí lập trình viên .NET, Java, Embedded của FPT Software). Mặc dù các tin đăng này dùng chung phần giới thiệu doanh nghiệp và các điều khoản phúc lợi chung, thuật toán TF-IDF đã tính toán chính xác trọng số IDF rất cao cho các từ khóa chuyên môn cốt lõi (như ``java'', ``spring'', ``net'', ``c\#''), kéo độ tương đồng Cosine của các cặp tin độc lập này xuống rất thấp (dao động dưới 0.35), đảm bảo an toàn tuyệt đối cho tính nguyên vẹn của dữ liệu thị trường lao động.
 
@@ -512,46 +627,65 @@ Kết quả thực nghiệm trong Bảng~\ref{tab:eval_dedup} ghi nhận hiệu 
 
 Phần này trình bày kịch bản đối soát và kiểm chứng tính đúng đắn của thuật toán Matching Engine trong việc áp đặt các quy tắc lọc ngữ nghĩa (Semantic Filtering Rules) và tính điểm số có trọng số (Weighted Match Score) cuối cùng dựa trên các trọng số được thiết lập.
 
-\subsubsection*{4. Kịch bản đối soát 4: Thuật toán so khớp năng lực Matching Engine và quy tắc ngữ nghĩa}
+\subsubsection*{4. Kịch bản đối soát 4: Đánh giá chất lượng gợi ý việc làm của Matching Engine (Precision@K, MRR)}
 \label{subsubsec:test_scenario_4}
 
-Mục tiêu của kịch bản này là kiểm chứng thực tế hiệu năng vận hành và tính đúng đắn của thuật toán tại lõi Matching Engine khi áp đặt 6 quy tắc lọc ngữ nghĩa (định nghĩa tại Mục~\ref{sec:skill_algorithm}) và tính điểm số tương thích có trọng số động (Weighted Match Score) dựa trên các trọng số được thiết lập \cite{sec:skill_algorithm}. Quá trình này được thiết kế nhằm triệt tiêu các liên kết ngữ nghĩa sai lệch (như khớp nhầm chứng chỉ sang kỹ năng khác) và tăng cường độ chính xác cho các gợi ý khoảng trống năng lực (Skill Gap) gửi tới người dùng.
+Mục tiêu của kịch bản này là đánh giá chất lượng đầu ra của Matching Engine khi được dùng để xếp hạng và gợi ý các vị trí việc làm phù hợp với hồ sơ của sinh viên. Do đây là bài toán xếp hạng (ranking) trong hệ khuyến nghị, chất lượng gợi ý được định lượng bằng hai độ đo tiêu chuẩn: \textbf{Precision@K} (với $K = 1, 3, 5$) và \textbf{Hạng nghịch đảo trung bình} (Mean Reciprocal Rank, MRR).
 
-Phương pháp thực hiện sử dụng tập mẫu đối soát gồm 100 bài đăng (50 hồ sơ CV ứng viên và 50 bản mô tả công việc JD) thu thập thực tế từ thị trường công nghệ thông tin tại Việt Nam và được gán nhãn Ground Truth độc lập bởi nhóm nghiên cứu. Điểm số và danh sách khoảng trống kỹ năng do hệ thống kết xuất tự động từ container \texttt{nova-algo-api} được đối chiếu trực tiếp với kết quả thẩm định thủ công. Độ chính xác được định lượng thông qua hệ số tương quan Pearson $r$ nhằm đo lường mức độ tương đồng giữa tư duy đánh giá của thuật toán và chuyên gia nhân sự.
+Phương pháp thực hiện: hệ thống truy vấn trực tiếp cơ sở dữ liệu production (qua SSH tunnel) để lấy \textbf{10 hồ sơ CV mẫu} của người dùng thực; với mỗi CV, Matching Engine kết xuất danh sách việc làm gợi ý kèm điểm số. Mỗi cặp (CV, việc làm được gợi ý) được nhóm thực hiện đề tài gán nhãn phù hợp (RELEVANT) hoặc không phù hợp (IRRELEVANT) làm Ground Truth để đối chiếu với dự đoán của hệ thống. Như đã nêu, việc nhãn do chính nhóm gán là một hạn chế về tính hợp lệ và được nhìn nhận lại ở Mục~6.2.
+% GHI CHÚ PHẢN BIỆN (A1): Nếu kịp, mời 1-2 người độc lập gán nhãn lại một phần tập mẫu và báo cáo độ đồng thuận (Cohen's kappa).
 
-Hệ số tương quan Pearson $r$ được tính toán theo công thức:
-\begin{equation}
-r = \frac{\sum (X_i - \bar{X})(Y_i - \bar{Y})}{\sqrt{\sum (X_i - \bar{X})^2 \sum (Y_i - \bar{Y})^2}}
-\end{equation}
-
-Trong đó:
+Định nghĩa các độ đo sử dụng:
 \begin{itemize}
-    \item $X_i$: Điểm tương thích (Match Score) do hệ thống CareerNova tính toán tự động.
-    \item $Y_i$: Điểm đánh giá mức độ phù hợp do nhóm thực hiện đề tài chấm thủ công.
-    \item $\bar{X}, \bar{Y}$: Điểm trung bình của hai tập dữ liệu tương ứng.
+    \item \textbf{Precision@K}: tỉ lệ các gợi ý được gán nhãn phù hợp (RELEVANT) trong $K$ vị trí đầu của danh sách đã xếp hạng.
+    \item \textbf{MRR}: trung bình nghịch đảo thứ hạng của gợi ý phù hợp đầu tiên trên toàn bộ tập CV, phản ánh khả năng đưa kết quả đúng lên vị trí cao.
 \end{itemize}
 
-Khung tiêu chí đánh giá chất lượng so khớp của Matching Engine được xác lập dựa trên các ngưỡng chấp nhận nghiêm ngặt. Kết quả thực nghiệm sau khi chạy tập dữ liệu đối soát trên môi trường production (tháng 07/2026) được tổng hợp chi tiết trong Bảng~\ref{tab:eval_matching_engine_final}.
+Kết quả thực nghiệm (chạy trực tiếp trên dữ liệu production, tháng 07/2026) được tổng hợp trong Bảng~\ref{tab:eval_matching_engine_final}.
 
 \begin{table}[H]
-\caption{Kết quả đánh giá độ chính xác thuật toán so khớp năng lực Matching Engine}
+\caption{Kết quả đánh giá chất lượng gợi ý việc làm của Matching Engine trên 10 CV mẫu}
 \label{tab:eval_matching_engine_final}
 \begin{center}
-\begin{tabular}{|L{8.5cm}|C{2.5cm}|C{2.5cm}|}
+\begin{tabular}{|L{8.5cm}|C{3.5cm}|}
 \hline
-\textbf{Chỉ số đánh giá dữ liệu (Metric)} & \textbf{Ngưỡng mục tiêu} & \textbf{Kết quả thực tế} \\
+\textbf{Độ đo (Metric)} & \textbf{Kết quả thực tế} \\
 \hline
-Độ tương quan Pearson $r$ với nhóm thực hiện đề tài & $\ge 0.80$ & 0.842 \\
+Precision@1 (P@1) & 60,0\% \\
 \hline
-Độ chính xác gợi ý khoảng trống kỹ năng (Gap) & $\ge 85.0\%$ & 88.6\% \\
+Precision@3 (P@3) & 55,0\% \\
 \hline
-Độ chính xác gợi ý tài liệu học tập tương ứng & $\ge 80.0\%$ & 82.4\% \\
+Precision@5 (P@5) & 55,0\% \\
+\hline
+Mean Reciprocal Rank (MRR) & 0,60 \\
 \hline
 \end{tabular}
 \end{center}
 \end{table}
 
-Kết quả thực nghiệm cho thấy hệ số tương quan Pearson đạt $r = 0.842$, vượt ngưỡng mục tiêu đề ra ($\ge 0.80$), minh chứng rằng thuật toán kết hợp vector nhúng Dense Vector \texttt{all-MiniLM-L6-v2} và các quy tắc nghiệp vụ đã mô phỏng rất sát logic đánh giá hồ sơ thực tế của con người. Độ chính xác gợi ý Gap đạt 88.6\% cho thấy bộ lọc hoạt động hiệu quả giúp hệ thống chỉ ra chính xác những kỹ năng thiếu hụt trọng tâm, loại bỏ nhiễu từ các kỹ năng bổ trợ không quan trọng. Bên cạnh đó, độ chính xác gợi ý tài liệu học tập đạt 82.4\%, bảo đảm ánh xạ đúng các tài liệu/khóa học tương ứng với phần kỹ năng bị thiếu hụt dựa trên bản đồ ma trận kỹ năng chuẩn hóa của hệ thống.
+Các chỉ số P@K và MRR được in trực tiếp từ notebook tại Hình~\ref{fig:kb4_metrics}; số liệu này khớp với Bảng~\ref{tab:eval_matching_engine_final}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{image_KB1/Hinh1_KB4.png}
+    \caption{Kết quả đánh giá Matching Engine trên 10 CV: P@1 = 60,00\%, P@3 = P@5 = 55,00\% và MRR = 0,6000.}
+    \label{fig:kb4_metrics}
+\end{figure}
+
+Hình~\ref{fig:kb4_details} ghi lại bảng chỉ số của từng CV và một phần các cặp CV--việc làm đã được gán nhãn để đối soát.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{image_KB1/Hinh2_KB4.png}
+    \caption{Bảng đối soát chi tiết chỉ số gợi ý việc làm của 10 CV mẫu và các cặp CV--việc làm được gán nhãn.}
+    \label{fig:kb4_details}
+\end{figure}
+
+Trên tập 10 CV mẫu, hệ thống đạt Precision@1 = 60,0\%, Precision@3 = Precision@5 = 55,0\% và MRR = 0,60; nghĩa là trong 6/10 trường hợp, gợi ý xếp hạng đầu tiên đã là việc làm phù hợp. Đây là kết quả \textbf{ban đầu, mang tính tham chiếu} vì tập đánh giá còn nhỏ (10 CV) và một số CV dạng ảnh chưa trích xuất được kỹ năng nên không sinh được gợi ý phù hợp, kéo các chỉ số trung bình xuống. Cần mở rộng số lượng CV đánh giá và cải thiện luồng OCR để có ước lượng ổn định, khái quát hơn (xem Mục~6.2). Tính đúng đắn của cơ chế tính điểm và bộ 6 quy tắc lọc ngữ nghĩa bên trong Matching Engine được minh họa chi tiết qua trường hợp cụ thể ở phần tiếp theo.
+% GHI CHÚ PHẢN BIỆN (Nhóm 3 - ĐÃ THAY SỐ THẬT): Đã thay Pearson r=0.842 / Gap 88.6% / khóa học 82.4%
+% (không có artifact trong repo) bằng đánh giá gợi ý việc làm CÓ THẬT: P@1=60%, P@3=P@5=55%, MRR=0.60
+% (nguồn: KiemThu/MatchingCV/2_calculate_matching_metrics.ipynb, 10 CV). LƯU Ý: eval này đo GỢI Ý VIỆC LÀM
+% (UC-15), không phải Gap accuracy. Nếu nhóm có đánh giá riêng cho chất lượng Gap thì bổ sung sau và ghi rõ nguồn.
 
 \subsubsection*{5. Phân tích đối soát chi tiết trường hợp cụ thể (Case Study)}
 \label{subsubsec:case_study_matching}

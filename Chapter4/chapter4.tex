@@ -5,7 +5,7 @@ Chương này trình bày quá trình hiện thực hóa thiết kế đã đề
 
 \section{Lựa chọn công nghệ}
 
-Việc lựa chọn công nghệ cho hệ thống CareerNova tuân theo nguyên tắc phân tách trách nhiệm rõ ràng giữa ba thành phần triển khai độc lập --- ứng dụng Frontend, dịch vụ Backend API và Pipeline ETL --- đồng thời ưu tiên các nền tảng có hệ sinh thái trưởng thành, hỗ trợ kiểu dữ liệu tường minh (TypeScript/Python type hints) và thuận tiện cho việc đóng gói thành container Docker. Toàn bộ ngăn xếp công nghệ được mô tả trong các tiểu mục dưới đây tương ứng với mã nguồn thực tế của hệ thống.
+Việc lựa chọn công nghệ cho hệ thống CareerNova tuân theo nguyên tắc phân tách trách nhiệm rõ ràng giữa ba thành phần triển khai độc lập: ứng dụng Frontend, dịch vụ Backend API và Pipeline ETL. Các thành phần này ưu tiên những nền tảng có hệ sinh thái trưởng thành, hỗ trợ kiểu dữ liệu tường minh (TypeScript/Python type hints) và thuận tiện cho việc đóng gói thành container Docker. Toàn bộ ngăn xếp công nghệ được mô tả trong các tiểu mục dưới đây tương ứng với mã nguồn thực tế của hệ thống.
 
 \subsection{Công nghệ Frontend}
 
@@ -38,9 +38,9 @@ Mỗi tin tuyển dụng sau khi tải về được bóc tách thành các trư
 \subsection{Quy trình làm sạch dữ liệu, xử lý trùng lặp và lưu trữ vào PostgreSQL}
 \label{sec:dedup}
 
-Sau khi thu thập, dữ liệu thô được làm sạch bằng cách loại bỏ HTML rác, ký tự thừa và chuẩn hóa khoảng trắng; các tin quá ngắn, lỗi định dạng hoặc thiếu trường bắt buộc bị loại ở \textit{quality gate}. Hệ thống khử trùng lặp nội bộ giữa các tin cùng công ty trước khi gọi AI. Gemini API tiếp tục bóc tách chức danh, kỹ năng và các trường chính, với điều kiện kết quả đạt ngưỡng tin cậy và có bằng chứng trong văn bản gốc; các nhãn kỹ năng sau đó được ánh xạ về từ điển chuẩn bằng FAISS và Lightcast Taxonomy.
+Sau khi thu thập, dữ liệu thô được chuẩn hóa khoảng trắng, loại bỏ ký tự thừa và kiểm tra các trường bắt buộc; các tin quá ngắn, lỗi định dạng hoặc thiếu trường bắt buộc bị loại ở \textit{quality gate}. Hệ thống khử trùng lặp nội bộ giữa các tin cùng công ty trước khi gọi AI. Gemini API tiếp tục bóc tách chức danh, kỹ năng và các trường chính, với điều kiện kết quả đạt ngưỡng tin cậy và có bằng chứng trong văn bản gốc; các nhãn kỹ năng sau đó được ánh xạ về từ điển chuẩn bằng FAISS và Lightcast Taxonomy.
 
-Ở bước khử trùng sâu, tin được nhóm theo tên công ty đã chuẩn hóa, mã hóa nội dung bằng \texttt{all-MiniLM-L6-v2} và đối chiếu Cosine Similarity trong từng nhóm. Cặp tin vượt ngưỡng 0,9, kể cả trùng chéo nguồn, được xem là trùng lặp và chỉ giữ lại tin cũ hơn. Cuối cùng, dữ liệu được ghi theo lô và giao dịch nguyên tử vào các bảng \texttt{jobs}, \texttt{companies}, \texttt{skills} và bảng liên kết \texttt{job\_skills}.
+Ở bước khử trùng sâu tại lớp import, tin được nhóm theo tên công ty đã chuẩn hóa và đối chiếu bằng TF-IDF kết hợp Cosine Similarity trong cửa sổ 30 ngày. Cặp có độ tương đồng vượt ngưỡng $\theta = 0{,}8$, kể cả trùng chéo nguồn, được xem là trùng lặp và chỉ giữ lại tin cũ hơn. Hiện tại, lớp so sánh này vẫn có thể nhận chuỗi mô tả chứa thẻ HTML; việc tách bỏ hoàn toàn thẻ HTML trước khi lập vector TF-IDF là một hướng tối ưu tiếp theo. Cuối cùng, dữ liệu được ghi theo lô và giao dịch nguyên tử vào các bảng \texttt{jobs}, \texttt{companies}, \texttt{skills} và bảng liên kết \texttt{job\_skills}.
 
 Nhờ cách tổ chức này, hệ thống không chỉ giảm trùng lặp mà còn giữ được tính nhất quán khi dữ liệu thị trường thay đổi theo thời gian.
 
@@ -192,8 +192,13 @@ Sau khi kỹ năng được chuẩn hóa, bộ máy so khớp (Matching Engine) 
             \item Nếu hai kỹ năng có phân nhóm (\texttt{category}) khác nhau (ví dụ: phát triển phần mềm vs kiểm thử), ép độ tương đồng về $0.0$.
             \item Nếu trùng khớp tuyệt đối phân nhóm, nhân thêm hệ số tăng cường $1.2$: $\text{Sim}_{\text{boosted}} = \min(1.0, \text{Sim} \times 1.2)$.
         \end{itemize}
-        \item \textbf{Soft Skills Direct Match (Khớp nhanh kỹ năng mềm)}: Nếu cả hai kỹ năng đều là kỹ năng mềm (\texttt{Common skill}) và có độ tương đồng cơ bản $> 0.35$, hệ thống tự động nâng lên mức khớp tối đa ($1.0$).
+        \item \textbf{Soft Skills Direct Match (Khớp nhanh kỹ năng mềm)}: Nếu cả hai kỹ năng đều là kỹ năng mềm (\texttt{Common skill}) và có độ tương đồng cơ bản $> 0.35$, hệ thống tự động nâng lên mức khớp tối đa ($1.0$). \textit{Lý do thiết kế:} trong từ điển kỹ năng, nhóm kỹ năng mềm được phân loại khá thô và thường có tính thay thế lẫn nhau trong thực tế công việc (ví dụ ``Communication'', ``Teamwork'' và ``Collaboration'' cùng biểu thị năng lực làm việc với con người); nếu đòi hỏi trùng khớp định danh tuyệt đối sẽ phạt oan các kỹ năng mềm đồng nghĩa. Ràng buộc ``cả hai đều là kỹ năng mềm'' cộng với ngưỡng cơ bản $0{,}35$ giới hạn phạm vi áp dụng của quy tắc. Đây là một đánh đổi có chủ đích nghiêng về phía không bỏ sót; nếu cần thận trọng hơn, có thể hạ trần của quy tắc (giữ nguyên giá trị Cosine hoặc chặn ở mức $0{,}85$ thay vì $1{,}0$).
     \end{enumerate}
+
+    \textbf{Thứ tự áp dụng và tương tác giữa các quy tắc.} Sáu quy tắc trên được áp dụng \textit{tuần tự} theo đúng thứ tự cài đặt trong mã nguồn (\texttt{match\_cv.py}): (1) Đồng nhất loại hình và Độc quyền chứng chỉ (khác loại, hoặc một bên là chứng chỉ $\rightarrow 0{,}0$); (2) Độc quyền công cụ; (3) Bộ lọc ngôn ngữ; (4) Đặc hiệu phân nhóm (khác phân nhóm $\rightarrow 0{,}0$); (5) Tăng cường cùng phân nhóm ($\times 1{,}2$, chặn trần $1{,}0$); (6) Khớp nhanh kỹ năng mềm. Do các quy tắc ép về $0{,}0$ được đặt trước, một cặp kỹ năng đã bị loại ($\text{sim} = 0$) sẽ không thể được ``phục hồi'' bởi quy tắc tăng cường (vì $0 \times 1{,}2 = 0$) hay quy tắc khớp nhanh kỹ năng mềm (vì điều kiện $\text{sim} > 0{,}35$ không còn thỏa). Nhờ vậy, thứ tự này bảo đảm các ràng buộc loại trừ luôn có ưu tiên cao hơn các quy tắc tăng cường, cho kết quả xác định và nhất quán. Cần lưu ý một đánh đổi: vì quy tắc Đặc hiệu phân nhóm ép $0{,}0$ khi hai kỹ năng khác \texttt{category}, một số cặp kỹ năng liên quan chéo phân nhóm có thể bị triệt tiêu; đây là lựa chọn thiên về độ chính xác (giảm khớp sai) và được nhìn nhận lại ở phần hạn chế.
+% GHI CHÚ PHẢN BIỆN (B2+B3 - ĐÃ XÁC MINH KHỚP CODE match_cv.py dòng 584-632):
+% Thứ tự thật: Type+Cert -> Software -> Language -> Subcat-Exclusivity -> Subcat-Boost(x1.2) -> SoftSkill(>0.35->1.0).
+% Áp dụng tuần tự, không short-circuit; các luật ép 0.0 đặt trước nên chi phối. Đã thêm biện minh luật soft-skill.
     \item \textbf{Công thức toán học}:
     \begin{itemize}
         \item \textit{Độ tương đồng ngữ nghĩa Cosine giữa vector nhúng của kỹ năng yêu cầu $\mathbf{e}(J_i)$ và vector nhúng của kỹ năng ứng viên $\mathbf{e}(s_j)$} (do vector nhúng đã chuẩn hóa L2 nên được rút gọn thành phép nhân ma trận/tích vô hướng hiệu năng cao):

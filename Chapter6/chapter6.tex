@@ -5,7 +5,7 @@
 
 \section{Các kết quả đã đạt được của hệ thống ứng dụng}
 
-Luận văn này đã nghiên cứu, phân tích và hiện thực hóa thành công hệ thống CareerNova --- một nền tảng hỗ trợ sinh viên ngành Công nghệ thông tin đánh giá khoảng cách năng lực và khám phá thị trường lao động thông qua trực quan hóa dữ liệu. Kết thúc quá trình xây dựng và thử nghiệm, đề tài đã đạt được các kết quả chính sau đây:
+Luận văn này đã nghiên cứu, phân tích và hiện thực hóa thành công hệ thống CareerNova, một nền tảng hỗ trợ sinh viên ngành Công nghệ thông tin đánh giá khoảng cách năng lực và khám phá thị trường lao động thông qua trực quan hóa dữ liệu. Kết thúc quá trình xây dựng và thử nghiệm, đề tài đã đạt được các kết quả chính sau đây:
 
 \begin{enumerate}
     \item \textbf{Xây dựng hoàn chỉnh khung dữ liệu đa nguồn}: Phát triển thành công hệ thống thu thập dữ liệu tin tuyển dụng tự động từ bốn nền tảng lớn tại Việt Nam (ITViec, VietnamWorks, CareerViet, LinkedIn) theo cơ chế dự phòng hai tầng (cào tĩnh ưu tiên, cào động dự phòng), cài đặt các module tiền xử lý dữ liệu và thuật toán khử trùng lặp trước khi lưu trữ tập trung. Số lượng dữ liệu tích lũy và tin đang mở được ghi nhận theo snapshot cơ sở dữ liệu tại thời điểm kiểm thử trong Mục 5.3.1.
@@ -28,7 +28,7 @@ Hệ thống đã được triển khai và kiểm thử trên môi trường th
 \begin{itemize}
     \item \textbf{Phạm vi dữ liệu}: Thử nghiệm thực tế mới chỉ tập trung chủ yếu vào nhóm ngành Công nghệ Thông tin (IT) và Khoa học Dữ liệu tại thị trường Việt Nam, chưa mở rộng sang các lĩnh vực ngành nghề phi kỹ thuật khác. Quy mô dữ liệu tích lũy đủ phục vụ phân tích xu hướng ngắn hạn trong phạm vi triển khai, nhưng chưa đủ dày để phân tích chu kỳ tuyển dụng theo mùa qua nhiều năm.
 
-    \item \textbf{Hiệu năng lần đối soát đầu tiên}: Khi cache miss, thời gian đối soát CV thực đo trung bình là 41,9 giây và lớn nhất là 55,1 giây (đạt mục tiêu dưới 60 giây của NFR-02). Tuy nhiên, con số này vẫn tương đối cao ở góc độ trải nghiệm người dùng. Nguyên nhân chủ yếu là độ trễ của Gemini API bên ngoài và chi phí tính vector trên máy chủ 2 vCPU không GPU. Hai endpoint thống kê kỹ năng của Dashboard (\texttt{in-demand}, \texttt{rising}) cũng chậm hơn các endpoint còn lại do truy vấn tổng hợp trên bảng liên kết lớn, cần tối ưu bằng chỉ mục bổ sung hoặc materialized view.
+    \item \textbf{Hiệu năng lần đối soát đầu tiên và khả năng chịu tải}: Khi cache miss, thời gian đối soát CV thực đo trung bình là 41,9 giây và lớn nhất là 55,1 giây (đạt mục tiêu dưới 60 giây của NFR-02). Tuy nhiên, con số này vẫn tương đối cao ở góc độ trải nghiệm người dùng. Nguyên nhân chủ yếu là độ trễ của Gemini API bên ngoài và chi phí tính vector trên máy chủ 2 vCPU không GPU. Quan trọng hơn, toàn bộ số liệu hiệu năng được đo ở chế độ \textit{đơn phiên} (một người dùng, gọi tuần tự); đề tài \textbf{chưa thực hiện kiểm thử tải (load/stress test)} nên chưa đánh giá được hành vi khi nhiều người dùng đối soát đồng thời. Với hạ tầng 2 vCPU không GPU, khi tải đồng thời tăng, thời gian đối soát lần đầu có nguy cơ vượt ngưỡng 60 giây; đánh giá khả năng mở rộng theo chiều ngang và xử lý bất đồng bộ qua hàng đợi là hướng cần bổ sung. Ngoài ra, hai endpoint thống kê kỹ năng của Dashboard (\texttt{in-demand}, \texttt{rising}) cũng chậm hơn các endpoint còn lại do truy vấn tổng hợp trên bảng liên kết lớn, cần tối ưu bằng chỉ mục bổ sung hoặc materialized view.
 
     \item \textbf{Sự phụ thuộc vào chất lượng dữ liệu thô}: Kết quả trích xuất kỹ năng có thể bị ảnh hưởng nếu tệp CV của ứng viên được trình bày quá cẩu thả, ảnh quét có độ phân giải kém hoặc sử dụng các định dạng thiết kế cột phức tạp mà tầng OCR không đọc đúng thứ tự dòng.
 
@@ -66,7 +66,7 @@ Dựa trên nền tảng kỹ thuật và dữ liệu đã xây dựng, cùng v�
 \begin{enumerate}
     \item \textbf{Mở rộng đa ngành nghề}: Cập nhật cây phân loại (taxonomy) và huấn luyện thêm các mô hình nhúng để hỗ trợ phân tích dữ liệu tuyển dụng ở các lĩnh vực khác như Tài chính, Marketing, Y tế và Giáo dục, đồng thời mở rộng danh sách nguồn thu thập để tăng độ phủ thị trường.
 
-    \item \textbf{Tự động hóa vòng lặp cải thiện từ điển kỹ năng}: Xây dựng quy trình bán tự động khai thác bảng \texttt{unmatched\_skills} --- kết hợp tần suất xuất hiện, điểm tương đồng gần nhất và xác nhận của LLM --- để đề xuất bổ sung kỹ năng mới vào từ điển chuẩn hóa theo chu kỳ, giúp hệ thống tự thích nghi với các công nghệ mới nổi trên thị trường mà không cần can thiệp thủ công.
+    \item \textbf{Tự động hóa vòng lặp cải thiện từ điển kỹ năng}: Xây dựng quy trình bán tự động khai thác bảng \texttt{unmatched\_skills}, kết hợp tần suất xuất hiện, điểm tương đồng gần nhất và xác nhận của LLM để đề xuất bổ sung kỹ năng mới vào từ điển chuẩn hóa theo chu kỳ. Quy trình này giúp hệ thống tự thích nghi với các công nghệ mới nổi trên thị trường mà không cần can thiệp thủ công.
 
     \item \textbf{Nâng cao chất lượng gợi ý lộ trình học tập}: Mở rộng kho khóa học liên kết với Gap Report bằng cách tự động đồng bộ metadata từ các nền tảng học trực tuyến (Coursera, Udemy, edX), bổ sung cơ chế xếp hạng khóa học theo phản hồi người dùng và theo dõi tiến độ học tập để đo lường mức độ thu hẹp khoảng cách kỹ năng theo thời gian.
 

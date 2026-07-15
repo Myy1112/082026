@@ -9,7 +9,7 @@ Trong kỷ nguyên số hóa, dữ liệu tuyển dụng trực tuyến ngày c�
 
 \section{Phát biểu bài toán}
 
-Bài toán cốt lõi mà luận văn giải quyết là sự thiếu hụt một công cụ đánh giá năng lực định lượng và chuẩn hóa ngữ nghĩa chuyên sâu cho thị trường lao động CNTT tại Việt Nam. Dữ liệu từ các nền tảng khác nhau có định dạng và cấu trúc không đồng nhất; cùng một công việc có thể xuất hiện lặp lại ở nhiều nguồn, trong khi một số trường thông tin lại thiếu hoặc chưa được chuẩn hóa. Đặc biệt, yêu cầu kỹ năng thường nằm trong mô tả công việc (Job Description --- JD) dạng văn bản tự do, làm cho việc trích xuất tự động trở nên khó khăn.
+Bài toán cốt lõi mà luận văn giải quyết là sự thiếu hụt một công cụ đánh giá năng lực định lượng và chuẩn hóa ngữ nghĩa chuyên sâu cho thị trường lao động CNTT tại Việt Nam. Dữ liệu từ các nền tảng khác nhau có định dạng và cấu trúc không đồng nhất; cùng một công việc có thể xuất hiện lặp lại ở nhiều nguồn, trong khi một số trường thông tin lại thiếu hoặc chưa được chuẩn hóa. Đặc biệt, yêu cầu kỹ năng thường nằm trong mô tả công việc (Job Description, viết tắt là JD) dạng văn bản tự do, làm cho việc trích xuất tự động trở nên khó khăn.
 
 \subsection{Vấn đề chuẩn hóa thực thể và đánh giá khoảng cách năng lực ứng viên}
 
@@ -34,7 +34,7 @@ Trong các nghiên cứu và ứng dụng thực tiễn, hệ thống ATS truy�
     
     \item \textbf{So khớp hồ sơ thông minh}: Sử dụng công nghệ Xử lý ngôn ngữ tự nhiên (NLP) và Mô hình ngôn ngữ lớn (LLM) để phân tích hồ sơ ứng viên (CV) và thực hiện Phân tích khoảng cách kỹ năng (Skill Gap Analysis) tương ứng với các công việc phù hợp.
     
-    \item \textbf{Trực quan hóa dữ liệu}: Xây dựng giao diện người dùng cung cấp các dashboard, biểu đồ trực quan giúp các bên liên quan (nhà tuyển dụng, ứng viên, nhà hoạch định chính sách) hiểu rõ hơn về thị trường lao động.
+    \item \textbf{Trực quan hóa dữ liệu}: Xây dựng giao diện người dùng cung cấp các dashboard, biểu đồ trực quan giúp sinh viên ngành IT hiểu rõ hơn về thị trường lao động.
 \end{enumerate}
 
 \subsection{Phạm vi của đề tài}
@@ -43,9 +43,18 @@ Trong các nghiên cứu và ứng dụng thực tiễn, hệ thống ATS truy�
 
 \section{Ý nghĩa khoa học và thực tiễn (Đóng góp của đề tài)}
 
-Về phương pháp và dữ liệu, đề tài thiết lập quy trình ETL lai kết hợp trích xuất thực thể bằng Generative AI có hậu kiểm với so khớp ngữ nghĩa bằng SBERT cục bộ và chỉ mục FAISS. Cách tiếp cận này hướng đến cân bằng độ chính xác ngữ nghĩa, chi phí vận hành và tốc độ phản hồi. Hệ thống đồng thời xây dựng tập dữ liệu 7.245 tin tuyển dụng CNTT sạch, chủ yếu thu thập trong năm 2026, cùng bộ đối soát gồm 100 tài liệu được gán nhãn thủ công (50 CV và 50 JD) để kiểm chứng thực nghiệm.
+Đề tài mang tính \textbf{ứng dụng}, với trọng tâm là tích hợp và tùy biến các kỹ thuật hiện có thành một hệ thống hoàn chỉnh, vận hành được cho bài toán phân tích dữ liệu tuyển dụng của sinh viên CNTT tại Việt Nam. Để tránh nhầm lẫn giữa việc sử dụng lại công nghệ và phần thực sự mới, phần đóng góp được phân định rõ như sau.
 
-Về ứng dụng, CareerNova giúp sinh viên CNTT năm cuối đối chiếu năng lực với nhu cầu tuyển dụng thông qua biểu đồ Radar, báo cáo khoảng cách kỹ năng và Dashboard thị trường. Kết quả phân tích cũng có thể cung cấp thêm góc nhìn cho nhà tuyển dụng khi sàng lọc hồ sơ, cũng như cho cơ sở đào tạo khi tham khảo nhu cầu kỹ năng thực tế để cập nhật chương trình học.
+Về \textbf{tích hợp kỹ thuật}, đề tài sử dụng lại các thành phần đã được cộng đồng kiểm chứng: mô hình ngôn ngữ lớn Gemini cho trích xuất thực thể, mô hình nhúng câu SBERT (\texttt{all-MiniLM-L6-v2}) cho biểu diễn ngữ nghĩa, chỉ mục FAISS cho tìm kiếm vector, và trọng số theo độ hiếm dạng TF-IDF cho phân biệt tầm quan trọng của kỹ năng. Việc phối hợp các thành phần này thành một quy trình ETL lai hoàn chỉnh (Generative AI xử lý ngoại tuyến kết hợp so khớp vector cục bộ trực tuyến) hướng đến cân bằng giữa độ chính xác ngữ nghĩa, chi phí vận hành và tốc độ phản hồi.
+
+Trên nền tảng đó, các \textbf{đóng góp riêng} mà nhóm đề xuất và hiện thực hóa gồm: (i) cơ chế \textit{hậu kiểm dựa trên bằng chứng} (evidence-based post-validation) buộc mỗi thực thể kỹ năng do LLM sinh ra phải kèm chuỗi bằng chứng trích nguyên văn từ tài liệu gốc, tự động loại bỏ các thực thể không đối chứng được nhằm giảm ảo giác; (ii) cơ chế \textit{trọng số theo độ hiếm được tính động từ kho tin tuyển dụng CNTT Việt Nam} (cập nhật theo dữ liệu thị trường thực tế thay cho trọng số tĩnh) để điểm so khớp phản ánh đúng quan hệ cung--cầu của thị trường; và (iii) \textit{bộ sáu quy tắc lọc ngữ nghĩa} dựa trên metadata phân loại kỹ năng (loại hình, phân nhóm, chứng chỉ, ngôn ngữ) nhằm triệt tiêu các so khớp vector sai bản chất giữa những nhóm khái niệm khác nhau.
+% GHI CHÚ PHẢN BIỆN (A7 + A4): Ba đóng góp (i)(ii)(iii) nên được CHỨNG MINH GIÁ TRỊ bằng một bảng
+% ablation ở Chương 5 (bật/tắt từng thành phần trên cùng tập nhãn 20 JD + 20 CV). Nếu chưa chạy kịp,
+% ít nhất nêu rõ đây là đóng góp về mặt thiết kế/kỹ thuật, tránh tuyên bố "vượt trội" khi chưa đo đối chứng.
+
+Về \textbf{dữ liệu}, hệ thống xây dựng tập 7.245 tin tuyển dụng CNTT sạch, chủ yếu thu thập trong năm 2026, cùng các bộ dữ liệu đối soát được gán nhãn thủ công phục vụ kiểm chứng thực nghiệm (20 JD và 20 CV cho trích xuất và chuẩn hóa kỹ năng, cùng các tập riêng cho khử trùng lặp và gợi ý việc làm; chi tiết ở Chương~5).
+
+Về \textbf{ứng dụng}, CareerNova giúp sinh viên CNTT năm cuối đối chiếu năng lực với nhu cầu tuyển dụng thông qua biểu đồ Radar, báo cáo khoảng cách kỹ năng và Dashboard thị trường.
 
 \section{Cấu trúc cuốn luận văn}
 
