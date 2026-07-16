@@ -1,0 +1,158 @@
+\chapter{Đặc tả chi tiết các bảng dữ liệu phụ trợ}
+\label{Appendix:db_spec}
+
+Phụ lục này trình bày chi tiết cấu trúc các bảng dữ liệu phụ trợ trong cơ sở dữ liệu hệ thống CareerNova, phục vụ cho các tính năng liên kết xác thực bên thứ ba, cấu hình thông báo, đề xuất lộ trình học tập từ Gap Report và ghi nhận nhật ký vận hành ETL Pipeline.
+
+% --- Bảng 1: user_auth_providers ---
+\subsubsection*{1. Bảng \texttt{user\_\allowbreak auth\_\allowbreak providers} (Liên kết nhà cung cấp xác thực)}
+
+Lưu trữ thông tin xác thực bên thứ ba (Google, Facebook) phục vụ đăng nhập Single Sign-On (SSO).
+
+\begin{footnotesize}\begin{longtable}{|L{3.5cm}|L{2.0cm}|L{3.0cm}|L{5.5cm}|}
+\caption{Cấu trúc bảng \texttt{user\_\allowbreak auth\_\allowbreak providers}.}
+\label{tab:auth_providers} \\
+\hline
+\textbf{Tên trường} & \textbf{Kiểu dữ liệu} & \textbf{Ràng buộc} & \textbf{Ý nghĩa} \\
+\hline
+\endfirsthead
+\hline
+\textbf{Tên trường} & \textbf{Kiểu dữ liệu} & \textbf{Ràng buộc} & \textbf{Ý nghĩa} \\
+\hline
+\text{ } \\ % Fix visual empty line warning
+\hline
+\endhead
+\texttt{auth\_\allowbreak provider\_\allowbreak id} & uuid & PK, DEFAULT gen\_random\_uuid() & Định danh duy nhất liên kết xác thực. \\
+\hline
+\texttt{user\_id} & uuid & FK -> users(user\_id) ON DELETE CASCADE & ID người dùng sở hữu liên kết. \\
+\hline
+\texttt{provider} & varchar(50) & CHECK (provider IN ('local', 'google', 'facebook')) & Tên nhà cung cấp dịch vụ xác thực. \\
+\hline
+\texttt{provider\_\allowbreak user\_\allowbreak id} & varchar(255) & NOT NULL & ID định danh từ phía nhà cung cấp. \\
+\hline
+\texttt{provider\_\allowbreak email} & varchar(255) & NULL & Email trả về từ nhà cung cấp. \\
+\hline
+\texttt{provider\_\allowbreak name} & varchar(255) & NULL & Họ tên trả về từ nhà cung cấp. \\
+\hline
+\texttt{provider\_\allowbreak avatar\_\allowbreak url} & text & NULL & Ảnh đại diện trả về từ nhà cung cấp. \\
+\hline
+\texttt{created\_at} & timestamp & Tự động & Thời điểm liên kết. \\
+\hline
+\texttt{last\_\allowbreak login\_\allowbreak at} & timestamp & NULL & Lần đăng nhập cuối qua provider này. \\
+\hline
+\end{longtable}
+\end{footnotesize}
+
+% --- Bảng 2: job_group_skill_weights ---
+\subsubsection*{2. Bảng \texttt{job\_\allowbreak group\_\allowbreak skill\_\allowbreak weights} (Trọng số kỹ năng theo nhóm ngành)}
+
+Bảng lưu trữ trọng số tầm quan trọng $w_i$ của từng kỹ năng thuộc một nhóm ngành công việc tiêu chuẩn, được tính toán bằng thuật toán TF-IDF trên tập dữ liệu việc làm.
+
+\begin{footnotesize}\begin{longtable}{|L{3.5cm}|L{2.0cm}|L{3.0cm}|L{5.5cm}|}
+\caption{Cấu trúc bảng \texttt{job\_\allowbreak group\_\allowbreak skill\_\allowbreak weights}.}
+\label{tab:skill_weights} \\
+\hline
+\textbf{Tên trường} & \textbf{Kiểu dữ liệu} & \textbf{Ràng buộc} & \textbf{Ý nghĩa} \\
+\hline
+\endfirsthead
+\hline
+\textbf{Tên trường} & \textbf{Kiểu dữ liệu} & \textbf{Ràng buộc} & \textbf{Ý nghĩa} \\
+\hline
+\endhead
+\texttt{search\_\allowbreak group} & varchar(100) & PK & Tên nhóm ngành công việc tiêu chuẩn. \\
+\texttt{skill\_id} & integer & PK, FK -> skills(skill\_id) ON DELETE CASCADE & ID kỹ năng chuẩn hóa trong nhóm. \\
+\hline
+\texttt{weight\_wi} & numeric(8,4) & NOT NULL & Trọng số đặc trưng $w_i$ của kỹ năng trong nhóm. \\
+\hline
+\end{longtable}
+\end{footnotesize}
+
+% --- Bảng 3: salaries ---
+\subsubsection*{3. Bảng \texttt{salaries} (Thông tin mức lương của tin tuyển dụng)}
+
+Lưu trữ dữ liệu mức lương tương ứng cho từng tin tuyển dụng. Dữ liệu này phục vụ cho thông tin chi tiết của tin và các phân tích có thể mở rộng trong tương lai.
+
+\begin{footnotesize}\begin{longtable}{|L{3.5cm}|L{2.0cm}|L{3.0cm}|L{5.5cm}|}
+\caption{Cấu trúc bảng \texttt{salaries}.}
+\label{tab:salaries} \\
+\hline
+\textbf{Tên trường} & \textbf{Kiểu dữ liệu} & \textbf{Ràng buộc} & \textbf{Ý nghĩa} \\
+\hline
+\endfirsthead
+\hline
+\textbf{Tên trường} & \textbf{Kiểu dữ liệu} & \textbf{Ràng buộc} & \textbf{Ý nghĩa} \\
+\hline
+\endhead
+\texttt{salary\_id} & integer & PK, SERIAL & Định danh duy nhất bản ghi lương. \\
+\hline
+\texttt{job\_id} & bigint & FK $\rightarrow$ jobs(job\_id) ON DELETE CASCADE & Tin tuyển dụng tương ứng. \\
+\hline
+\texttt{min\_salary} & numeric(18,2) & NULL & Mức lương tối thiểu. \\
+\hline
+\texttt{max\_salary} & numeric(18,2) & NULL & Mức lương tối đa. \\
+\hline
+\texttt{med\_salary} & numeric(18,2) & NULL & Mức lương trung vị. \\
+\hline
+\texttt{currency} & varchar(10) & DEFAULT 'VND' & Đơn vị tiền tệ. \\
+\hline
+\texttt{pay\_period} & varchar(20) & NULL & Chu kỳ trả lương (Monthly, Yearly). \\
+\hline
+\end{longtable}
+\end{footnotesize}
+
+% --- Bảng 4: saved_jobs ---
+\subsubsection*{4. Bảng \texttt{saved\_jobs} (Việc làm yêu thích của sinh viên)}
+
+Bảng cầu nối ghi nhận các tin tuyển dụng được sinh viên đánh dấu lưu lại, phục vụ tính năng danh sách yêu thích và gợi ý đối soát CV.
+
+\begin{footnotesize}\begin{longtable}{|L{3.5cm}|L{2.0cm}|L{3.0cm}|L{5.5cm}|}
+\caption{Cấu trúc bảng \texttt{saved\_jobs}.}
+\label{tab:saved_jobs} \\
+\hline
+\textbf{Tên trường} & \textbf{Kiểu dữ liệu} & \textbf{Ràng buộc} & \textbf{Ý nghĩa} \\
+\hline
+\endfirsthead
+\hline
+\textbf{Tên trường} & \textbf{Kiểu dữ liệu} & \textbf{Ràng buộc} & \textbf{Ý nghĩa} \\
+\hline
+\endhead
+\texttt{saved\_\allowbreak job\_\allowbreak id} & uuid & PK, DEFAULT gen\_random\_uuid() & Định danh duy nhất bản ghi lưu. \\
+\hline
+\texttt{user\_id} & uuid & FK $\rightarrow$ users(user\_id) ON DELETE CASCADE & Sinh viên thực hiện lưu. \\
+\hline
+\texttt{job\_id} & bigint & FK $\rightarrow$ jobs(job\_id) ON DELETE CASCADE & Tin tuyển dụng được lưu. \\
+\hline
+\texttt{created\_at} & timestamp & Tự động; UNIQUE & Thời điểm lưu; ràng buộc composite ngăn lưu trùng. \\
+\hline
+\end{longtable}
+\end{footnotesize}
+
+% --- Bảng 5-7: courses, learning_paths, path_courses ---
+\subsubsection*{5--7. Nhóm bảng Khóa học và Lộ trình học tập}
+
+Nhóm ba bảng phụ trợ \texttt{courses}, \texttt{learning\_\allowbreak paths} và \texttt{path\_\allowbreak courses} lưu trữ dữ liệu phục vụ tính năng đề xuất lộ trình học tập (Learning Roadmap) cá nhân hóa theo kết quả Gap Report của từng sinh viên.
+
+\begin{itemize}
+    \item \textbf{\texttt{courses}}: Mỗi bản ghi lưu metadata một khóa học gồm tiêu đề, nhà cung cấp (Coursera, Udemy, v.v.), đường dẫn nguồn, thời lượng (giờ), đánh giá sao, giá và mảng thẻ kỹ năng (\texttt{skills\_tags[]}) để đối chiếu với kỹ năng thiếu hụt trong Gap Report.
+    \item \textbf{\texttt{learning\_\allowbreak paths}}: Mỗi lộ trình học tập được định nghĩa bởi một \texttt{skill\_key} (tên kỹ năng chuẩn), cấp độ (Beginner/Intermediate/Advanced), thời gian ước tính và một tập hợp các khóa học được sắp xếp tuần tự theo \texttt{sort\_order}.
+    \item \textbf{\texttt{path\_\allowbreak courses}}: Bảng cầu nối N-N liên kết \texttt{learning\_\allowbreak paths} và \texttt{courses}, lưu thêm trường \texttt{sort\_order} để đảm bảo thứ tự học tập logic trong lộ trình.
+\end{itemize}
+
+% --- Bảng 8-9: notifications, notification_templates ---
+\subsubsection*{8--9. Nhóm bảng Thông báo hệ thống}
+
+Nhóm bảng \texttt{notifications} và \texttt{notification\_\allowbreak templates} triển khai hệ thống thông báo in-app đa kênh.
+
+\begin{itemize}
+    \item \textbf{\texttt{notification\_\allowbreak templates}}: Lưu trữ các mẫu thông báo tái sử dụng với tiêu đề và nội dung dạng template (có placeholder thay thế động). Mỗi template được định danh bằng \texttt{template\_\allowbreak code} duy nhất và có thể tắt/bật qua trường \texttt{is\_active}.
+    \item \textbf{\texttt{notifications}}: Mỗi bản ghi là một thông báo cụ thể gửi đến một người dùng, liên kết với thực thể nguồn qua cặp (\texttt{entity\_type}, \texttt{entity\_id}), lưu trạng thái đọc (\texttt{is\_read}, \texttt{read\_at}) và metadata bổ sung dưới dạng JSONB.
+\end{itemize}
+
+% --- Bảng 10-11: unmatched_skills, search_group_keywords ---
+\subsubsection*{10--11. Nhóm bảng Hỗ trợ ETL Pipeline}
+
+Hai bảng phụ trợ phục vụ vận hành và cải thiện chất lượng Pipeline ETL theo thời gian:
+
+\begin{itemize}
+    \item \textbf{\texttt{unmatched\_\allowbreak skills}}: Ghi lại các cụm từ kỹ năng thô từ văn bản JD hoặc CV mà Pipeline không thể chuẩn hóa thành công vào từ điển \texttt{skills} (điểm tương đồng dưới ngưỡng). Bảng này là đầu vào quan trọng cho quy trình mở rộng từ điển định kỳ.
+    \item \textbf{\texttt{search\_\allowbreak group\_\allowbreak keywords}}: Ánh xạ từ khóa tìm kiếm của người dùng hoặc tiêu đề tin tuyển dụng sang nhóm ngành chuẩn hóa (\texttt{group\_key}) tương ứng.
+\end{itemize}

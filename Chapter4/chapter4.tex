@@ -30,19 +30,36 @@ Docker và Docker Compose đóng gói độc lập Frontend, Backend API, ETL Pi
 Pipeline dữ liệu (ETL Pipeline) hoạt động theo cơ chế xử lý theo lô (batch processing) định kỳ hằng ngày để thu thập và xử lý tin tuyển dụng trên thị trường. Cách tổ chức này cho phép hệ thống vừa đảm bảo độ phủ dữ liệu thị trường, vừa kiểm soát được tải hệ thống trong mỗi lần chạy.
 
 \subsection{Cài đặt các module thu thập dữ liệu tin tuyển dụng tự động}
+\label{sec:crawl_module}
 
-Quy trình thu thập được thực thi trên ITviec, LinkedIn, VietnamWorks và CareerViet. Hệ thống ưu tiên \texttt{requests} kết hợp \texttt{cloudscraper} để giảm chi phí tài nguyên, rồi tự động chuyển sang Selenium headless khi trang đích kết xuất bằng JavaScript hoặc bị WAF chặn. Để hạn chế yêu cầu không cần thiết, hệ thống chỉ thu thập các tin mới hơn mốc \textit{date cutoff}; danh sách 199 từ khóa IT được xoay vòng theo ngày để tăng độ phủ. Với nguồn trả về payload RSC, hệ thống giải mã trực tiếp luồng dữ liệu để lấy mô tả gốc khi có thể, thay vì luôn khởi chạy trình duyệt.
+Phân hệ thu thập (Scraper) được thiết kế chuyên biệt để tự động hóa quy trình khai thác dữ liệu từ các nền tảng tuyển dụng lớn tại Việt Nam bao gồm ITviec, LinkedIn, VietnamWorks và CareerViet. Quy trình thu thập dữ liệu tự động được thể hiện trực quan qua Hình~\ref{fig:crawl_flow}.
 
-Mỗi tin tuyển dụng sau khi tải về được bóc tách thành các trường có cấu trúc như tiêu đề, công ty, địa điểm, mô tả, mức lương, ngày đăng. Dữ liệu đầu ra được gắn thêm \texttt{source\_name} và \texttt{source\_id} để truy vết nguồn gốc, đồng thời đưa vào bước lọc trùng trước khi nạp vào PostgreSQL.
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.85\textwidth]{image4_1}
+    \caption{Sơ đồ quy trình thu thập dữ liệu tin tuyển dụng tự động.}
+    \label{fig:crawl_flow}
+\end{figure}
+
+Hệ thống ưu tiên sử dụng \texttt{requests} giả lập trình duyệt sạch (clean User-Agent) để thu thập dữ liệu thô nhanh chóng và tiết kiệm tài nguyên hệ thống. Đối với các nền tảng tuyển dụng sử dụng cơ chế kết xuất bằng JavaScript động phức tạp hoặc áp dụng hệ thống tường lửa chống bot (WAF) nghiêm ngặt như LinkedIn, hệ thống tự động kích hoạt trình duyệt Selenium ở chế độ headless (không giao diện) để cào dữ liệu một cách an toàn. Riêng đối với tính năng lấy thông tin việc làm trực tiếp từ đường dẫn liên kết (URL) do người dùng cung cấp, thư viện \texttt{cloudscraper} được tích hợp nhằm vượt qua cơ chế bảo vệ Cloudflare. Để hạn chế các yêu cầu không cần thiết, hệ thống chỉ thu thập các tin mới trong vòng 2--3 ngày gần nhất; danh sách hơn 200 từ khóa IT được xoay vòng theo ngày để đảm bảo độ phủ dữ liệu thị trường. Đặc biệt, đối với nền tảng VietnamWorks (sử dụng Next.js), thay vì khởi chạy trình duyệt Selenium gây tiêu tốn tài nguyên bộ nhớ, hệ thống thực hiện giải mã trực tiếp luồng dữ liệu React Server Components (RSC) từ mã nguồn trang. Cơ chế này giúp bóc tách chính xác mô tả gốc (\texttt{jobDescription} và \texttt{jobRequirement}) một cách nhanh chóng và tối ưu hiệu năng.
+
+Mỗi tin tuyển dụng sau khi tải về được bóc tách thành các trường có cấu trúc như tiêu đề, công ty, địa điểm, mô tả, mức lương, ngày đăng. Dữ liệu đầu ra được gắn thêm \texttt{source\_name} và \texttt{source\_id} để phục vụ truy vết nguồn gốc, đồng thời đưa vào bước lọc trùng trước khi nạp vào PostgreSQL.
 
 \subsection{Quy trình làm sạch dữ liệu, xử lý trùng lặp và lưu trữ vào PostgreSQL}
 \label{sec:dedup}
 
-Sau khi thu thập, dữ liệu thô được chuẩn hóa khoảng trắng, loại bỏ ký tự thừa và kiểm tra các trường bắt buộc; các tin quá ngắn, lỗi định dạng hoặc thiếu trường bắt buộc bị loại ở \textit{quality gate}. Hệ thống khử trùng lặp nội bộ giữa các tin cùng công ty trước khi gọi AI. Gemini API tiếp tục bóc tách chức danh, kỹ năng và các trường chính, với điều kiện kết quả đạt ngưỡng tin cậy và có bằng chứng trong văn bản gốc; các nhãn kỹ năng sau đó được ánh xạ về từ điển chuẩn bằng FAISS và Lightcast Taxonomy.
+Sau khi thu thập, dữ liệu thô được chuẩn hóa khoảng trắng, loại bỏ ký tự thừa và kiểm tra các trường bắt buộc; các tin quá ngắn, lỗi định dạng hoặc thiếu trường bắt buộc bị loại bỏ ở cổng kiểm soát chất lượng (\textit{quality gate}). Hệ thống tiến hành khử trùng lặp nội bộ sơ bộ giữa các tin cùng công ty trước khi gọi AI. Gemini API tiếp tục bóc tách chức danh, kỹ năng và các trường chính bằng cơ chế Structured Output, với điều kiện kết quả đạt ngưỡng tin cậy và có bằng chứng đối sánh trực tiếp trong văn bản gốc; các nhãn kỹ năng sau đó được ánh xạ về từ điển chuẩn bằng FAISS và Lightcast Taxonomy. Sơ đồ xử lý dữ liệu và khử trùng lặp được trình bày ở Hình~\ref{fig:clean_flow}.
 
-Ở bước khử trùng sâu tại lớp import, tin được nhóm theo tên công ty đã chuẩn hóa và đối chiếu bằng TF-IDF kết hợp Cosine Similarity trong cửa sổ 30 ngày. Cặp có độ tương đồng vượt ngưỡng $\theta = 0{,}8$, kể cả trùng chéo nguồn, được xem là trùng lặp và chỉ giữ lại tin cũ hơn. Hiện tại, lớp so sánh này vẫn có thể nhận chuỗi mô tả chứa thẻ HTML; việc tách bỏ hoàn toàn thẻ HTML trước khi lập vector TF-IDF là một hướng tối ưu tiếp theo. Cuối cùng, dữ liệu được ghi theo lô và giao dịch nguyên tử vào các bảng \texttt{jobs}, \texttt{companies}, \texttt{skills} và bảng liên kết \texttt{job\_skills}.
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.85\textwidth]{image4_2.jpg}
+    \caption{Sơ đồ quy trình làm sạch, xử lý trùng lặp và lưu trữ dữ liệu.}
+    \label{fig:clean_flow}
+\end{figure}
 
-Nhờ cách tổ chức này, hệ thống không chỉ giảm trùng lặp mà còn giữ được tính nhất quán khi dữ liệu thị trường thay đổi theo thời gian.
+Ở bước khử trùng sâu tại lớp import, tin được nhóm theo tên công ty đã chuẩn hóa và đối chiếu bằng TF-IDF kết hợp Cosine Similarity trong cửa sổ 30 ngày. Cặp có độ tương đồng vượt ngưỡng $\theta = 0{,}8$ (kể cả trùng chéo nguồn) được xác định là trùng lặp. Khi đó, hệ thống sẽ duy trì bản ghi cũ trong cơ sở dữ liệu để bảo toàn lịch sử thu thập, đồng thời thực hiện cập nhật (merge/refresh) các thông số động mới như số lượt nộp hồ sơ, lượt xem và thời điểm cào dữ liệu gần nhất. Một điểm cần lưu ý trong thiết kế hiện tại là chuỗi văn bản mô tả đưa vào tính TF-IDF vẫn chứa một số thẻ HTML thô; việc tiền xử lý loại bỏ triệt để các thẻ này trước khi vector hóa là hướng tối ưu hóa tiếp theo của hệ thống. Cuối cùng, dữ liệu được ghi theo lô và giao dịch nguyên tử vào các bảng \texttt{jobs}, \texttt{companies}, \texttt{skills} và bảng liên kết \texttt{job\_skills}.
+
+Nhờ cách tổ chức này, hệ thống không chỉ giảm thiểu việc lưu trữ dữ liệu dư thừa mà còn giữ được tính nhất quán khi dữ liệu thị trường biến động theo thời gian.
 
 \section{Xây dựng chức năng cho các phân hệ người dùng}
 
@@ -91,7 +108,7 @@ Kết quả hiển thị được đối chiếu với màn hình Dashboard tạ
 
 \subsection{Hiện thực hóa chức năng Tìm kiếm job, Lưu job và Quản lý danh sách CV}
 
-Sau khi xem Dashboard, sinh viên có thể tìm việc theo từ khóa, kỹ năng và địa điểm; PostgreSQL được truy vấn qua Prisma ORM, còn kết quả có thể sắp xếp theo thời gian đăng, mức lương hoặc mức độ phù hợp. Người dùng có thể lưu tin quan tâm để theo dõi, sau đó tải lên, đổi tên, xóa hoặc chọn một CV mặc định trong danh sách \texttt{user\_cvs}. Khi chọn CV và công việc hoặc nhóm việc mục tiêu, yêu cầu được chuyển sang Matching Service để phân tích ngữ nghĩa, tách biệt với thao tác tìm kiếm danh sách việc làm. Chuỗi thao tác này tạo thành kịch bản sử dụng xuyên suốt từ khám phá thị trường, lựa chọn cơ hội đến nhận báo cáo đối soát năng lực.
+Sau khi xem Dashboard, sinh viên có thể tìm việc theo từ khóa, kỹ năng và địa điểm; PostgreSQL được truy vấn qua Prisma ORM, còn kết quả có thể sắp xếp theo thời gian đăng, mức lương hoặc mức độ phù hợp. Người dùng có thể lưu tin quan tâm để theo dõi, sau đó tải lên, đổi tên, xóa hoặc chọn một CV mặc định trong danh sách \texttt{user\_cvs}. Khi chọn CV và nhóm việc mục tiêu, yêu cầu được chuyển sang Matching Service để phân tích ngữ nghĩa, tách biệt với thao tác tìm kiếm danh sách việc làm. Chuỗi thao tác này tạo thành kịch bản sử dụng xuyên suốt từ khám phá thị trường, lựa chọn nhóm nghề đến nhận báo cáo đối soát năng lực.
 
 \section{Xây dựng thuật toán phân tích kỹ năng năng lực}
 \label{sec:skill_algorithm}
@@ -102,11 +119,11 @@ Thuật toán phân tích kỹ năng năng lực đóng vai trò cốt lõi tron
 
 Để hiện thực hóa yêu cầu phân tích ngữ nghĩa, hệ thống tích hợp API của mô hình ngôn ngữ lớn Gemini kết hợp cơ chế \textit{Structured Outputs}. Mô hình được ràng buộc trả về đúng một đối tượng JSON tuân theo JSON Schema định nghĩa trước, giúp loại bỏ các trường hợp mô hình trả về văn bản giải thích hoặc định dạng sai.
 
-\noindent\hrule
+\noindent
 \vspace{2mm}
 \textbf{Cấu hình trích xuất thực thể kỹ năng:}
 \vspace{2mm}
-\hrule
+
 \vspace{2mm}
 Đọc văn bản thô từ CV hoặc JD và trích xuất danh sách kỹ năng theo đúng cấu trúc JSON sau. Mỗi kỹ năng phải đi kèm cụm từ bằng chứng được trích nguyên văn từ văn bản gốc:
 \begin{lstlisting}
@@ -119,7 +136,7 @@ Thuật toán phân tích kỹ năng năng lực đóng vai trò cốt lõi tron
 ]
 \end{lstlisting}
 \vspace{2mm}
-\hrule
+
 
 \subsection{Cài đặt Matching Engine tính độ phù hợp và liệt kê các kỹ năng còn thiếu}
 
@@ -164,7 +181,7 @@ Sau khi kỹ năng được chuẩn hóa, bộ máy so khớp (Matching Engine) 
 \label{fig:matching_engine_process}
 \end{figure}
 
-\noindent\hrule
+\noindent
 \vspace{2mm}
 \textbf{Phân rã logic cấu trúc Matching Engine:}
 \begin{itemize}
@@ -247,7 +264,6 @@ Sau khi kỹ năng được chuẩn hóa, bộ máy so khớp (Matching Engine) 
 \end{lstlisting}
 \end{itemize}
 \vspace{2mm}
-\hrule
 
 Trong trường hợp gọi LLM thất bại hoặc cạn hạn ngạch, hệ thống kích hoạt bộ đối sánh từ khóa thô (Keyword Match Fallback) trực tiếp với từ điển trong bảng \texttt{skills} bằng biểu thức chính quy có ranh giới từ.
 
