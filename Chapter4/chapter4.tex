@@ -267,4 +267,6 @@ Sau khi kỹ năng được chuẩn hóa, bộ máy so khớp (Matching Engine) 
 
 Trong trường hợp gọi LLM thất bại hoặc cạn hạn ngạch, hệ thống kích hoạt bộ đối sánh từ khóa thô (Keyword Match Fallback) trực tiếp với từ điển trong bảng \texttt{skills} bằng biểu thức chính quy có ranh giới từ.
 
+Đặc biệt, để tối ưu hóa trải nghiệm người dùng đối với các yêu cầu đối soát đơn lẻ trực tiếp từ giao diện web, hệ thống tích hợp thêm cơ chế cảnh báo cạn kiệt tài nguyên API (\texttt{API\_KEY\_EXHAUSTED}). Khi toàn bộ danh sách API key dự phòng đều rơi vào trạng thái quá giới hạn định mức (Rate Limit) hoặc cooldown, thay vì âm thầm trả về kết quả rỗng không chính xác thông qua cơ chế fallback từ khóa thô, hệ thống sẽ chủ động ném ngoại lệ và phản hồi thông điệp lỗi ``Hết lượt matching'' trực tiếp về phía Frontend để thông báo trực quan cho người dùng.
+
 Kết quả tính toán sau khi phân loại thành ba nhóm kỹ năng đã lọc sẽ được lưu trực tiếp vào cột \texttt{radar\_data} và \texttt{gap\_report} (kiểu JSONB) của bảng \texttt{cv\_job\_matches} để phục vụ kết xuất biểu đồ Radar và Gap Report trên giao diện người dùng.
