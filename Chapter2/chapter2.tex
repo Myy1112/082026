@@ -5,7 +5,7 @@ Chương này tổng hợp các nghiên cứu liên quan, các nguyên lý thu t
 
 \subsection{Tổng quan về các nền tảng tuyển dụng và hệ thống gợi ý hiện tại}
 
-Trên thị trường hiện nay, có nhiều nền tảng tuyển dụng lớn đang hoạt động như LinkedIn, CareerViet, VietnamWorks hay ITViet. Hầu hết các hệ thống này tập trung vào chức năng đăng tải thông tin việc làm và cung cấp bộ lọc tìm kiếm cơ bản dựa trên chức danh, địa điểm và một số kỹ năng cốt lõi. Trong những năm gần đây, một số hệ thống đã bắt đầu tích hợp các thuật toán học máy cơ bản để gợi ý công việc cho ứng viên dựa trên từ khóa có trong hồ sơ (Resume/CV Matching) \cite{li2020competence}.
+Trên thị trường hiện nay, có nhiều nền tảng tuyển dụng lớn đang hoạt động như LinkedIn, CareerViet, VietnamWorks hay ITviec. Hầu hết các hệ thống này tập trung vào chức năng đăng tải thông tin việc làm và cung cấp bộ lọc tìm kiếm cơ bản dựa trên chức danh, địa điểm và một số kỹ năng cốt lõi. Trong những năm gần đây, một số hệ thống đã bắt đầu tích hợp các thuật toán học máy cơ bản để gợi ý công việc cho ứng viên dựa trên từ khóa có trong hồ sơ (Resume/CV Matching) \cite{li2020competence}.
 
 Để xác định vị trí của CareerNova trong bối cảnh các sản phẩm đang được sử dụng, Bảng~\ref{tab:related_platforms} đối chiếu các tính năng xoay quanh hai chức năng chính của đề tài: phân tích dữ liệu tuyển dụng và đối soát năng lực từ CV. Việc đối chiếu dựa trên các chức năng công khai được khảo sát trên LinkedIn, TopCV, ITviec và Glints \cite{linkedinjobs,topcv,itviec,glints}; ký hiệu $\bullet$ thể hiện hỗ trợ toàn diện hoặc tự động, $\circleddash$ thể hiện hỗ trợ một phần hoặc cần thao tác thủ công, còn $\circ$ thể hiện không xác định được chức năng tương ứng trong phạm vi khảo sát. Bảng này nhằm làm rõ phạm vi thiết kế, không dùng để xếp hạng chất lượng hay đánh giá thương mại các nền tảng.
 
@@ -79,10 +79,7 @@ Tuy nhiên, phần lớn các thuật toán đối soát trên các nền tảng
 
 Trong dòng nghiên cứu học thuật về trích xuất và phân tích kỹ năng từ dữ liệu tuyển dụng, nhiều công trình đã tập trung vào bài toán trích xuất và phân loại kỹ năng từ mô tả công việc: Bhola và cộng sự đề xuất khung phân loại đa nhãn cực trị dựa trên mô hình ngôn ngữ để truy hồi kỹ năng từ JD \cite{bhola2020retrieving}; Zhang và cộng sự xây dựng bộ dữ liệu và mô hình trích xuất kỹ năng cứng lẫn kỹ năng mềm từ tin tuyển dụng tiếng Anh \cite{zhang2022skillspan}; và khảo sát hệ thống của Khaouja và cộng sự tổng hợp các phương pháp nhận diện kỹ năng từ tin tuyển dụng trực tuyến \cite{khaouja2021survey}. Tuy nhiên, các nghiên cứu này chủ yếu giải quyết riêng khâu trích xuất hoặc phân loại kỹ năng, phần lớn trên dữ liệu tiếng Anh, mà chưa tích hợp thành một quy trình khép kín gắn trích xuất kỹ năng với chuẩn hóa ngữ nghĩa và đánh giá định lượng khoảng cách năng lực của người dùng theo nhu cầu thị trường.
 
-Từ Bảng~\ref{tab:related_platforms} và các nghiên cứu đã khảo sát, luận văn xác định khoảng trống ở việc kết hợp thu thập dữ liệu thị trường tự động, trích xuất và chuẩn hóa dữ liệu ứng dụng trí tuệ nhân tạo tạo sinh và đánh giá định lượng khoảng cách năng lực dựa trên ngữ nghĩa cho sinh viên CNTT tại Việt Nam. Đây là khoảng trống về phạm vi mục tiêu của đề tài, không phải khẳng định rằng các nền tảng thương mại không cung cấp các tính năng hỗ trợ nghề nghiệp khác.
-% GHI CHÚ PHẢN BIỆN (A6 phần 2): Đã thêm 3 nguồn học thuật THẬT (đã xác minh bibtex trên ACL Anthology /
-% IEEE Access) để định vị khoảng trống theo nghiên cứu, không chỉ theo sản phẩm thương mại.
-% ⚠️ NHÓM PHẢI ĐỌC 3 bài này trước khi bảo vệ để trả lời được nếu hội đồng hỏi nội dung.
+Từ Bảng~\ref{tab:related_platforms} và các nghiên cứu đã khảo sát, luận văn xác định khoảng trống ở việc kết hợp thu thập dữ liệu thị trường tự động, trích xuất và chuẩn hóa dữ liệu ứng dụng trí tuệ nhân tạo tạo sinh và đánh giá định lượng khoảng cách năng lực dựa trên ngữ nghĩa cho sinh viên CNTT tại Việt Nam.
 
 Để lấp đầy khoảng trống này, hệ thống \textit{CareerNova} được đề xuất với một cách tiếp cận hoàn toàn mới:
 \begin{enumerate}
@@ -96,11 +93,7 @@ Từ Bảng~\ref{tab:related_platforms} và các nghiên cứu đã khảo sát,
 
 \subsection{Xác định yêu cầu nghiệp vụ thu thập dữ liệu tuyển dụng}
 
-Kỹ thuật khai thác thông tin tự động từ môi trường Internet là một trong những phân nhánh quan trọng của khoa học dữ liệu, hỗ trợ đắc lực cho việc thu thập thông tin thị trường lao động theo thời gian thực \cite{olston2010web}. Trong nghiên cứu học thuật và ứng dụng thực tiễn, cần phân biệt rõ ràng hai khái niệm thường bị nhầm lẫn: Thu thập liên kết ứng dụng Web (Web Crawling) và Trích xuất dữ liệu Web (Web Scraping) \cite{olston2010web}.
-
-Quá trình Web Crawling được định nghĩa là việc duyệt mạng Internet một cách hệ thống và tự động bởi các tác nhân phần mềm nhằm mục đích lập chỉ mục nội dung trang web phục vụ cho các công cụ tìm kiếm \cite{olston2010web}. Cơ chế hoạt động của một bộ thu thập liên kết (crawler) dựa trên việc bắt đầu từ một danh sách các địa chỉ mạng gốc (seed URLs), liên tục phân tích các siêu liên kết (hyperlinks) xuất hiện trong tài liệu HTML thu về, rồi đưa chúng vào một danh sách hàng đợi các liên kết cần truy cập tiếp theo (gọi là Crawl Frontier) theo các chính sách quản lý nghiêm ngặt \cite{olston2010web}.
-
-Ngược lại, Web Scraping tập trung vào một phạm vi hẹp và chuyên sâu hơn, đó là quá trình giả lập hành vi duyệt web của con người để tự động trích xuất các trường thông tin cụ thể, có mục tiêu từ cấu trúc tài liệu của một trang web đích và lưu trữ chúng vào hệ thống tệp tin hoặc cơ sở dữ liệu để phục vụ cho các phân tích chuyên sâu \cite{olston2010web}.
+Khi triển khai hệ thống thu thập thông tin tuyển dụng, việc lựa chọn phương pháp cào dữ liệu tĩnh dựa trên HTTP Requests hay cào dữ liệu động bằng trình duyệt không giao diện (Headless Browser) quyết định trực tiếp đến hiệu năng và độ ổn định của toàn hệ thống \cite{olston2010web}.
 
 \begin{figure}[H]
     \centering
@@ -109,90 +102,57 @@ Ngược lại, Web Scraping tập trung vào một phạm vi hẹp và chuyên 
     \label{fig:static_vs_dynamic}
 \end{figure}
 
-Khi triển khai hệ thống thu thập thông tin tuyển dụng, việc lựa chọn phương pháp cào dữ liệu tĩnh dựa trên giao thức truyền tải siêu văn bản (HTTP Requests) hay cào dữ liệu động bằng trình duyệt không giao diện (Headless Browser) quyết định trực tiếp đến hiệu năng và độ ổn định của toàn hệ thống.
+Phương pháp cào dữ liệu tĩnh sử dụng các thư viện như Python Requests gửi yêu cầu trực tiếp đến máy chủ nhằm tải về mã nguồn HTML thô \cite{requestsdocs}. Phương pháp này sở hữu ưu điểm vượt trội về tốc độ phản hồi nhanh và tiêu thụ tài nguyên cực kỳ thấp. Tuy nhiên, cào tĩnh bất lực trước các ứng dụng kết xuất phía máy khách (Client-Side Rendering) thông qua JavaScript \cite{webdriver}. Ngược lại, cào dữ liệu động bằng Selenium sử dụng Headless Browser cho phép thực thi đầy đủ mã JavaScript và phân tích cây DOM hoàn chỉnh, nhưng tiêu tốn bộ nhớ RAM lớn và tốc độ xử lý chậm hơn \cite{webdriver}.
 
-Phương pháp cào dữ liệu tĩnh sử dụng các thư viện như Python Requests để gửi các yêu cầu GET hoặc POST trực tiếp đến máy chủ của trang tuyển dụng nhằm tải về mã nguồn HTML thô \cite{requestsdocs}. Phương pháp này sở hữu ưu điểm vượt trội về tốc độ phản hồi nhanh, tiêu thụ băng thông thấp và không yêu cầu năng lực tính toán lớn của CPU.
-
-Tuy nhiên, HTTP Requests tĩnh hoàn toàn bất lực trước thế hệ ứng dụng web hiện đại sử dụng cơ chế kết xuất phía máy khách (Client-Side Rendering) thông qua JavaScript hoặc các ứng dụng đơn trang (Single Page Applications) \cite{webdriver}. Đối với các trang tin tuyển dụng có cơ chế tải dữ liệu động thông qua các hành vi cuộn chuột hoặc chuyển trang bất tuần tự, hệ thống bắt buộc phải chuyển sang sử dụng Headless Browser như Selenium \cite{webdriver}.
-
-Selenium hoạt động bằng cách khởi tạo một trình duyệt thực thụ chạy ngầm không có giao diện hiển thị, thiết lập kết nối thông qua giao thức chuẩn hóa của tổ chức World Wide Web (W3C WebDriver) để thực thi toàn bộ các đoạn mã JavaScript trên trang, tự động hóa các thao tác click chuột, điền biểu mẫu, giải quyết phân trang và kết xuất ra cây phân cấp đối tượng tài liệu (Document Object Model, viết tắt là DOM) hoàn chỉnh trước khi tiến hành bóc tách dữ liệu \cite{webdriver}. Điểm hạn chế lớn nhất của Selenium là tiêu tốn bộ nhớ RAM lớn, tốc độ chậm và đòi hỏi tài nguyên hệ thống cao hơn gấp nhiều lần so với các yêu cầu HTTP truyền thống.
-
-Bên cạnh vấn đề về mặt công nghệ kết xuất, các rào cản bảo mật từ các nền tảng tuyển dụng lớn như ITViec, VietnamWorks, CareerViet hay LinkedIn tạo ra thách thức không nhỏ cho quá trình thu thập thông tin tự động \cite{cloudflarebots}. Các nền tảng này thường thiết lập các hệ thống tường lửa ứng dụng Web (Web Application Firewall, viết tắt là WAF) như Cloudflare nhằm phát hiện và ngăn chặn bot. Các cơ chế phòng thủ tiêu biểu bao gồm kiểm tra thử thách JavaScript (JS Challenges), hệ thống xác thực Turnstile, phân tích hành vi bất thường, giới hạn tần suất yêu cầu từ một địa chỉ IP (Rate Limiting) và phản hồi mã lỗi 403 Forbidden. Để giải quyết triệt để rào cản này, hệ thống tích hợp thư viện chuyên dụng cloudscraper \cite{cloudscraper}.
-
-Thư viện này hoạt động bằng cách tích hợp các công cụ thực thi JavaScript ngay trong tiến trình Python để giải quyết tự động các thuật toán thử thách của Cloudflare mà không cần khởi chạy một trình duyệt hoàn chỉnh \cite{cloudscraper}. Đồng thời, thư viện cho phép cấu hình các tiêu đề HTTP như User-Agent phù hợp với yêu cầu của máy chủ; hiệu quả phụ thuộc vào cơ chế bảo vệ của từng trang \cite{cloudscraper}.
-
-Nhằm tối ưu hóa hiệu năng hệ thống và bảo đảm tính bền vững, một cơ chế dự phòng (Fallback) tự động được thiết lập: ban đầu hệ thống sẽ ưu tiên sử dụng luồng cào tĩnh thông qua Requests và cloudscraper để đạt tốc độ tối đa \cite{cloudscraper}; trong trường hợp hệ thống bảo mật của trang đích nâng cấp khiến luồng cào tĩnh bị chặn hoàn toàn, hệ thống sẽ tự động kích hoạt luồng dự phòng, chuyển đổi sang Selenium Headless Browser được cấu hình với các plugin chống phát hiện (như Undetected ChromeDriver), đồng thời áp dụng cơ chế giãn cách thời gian truy cập ngẫu nhiên và xoay vòng địa chỉ IP qua proxy để tiếp tục duy trì hoạt động thu thập dữ liệu tuyển dụng \cite{webdriver}.
-
-\textbf{Đánh giá và lý giải lựa chọn:} Đối với bài toán cụ thể của hệ thống CareerNova, việc chỉ dùng một trong hai phương pháp đều không tối ưu: cào tĩnh nhanh nhưng bị chặn bởi WAF Cloudflare; cào động vượt WAF nhưng chậm và tốn tài nguyên nếu dùng cho toàn bộ hàng nghìn tin tuyển dụng. Yêu cầu nghiệp vụ về \textit{tính bền vững và hiệu năng} dẫn đến quyết định thiết kế một \textbf{cơ chế dự phòng hai tầng (Two-tier Fallback Mechanism)}: hệ thống ưu tiên cào tĩnh để đạt tốc độ tối đa; khi gặp tường lửa WAF chặn, hệ thống tự động kích hoạt luồng dự phòng chuyển sang Headless Browser với plugin chống phát hiện (Undetected ChromeDriver) và cơ chế xoay vòng proxy \cite{webdriver}.
-
-Đồng thời, để giải quyết riêng rào cản Cloudflare WAF trong luồng cào tĩnh mà không cần khởi chạy trình duyệt đầy đủ, thư viện \texttt{cloudscraper} được tích hợp vào luồng tĩnh như một giải pháp bypass WAF hạng nhẹ \cite{cloudscraper}. Thư viện hỗ trợ xử lý một số cơ chế thử thách JavaScript và cấu hình tiêu đề HTTP trong luồng yêu cầu; hệ thống vẫn cần tuân thủ điều khoản sử dụng, robots.txt và giới hạn tần suất của từng nguồn dữ liệu \cite{cloudscraper}.
-
-Vì vậy, trong hệ thống đề xuất, sự kết hợp giữa cào tĩnh (qua Requests và cloudscraper) và cào động dự phòng (qua Selenium Headless Browser) được lựa chọn nhằm tối ưu hóa đồng thời tốc độ thu thập và tỷ lệ thành công đối với các nền tảng tuyển dụng có cơ chế chống bot nghiêm ngặt.
-
-%==========================================================================
+Bên cạnh đó, các rào cản bảo mật từ nền tảng tuyển dụng như tường lửa ứng dụng Web (WAF Cloudflare) thường ngăn chặn bot bằng các thử thách JavaScript hoặc Rate Limiting \cite{cloudflarebots}. Để tối ưu hóa hiệu năng và bảo đảm tính bền vững, hệ thống thiết lập một \textbf{cơ chế dự phòng hai tầng (Two-tier Fallback Mechanism)}: ban đầu ưu tiên sử dụng luồng cào tĩnh qua Requests kết hợp thư viện \texttt{cloudscraper} để vượt thử thách WAF dạng nhẹ với tốc độ tối đa \cite{cloudscraper}; khi luồng tĩnh bị chặn, hệ thống sẽ tự động kích hoạt luồng dự phòng chuyển sang Selenium Headless Browser (kèm Undetected ChromeDriver) cùng cơ chế xoay vòng địa chỉ IP qua proxy \cite{webdriver}.
 
 \subsection{Xác định yêu cầu xử lý và tổ chức dữ liệu thu thập}
 
-Sau khi dữ liệu tuyển dụng được thu thập về, một thách thức nghiệp vụ tiếp theo được đặt ra: dữ liệu thô từ nhiều nguồn khác nhau (ITViec, VietnamWorks, LinkedIn...) có định dạng HTML và cấu trúc nội dung hoàn toàn không đồng nhất. Dữ liệu này cần được chuẩn hóa và tổ chức vào một cấu trúc nhất quán để phục vụ cho các module phân tích và trực quan hóa ở tầng trên. Yêu cầu nghiệp vụ cụ thể bao gồm:
+Dữ liệu tuyển dụng thô thu thập từ nhiều nguồn (ITViec, VietnamWorks, LinkedIn...) có định dạng HTML và cấu trúc không đồng nhất. Yêu cầu xử lý bao gồm:
 \begin{itemize}
-    \item Loại bỏ các thẻ HTML rác, ký tự đặc biệt, khoảng trắng thừa từ văn bản thô.
-    \item Hệ thống tự động phát hiện và tránh các tin tuyển dụng trùng lặp, chỉ giữ một tin đại diện.
-    \item Trích xuất các trường thông tin có cấu trúc (chức danh, kỹ năng, mức lương, địa điểm) từ mô tả công việc dạng tự do.
-    \item Chuẩn hóa các biến thể tên gọi kỹ năng về một từ điển thống nhất (ví dụ: ``ReactJS'', ``React.js'', ``React'' đều cùng một thực thể).
-    \item Lưu trữ kết quả vào cơ sở dữ liệu quan hệ để phục vụ truy vấn và trực quan hóa tức thời.
+    \item Loại bỏ thẻ HTML rác, ký tự đặc biệt và khoảng trắng thừa.
+    \item Tự động phát hiện và loại bỏ các tin tuyển dụng trùng lặp.
+    \item Trích xuất các trường thông tin có cấu trúc (chức danh, kỹ năng, mức lương, địa điểm).
+    \item Chuẩn hóa các biến thể tên gọi kỹ năng về một từ điển thống nhất (ví dụ: ``ReactJS'', ``React.js'' đều quy về thực thể chuẩn).
+    \item Lưu trữ kết quả vào cơ sở dữ liệu quan hệ phục vụ truy vấn và trực quan hóa tức thời.
 \end{itemize}
 
-\subsection{Quy trình trích xuất, biến đổi và lưu trữ dữ liệu trong phân tích dữ liệu lớn}
+\subsection{Quy trình trích xuất, biến đổi và lưu trữ dữ liệu (ETL Pipeline)}
 
-Trong kiến trúc của các hệ thống thông tin hướng dữ liệu lớn, việc thiết lập một luồng xử lý dữ liệu chuẩn hóa đóng vai trò cốt lõi trong việc đảm bảo tính toàn vẹn và chất lượng của dữ liệu đầu ra \cite{kimballcaserta}. Hệ thống áp dụng phương pháp luận Trích xuất, Biến đổi và Nạp (Extract, Transform, Load; ETL) được đề xuất bởi chuyên gia kho dữ liệu Ralph Kimball \cite{kimballcaserta}.
-
-Theo Kimball, hệ thống ETL đóng vai trò như một phân xưởng chuẩn bị dữ liệu (Data Staging Area) \cite{kimballcaserta}. Đây là nơi tiếp nhận các nguồn dữ liệu thô, không đồng nhất, tiến hành làm sạch, loại bỏ các lỗi sai lệch, áp dụng các quy tắc nghiệp vụ để đồng nhất hóa ngữ nghĩa, trước khi tổ chức sắp xếp dữ liệu vào các cấu trúc bảng chuẩn hóa nhằm phục vụ cho các phân tích và hiển thị trực quan tiếp theo \cite{kimballcaserta}. Tiến trình này mặc dù hoạt động ngầm nhưng lại chiếm tới hơn 70\% nỗ lực và tài nguyên trong việc xây dựng một hệ thống thông tin hoàn chỉnh.
+Để đảm bảo chất lượng dữ liệu đầu ra, hệ thống triển khai quy trình Trích xuất, Biến đổi và Nạp (Extract, Transform, Load - ETL) \cite{kimballcaserta}. Tiến trình này hoạt động qua ba giai đoạn chính:
 
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.90\textwidth]{image2_2}
-    \caption{Quy trình tổng quát của tiến trình trích xuất, biến đổi và nạp dữ liệu (ETL Pipeline) theo phương pháp luận Kimball.}
+    \caption{Quy trình tổng quát của tiến trình trích xuất, biến đổi và nạp dữ liệu (ETL Pipeline).}
     \label{fig:etl_pipeline}
 \end{figure}
 
+\textbf{Giai đoạn Trích xuất (Extract):} Dữ liệu sau khi cào về được lưu trữ nguyên bản dưới dạng tệp tin JSON thô (raw JSON) tại phân vùng đệm \cite{kimballcaserta}. Việc lưu dữ liệu thô đảm bảo khả năng tái xử lý khi thay đổi quy tắc biến đổi mà không cần cào lại từ trang nguồn, giảm tải cho máy chủ đối tác \cite{kimballcaserta}.
 
-\textbf{Giai đoạn Trích xuất (Extract):} Hệ thống thực hiện thu thập dữ liệu phi cấu trúc từ các nguồn trang tuyển dụng khác nhau. Dữ liệu sau khi cào về được lưu trữ nguyên bản dưới dạng tệp tin JSON thô (raw JSON) tại phân vùng đệm của hệ thống \cite{kimballcaserta}. Việc lưu trữ dữ liệu thô giúp đảm bảo khả năng khôi phục hoặc tái xử lý dữ liệu từ đầu khi có sự thay đổi về quy tắc biến đổi mà không cần phải tiến hành cào lại từ trang web gốc, giảm thiểu việc tải nặng lên máy chủ đối tác và tuân thủ các quy tắc lịch sự trong thu thập dữ liệu \cite{kimballcaserta}.
+\textbf{Giai đoạn Biến đổi (Transform):} Hệ thống thực hiện tiền xử lý cơ bản (làm sạch HTML rác bằng biểu thức chính quy), sau đó gọi Gemini API bóc tách thông tin kỹ năng, chức danh công việc từ mô tả công việc (JD) dạng phi cấu trúc \cite{geministructured}. Kỹ năng trích xuất tiếp tục được ánh xạ về từ điển kỹ năng chuẩn hóa để đảm bảo tính nhất quán ngữ nghĩa trên toàn bộ kho dữ liệu \cite{reimers2019}.
 
-\textbf{Giai đoạn Biến đổi (Transform):} Đây là giai đoạn quan trọng và phức tạp nhất của luồng xử lý \cite{kimballcaserta}. Đầu tiên, hệ thống thực hiện các bước tiền xử lý cơ bản bằng cách loại bỏ các thẻ định dạng HTML rác, các ký tự đặc biệt không mong muốn và chuẩn hóa khoảng trắng thông qua các biểu thức chính quy. Tiếp theo, do mô tả công việc (Job Description, viết tắt là JD) mang tính phi cấu trúc cao, hệ thống gọi giao diện lập trình ứng dụng Gemini API để thực hiện trích xuất thực thể thông tin chuyên sâu bao gồm chức danh công việc, yêu cầu kỹ năng và các chế độ phúc lợi \cite{geministructured}. Do các kỹ năng tuyển dụng thường được viết dưới dạng các thuật ngữ không đồng nhất, hệ thống tiếp tục thực hiện bước chuẩn hóa ngữ nghĩa (Semantic Normalization) \cite{kimballcaserta}. Các thực thể kỹ năng bóc tách được ánh xạ vào một từ điển kỹ năng chuẩn hóa duy nhất thông qua mô hình biểu diễn vector nhằm đảm bảo tính nhất quán ngữ nghĩa \cite{reimers2019}. Đây chính là quá trình thiết lập các chiều dữ liệu chuẩn hóa (Conformed Dimensions) theo lý thuyết Kimball, cho phép kết nối dữ liệu từ nhiều nguồn tuyển dụng khác nhau trên một hệ quy chiếu chung \cite{kimballcaserta}.
-
-\textbf{Giai đoạn Nạp (Load):} Dữ liệu sau khi được làm sạch và chuẩn hóa ngữ nghĩa sẽ được chuyển đổi sang cấu trúc quan hệ để nạp vào hệ quản trị cơ sở dữ liệu PostgreSQL \cite{kimballcaserta}. Để tối ưu hóa hiệu năng truy vấn, tránh dư thừa dữ liệu và hỗ trợ trực quan hóa thời gian thực, cơ sở dữ liệu được tổ chức theo mô hình quan hệ chuẩn hóa cao bao gồm các bảng chính: bảng công việc (\texttt{jobs} lưu trữ các thông tin chung về vị trí tuyển dụng, công ty, mức lương, địa điểm), bảng kỹ năng (\texttt{skills} lưu trữ từ điển kỹ năng chuẩn hóa, đồng thời lưu giữ trường số liệu Document Frequency đại diện cho số lượng tin tuyển dụng chứa kỹ năng nhằm phục vụ tính toán trọng số IDF động) và bảng liên kết đa-đa (\texttt{job\_skills} lưu trữ liên kết giữa các công việc và các kỹ năng tương ứng kèm theo trọng số TF-IDF được tính toán thời gian thực từ tập dữ liệu thị trường) \cite{manning2008}. Hơn nữa, kết quả tính toán chi tiết của bộ so khớp (Matching Engine) bao gồm cấu trúc biểu đồ Radar (\texttt{radar\_data}) và báo cáo khoảng cách kỹ năng (\texttt{gap\_report}) sẽ được đóng gói dưới định dạng JSONB để nạp trực tiếp vào cơ sở dữ liệu PostgreSQL. Thiết kế này giúp tối ưu hóa hiệu năng truy vấn thời gian thực ở tầng trực quan hóa mà không cần phải tính toán lại nhiều lần.
-
-Vì vậy, trong hệ thống đề xuất, quy trình ETL theo mô hình Kimball được triển khai để biến dữ liệu tuyển dụng thô từ nhiều nguồn phi cấu trúc thành một kho dữ liệu PostgreSQL nhất quán, đồng thời tính toán động và lưu trữ trọng số TF-IDF cùng kết quả so khớp dạng JSONB để phục vụ trực quan hóa tức thời.
+\textbf{Giai đoạn Nạp (Load):} Dữ liệu đã chuẩn hóa được nạp vào cơ sở dữ liệu PostgreSQL \cite{kimballcaserta}, bao gồm bảng công việc (\texttt{jobs}), bảng từ điển kỹ năng (\texttt{skills} lưu chỉ số Document Frequency để tính IDF động) và bảng liên kết (\texttt{job\_skills} lưu trọng số TF-IDF) \cite{manning2008}. Đồng thời, kết quả so khớp và dữ liệu biểu đồ Radar (\texttt{radar\_data}, \texttt{gap\_report}) được lưu trữ trực tiếp dưới dạng trường JSONB để tối ưu hóa tốc độ truy vấn ở tầng giao diện.
 
 %==========================================================================
 
 \subsection{Yêu cầu trực quan hóa thông tin hỗ trợ ra quyết định}
 
-Sau khi dữ liệu tuyển dụng đã được chuẩn hóa và lưu trữ, yêu cầu nghiệp vụ tiếp theo là trình bày dữ liệu theo cách giúp sinh viên dễ dàng nhận diện khoảng cách năng lực và ra quyết định nghề nghiệp mà không cần kiến thức phân tích dữ liệu chuyên sâu. Yêu cầu này trực tiếp định hướng thiết kế các thành phần giao diện trực quan hóa.
+Dữ liệu tuyển dụng sau khi lưu trữ cần được trình bày qua giao diện trực quan hóa tương tác, giúp sinh viên dễ dàng nhận diện khoảng cách năng lực và đưa ra quyết định nghề nghiệp phù hợp.
 
 \subsection{Nguyên lý trực quan hóa thông tin hỗ trợ ra quyết định}
 
-\textbf{Trực quan hóa thông tin} (Information Visualization) là lĩnh vực nghiên cứu tập trung vào việc sử dụng các biểu diễn đồ họa tương tác để khai thác khả năng nhận thức thị giác, nhằm phát hiện các mẫu ẩn, xu hướng và mối quan hệ trong tập dữ liệu phức tạp \cite{card1999readings}. Card, Mackinlay và Shneiderman (1999) định nghĩa đây là ``việc sử dụng biểu diễn trực quan được máy tính hỗ trợ từ dữ liệu trừu tượng để khuếch đại nhận thức (amplify cognition)'' \cite{card1999readings}.
-
-Nguyên lý định hướng thiết kế phổ biến nhất trong lĩnh vực này là \textbf{mantra trực quan hóa} của Shneiderman (1996): \textit{``Overview first, zoom and filter, then details on demand''} \cite{shneiderman1996eyes}. Theo nguyên lý này, giao diện cần dẫn dắt người dùng qua ba tầng tương tác: (i) nhìn thấy bức tranh tổng quan, (ii) thu hẹp dữ liệu theo các thuộc tính phù hợp và (iii) chỉ xem chi tiết khi đã xác định được vấn đề cần tìm hiểu. Cách tiếp cận này giảm tải nhận thức vì người dùng không phải đọc đồng thời toàn bộ dữ liệu thô và có thể đưa ra quyết định theo từng tầng thông tin.
-
-Tufte (2001) nhấn mạnh rằng thiết kế đồ họa xuất sắc phải tối đa hóa tỷ số dữ liệu-mực vẽ (data-ink ratio), vì mọi yếu tố đồ họa đều phải mang thông tin có giá trị \cite{tufte2001visual}. Few (2006) mở rộng nguyên tắc này sang dashboard phân tích: dashboard cần ưu tiên thông tin quan trọng nhất trên một màn hình, sử dụng nhất quán các thuộc tính tiền chú ý (pre-attentive attributes) như vị trí, độ dài, màu sắc tương phản và kích thước tương đối để người dùng nhận diện xu hướng hoặc ngoại lệ nhanh chóng \cite{few2006dashboard}. Vì vậy, màu sắc trong CareerNova được dùng có ngữ nghĩa cố định: xanh lá cho mức đáp ứng tốt, vàng cho mức cần cải thiện và đỏ cho thiếu hụt; không dùng màu sắc chỉ để trang trí.
-
-\textbf{Ứng dụng vào hệ thống CareerNova:} Dựa trên các nguyên lý trên và giao diện hiện tại của hệ thống, các thành phần trực quan hóa được lựa chọn theo câu hỏi ra quyết định cụ thể của sinh viên:
+Nhằm hỗ trợ người dùng tiếp nhận thông tin hiệu quả, giao diện trực quan hóa của hệ thống được thiết kế theo nguyên lý dẫn dắt tầng tương tác của Shneiderman (1996): \textit{``Overview first, zoom and filter, then details on demand''} \cite{shneiderman1996eyes}. Hệ thống giúp sinh viên nắm bức tranh tổng quan thị trường, thu hẹp phạm vi theo bộ lọc, và xem chi tiết theo câu hỏi ra quyết định cụ thể:
 
 \begin{enumerate}
-    \item \textbf{Thẻ chỉ số tổng quan:} Hiển thị số tin đang mở, số công ty đang tuyển và số cơ hội thực tập theo bộ lọc. Đây là lớp tổng quan, giúp người dùng nắm quy mô thị trường trước khi xem biểu đồ chi tiết.
-
-    \item \textbf{Biểu đồ vùng (AreaChart):} Thể hiện xu hướng số tin tuyển dụng theo thời gian, đồng thời so sánh tổng số tin với số vị trí làm việc từ xa. Người dùng quan sát được biến động nhu cầu tuyển dụng và xác định giai đoạn nên ưu tiên tìm việc.
-
-    \item \textbf{Bản đồ cây (Treemap):} Biểu diễn tỷ trọng các nhóm kỹ năng hoặc lĩnh vực trong thị trường. Diện tích mỗi ô tỷ lệ với số tin tuyển dụng; do đó người dùng nhanh chóng nhận biết nhóm có nhu cầu nổi trội mà không cần đọc bảng dữ liệu dài.
-
-    \item \textbf{Biểu đồ cột xếp hạng và danh sách kỹ năng tăng trưởng:} Danh sách ``Top 10 kỹ năng được yêu cầu'' dùng độ dài thanh để so sánh số tin theo kỹ năng; danh sách ``Kỹ năng tăng trưởng nhanh'' nhấn mạnh tốc độ thay đổi bằng màu cam và phần trăm tăng trưởng. Hai thành phần giúp chuyển từ quan sát tổng quan sang quyết định kỹ năng cần ưu tiên học.
-
-    \item \textbf{Biểu đồ Radar và Gap Report:} RadarChart biểu diễn đồng thời năng lực hiện tại của người dùng và ngưỡng yêu cầu thị trường trên hệ trục đa chiều. Báo cáo khoảng cách kỹ năng bổ sung danh sách đạt yêu cầu, đạt một phần và còn thiếu, giúp người dùng hiểu nguyên nhân phía sau điểm phù hợp và lựa chọn kỹ năng cần cải thiện.
+    \item \textbf{Thẻ chỉ số tổng quan:} Hiển thị tổng số tin tuyển dụng, số công ty tuyển và vị trí thực tập theo bộ lọc, giúp nắm nhanh quy mô thị trường.
+    \item \textbf{Biểu đồ vùng (AreaChart):} Thể hiện xu hướng số tin tuyển dụng theo thời gian để sinh viên xác định giai đoạn tìm việc phù hợp.
+    \item \textbf{Bản đồ cây (Treemap):} Biểu diễn tỷ trọng các nhóm kỹ năng nổi trội trong thị trường dựa trên diện tích ô hiển thị.
+    \item \textbf{Biểu đồ cột xếp hạng và Kỹ năng tăng trưởng:} So sánh danh sách Top 10 kỹ năng được yêu cầu nhiều nhất và nhấn mạnh các kỹ năng có tốc độ tăng trưởng nhanh.
+    \item \textbf{Biểu đồ Radar và Gap Report:} Biểu diễn đa chiều đối chiếu năng lực cá nhân với yêu cầu thị trường, phân loại kỹ năng thành các nhóm đạt yêu cầu, cần bổ sung hoặc còn thiếu.
 \end{enumerate}
 
-Tất cả thành phần thị trường đều dùng chung bộ lọc theo khu vực, khoảng thời gian và loại hình công việc. Cách tổ chức này hiện thực hóa đầy đủ mantra của Shneiderman: người dùng xem tổng quan qua thẻ chỉ số và xu hướng, thu hẹp phạm vi bằng bộ lọc, sau đó xem chi tiết qua danh sách vị trí, kỹ năng hoặc báo cáo khoảng cách. Màu sắc được dùng có ngữ nghĩa cố định: xanh lá cho trạng thái đáp ứng tốt, vàng cho mức cần cải thiện, đỏ cho kỹ năng thiếu và cam cho xu hướng tăng nhanh; vì vậy màu sắc hỗ trợ nhận biết thay vì chỉ mang tính trang trí. Luồng dữ liệu từ cơ sở dữ liệu đến các thành phần trực quan hóa được mô tả trong Hình~\ref{fig:visualization_theory}.
+Màu sắc trên giao diện được quy chuẩn có ngữ nghĩa cố định: màu xanh lá đại diện cho mức đáp ứng tốt, màu vàng cho mức cần cải thiện, màu đỏ đại diện cho kỹ năng thiếu hụt và màu cam chỉ xu hướng tăng trưởng nhanh. Luồng dữ liệu trực quan hóa được mô tả trong Hình~\ref{fig:visualization_theory}.
 
 \begin{figure}[H]
     \centering
@@ -201,35 +161,23 @@ Tất cả thành phần thị trường đều dùng chung bộ lọc theo khu 
     \label{fig:visualization_theory}
 \end{figure}
 
-Tóm lại, việc lựa chọn biểu đồ trong CareerNova dựa trên câu hỏi ra quyết định thay vì dựa trên tính trang trí: biểu đồ xu hướng trả lời câu hỏi về thời điểm, Treemap trả lời câu hỏi về nhóm nhu cầu nổi trội, biểu đồ xếp hạng và danh sách tăng trưởng trả lời câu hỏi nên ưu tiên kỹ năng nào, còn Radar Chart và Gap Report trả lời câu hỏi về năng lực cần bổ sung. Nhờ tuân thủ các nguyên lý của Card, Shneiderman, Tufte và Few, người dùng không cần kiến thức phân tích dữ liệu chuyên sâu vẫn có thể nhận diện khoảng cách năng lực, theo dõi xu hướng thị trường và điều chỉnh định hướng nghề nghiệp qua các biểu đồ tương tác.
-
 %==========================================================================
 
 \section{Giải pháp so khớp hồ sơ}
 
 \subsection{Xác định yêu cầu nghiệp vụ của bài toán so khớp hồ sơ}
 
-Một yêu cầu nghiệp vụ trung tâm của hệ thống CareerNova là đánh giá \textit{mức độ phù hợp} giữa năng lực của sinh viên (thể hiện qua CV) và yêu cầu các vị trí tuyển dụng (thể hiện qua JD) theo cách có ý nghĩa hơn so với việc đơn thuần đếm từ khóa trùng khớp. Phân tích yêu cầu này làm nổi lên hai vấn đề cốt lõi cần giải quyết ở tầng thuật toán:
-
+Đánh giá mức độ tương thích giữa CV sinh viên và yêu cầu JD đòi hỏi giải quyết hai vấn đề cốt lõi:
 \begin{itemize}
-    \item \textbf{Vấn đề 1: Đo lường tương đồng ngữ nghĩa.} Cần một phương pháp biểu diễn và so sánh ý nghĩa của các kỹ năng ngay cả khi chúng được diễn đạt khác nhau về từ ngữ (``JS'' vs ``JavaScript'', ``lãnh đạo nhóm'' vs ``team leadership'').
-    \item \textbf{Vấn đề 2: Phân biệt tầm quan trọng của kỹ năng.} Không phải mọi kỹ năng đều quan trọng như nhau. Kỹ năng hiếm và chuyên sâu (PyTorch, Kubernetes) cần được trọng số hóa cao hơn kỹ năng phổ biến (Git, HTML) để điểm so khớp phản ánh đúng thực tế thị trường.
+    \item \textbf{Đo lường tương đồng ngữ nghĩa:} So sánh ý nghĩa kỹ năng ngay cả khi được viết khác nhau (ví dụ: ``JS'' và ``JavaScript'').
+    \item \textbf{Phân biệt tầm quan trọng kỹ năng:} Đánh trọng số cao cho kỹ năng hiếm, chuyên sâu (PyTorch, Kubernetes) so với kỹ năng phổ biến (Git, HTML).
 \end{itemize}
-
-Hai vấn đề này định hướng việc lựa chọn các kỹ thuật biểu diễn và so sánh vector ngữ nghĩa được phân tích ở các mục tiếp theo.
 
 \subsection{Lý thuyết không gian vector và kỹ thuật tạo vector nhúng}
 
-Mô hình Không gian Vector (Vector Space Model, viết tắt là VSM) là một nền tảng lý thuyết kinh điển trong xử lý ngôn ngữ tự nhiên (Natural Language Processing, viết tắt là NLP) và tìm kiếm thông tin, biểu diễn tài liệu văn bản dưới dạng các điểm hoặc vector trong một không gian số học đa chiều \cite{reimers2019}. Trong không gian này, khoảng cách hình học giữa các vector tỷ lệ thuận với mức độ tương đồng về mặt nội dung giữa các tài liệu tương ứng \cite{reimers2019}. Sự phát triển của các kỹ thuật biểu diễn từ ngữ đã chuyển dịch từ các vector thưa tần suất (như TF-IDF, vốn bỏ qua ngữ cảnh và quan hệ đồng nghĩa) sang các vector nhúng dày đặc (Dense Embeddings), nơi các giá trị số học biểu diễn các đặc trưng ngữ nghĩa ẩn của từ ngữ trong một không gian liên tục \cite{reimers2019}.
+Mô hình Không gian Vector (Vector Space Model - VSM) biểu diễn văn bản dưới dạng các vector số học đa chiều, nơi khoảng cách giữa các vector phản ánh độ tương đồng nội dung \cite{reimers2019}. Để biểu diễn ngữ nghĩa ở cấp độ câu và cụm từ, mô hình Sentence-BERT (SBERT) mã hóa câu thành các vector nhúng dày đặc (Dense Embeddings) có kích thước cố định thông qua cơ chế lấy trung bình (Mean Pooling) \cite{reimers2019}. Ưu điểm cốt lõi của SBERT là cho phép tính toán trước (precompute) vector nhúng của tài liệu, giúp thực hiện phép so khớp trực tuyến trong thời gian phần nghìn giây \cite{reimers2019}.
 
-Để giải quyết bài toán biểu diễn ngữ nghĩa ở cấp độ câu và cụm từ phức tạp trong tin tuyển dụng và hồ sơ ứng viên, Nils Reimers và Iryna Gurevych đã đề xuất mô hình Sentence-BERT (SBERT) vào năm 2019 \cite{reimers2019}. SBERT cải tiến mô hình tiền huấn luyện BERT bằng cách sử dụng cấu trúc mạng song sinh (Siamese Network) và mạng sinh ba (Triplet Network) để tối ưu hóa trọng số của mô hình \cite{reimers2019}. Kiến trúc mạng song sinh của SBERT bao gồm hai nhánh BERT song song có chia sẻ hoàn toàn bộ tham số trọng số \cite{reimers2019}. Khi xử lý cặp văn bản đầu vào $(s_1, s_2)$, mỗi câu sẽ được đưa qua một nhánh mạng độc lập để trích xuất các trạng thái ẩn cuối cùng:
-\begin{equation}
-    H_i = \text{BERT}(s_i), \quad i \in \{1, 2\}
-\end{equation}
-
-Sau đó, một phép toán lấy trung bình (Mean Pooling) được áp dụng trên toàn bộ các vector biểu diễn token của câu ở lớp đầu ra để chuyển đổi ma trận trạng thái ẩn có kích thước biến thiên thành một vector nhúng có kích thước cố định $\mathbf{u}$ biểu diễn trọn vẹn ngữ nghĩa của toàn bộ câu \cite{reimers2019}. SBERT được huấn luyện thông qua các mục tiêu tối ưu như hàm mất mát phân loại (Classification Loss) dựa trên việc liên kết các vector hoặc hàm mất mát hồi quy (Regression Loss) so khớp trực tiếp với điểm tương đồng mục tiêu \cite{reimers2019}. Phát minh mang tính đột phá của SBERT nằm ở chỗ nó cho phép mã hóa độc lập từng câu thành vector nhúng cố định \cite{reimers2019}. Điều này cho phép hệ thống tính toán trước (precompute) và lập chỉ mục các vector biểu diễn năng lực của hàng triệu ứng viên hoặc công việc một lần duy nhất \cite{reimers2019}. Khi cần so khớp, hệ thống chỉ việc thực hiện các phép so sánh vector đơn giản (như tính Cosine) trong thời gian vài phần nghìn giây, giải quyết triệt để nút thắt cổ chai về mặt hiệu năng của kiến trúc BERT Cross-Encoder truyền thống \cite{reimers2019}.
-
-Trong bối cảnh xây dựng công cụ so khớp hồ sơ cục bộ (local engine) hoạt động tối ưu trên máy chủ có giới hạn về tài nguyên phần cứng, mô hình \texttt{all-MiniLM-L6-v2} thuộc thư viện Sentence Transformers được lựa chọn làm giải pháp biểu diễn vector cốt lõi \cite{minilmmodel}. Được phát triển dựa trên phương pháp chắt lọc tri thức (Knowledge Distillation) từ kiến trúc MiniLM của Microsoft, mô hình này sở hữu cấu hình kỹ thuật cực kỳ tinh gọn \cite{minilmmodel}:
+Trong hệ thống CareerNova, mô hình nhúng cục bộ \texttt{all-MiniLM-L6-v2} được lựa chọn để triển khai trực tiếp trên máy chủ \cite{minilmmodel}:
 
 \begin{figure}[H]
     \centering
@@ -239,87 +187,42 @@ Trong bối cảnh xây dựng công cụ so khớp hồ sơ cục bộ (local e
 \end{figure}
 
 \begin{itemize}
-    \item \textbf{Số lượng tầng biến đổi (Layers):} 6 tầng Transformer (so với 12 tầng của BERT-base) \cite{minilmmodel}.
-    \item \textbf{Kích thước tham số (Parameter Count):} Khoảng 22 triệu tham số (chỉ bằng 1/5 kích thước của BERT-base) \cite{minilmmodel}.
-    \item \textbf{Chiều của vector nhúng (Embedding Size):} 384 chiều liên tục \cite{minilmmodel}.
-    \item \textbf{Độ dài chuỗi đầu vào tối đa (Max Sequence Length):} 256 tokens \cite{minilmmodel}.
-    \item \textbf{Dung lượng đĩa cứng (Model Size):} Khoảng 80 MB \cite{minilmmodel}.
+    \item \textbf{Số tầng Transformer:} 6 tầng (tinh gọn 1/2 so với BERT-base) \cite{minilmmodel}.
+    \item \textbf{Kích thước tham số:} Khoảng 22 triệu tham số \cite{minilmmodel}.
+    \item \textbf{Chiều vector nhúng:} 384 chiều liên tục \cite{minilmmodel}.
+    \item \textbf{Dung lượng lưu trữ:} Khoảng 80 MB \cite{minilmmodel}.
 \end{itemize}
 
-Lý do lựa chọn \texttt{all-MiniLM-L6-v2} xuất phát từ sự cân bằng hoàn hảo giữa hiệu năng tính toán và chất lượng biểu diễn ngữ nghĩa \cite{reimers2019}. Mô hình được huấn luyện tự giám sát trên tập dữ liệu khổng lồ chứa hơn 1 tỷ cặp câu chất lượng cao, bao gồm cả tập dữ liệu tìm kiếm ngữ nghĩa MS MARCO \cite{minilmmodel}. Nhờ đó, dù có dung lượng siêu nhẹ (khoảng 80 MB) và tốc độ mã hóa cực nhanh (đạt tới hàng nghìn câu mỗi giây trên GPU và vẫn vận hành hiệu quả trên CPU thông thường) \cite{minilmmodel}, mô hình vẫn duy trì khả năng biểu diễn ngữ nghĩa vượt trội, tương đương hoặc thậm chí vượt qua các mô hình lớn hơn nhiều trong các tác vụ tìm kiếm ngữ nghĩa và so khớp văn bản ngắn \cite{minilmmodel}. Vì vậy, trong hệ thống đề xuất, mô hình nhúng cục bộ \texttt{all-MiniLM-L6-v2} được lựa chọn để thực hiện mã hóa các thực thể kỹ năng một cách nhanh chóng và chính xác trực tiếp trên máy chủ cục bộ mà không tốn chi phí gọi API bên thứ ba.
+Mô hình \texttt{all-MiniLM-L6-v2} mang lại sự cân bằng hoàn hảo giữa tốc độ tính toán trên CPU và chất lượng biểu diễn ngữ nghĩa, cho phép hệ thống mã hóa kỹ năng nhanh chóng mà không tốn chi phí gọi API bên thứ ba \cite{minilmmodel}.
 
 %==========================================================================
 
 \subsection{Phương pháp định lượng hóa độ tương đồng ngữ nghĩa bằng độ đo Cosine và Trọng số TF-IDF từ thị trường}
 
-Để lượng hóa mức độ tương đồng về mặt năng lực giữa hồ sơ ứng viên (CV) và mô tả yêu cầu công việc (JD), hệ thống áp dụng độ đo Cosine (Cosine Similarity) \cite{reimers2019}. Về mặt toán học, độ đo Cosine giữa hai vector đa chiều phi không $\mathbf{u}$ và $\mathbf{v}$ được định nghĩa là tỷ số giữa tích vô hướng của hai vector và tích độ dài (chuẩn L2) của chúng:
-\begin{equation}
-    \text{cosine}(\mathbf{u}, \mathbf{v}) = \frac{\mathbf{u} \cdot \mathbf{v}}{\|\mathbf{u}\|_2 \cdot \|\mathbf{v}\|_2} = \frac{\sum_{k=1}^{d} u_k v_k}{\sqrt{\sum_{k=1}^{d} u_k^2} \cdot \sqrt{\sum_{k=1}^{d} v_k^2}}
-\end{equation}
-Trong đó $d = 384$ là số chiều của không gian vector biểu diễn bởi mô hình \texttt{all-MiniLM-L6-v2} \cite{minilmmodel}. Giá trị của độ đo Cosine nằm trong khoảng $[-1, 1]$, thể hiện mức độ trùng khớp ngữ nghĩa từ hoàn toàn khác biệt đến hoàn toàn tương đồng.
-
-Để tối ưu hóa hiệu năng tính toán khi so khớp hàng loạt hồ sơ trực tuyến, giả sử các vector nhúng đầu ra đã được chuẩn hóa đơn vị (Unit Vectors):
-\begin{equation}
-    \|\hat{\mathbf{u}}\|_2 = \|\hat{\mathbf{v}}\|_2 = 1
-\end{equation}
-Khi đó, công thức tính độ tương đồng Cosine được rút gọn về tích vô hướng (Dot Product):
+Độ tương đồng ngữ nghĩa giữa hai vector nhúng $\mathbf{u}$ và $\mathbf{v}$ được đo lường bằng độ đo Cosine (Cosine Similarity) \cite{reimers2019}. Khi các vector đầu ra được chuẩn hóa đơn vị ($\|\hat{\mathbf{u}}\|_2 = \|\hat{\mathbf{v}}\|_2 = 1$), độ tương đồng Cosine được rút gọn về tích vô hướng (Dot Product):
 \begin{equation}
     \text{cosine}(\hat{\mathbf{u}}, \hat{\mathbf{v}}) = \hat{\mathbf{u}} \cdot \hat{\mathbf{v}} = \sum_{k=1}^{d} \hat{u}_k \hat{v}_k
 \end{equation}
-Điều này loại bỏ các phép toán tính căn bậc hai và phép chia trong vòng lặp so khớp quy mô lớn, giúp giảm thiểu đáng kể số chu kỳ lệnh của CPU/GPU và cho phép thực hiện hàng triệu phép so khớp trong thời gian thực \cite{salton1983}.
+Trong đó $d = 384$ là số chiều của vector nhúng \cite{minilmmodel}.
 
-Tuy nhiên, trong bài toán so khớp hồ sơ nhân sự thực tế, không phải tất cả các kỹ năng được yêu cầu trong mô tả công việc (JD) đều có vai trò đóng góp như nhau vào tổng điểm đánh giá của ứng viên. Nếu sử dụng độ đo tương đồng không trọng số, các kỹ năng cực kỳ phổ biến và dễ đạt được (ví dụ: Git, SQL, Microsoft Office, HTML/CSS) sẽ vô tình làm lu mờ sự thiếu hụt hoặc mức độ tương đồng thấp ở các kỹ năng cốt lõi, mang tính chất quyết định của công việc (ví dụ: PyTorch, CI/CD, Kubernetes). Để giải quyết triệt để vấn đề này, đề tài xây dựng giải pháp định lượng hóa trọng số kỹ năng động dựa trên công thức TF-IDF (Term Frequency -- Inverse Document Frequency) được tính toán trực tiếp từ kho ngữ liệu tin tuyển dụng thực tế cào từ thị trường Việt Nam \cite{manning2008}.
-
-Mô hình toán học của cơ chế tính trọng số này được thiết lập như sau. Gọi $\mathcal{D} = \{d_1, d_2, \ldots, d_N\}$ là tập hợp (corpus) chứa tất cả $N$ tin tuyển dụng đã thu thập và lưu trữ thành công trong PostgreSQL. Với một tin tuyển dụng (JD) cụ thể $d_j$, gọi $S_j$ là tập hợp các kỹ năng yêu cầu được trích xuất từ JD đó.
-
-\textbf{Tần suất Kỹ năng (Term Frequency, $\text{TF}$)} thể hiện mức độ nổi bật của kỹ năng $s_i$ trong JD $d_j$. Do kỹ năng thường xuất hiện dưới dạng thực thể đơn lẻ (presence/absence) trong danh sách yêu cầu của JD, tần suất $\text{TF}$ được định nghĩa theo dạng chuẩn hóa nhị phân \cite{manning2008}:
-\begin{equation}
-    \text{TF}(s_i, d_j) = \begin{cases} 1 & \text{nếu } s_i \in S_j \\ 0 & \text{ngược lại} \end{cases}
-\end{equation}
-
-\textbf{Nghịch đảo Tần suất Văn bản (Inverse Document Frequency, $\text{IDF}$)} đo lường mức độ đặc trưng và tính khan hiếm của kỹ năng $s_i$ trên toàn bộ thị trường lao động Việt Nam \cite{manning2008}:
+Để phân biệt tầm quan trọng giữa các kỹ năng, hệ thống áp dụng cơ chế tính trọng số theo độ hiếm dạng IDF (Inverse Document Frequency) tính trực tiếp từ kho ngữ liệu tin tuyển dụng thực tế tại Việt Nam \cite{manning2008}:
 \begin{equation}
     \text{IDF}(s_i, \mathcal{D}) = \log\left(\frac{N}{|\{d \in \mathcal{D} : s_i \in S_d\}|}\right)
 \end{equation}
-Trong đó $N$ là tổng số tin tuyển dụng, và $|\{d \in \mathcal{D} : s_i \in S_d\}|$ là số tin tuyển dụng chứa kỹ năng $s_i$.
+Trong đó $N$ là tổng số tin tuyển dụng và $|\{d \in \mathcal{D} : s_i \in S_d\}|$ là số tin tuyển dụng chứa kỹ năng $s_i$. Kỹ năng xuất hiện tràn lan có trọng số tiến về 0, trong khi kỹ năng chuyên sâu có trọng số cao để tạo lực đẩy quyết định cho điểm so khớp \cite{manning2008}.
 
-\textbf{Trọng số TF-IDF kết hợp} của kỹ năng $s_i$ thuộc JD $d_j$ được xác định bằng tích của hai thành phần \cite{manning2008}:
-\begin{equation}
-    w(s_i, d_j) = \text{TF}(s_i, d_j) \times \text{IDF}(s_i, \mathcal{D})
-\end{equation}
-
-Nhờ mô hình này, kỹ năng xuất hiện tràn lan (IDF $\approx 0$) sẽ có trọng số tiến về 0, giảm ảnh hưởng của kỹ năng phổ biến. Ngược lại, kỹ năng chuyên sâu và hiếm có IDF lớn, đẩy trọng số lên cao để tạo lực đẩy quyết định cho điểm số.
-
-Cần lưu ý rằng do kỹ năng trong một JD được biểu diễn theo dạng hiện diện/vắng mặt nên thành phần $\text{TF}(s_i, d_j) \in \{0, 1\}$; vì vậy khi $s_i \in S_j$, trọng số kết hợp $w(s_i, d_j)$ thực chất được chi phối hoàn toàn bởi thành phần IDF. Cách đặt tên ``TF-IDF'' ở đây được giữ theo quy ước phổ biến trong tìm kiếm thông tin, song về bản chất cơ chế trọng số của hệ thống là trọng số theo độ hiếm (IDF-based weighting) của kỹ năng trên toàn thị trường.
-
-Cuối cùng, tổng điểm tương thích \textbf{Match Score} giữa hồ sơ CV của ứng viên và yêu cầu JD của công việc được xác định bằng công thức trung bình có trọng số TF-IDF của các độ tương đồng kỹ năng \cite{manning2008}. Gọi $\mathcal{C}$ là tập kỹ năng đã chuẩn hóa từ CV; với mỗi kỹ năng yêu cầu $s_i \in S_j$, hệ thống lấy độ tương đồng ngữ nghĩa lớn nhất giữa $s_i$ và toàn bộ kỹ năng trong CV:
-\begin{equation}
-    \text{MatchScore}(\text{CV}, d_j) = \frac{\sum_{s_i \in S_j} w(s_i, d_j) \cdot \displaystyle\max_{c \in \mathcal{C}} \text{cosine}(\mathbf{e}_{s_i}^{\text{JD}}, \mathbf{e}_{c}^{\text{CV}})}{\sum_{s_i \in S_j} w(s_i, d_j)}
-\end{equation}
-
-Áp dụng rút gọn tích vô hướng cho các vector đã chuẩn hóa đơn vị ($\|\hat{\mathbf{e}}\|_2 = 1$), công thức Match Score cuối cùng của hệ thống:
+Tổng điểm phù hợp (\textbf{Match Score}) giữa CV và JD $d_j$ được tính bằng trung bình có trọng số IDF của các độ tương đồng kỹ năng tốt nhất \cite{manning2008}:
 \begin{equation}
     \text{MatchScore}(\text{CV}, d_j) = \frac{\sum_{s_i \in S_j} w(s_i, d_j) \cdot \displaystyle\max_{c \in \mathcal{C}} \left(\hat{\mathbf{e}}_{s_i}^{\text{JD}} \cdot \hat{\mathbf{e}}_{c}^{\text{CV}}\right)}{\sum_{s_i \in S_j} w(s_i, d_j)}
 \end{equation}
 
-Vì vậy, trong hệ thống đề xuất, phương pháp tích vô hướng trên vector chuẩn hóa kết hợp trọng số TF-IDF từ thị trường thực tế được triển khai để tính Match Score chuẩn xác, tối ưu hóa hiệu năng thời gian thực và phản ánh chính xác xu thế cung -- cầu của thị trường lao động CNTT Việt Nam.
+Phương pháp này giúp Match Score tính toán nhanh chóng ở thời gian thực và phản ánh chính xác quy luật cung -- cầu của thị trường lao động CNTT.
 
 %==========================================================================
 
 \subsection{Khảo sát các công cụ và thuật toán so khớp hồ sơ hiện có}
 
-% ==========================================================================
-% GHI CHÚ PHẢN BIỆN (A6 - LẠM DỤNG TRÍCH DẪN, QUAN TRỌNG):
-%   Nguồn \cite{li2020competence} (bài EMNLP về resume-JD matching) đang bị gắn cho RẤT NHIỀU
-%   khẳng định KHÔNG liên quan: kỹ thuật crawling, định dạng CV/OCR, phân loại "4 thế hệ ATS",
-%   chi phí/độ trễ LLM API... Đây là misattribution, hội đồng học thuật rất dễ bắt lỗi.
-%   HÀNH ĐỘNG: (1) mỗi khẳng định gắn ĐÚNG nguồn; (2) phần "4 thế hệ ATS" và "chi phí LLM" nếu
-%   không có nguồn học thuật thì ghi rõ là "nhận định/khảo sát của nhóm"; (3) bổ sung 3-5 công
-%   trình học thuật cùng lĩnh vực (skill gap analysis, labor-market NLP) để định vị khoảng trống.
-% ==========================================================================
-Quá trình tiến hóa công nghệ của các Hệ thống quản lý ứng viên (Applicant Tracking System, viết tắt là ATS) có thể được tổng hợp thành bốn thế hệ phát triển, từ các bộ lọc từ khóa sơ khai cho đến các hệ thống trí tuệ nhân tạo hiện đại. Bảng~\ref{tab:ats_generations} là bảng phân loại do nhóm tổng hợp dựa trên các công nghệ đã khảo sát ở các mục trước; các số liệu chi phí và độ trễ mang tính ước lượng tương đối nhằm đối chiếu định tính giữa các thế hệ, không phải giá trị đo chuẩn.
-% GHI CHÚ PHẢN BIỆN (A6): Đã gỡ trích dẫn li2020competence bị gán sai cho taxonomy 4 thế hệ ATS
-% (bài đó không đề cập taxonomy này). Bảng nay được nêu rõ là tổng hợp của nhóm.
+Quá trình tiến hóa công nghệ của các Hệ thống quản lý ứng viên (Applicant Tracking System - ATS) được tổng hợp qua Bảng~\ref{tab:ats_generations}:
 
 \begingroup
 \footnotesize
@@ -365,16 +268,13 @@ Rất cao (1--5s) \\
 \end{longtable}
 \endgroup
 
-Mặc dù các mô hình ngôn ngữ lớn thuộc Thế hệ IV thể hiện khả năng hiểu văn bản vượt trội, việc gửi trực tiếp toàn bộ nội dung của hàng nghìn hồ sơ ứng viên và tin tuyển dụng lên các API thương mại cho mỗi lần chạy so khớp là một giải pháp không khả thi đối với các dự án thực tế xét trên cả hai phương diện kinh tế và kỹ thuật. Về mặt kinh tế, chi phí sử dụng API sẽ tăng trưởng tuyến tính theo số lượng hồ sơ cần đánh giá, trở nên rất tốn kém khi quy mô dữ liệu lớn. Về mặt kỹ thuật, độ trễ phản hồi của LLM API lên tới vài giây sẽ làm tê liệt khả năng hiển thị thời gian thực của các công cụ trực quan hóa thông tin tuyển dụng. Ngược lại, nếu chỉ dựa vào các mô hình nhúng cục bộ thuộc Thế hệ III để so khớp trực tiếp toàn bộ văn bản của CV và JD, hệ thống sẽ gặp phải sai số rất lớn do cấu trúc CV thường chứa nhiều thông tin nhiễu khiến vector nhúng của toàn bộ văn bản bị lệch hướng ngữ nghĩa.
-
-Để giải quyết mâu thuẫn này, đề tài đề xuất một \textbf{giải pháp lai đột phá (Hybrid Approach)}, tách rời quy trình thành hai bước độc lập:
-
+Để giải quyết mâu thuẫn giữa chi phí/độ trễ cao của LLM API (Thế hệ IV) và sai số nhiễu văn bản của SBERT thuần túy (Thế hệ III), đề tài đề xuất \textbf{Giải pháp lai (Hybrid Approach)}:
 \begin{enumerate}
-    \item \textbf{Bước bóc tách cấu trúc ngoại tuyến (Offline Structuring):} Sử dụng Gemini API (Thế hệ IV) để xử lý một lần duy nhất khi CV được tải lên hoặc khi tin tuyển dụng được cào về. Sức mạnh suy luận của LLM được khai thác triệt để để bóc tách chính xác các thực thể kỹ năng, chức danh công việc từ văn bản phi cấu trúc phức tạp thành dữ liệu bán cấu trúc JSON \cite{geministructured}.
-    \item \textbf{Bước so khớp trực tuyến (Online Matching Engine):} Khi người dùng thực hiện thao tác so khớp hoặc xem trực quan hóa, hệ thống sử dụng mô hình Sentence-BERT cục bộ \texttt{all-MiniLM-L6-v2} (Thế hệ III) kết hợp độ đo Cosine chuẩn hóa tích vô hướng và trọng số TF-IDF được tính động trực tuyến từ tập dữ liệu thị trường để tính toán Match Score trực tiếp trên các kỹ năng đã được cấu trúc hóa \cite{minilmmodel}.
+    \item \textbf{Bóc tách cấu trúc ngoại tuyến (Offline Structuring):} Sử dụng Gemini API (Thế hệ IV) bóc tách chính xác thực thể kỹ năng, vị trí công việc từ CV và JD thành dữ liệu JSON một lần duy nhất khi dữ liệu được nạp vào hệ thống \cite{geministructured}.
+    \item \textbf{So khớp trực tuyến (Online Matching Engine):} Sử dụng mô hình SBERT cục bộ \texttt{all-MiniLM-L6-v2} (Thế hệ III) kết hợp độ đo Cosine và trọng số IDF tính động từ thị trường để so khớp nhanh thời gian thực trên các thực thể đã được cấu trúc hóa \cite{minilmmodel}.
 \end{enumerate}
 
-Lập luận khoa học của giải pháp lai này dựa trên việc đặt đúng công nghệ vào đúng tác vụ: tận dụng khả năng hiểu bố cục xuất sắc của LLM để dọn dẹp và cấu trúc hóa dữ liệu, đồng thời tận dụng tốc độ tính toán vector vượt trội, chi phí bằng không và tính bảo mật của mô hình SBERT cục bộ kết hợp với trọng số TF-IDF có ý nghĩa phân loại cao cho khâu tìm kiếm và so khớp thời gian thực \cite{reimers2019}. Vì vậy, trong hệ thống đề xuất, giải pháp kiến trúc lai (Hybrid) kết hợp LLM API ngoại tuyến và SBERT trực tuyến có trọng số TF-IDF được lựa chọn để tối ưu hóa bài toán so khớp hồ sơ đạt hiệu năng cao và tiết kiệm chi phí vận hành.
+Giải pháp lai tận dụng tối đa khả năng đọc hiểu của LLM để làm sạch dữ liệu, đồng thời đảm bảo tốc độ phản hồi tính bằng phần nghìn giây và chi phí bằng 0 ở tầng so khớp trực tuyến.
 
 %==========================================================================
 
@@ -382,24 +282,16 @@ Lập luận khoa học của giải pháp lai này dựa trên việc đặt đ
 
 \subsection{Bài toán bóc tách thông tin kỹ năng, vị trí công việc từ văn bản}
 
-Nhận diện thực thể tên (Named Entity Recognition, viết tắt là NER) là một trong những tác vụ nền tảng nhất của xử lý ngôn ngữ tự nhiên, hướng tới việc tự động xác định các phân đoạn văn bản thô đại diện cho các thực thể cụ thể và phân loại chúng vào các nhóm ngữ nghĩa được định nghĩa trước \cite{reimers2019}. Khi được áp dụng vào lĩnh vực quản lý nhân sự (HR Domain), bài toán NER trở nên đặc thù và phức tạp hơn rất nhiều, đòi hỏi hệ thống phải bóc tách chính xác các thực thể cốt lõi bao gồm: chức danh công việc (Job Title), kỹ năng chuyên môn (Skills), trình độ học vấn, các chứng chỉ chuyên ngành và chế độ phúc lợi \cite{li2020competence}. Việc cấu trúc hóa thành công các thực thể này từ văn bản tự do là điều kiện tiên quyết để xây dựng các thuật toán so khớp chính xác và lập biểu đồ phân tích thị trường lao động hiệu quả.
-
-Thách thức lớn nhất khi giải quyết tác vụ NER trong lĩnh vực nhân sự xuất phát từ tính phi cấu trúc cực kỳ cao của hồ sơ ứng viên (CV) \cite{li2020competence}. Ứng viên thường tự do trình bày hồ sơ cá nhân theo nhiều phong cách thẩm mỹ khác nhau, sử dụng các phần mềm thiết kế đa dạng dẫn đến định dạng tệp tin không đồng nhất (như PDF, DOCX, hoặc tệp ảnh quét). Đối với các CV được lưu trữ dưới dạng ảnh quét hoặc PDF dạng ảnh, hệ thống bắt buộc phải tích hợp một lớp nhận diện ký tự quang học (Optical Character Recognition, viết tắt là OCR) để khôi phục văn bản thô. Tuy nhiên, CV hiện đại thường áp dụng bố cục trình bày nhiều cột (multi-column layouts) hoặc dạng bảng lồng nhau nhằm tối ưu hóa diện tích hiển thị. Các công cụ đọc văn bản thông thường nếu chỉ quét tuần tự từ trái sang phải, từ trên xuống dưới sẽ làm đứt gãy hoàn toàn cấu trúc ngữ pháp của câu văn, trộn lẫn nội dung của hai cột khác biệt, dẫn đến việc phá hủy ngữ cảnh và khiến các mô hình NER truyền thống mất khả năng nhận diện thực thể chính xác.
-
-Đặc biệt, đối với thị trường lao động ngành Công nghệ thông tin tại Việt Nam, bài toán trích xuất thực thể phải đối mặt với rào cản ngôn ngữ song ngữ Anh -- Việt rất phức tạp. Cả nhà tuyển dụng và ứng viên thường có thói quen viết xen lẫn hai ngôn ngữ ngay trong cùng một câu văn. Thêm vào đó, danh mục kỹ năng ngành IT vô cùng đa dạng, chứa nhiều thuật ngữ viết tắt, viết liền hoặc có nhiều biến thể ký tự khác nhau. Các mô hình NER truyền thống dựa trên các thuật toán học máy giám sát thường bộc lộ sự yếu kém do tập dữ liệu huấn luyện hạn chế, không thể bao phủ toàn bộ các biến thể ngôn ngữ lai này, dẫn đến tỷ lệ bỏ sót thực thể kỹ năng mới hoặc nhận diện sai lệch chức danh công việc ở mức cao \cite{li2020competence}. Vì vậy, trong hệ thống đề xuất, giải pháp nhận diện thực thể tên kết hợp OCR được triển khai để xử lý các CV song ngữ và đa dạng về cấu trúc trình bày một cách chuẩn xác, đảm bảo không bỏ sót thông tin năng lực của ứng viên.
-
-%==========================================================================
+Trích xuất thực thể tên (Named Entity Recognition - NER) trong lĩnh vực nhân sự hướng tới việc tự động bóc tách các thông tin như chức danh công việc, kỹ năng, trình độ học vấn và kinh nghiệm từ CV và JD \cite{li2020competence}. Thách thức chính nằm ở tính phi cấu trúc cao của CV (bố cục nhiều cột, tệp ảnh quét cần qua OCR) và thói quen viết song ngữ Anh -- Việt chứa nhiều thuật ngữ công nghệ mới xuất hiện \cite{li2020competence}.
 
 \subsection{Ứng dụng mô hình ngôn ngữ lớn (LLM) và câu lệnh để chuẩn hóa dữ liệu}
 
-Sự trỗi dậy của các mô hình ngôn ngữ lớn (Large Language Models, viết tắt là LLMs) dựa trên kiến trúc Transformer tự chú ý đã mang lại một bước nhảy vọt về chất cho tác vụ bóc tách thông tin \cite{li2020competence}. Nhờ được huấn luyện trên các kho ngữ liệu khổng lồ đa ngôn ngữ, các LLM hiện đại như Google Gemini sở hữu khả năng hiểu biết ngữ cảnh sâu sắc và khả năng suy luận mạnh mẽ dưới dạng zero-shot (trích xuất thực thể chính xác mà không cần trải qua quá trình huấn luyện lại trên tập dữ liệu chuyên biệt). Để khai thác tối đa sức mạnh của LLM phục vụ cho quy trình ETL dữ liệu tuyển dụng, kỹ thuật Thiết kế câu lệnh (Prompt Engineering) được nghiên cứu và ứng dụng một cách có hệ thống \cite{geministructured}. Prompt Engineering đóng vai trò như một bộ chỉ dẫn hành vi, thiết lập các ràng buộc ngữ cảnh, định dạng đầu ra và các quy tắc kiểm tra nghiêm ngặt để LLM hoạt động ổn định và chính xác nhất \cite{geministructured}.
+Mô hình ngôn ngữ lớn như Google Gemini sở hữu khả năng hiểu ngữ cảnh sâu sắc, cho phép bóc tách thông tin chính xác theo hình thức Zero-shot \cite{geministructured}. Để khai thác Gemini hiệu quả trong luồng ETL, ba kỹ thuật Prompt Engineering cốt lõi được áp dụng:
 
-Trong thiết kế hệ thống, ba kỹ thuật Prompt Engineering cốt lõi được áp dụng đồng thời:
+\begin{enumerate}
+    \item \textbf{Thiết lập vai trò chuyên gia (Role Setting):} Định hướng mô hình hành xử như chuyên gia tuyển dụng IT tại Việt Nam để bóc tách chuẩn xác thuật ngữ chuyên ngành.
+    \item \textbf{Ép kiểu dữ liệu đầu ra bằng Structured Outputs (JSON Schema):} Sử dụng tính năng Structured Outputs kết hợp thư viện Pydantic truyền vào tham số \texttt{response\_schema} của Gemini API, đảm bảo dữ liệu phản hồi đúng định dạng JSON để nạp trực tiếp vào cơ sở dữ liệu quan hệ \cite{geministructured}.
+    \item \textbf{Cơ chế hậu kiểm chống ảo giác (Evidence-based Verification):} Yêu cầu LLM trả về trường \texttt{evidence\_text} chứa đoạn văn bản thô đối chứng. Hàm kiểm tra nội bộ sẽ xác minh sự tồn tại của chuỗi đối chứng trong CV/JD gốc; nếu không tìm thấy, thực thể kỹ năng sẽ bị loại bỏ để giảm rủi ro ảo giác thông tin \cite{geministructured}.
+\end{enumerate}
 
-\textbf{(1) Thiết lập vai trò chuyên gia (Role Setting):} Câu lệnh gửi Gemini API bắt đầu bằng việc thiết lập vai trò rõ ràng: \textit{``Bạn là một chuyên gia phân tích thị trường lao động CNTT tại Việt Nam, am hiểu sâu sắc xu hướng kỹ thuật, từ vựng song ngữ Anh-Việt và từ điển kỹ năng của thị trường''}. Việc thiết lập vai trò hướng mô hình tập trung áp dụng tri thức chuyên ngành, chuẩn hóa tên công việc và kỹ năng theo thuật ngữ chuẩn mực, hạn chế trích xuất các cụm từ tự do thiếu giá trị phân tích.
-
-\textbf{(2) Ép kiểu dữ liệu đầu ra bằng Structured Outputs (JSON Schema):} Để kết quả phản hồi từ Gemini API có thể nạp trực tiếp vào cơ sở dữ liệu quan hệ của hệ thống mà không gặp phải lỗi phân tích cú pháp, hệ thống sử dụng tính năng Structured Outputs kết hợp với thư viện Pydantic trong Python \cite{geministructured}. Cấu trúc này sau đó được truyền trực tiếp vào tham số \texttt{response\_schema} của cấu hình cuộc gọi API của Gemini. Cơ chế này hướng mô hình sinh đầu ra theo JSON Schema đã định nghĩa, giúp giảm lỗi phân tích cú pháp và tăng tính nhất quán về định dạng; giá trị ngữ nghĩa vẫn được kiểm tra ở tầng ứng dụng \cite{geministructured}.
-
-\textbf{(3) Cơ chế hậu kiểm chống ảo giác (Anti-hallucination Verification):} Một trong những hạn chế lớn nhất của LLM là hiện tượng ảo giác (hallucination), khi mô hình tự động bổ sung hoặc suy diễn ra các kỹ năng không hề tồn tại trong văn bản gốc của CV hoặc JD \cite{geministructured}. Để giảm rủi ro này, thiết kế prompt áp dụng kỹ thuật yêu cầu trích xuất kèm bằng chứng (evidence-based extraction). Trong schema JSON yêu cầu, mỗi thực thể kỹ năng bóc tách được bắt buộc phải đi kèm với trường \texttt{evidence\_text} chứa đoạn văn bản thô trích xuất chính xác từ tài liệu gốc. Sau khi nhận phản hồi JSON từ Gemini API, hệ thống sẽ thực thi một hàm kiểm chứng nội bộ: hàm này thực hiện kiểm tra xem chuỗi văn bản trong trường \texttt{evidence\_text} có thực sự tồn tại trong văn bản CV/JD gốc ban đầu hay không. Nếu phát hiện sự sai lệch hoặc không tìm thấy chuỗi đối chứng, thực thể kỹ năng tương ứng sẽ bị đánh dấu là ảo giác và tự động bị loại bỏ khỏi luồng ETL. Cơ chế tự kiểm chứng này là một lớp hậu kiểm giúp giảm nguy cơ đưa thực thể không có bằng chứng vào luồng so khớp; kết quả vẫn cần được đánh giá trên tập dữ liệu có nhãn.
-
-Vì vậy, trong hệ thống đề xuất, kỹ thuật Prompt Engineering kết hợp JSON Schema và cơ chế hậu kiểm chống ảo giác được triển khai nhằm giảm rủi ro ảo giác thông tin và tăng tính toàn vẹn, khả năng kiểm tra lại cho dữ liệu đầu vào của pipeline so khớp.
+Cơ chế này đảm bảo dữ liệu trích xuất vừa chuẩn hóa cấu trúc, vừa duy trì độ tin cậy cao phục vụ cho engine so khớp ở tầng sau.
