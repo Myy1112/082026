@@ -1,4 +1,4 @@
-\chapter{Kiểm thử và Đánh giá}
+\chapter{Kiểm thử và đánh giá}
 \label{Chapter5}
 
 Chương này mô tả môi trường, phương pháp và các kịch bản kiểm thử dùng để đánh giá CareerNova sau khi triển khai. Các kết quả về chức năng, hiệu năng và chất lượng thuật toán được phân tích nhằm đối chiếu với những yêu cầu đã xác định.
@@ -148,52 +148,15 @@ TC-11 & Lưu và hủy lưu việc làm & Danh sách đã lưu cập nhật đú
 
 Theo Bảng~\ref{tab:test_results}, toàn bộ \textbf{11/11 kịch bản đạt (100\%)}, xác nhận các chức năng cốt lõi vận hành đúng đặc tả trên môi trường triển khai thật. Đáng chú ý, hai ca có rủi ro cao nhất đều vượt qua: TC-06 chứng minh tầng kiểm tra dữ liệu đầu vào từ chối đúng các tệp sai định dạng hoặc vượt 5 MB mà không để lọt dữ liệu rác vào hệ thống lưu trữ, và TC-08 xác nhận chuỗi xử lý AI nhiều bước gồm trích xuất, chuẩn hóa và so khớp trả về kết quả nhất quán từ đầu đến cuối. Kiểm thử chức năng vì vậy chỉ trả lời câu hỏi ``hệ thống có chạy đúng hay không''; các khía cạnh định lượng về tốc độ và độ chính xác được đo riêng tại Mục 5.3 và 5.4.
 
-Hình~\ref{fig:test_cv_matching} và Hình~\ref{fig:test_market_dashboard} cung cấp bằng chứng trực quan cho hai luồng có nhiều thành phần nhất trong ma trận. Ảnh chụp được dùng để xác nhận sự hiện diện và cách hiển thị của kết quả; các số liệu biến động theo thời gian (số tin tuyển dụng, điểm khớp và danh sách kỹ năng) được diễn giải theo snapshot tại thời điểm kiểm thử, không được coi là hằng số của hệ thống.
+Ngoài trạng thái đạt/không đạt tổng hợp ở Bảng~\ref{tab:test_results}, phần này ghi nhận kết quả thực thi chi tiết của các luồng có nhiều thành phần nhất trong ma trận. Giao diện tương ứng của những chức năng này đã được trình bày ở Chương~4, nên ở đây chỉ tổng hợp \textit{kết quả kiểm thử} mà không lặp lại ảnh chụp màn hình. Các số liệu biến động theo thời gian (số tin tuyển dụng, điểm khớp và danh sách kỹ năng) được diễn giải theo snapshot tại thời điểm kiểm thử, không được coi là hằng số của hệ thống.
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.94\textwidth,height=0.72\textheight,keepaspectratio]{ui_cv_matching_radar.png}
-    \caption{Bằng chứng thực thi TC-08: màn hình kết quả đối soát CV hiển thị nhóm kỹ năng, các kỹ năng cần bổ sung và biểu đồ radar so sánh với yêu cầu}
-    \label{fig:test_cv_matching}
-\end{figure}
-
-Hình~\ref{fig:test_cv_matching} chứng minh chuỗi xử lý AI đối soát vận hành đúng đầu--cuối: hệ thống không chỉ trả về một điểm tương thích tổng hợp mà còn phân rã được thành nhóm kỹ năng đã đạt, nhóm kỹ năng cần bổ sung và biểu đồ radar so sánh trực quan với yêu cầu công việc. Điều này khẳng định đầu ra của Matching Engine có cấu trúc rõ ràng và có thể diễn giải được cho người dùng, thay vì chỉ là một con số đơn lẻ.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.94\textwidth,height=0.72\textheight,keepaspectratio]{ui_market_dashboard.png}
-    \caption{Bằng chứng thực thi TC-09: Dashboard hiển thị các chỉ số tổng quan, biểu đồ xu hướng và phân bố nhóm kỹ năng}
-    \label{fig:test_market_dashboard}
-\end{figure}
-
-Hình~\ref{fig:test_market_dashboard} chứng minh tầng trực quan hóa tổng hợp và hiển thị đúng dữ liệu thị trường theo bộ lọc người dùng chọn: các chỉ số tổng quan, biểu đồ xu hướng tuyển dụng và phân bố nhóm kỹ năng được kết xuất đồng thời trên cùng một màn hình. Kết quả này xác nhận sáu API Dashboard trả về dữ liệu hợp lệ và tầng Frontend ghép nối chính xác thành một bức tranh thị trường có ý nghĩa hỗ trợ ra quyết định.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.94\textwidth,trim=0 100 0 0,clip]{test_cv_upload_rejected.png}
-    \caption{Bằng chứng thực thi TC-06: hệ thống từ chối tệp CV có dung lượng 6 MB và thông báo giới hạn tối đa 5 MB}
-    \label{fig:test_cv_upload_rejected}
-\end{figure}
-
-Hình~\ref{fig:test_cv_upload_rejected} chứng minh tầng kiểm tra dữ liệu đầu vào chặn đúng tại biên: tệp vượt quá 5~MB bị từ chối kèm thông báo giới hạn rõ ràng và không được ghi vào kho lưu trữ. Đây là bằng chứng cho thấy hệ thống bảo vệ được tính toàn vẹn của dữ liệu, ngăn tệp rác hoặc quá khổ đi vào pipeline xử lý phía sau.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.94\textwidth,trim=0 100 0 0,clip]{test_job_search.png}
-    \caption{Bằng chứng thực thi TC-10: kết quả được lọc theo từ khóa ``business analyst'' và hiển thị các tin phù hợp}
-    \label{fig:test_job_search}
-\end{figure}
-
-Hình~\ref{fig:test_job_search} chứng minh chức năng tìm kiếm áp đúng tiêu chí lọc trên tập dữ liệu thực: với từ khóa ``business analyst'', danh sách trả về chỉ gồm các tin phù hợp với truy vấn. Điều này xác nhận truy vấn lọc phía Backend hoạt động chính xác, giúp người dùng thu hẹp đúng phạm vi việc làm quan tâm.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.94\textwidth,trim=0 100 0 0,clip]{test_saved_job.png}
-    \caption{Bằng chứng thực thi TC-11: hồ sơ người dùng hiển thị tin tuyển dụng đã được lưu trong danh sách cá nhân}
-    \label{fig:test_saved_job}
-\end{figure}
-
-Hình~\ref{fig:test_saved_job} chứng minh luồng lưu trạng thái cá nhân hóa hoạt động bền vững: tin được lưu xuất hiện đúng trong danh sách ``Cơ hội đã lưu'' gắn với tài khoản người dùng. Bằng chứng này khẳng định thao tác ghi và truy xuất dữ liệu theo từng người dùng diễn ra chính xác, làm nền tảng cho các tính năng cá nhân hóa của hệ thống.
+\begin{itemize}
+    \item \textbf{TC-08 --- Đối soát CV và tính Skill Gap}: chuỗi xử lý AI vận hành đúng đầu--cuối; hệ thống không chỉ trả về một điểm tương thích tổng hợp mà còn phân rã thành nhóm kỹ năng đã đạt, nhóm kỹ năng cần bổ sung và biểu đồ radar so sánh trực quan với yêu cầu công việc. Kết quả này khẳng định đầu ra của Matching Engine có cấu trúc rõ ràng và có thể diễn giải được cho người dùng, thay vì chỉ là một con số đơn lẻ.
+    \item \textbf{TC-09 --- Dashboard thị trường}: tầng trực quan hóa tổng hợp và hiển thị đúng dữ liệu thị trường theo bộ lọc người dùng chọn; các chỉ số tổng quan, biểu đồ xu hướng tuyển dụng và phân bố nhóm kỹ năng được kết xuất đồng thời trên cùng một màn hình. Kết quả này xác nhận sáu API Dashboard trả về dữ liệu hợp lệ và tầng Frontend ghép nối chính xác thành một bức tranh thị trường có ý nghĩa hỗ trợ ra quyết định.
+    \item \textbf{TC-06 --- Từ chối tệp không hợp lệ}: tầng kiểm tra dữ liệu đầu vào chặn đúng tại biên; tệp vượt quá 5~MB bị từ chối kèm thông báo giới hạn rõ ràng và không được ghi vào kho lưu trữ. Đây là bằng chứng cho thấy hệ thống bảo vệ được tính toàn vẹn của dữ liệu, ngăn tệp rác hoặc quá khổ đi vào pipeline xử lý phía sau.
+    \item \textbf{TC-10 --- Tìm kiếm việc làm}: chức năng áp đúng tiêu chí lọc trên tập dữ liệu thực; với từ khóa ``business analyst'', danh sách trả về chỉ gồm các tin phù hợp với truy vấn. Kết quả này xác nhận truy vấn lọc phía Backend hoạt động chính xác, giúp người dùng thu hẹp đúng phạm vi việc làm quan tâm.
+    \item \textbf{TC-11 --- Lưu và hủy lưu việc làm}: luồng lưu trạng thái cá nhân hóa hoạt động bền vững; tin được lưu xuất hiện đúng trong danh sách ``Cơ hội đã lưu'' gắn với tài khoản người dùng. Bằng chứng này khẳng định thao tác ghi và truy xuất dữ liệu theo từng người dùng diễn ra chính xác, làm nền tảng cho các tính năng cá nhân hóa của hệ thống.
+\end{itemize}
 
 \section{Đánh giá hiệu năng và dữ liệu thực tế}
 
@@ -232,7 +195,7 @@ Thời điểm truy vấn & 14/07/2026 & Ảnh chụp trạng thái CSDL tại t
 
 Hình~\ref{fig:db_snapshot_psql} chứng minh các con số quy mô dữ liệu trong Bảng~\ref{tab:data_stats} là kết quả đếm chính xác trực tiếp trên cơ sở dữ liệu tại một thời điểm xác định, không phải giá trị ước lượng hay số liệu tổng hợp lấy từ giao diện. Việc gắn ảnh chụp truy vấn kèm mốc thời gian bảo đảm tính minh bạch và khả năng kiểm chứng của số liệu, phù hợp với đặc thù dữ liệu luôn tăng theo lịch đồng bộ của hệ thống.
 
-Sự chênh lệch giữa tổng số tin tích lũy (7.245) và số tin người dùng nhìn thấy trên Dashboard phản ánh đúng đặc thù luồng xử lý của hệ thống: các tin hết hạn nộp hồ sơ vẫn tồn tại trong cơ sở dữ liệu gốc để phục vụ phân tích xu hướng dài hạn (tính trọng số TF-IDF, gợi ý kỹ năng), trong khi tầng Frontend (Dashboard) chỉ truy vấn và trực quan hóa các tin còn hiệu lực và áp thêm bộ lọc thời gian (mặc định 30 ngày, xem Hình~\ref{fig:test_market_dashboard}). Việc bóc tách rõ ràng giữa dữ liệu thô lưu trữ ở Backend và dữ liệu tổng hợp hiển thị ở Frontend giúp hệ thống duy trì hiệu năng cao khi phản hồi các yêu cầu từ phía người dùng.
+Sự chênh lệch giữa tổng số tin tích lũy (7.245) và số tin người dùng nhìn thấy trên Dashboard phản ánh đúng đặc thù luồng xử lý của hệ thống: các tin hết hạn nộp hồ sơ vẫn tồn tại trong cơ sở dữ liệu gốc để phục vụ phân tích xu hướng dài hạn (tính trọng số TF-IDF, gợi ý kỹ năng), trong khi tầng Frontend (Dashboard) chỉ truy vấn và trực quan hóa các tin còn hiệu lực và áp thêm bộ lọc thời gian (mặc định 30 ngày, tương ứng kết quả kiểm thử TC-09). Việc bóc tách rõ ràng giữa dữ liệu thô lưu trữ ở Backend và dữ liệu tổng hợp hiển thị ở Frontend giúp hệ thống duy trì hiệu năng cao khi phản hồi các yêu cầu từ phía người dùng.
 
 \subsection{Đo lường thời gian phản hồi (Response Time) và đánh giá độ trễ}
 
@@ -307,7 +270,7 @@ Kết quả đo cho thấy sự phân hóa rõ rệt giữa hai chế độ ho�
 
 Hình~\ref{fig:perf_measurement_terminal} chứng minh các số liệu trong hai bảng trên là kết quả đo thực tế chứ không phải ước lượng: mỗi lượt gọi API được ghi trực tiếp trường \textit{Duration} bằng công cụ đo (\texttt{curl -w \%\{time\_total\}} và tab \textit{Network} của trình duyệt), qua đó bảo đảm tính tái lập của phép đo. Ảnh cũng làm rõ hai chế độ vận hành của chức năng đối soát, gồm cache miss (hàng chục giây) và cache hit (dưới một giây), đúng như phân tích ở trên, đồng thời xác nhận toàn bộ các lượt đo đều thành công (tỷ lệ lỗi 0/20).
 
-\section{Kiểm thử độ chính xác và Đánh giá kết quả đầu ra thuật toán (Algorithm Accuracy Evaluation)}
+\section{Đánh giá thuật toán}
 \label{sec:algorithm_evaluation}
 
 Nhằm kiểm chứng tính đúng đắn và độ chính xác của các thuật toán xử lý dữ liệu trong hệ thống, bao gồm bóc tách dữ liệu bằng LLM, chuẩn hóa kỹ năng hai tầng (khớp chuỗi và tìm kiếm ngữ nghĩa trên embedding), gộp nhóm doanh nghiệp bằng chuẩn hóa hậu tố pháp lý, khử trùng lặp sâu bài đăng bằng vector nhúng kết hợp Cosine Similarity và thuật toán so khớp Matching Engine, chúng tôi xây dựng bộ kịch bản đối soát thực tế và khung chỉ số đánh giá hiệu năng. % ==========================================================================
@@ -799,6 +762,113 @@ Sự chênh lệch nhỏ 9\% này là hợp lý và có thể lý giải: hệ t
 Toàn bộ 7 trường hợp phân loại sai trong case study này đều thuộc nhóm \textit{Partial} theo Ground Truth nhưng hệ thống trả về \textit{Missing}. Đây là hệ quả trực tiếp của hạn chế về cấu trúc CSDL đã phân tích tại mục trước: khi chuyên gia nhận thấy ứng viên có kỹ năng liên quan gián tiếp (ví dụ: kinh nghiệm UAT $\to$ Quality Control; kinh nghiệm Scrum $\to$ Record Keeping; nền tảng phân tích dữ liệu $\to$ Analytical Thinking), hệ thống trong phiên bản hiện tại chưa thể hiện thị trạng thái trung gian này mà chỉ báo cáo nhị phân. Không có trường hợp nào hệ thống phân loại sai theo chiều ngược lại (từ Missing $\to$ Matched), chứng minh ngưỡng lọc cosine $\ge 0{,}55$ đang hoạt động an toàn và không gây phân loại nhầm theo chiều dương.
 
 Số liệu thực nghiệm này khẳng định Matching Engine của CareerNova vận hành đúng đắn và minh bạch trên dữ liệu thực tế. Điểm số tổng hợp cuối cùng (MAE = 0,09) phản ánh chính xác mức độ phù hợp của ứng viên, ngay cả khi cơ chế lưu trữ tạm thời ép các trạng thái trung gian về dạng nhị phân.
+
+\section{Đánh giá với người dùng cuối}
+\label{sec:end_user_evaluation}
+
+Ba mục trước đánh giá hệ thống theo hướng khách quan: chức năng chạy đúng đặc tả (Mục 5.2), độ trễ đo được trên môi trường thật (Mục 5.3) và chất lượng đầu ra thuật toán so với nhãn chuẩn (Mục 5.4). Tuy nhiên, các số liệu này chưa trả lời được câu hỏi cuối cùng và cũng là mục tiêu của đề tài: liệu người dùng thực tế có \textit{cảm nhận} sản phẩm là dễ dùng, nhanh và hữu ích cho việc định hướng nghề nghiệp hay không. Mục này bổ sung lớp đánh giá chủ quan đó thông qua một khảo sát trải nghiệm người dùng, qua đó đối chiếu cảm nhận của người dùng với các số đo kỹ thuật đã trình bày và thu thập định hướng cải tiến cho các phiên bản sau.
+
+\subsection{Phương pháp khảo sát và đặc điểm mẫu người dùng}
+
+Khảo sát được thực hiện bằng bảng hỏi trực tuyến (Google Biểu mẫu) sau khi người tham gia đã trực tiếp trải nghiệm hệ thống chạy thật tại \texttt{career-nova.online}. Bảng hỏi gồm bốn phần: (i) thông tin phân loại người dùng, (ii) giao diện và tốc độ, (iii) biểu đồ thị trường và chức năng so khớp CV, (iv) khóa học và lộ trình học tập, khép lại bằng một câu hỏi tổng kết mức độ thiện cảm với sản phẩm. Phần lớn phát biểu được đo trên thang Likert 5 mức (1 --- Hoàn toàn không đồng ý đến 5 --- Hoàn toàn đồng ý), bên cạnh một số câu hỏi phân loại, câu hỏi nhiều lựa chọn và câu hỏi mở.
+
+Khảo sát thu về 9 phản hồi. Về đặc điểm mẫu, nhóm người dùng tham gia có tính đồng nhất cao và bám sát đúng chân dung người dùng mục tiêu của CareerNova:
+
+\begin{itemize}
+    \item \textbf{Bối cảnh học tập/nghề nghiệp}: 77,8\% là sinh viên đang theo học, 11,1\% mới ra trường đang tìm việc/thực tập và 11,1\% đã đi làm dưới một năm.
+    \item \textbf{Mục tiêu nghề nghiệp}: toàn bộ người tham gia hướng tới các vị trí trong lĩnh vực công nghệ thông tin (Software Engineer, Backend/Fullstack Developer, DevOps, Data/BI Engineer, Automation Tester), trùng khớp với phạm vi dữ liệu thị trường mà hệ thống phục vụ.
+    \item \textbf{Tình trạng tìm việc}: 66,7\% đang tập trung trau dồi kỹ năng, 22,2\% đang tích cực ứng tuyển và 11,1\% đã đi làm --- cho thấy đa số đang ở đúng giai đoạn cần công cụ định hướng và phân tích khoảng cách năng lực.
+\end{itemize}
+
+Cần nhấn mạnh rằng đây là một khảo sát mang tính \textbf{định hình (formative)} với cỡ mẫu nhỏ (n = 9) và người tham gia tự nguyện, tập trung ở nhóm sinh viên công nghệ thông tin. Vì vậy, các kết quả dưới đây có giá trị định hướng cải tiến và phản ánh cảm nhận ban đầu của đúng tập người dùng mục tiêu, chứ \textbf{không đủ cơ sở thống kê để suy rộng} cho toàn bộ cộng đồng người tìm việc. Giới hạn về quy mô và tính đại diện của mẫu được nhìn nhận thẳng thắn tại Mục~6.2.
+
+\subsection{Kết quả đánh giá giao diện, tốc độ và các tính năng lõi}
+
+Bảng~\ref{tab:ux_likert_summary} tổng hợp điểm trung bình và tỷ lệ đồng ý (chọn mức 4 hoặc 5) của 12 phát biểu Likert, nhóm theo ba trục trải nghiệm chính của hệ thống.
+
+\begin{table}[H]
+\caption{Tổng hợp kết quả khảo sát trải nghiệm người dùng theo thang Likert 5 mức (n = 9)}
+\label{tab:ux_likert_summary}
+\begin{center}
+\begin{tabular}{|L{8.4cm}|C{1.4cm}|C{2.0cm}|C{2.4cm}|}
+\hline
+\textbf{Phát biểu khảo sát} & \textbf{Cỡ mẫu} & \textbf{Điểm TB (/5)} & \textbf{Tỷ lệ đồng ý (mức 4--5)} \\
+\hline
+\multicolumn{4}{|l|}{\textit{Trục 1 --- Giao diện \& Tốc độ}} \\
+\hline
+Các thao tác trên ứng dụng thuận tiện, dễ dàng & 9 & 4,67 & 88,9\% \\
+\hline
+Giao diện giúp tìm kiếm thông tin cần thiết nhanh chóng & 9 & 4,11 & 77,8\% \\
+\hline
+Tốc độ phản hồi của trang web đáp ứng kỳ vọng & 9 & 4,67 & 88,9\% \\
+\hline
+Bố cục thông tin trên Dashboard vừa vặn, không quá tải & 9 & 4,44 & 77,8\% \\
+\hline
+\multicolumn{4}{|l|}{\textit{Trục 2 --- Biểu đồ thị trường \& So khớp CV}} \\
+\hline
+Việc thiết lập và tải CV lên hệ thống diễn ra dễ dàng & 9 & 4,67 & 88,9\% \\
+\hline
+Hệ thống nhận diện đầy đủ các kỹ năng liệt kê trong CV & 9 & 4,44 & 88,9\% \\
+\hline
+Biểu đồ Radar giúp nắm bắt điểm mạnh/điểm yếu bản thân & 9 & 4,33 & 77,8\% \\
+\hline
+Con số \% Matching do hệ thống đưa ra đáng tin cậy & 9 & \textbf{3,89} & \textbf{55,6\%} \\
+\hline
+\multicolumn{4}{|l|}{\textit{Trục 3 --- Khóa học \& Lộ trình học tập}} \\
+\hline
+Các khóa học đề xuất sát với chuyên môn và nhu cầu thực tế & 9 & 4,22 & 77,8\% \\
+\hline
+Lộ trình giúp biết cách bắt đầu cải thiện kỹ năng ngay & 9 & 4,11 & 77,8\% \\
+\hline
+Lộ trình được cá nhân hóa theo mục tiêu nghề nghiệp & 9 & 4,44 & 88,9\% \\
+\hline
+Tiết kiệm đáng kể thời gian tìm kiếm định hướng so với công cụ khác & 9 & \textbf{4,67} & \textbf{100,0\%} \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+Nhìn tổng thể, cả 12 phát biểu đều đạt điểm trung bình từ 3,89 trở lên (trung bình chung khoảng 4,39/5), cho thấy người dùng đánh giá tích cực về trải nghiệm sử dụng. Kết quả này củng cố các số đo khách quan ở những mục trước theo ba khía cạnh:
+
+\begin{itemize}
+    \item \textbf{Giao diện và tốc độ}: hai phát biểu về sự thuận tiện thao tác và tốc độ phản hồi cùng đạt 4,67 với 88,9\% người dùng đồng ý. Cảm nhận ``nhanh'' này nhất quán với kết quả đo hiệu năng ở Mục~5.3, nơi các API Dashboard đều phản hồi dưới ngưỡng NFR-01 (P95 $\le$ 2 giây). Đáng chú ý, phát biểu về việc tìm kiếm thông tin nhanh chóng đạt điểm thấp hơn nhóm còn lại (4,11) do có 2/9 người chọn mức trung lập trở xuống, gợi ý dư địa tinh chỉnh về khả năng điều hướng và tìm kiếm.
+    \item \textbf{Đầu vào CV và trực quan hóa}: thao tác tải CV (4,67) và khả năng nhận diện kỹ năng từ CV (4,44) đều được đánh giá cao, phù hợp với chỉ số Precision 98,9\% của module trích xuất NER ở Mục~5.4. Biểu đồ Radar --- công cụ trực quan hóa điểm mạnh/điểm yếu --- đạt 4,33, xác nhận giá trị diễn giải được của đầu ra so khớp như đã xác nhận qua kết quả kiểm thử TC-08 ở Mục~5.2.
+    \item \textbf{Khóa học và lộ trình}: phát biểu ``tiết kiệm thời gian tìm kiếm định hướng so với các công cụ khác'' đạt mức đồng thuận tuyệt đối \textbf{100,0\%} (4,67) --- đây là tín hiệu mạnh nhất trong toàn khảo sát, khẳng định trực tiếp giá trị cốt lõi mà đề tài hướng tới. Tính cá nhân hóa của lộ trình theo mục tiêu nghề nghiệp cũng được ghi nhận tốt (4,44).
+\end{itemize}
+
+Bên cạnh các phát biểu Likert, khảo sát còn yêu cầu người dùng đánh giá trực tiếp mức độ hữu ích của từng biểu đồ thị trường. Bốn biểu đồ đều được đón nhận tích cực, trong đó ``Top 5 vị trí được tuyển nhiều nhất'' và ``Top 10 kỹ năng được yêu cầu'' được đánh giá hữu ích cao nhất (mỗi biểu đồ có tỷ lệ ``Hữu ích'' và ``Rất hữu ích'' đạt 87,5\%), phản ánh đúng nhu cầu thực dụng của sinh viên là biết thị trường \textit{đang cần vị trí và kỹ năng nào}.
+
+\subsection{Điểm cần cải thiện và định hướng phát triển từ phản hồi người dùng}
+
+Giá trị lớn nhất của khảo sát định hình không nằm ở các điểm số cao mà ở việc chỉ ra chính xác điểm yếu cần ưu tiên khắc phục. Trong toàn bộ 12 phát biểu, \textbf{độ tin cậy của con số \% Matching} là hạng mục đạt điểm thấp nhất (3,89) và có tỷ lệ đồng ý thấp nhất (55,6\%). Đây không phải một kết quả bất ngờ mà \textbf{ăn khớp chặt chẽ với hạn chế đã được định lượng ở Mục~5.4}: do cơ chế lưu trữ hiện tại chỉ hỗ trợ phân lớp nhị phân (Matched/Missing) mà chưa có trạng thái ``khớp một phần'' (Partial), độ chính xác phân loại Skill Gap mới đạt 54,8\%. Người dùng cuối, dù không tiếp cận các chỉ số kỹ thuật này, vẫn cảm nhận được sự thiếu chắc chắn của điểm số --- cho thấy cảm nhận chủ quan và số đo khách quan hội tụ về cùng một điểm cần cải thiện. Một phản hồi ở câu hỏi mở cũng phản ánh trực tiếp trải nghiệm này (``Hệ thống đang còn bị lỗi chưa quét được CV''), xác nhận tính ổn định của luồng phân tích cần được củng cố thêm.
+
+Quan trọng hơn, khảo sát chỉ rõ \textit{người dùng cần gì để tin tưởng con số Matching hơn}: 71,4\% mong muốn hệ thống \textbf{giải thích tiêu chí chấm điểm} thay vì chỉ hiển thị một con số đơn lẻ. Đây là định hướng cải tiến có chi phí thấp nhưng tác động lớn --- bổ sung phần diễn giải cách tính điểm và danh sách kỹ năng còn thiếu sẽ trực tiếp nâng cao độ tin cậy cảm nhận, song song với việc nâng cấp mô hình lưu trữ ba trạng thái đã đề xuất ở Mục~6.2.
+
+Về nhu cầu mở rộng dữ liệu thị trường, Bảng~\ref{tab:ux_market_wishlist} tổng hợp các loại thông tin người dùng mong muốn được bổ sung (câu hỏi cho phép chọn tối đa hai phương án).
+
+\begin{table}[H]
+\caption{Nhu cầu bổ sung thông tin thị trường từ phía người dùng (chọn tối đa 2, n = 9)}
+\label{tab:ux_market_wishlist}
+\begin{center}
+\begin{tabular}{|L{9.5cm}|C{2.2cm}|C{2.0cm}|}
+\hline
+\textbf{Thông tin mong muốn bổ sung} & \textbf{Lượt chọn} & \textbf{Tỷ lệ} \\
+\hline
+So sánh mặt bằng lương (Salary Benchmarking) & 7 & 77,8\% \\
+\hline
+Quy trình phỏng vấn \& bộ câu hỏi test kỹ thuật & 5 & 55,6\% \\
+\hline
+Xu hướng công nghệ mới nổi (Emerging Tech Trends) & 5 & 55,6\% \\
+\hline
+Phân tích Tech Stack/Dự án thực tế từ JD & 2 & 22,2\% \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+Kết quả trong Bảng~\ref{tab:ux_market_wishlist} vẽ nên một bản đồ ưu tiên rõ ràng cho hướng phát triển tương lai: nhu cầu về dữ liệu lương (77,8\%) và về chuẩn bị phỏng vấn kỹ thuật (55,6\%) là hai khoảng trống nổi bật nhất mà phiên bản hiện tại chưa đáp ứng. Những đề xuất này được ghi nhận và đưa vào định hướng nghiên cứu, phát triển tại Mục~6.3.
+
+Khép lại, câu hỏi tổng kết đo mức độ thiện cảm với sản phẩm trên thang 0--10 cho kết quả tích cực: điểm trung bình đạt \textbf{8,56/10}, trong đó 100\% người tham gia cho điểm từ 7 trở lên và không có phản hồi tiêu cực nào (điểm $\le 6$). Kết hợp lại, khảo sát trải nghiệm người dùng cuối cho thấy CareerNova được nhóm người dùng mục tiêu đón nhận tích cực về giao diện, tốc độ và giá trị định hướng nghề nghiệp; đồng thời, với tinh thần đánh giá khách quan xuyên suốt chương này, khảo sát cũng xác nhận đúng điểm yếu cốt lõi (độ tin cậy của điểm Matching và nhu cầu minh bạch hóa tiêu chí chấm điểm) mà kết quả định lượng ở Mục~5.4 đã chỉ ra, làm cơ sở thực chứng cho các hạn chế và hướng phát triển được trình bày ở Chương~6.
 
 
 

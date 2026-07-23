@@ -3,7 +3,7 @@
 
 Chương này trình bày bối cảnh, vấn đề và động lực xây dựng hệ thống CareerNova nhằm hỗ trợ sinh viên CNTT phân tích dữ liệu tuyển dụng và tự đánh giá năng lực. Trên cơ sở đó, chương xác định mục tiêu, phạm vi, đối tượng nghiên cứu và phương pháp tiếp cận của đề tài.
 
-\section{Bối cảnh và Lý do chọn đề tài}
+\section{Bối cảnh và lý do chọn đề tài}
 
 Trong kỷ nguyên số hóa, dữ liệu tuyển dụng trực tuyến ngày càng phong phú nhưng thường tồn tại dưới dạng rời rạc và không nhất quán, gây khó khăn cho sinh viên trong việc theo dõi và phân tích thực trạng thị trường lao động. Sự phát triển của các nền tảng như LinkedIn, VietnamWorks, CareerViet và ITviec tạo ra lượng dữ liệu lớn, song cũng đặt ra nhu cầu chuẩn hóa và phân tích thông tin từ nhiều nguồn. Các nền tảng này chủ yếu phục vụ đăng tin và tìm kiếm ứng viên, trong khi việc kết nối có hệ thống giữa yêu cầu nhân sự và kỹ năng thực tế của sinh viên vẫn còn hạn chế. Do đó, một hệ thống có khả năng khai phá, chuẩn hóa và phân tích dữ liệu tuyển dụng sẽ giúp sinh viên CNTT năm cuối định hình và bù đắp khoảng cách năng lực trước khi bước vào thị trường lao động.
 
@@ -15,15 +15,15 @@ Bài toán cốt lõi mà luận văn giải quyết là sự thiếu hụt mộ
 
 Ngay cả khi dữ liệu được thu thập, hệ thống cần chuẩn hóa các thực thể như kỹ năng, vị trí công việc và công ty trước khi có thể so sánh chúng. Một kỹ năng có thể được diễn đạt bằng nhiều biến thể, chẳng hạn ``Python Programming'', ``Python Development'' hoặc ``Python Coding'', và các kỹ năng còn có thể tương đồng hoặc liên quan về ngữ nghĩa. Vì vậy, cần một phương pháp định lượng có khả năng đối chiếu tập kỹ năng yêu cầu với tập kỹ năng trong CV để tạo báo cáo khoảng cách có ý nghĩa cho ứng viên.
 
-\section{Khảo sát các giải pháp hiện tại và Hạn chế}
+\section{Khảo sát các giải pháp hiện tại và hạn chế}
 
 Trong các nghiên cứu và ứng dụng thực tiễn, hệ thống ATS truyền thống thường đối soát từ khóa bằng biểu thức chính quy. Cách làm này dễ bỏ sót từ đồng nghĩa hoặc kỹ năng tương đương, chẳng hạn quan hệ giữa ``Git'' và ``Version Control'', đồng thời có thể bị ảnh hưởng bởi hiện tượng nhồi từ khóa trong CV. Các giải pháp học máy sử dụng Bag of Words hoặc TF-IDF tĩnh cải thiện khả năng biểu diễn văn bản nhưng vẫn hạn chế khi xử lý trật tự từ và ngữ cảnh của các cụm kỹ năng phức tạp. Ngược lại, việc dùng LLM API thuần túy có khả năng đọc hiểu ngữ cảnh tốt hơn nhưng tạo ra chi phí và độ trễ đáng kể khi phải xử lý hàng loạt, nên chưa phù hợp với yêu cầu tìm kiếm, phân tích và trực quan hóa gần thời gian thực.
 
-\section{Giải pháp đề xuất và Cách tiếp cận}
+\section{Giải pháp đề xuất và cách tiếp cận}
 
 Để giải quyết các hạn chế trên, đề tài đề xuất hệ thống \textit{CareerNova}, áp dụng mô hình lai giữa khả năng hiểu ngữ cảnh của Generative AI và tốc độ của mô hình biểu diễn ngữ nghĩa cục bộ. Ở tầng ETL, hệ thống thu thập tin tuyển dụng, dùng Gemini API với Pydantic Schema và \textit{Structured Outputs} để chuyển dữ liệu thô thành JSON có cấu trúc, rồi hậu kiểm từng thực thể kỹ năng bằng bằng chứng xuất hiện trong văn bản gốc. Ở tầng Matching Engine, các kỹ năng đã chuẩn hóa được mã hóa bằng Sentence-BERT cục bộ (\texttt{all-MiniLM-L6-v2}), lập chỉ mục bằng FAISS và so khớp bằng Cosine Similarity có trọng số TF-IDF động tính từ dữ liệu thị trường Việt Nam.
 
-\section{Mục tiêu và Đối tượng nghiên cứu}
+\section{Mục tiêu và đối tượng nghiên cứu}
 
 \subsection{Mục tiêu đề tài}
 

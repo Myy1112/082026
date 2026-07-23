@@ -152,11 +152,11 @@ NFR-14 & Bảo trì & Hệ thống ưu tiên sử dụng các ngôn ngữ lập 
 \hline
 UC-01--UC-04 (luồng email/mật khẩu) & Use Case tổng quát; luồng xác thực tại Core API & Phân hệ Auth; bảng \texttt{users} và liên kết nhà cung cấp xác thực & TC-01 đến TC-04; chưa bao gồm Google OAuth, Bảng~\ref{tab:test_results} \\
 \hline
-UC-08--UC-11 & Sơ đồ tuần tự tải CV và so khớp; sơ đồ lớp miền nghiệp vụ & \texttt{user\_cvs}, \texttt{user\_\allowbreak cv\_\allowbreak skills}, \texttt{cv\_\allowbreak job\_\allowbreak matches} và Data Processing Engine & TC-05 đến TC-08; Hình~\ref{fig:test_cv_matching} \\
+UC-08--UC-11 & Sơ đồ tuần tự tải CV và so khớp; sơ đồ lớp miền nghiệp vụ & \texttt{user\_cvs}, \texttt{user\_\allowbreak cv\_\allowbreak skills}, \texttt{cv\_\allowbreak job\_\allowbreak matches} và Data Processing Engine & TC-05 đến TC-08; Hình~\ref{fig:ui_cv_matching} \\
 \hline
 UC-12--UC-14 & Use Case khám phá việc làm; thiết kế giao diện danh sách việc làm & \texttt{jobs}, \texttt{job\_skills}, \texttt{saved\_jobs} và phân hệ Job & TC-10 và TC-11, Bảng~\ref{tab:test_results} \\
 \hline
-UC-16 & Sơ đồ tuần tự Dashboard; thiết kế Dashboard thị trường & Dữ liệu \texttt{jobs}, \texttt{companies}, \texttt{skills} và API tổng hợp thị trường & TC-09; Hình~\ref{fig:test_market_dashboard}; Mục~5.3 \\
+UC-16 & Sơ đồ tuần tự Dashboard; thiết kế Dashboard thị trường & Dữ liệu \texttt{jobs}, \texttt{companies}, \texttt{skills} và API tổng hợp thị trường & TC-09; Hình~\ref{fig:ui_market_dashboard}; Mục~5.3 \\
 \hline
 UC-19--UC-20 & Kiến trúc Data Processing Engine & Pipeline crawl, chuẩn hóa, trích xuất kỹ năng và nạp PostgreSQL & Số liệu dữ liệu thực tế và đánh giá đầu ra thuật toán, Mục~5.3--5.4 \\
 \hline
@@ -287,7 +287,7 @@ Hậu điều kiện & Sinh viên nắm được xu hướng tuyển dụng, cá
 % ----------------------------------------------------------------
 \subsection{Sơ đồ tuần tự cho các chức năng chính}
 
-\subsubsection*{Luồng tải lên CV và So khớp kỹ năng}
+\subsubsection*{Luồng tải lên CV và so khớp kỹ năng}
 
 Để người đọc theo dõi thứ tự trao đổi giữa các thành phần trước khi đi vào chi tiết, Hình~\ref{fig:cv_upload_sequence} mô tả luồng tải lên CV và so khớp kỹ năng từ Giao diện người dùng (Frontend), qua Core API và Data Processing Engine, đến Cơ sở dữ liệu.
 

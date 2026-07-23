@@ -75,7 +75,7 @@ Tuy nhiên, phần lớn các thuật toán đối soát trên các nền tảng
     \item \textbf{Không hiểu ngữ cảnh (Contextual Ignorance):} Hệ thống không thể phân biệt được một kỹ năng xuất hiện với tư cách là yêu cầu chính yếu của công việc hay chỉ là một kỹ năng phụ trợ mang tính chất ``nice-to-have''.
 \end{itemize}
 
-\subsection{Khoảng trống nghiên cứu và Giải pháp đề xuất}
+\subsection{Khoảng trống nghiên cứu và giải pháp đề xuất}
 
 Trong dòng nghiên cứu học thuật về trích xuất và phân tích kỹ năng từ dữ liệu tuyển dụng, nhiều công trình đã tập trung vào bài toán trích xuất và phân loại kỹ năng từ mô tả công việc: Bhola và cộng sự đề xuất khung phân loại đa nhãn cực trị dựa trên mô hình ngôn ngữ để truy hồi kỹ năng từ JD \cite{bhola2020retrieving}; Zhang và cộng sự xây dựng bộ dữ liệu và mô hình trích xuất kỹ năng cứng lẫn kỹ năng mềm từ tin tuyển dụng tiếng Anh \cite{zhang2022skillspan}; và khảo sát hệ thống của Khaouja và cộng sự tổng hợp các phương pháp nhận diện kỹ năng từ tin tuyển dụng trực tuyến \cite{khaouja2021survey}. Tuy nhiên, các nghiên cứu này chủ yếu giải quyết riêng khâu trích xuất hoặc phân loại kỹ năng, phần lớn trên dữ liệu tiếng Anh, mà chưa tích hợp thành một quy trình khép kín gắn trích xuất kỹ năng với chuẩn hóa ngữ nghĩa và đánh giá định lượng khoảng cách năng lực của người dùng theo nhu cầu thị trường.
 
@@ -197,7 +197,7 @@ Mô hình \texttt{all-MiniLM-L6-v2} mang lại sự cân bằng hoàn hảo gi�
 
 %==========================================================================
 
-\subsection{Phương pháp định lượng hóa độ tương đồng ngữ nghĩa bằng độ đo Cosine và Trọng số TF-IDF từ thị trường}
+\subsection{Phương pháp định lượng hóa độ tương đồng ngữ nghĩa bằng độ đo Cosine và trọng số TF-IDF từ thị trường}
 
 Độ tương đồng ngữ nghĩa giữa hai vector nhúng $\mathbf{u}$ và $\mathbf{v}$ được đo lường bằng độ đo Cosine (Cosine Similarity) \cite{reimers2019}. Khi các vector đầu ra được chuẩn hóa đơn vị ($\|\hat{\mathbf{u}}\|_2 = \|\hat{\mathbf{v}}\|_2 = 1$), độ tương đồng Cosine được rút gọn về tích vô hướng (Dot Product):
 \begin{equation}

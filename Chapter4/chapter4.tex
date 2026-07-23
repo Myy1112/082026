@@ -11,11 +11,11 @@ Việc lựa chọn công nghệ cho hệ thống CareerNova tuân theo nguyên 
 
 Giao diện được xây dựng bằng Next.js 15 và React 19 theo kiến trúc App Router. Next.js cho phép kết hợp kết xuất phía máy chủ cho các trang công khai với kết xuất phía trình duyệt cho Dashboard tương tác. TypeScript được dùng để kiểm soát kiểu dữ liệu tĩnh, giúp phát hiện lỗi sớm và hỗ trợ mở rộng mã nguồn an toàn. Về trình bày, Tailwind CSS và shadcn/ui duy trì tính nhất quán của hệ thống thiết kế, khả năng đáp ứng và chế độ sáng/tối; Recharts được dùng để vẽ biểu đồ xu hướng, phân bổ, xếp hạng và Radar.
 
-\subsection{Công nghệ Backend và Cơ sở dữ liệu}
+\subsection{Công nghệ Backend và cơ sở dữ liệu}
 
 Backend sử dụng NestJS trên Node.js 20 và được tổ chức theo các module như \texttt{auth}, \texttt{profile}, \texttt{job}, \texttt{matching}, \texttt{skill-gap} và \texttt{market-dashboard}. NestJS là cổng dịch vụ chính, điều phối yêu cầu từ Frontend, xác thực, phân quyền và tổng hợp dữ liệu. Prisma ORM cung cấp truy vấn an toàn kiểu và quản lý lược đồ PostgreSQL. PostgreSQL 17 lưu tài khoản, CV, dữ liệu tuyển dụng, từ điển kỹ năng và kết quả so khớp; các cấu trúc \texttt{radar\_data} và \texttt{gap\_report} được lưu sẵn dưới dạng JSONB để tối ưu truy vấn. Các tác vụ AI nặng được tách sang dịch vụ FastAPI, nhận yêu cầu từ NestJS qua HTTP để trích xuất, chuẩn hóa và tính điểm kỹ năng.
 
-\subsection{Công nghệ Thu thập và Xử lý AI}
+\subsection{Công nghệ thu thập và xử lý AI}
 
 Phân hệ thu thập và AI bóc tách thông tin phi cấu trúc từ tin tuyển dụng và CV, sau đó quy chuẩn chúng về không gian vector ngữ nghĩa. Luồng thu thập ưu tiên \texttt{requests} kết hợp \texttt{cloudscraper} để giảm chi phí tài nguyên; khi gặp trang chặn truy cập hoặc kết xuất hoàn toàn bằng JavaScript, hệ thống chuyển sang Selenium Headless Chrome để tải nội dung động. Trong môi trường thử nghiệm, Gemini API với mô hình \texttt{gemini-2.5-flash} được gọi qua \textit{Structured Outputs}, đặt $\text{temperature} = 0.0$ và JSON Schema. Đầu ra tiếp tục được hậu kiểm theo bằng chứng xuất hiện trong văn bản gốc để giảm rủi ro sinh kỹ năng không có căn cứ.
 
@@ -65,7 +65,7 @@ Nhờ cách tổ chức này, hệ thống không chỉ giảm thiểu việc l�
 
 Phần này trình bày kết quả hiện thực theo hành trình của sinh viên: tạo tài khoản và thiết lập hồ sơ, khai thác dữ liệu thị trường, sau đó tìm kiếm cơ hội việc làm, quản lý CV và thực hiện đối soát. Các màn hình giao diện được trình bày ở Mục~\ref{sec:ui_design}; tại đây nội dung tập trung làm rõ chức năng đã cài đặt, dữ liệu đầu vào/đầu ra và ý nghĩa của từng bước trong kịch bản sử dụng.
 
-\subsection{Hiện thực hóa các tính năng Quản lý tài khoản, Đăng ký/Đăng nhập (Auth)}
+\subsection{Hiện thực hóa các tính năng quản lý tài khoản, đăng ký/đăng nhập (Auth)}
 
 Module \texttt{auth} của NestJS quản lý xác thực và phân quyền bằng JWT stateless kết hợp refresh token. \texttt{AuthController} cung cấp đăng ký, đăng nhập, xác thực email, đặt lại mật khẩu và đăng nhập Google OAuth 2.0. Khi đăng ký, mật khẩu được băm bằng \texttt{bcrypt} trước khi lưu tại \texttt{password\_hash}; hệ thống tạo \texttt{verify\_token} có thời hạn và chỉ kích hoạt tài khoản sau khi người dùng xác nhận email. Khi đăng nhập thành công, Backend cấp access token ngắn hạn và refresh token dài hạn; Frontend gọi \texttt{POST /auth/refresh} khi access token hết hạn. Các route có dữ liệu cá nhân được \texttt{JwtAuthGuard} bảo vệ. Với Google SSO, thông tin nhà cung cấp được lưu tại \texttt{user\_auth\_providers} và liên kết với tài khoản sẵn có theo email để tránh tạo bản ghi trùng.
 
@@ -106,7 +106,7 @@ Dựa trên thiết kế trực quan ở Chương 3, biểu đồ xu hướng đ
 
 Kết quả hiển thị được đối chiếu với màn hình Dashboard tại Hình~\ref{fig:ui_market_dashboard}. Theo kịch bản sử dụng, sinh viên chọn bộ lọc khu vực, khoảng thời gian và loại hình công việc; giao diện cập nhật các thẻ tổng quan, xu hướng tuyển dụng, nhóm kỹ năng được yêu cầu và kỹ năng tăng trưởng để hỗ trợ quyết định học tập hoặc ứng tuyển.
 
-\subsection{Hiện thực hóa chức năng Tìm kiếm job, Lưu job và Quản lý danh sách CV}
+\subsection{Hiện thực hóa chức năng tìm kiếm job, lưu job và quản lý danh sách CV}
 
 Sau khi xem Dashboard, sinh viên có thể tìm việc theo từ khóa, kỹ năng và địa điểm; PostgreSQL được truy vấn qua Prisma ORM, còn kết quả có thể sắp xếp theo thời gian đăng, mức lương hoặc mức độ phù hợp. Người dùng có thể lưu tin quan tâm để theo dõi, sau đó tải lên, đổi tên, xóa hoặc chọn một CV mặc định trong danh sách \texttt{user\_cvs}. Khi chọn CV và nhóm việc mục tiêu, yêu cầu được chuyển sang Matching Service để phân tích ngữ nghĩa, tách biệt với thao tác tìm kiếm danh sách việc làm. Chuỗi thao tác này tạo thành kịch bản sử dụng xuyên suốt từ khám phá thị trường, lựa chọn nhóm nghề đến nhận báo cáo đối soát năng lực.
 
