@@ -1,0 +1,463 @@
+\chapter{Đặc tả chi tiết các Use Case còn lại}
+\label{Appendix:usecase}
+
+Phụ lục này trình bày đặc tả chi tiết theo mẫu (mã, tên, tác nhân chính, tiền điều kiện, luồng chính, luồng thay thế và hậu điều kiện) cho các Use Case còn lại của hệ thống CareerNova, bổ sung cho ba Use Case tiêu biểu đã trình bày ở Mục~\ref{Chapter3}. Các đặc tả được mô tả ở mức hành vi (góc nhìn của người dùng đối với hệ thống), thống nhất với sơ đồ Use Case tổng quát ở Hình~\ref{fig:usecase_diagram} và danh sách yêu cầu chức năng ở Bảng~\ref{tab:functional_requirements}.
+
+\begin{longtable}{|L{3.5cm}|L{10cm}|}
+\caption{Đặc tả Use Case UC-01: Đăng ký tài khoản.}
+\label{tab:uc01} \\
+\hline
+\textbf{Trường} & \textbf{Nội dung} \\
+\hline
+\endfirsthead
+\hline
+\textbf{Trường} & \textbf{Nội dung} \\
+\hline
+\endhead
+Mã & UC-01 \\
+\hline
+Tên & Đăng ký tài khoản \\
+\hline
+Actor chính & Sinh viên \\
+\hline
+Tiền điều kiện & Chưa tồn tại tài khoản gắn với địa chỉ email dự định sử dụng. \\
+\hline
+Luồng chính & 1. Sinh viên mở trang đăng ký và nhập họ tên, email cùng mật khẩu. \newline 2. Hệ thống kiểm tra tính hợp lệ của thông tin (định dạng email, độ dài mật khẩu $\ge$ 6 ký tự) và email chưa được đăng ký. \newline 3. Hệ thống tạo tài khoản ở trạng thái chưa kích hoạt và gửi email xác thực. \newline 4. Hệ thống thông báo đăng ký thành công và hướng dẫn kiểm tra email. \\
+\hline
+Luồng thay thế & 2a. Email đã tồn tại hoặc thông tin không hợp lệ: hệ thống báo lỗi và yêu cầu nhập lại. \\
+\hline
+Hậu điều kiện & Tài khoản được tạo và ở trạng thái chờ xác thực email (UC-03). \\
+\hline
+\end{longtable}
+
+\begin{longtable}{|L{3.5cm}|L{10cm}|}
+\caption{Đặc tả Use Case UC-02: Đăng nhập hệ thống.}
+\label{tab:uc02} \\
+\hline
+\textbf{Trường} & \textbf{Nội dung} \\
+\hline
+\endfirsthead
+\hline
+\textbf{Trường} & \textbf{Nội dung} \\
+\hline
+\endhead
+Mã & UC-02 \\
+\hline
+Tên & Đăng nhập hệ thống \\
+\hline
+Actor chính & Sinh viên \\
+\hline
+Tiền điều kiện & Đã có tài khoản (với luồng email/mật khẩu, tài khoản đã được kích hoạt). \\
+\hline
+Luồng chính & 1. Sinh viên nhập email và mật khẩu, hoặc chọn đăng nhập bằng Google. \newline 2. Hệ thống xác thực thông tin đăng nhập. \newline 3. Hệ thống thiết lập phiên đăng nhập và chuyển tới trang chính. \\
+\hline
+Luồng thay thế & 1a. Chọn Google OAuth: hệ thống chuyển sang Google để xác thực rồi quay lại, tạo mới hoặc khớp tài khoản tương ứng. \newline 2a. Sai email hoặc mật khẩu: hệ thống báo lỗi và cho nhập lại. \newline 2b. Tài khoản chưa xác thực email: hệ thống nhắc thực hiện xác thực (UC-03). \\
+\hline
+Hậu điều kiện & Sinh viên đăng nhập thành công và truy cập được các chức năng cá nhân hóa. \\
+\hline
+\end{longtable}
+
+\begin{longtable}{|L{3.5cm}|L{10cm}|}
+\caption{Đặc tả Use Case UC-03: Xác thực email.}
+\label{tab:uc03} \\
+\hline
+\textbf{Trường} & \textbf{Nội dung} \\
+\hline
+\endfirsthead
+\hline
+\textbf{Trường} & \textbf{Nội dung} \\
+\hline
+\endhead
+Mã & UC-03 \\
+\hline
+Tên & Xác thực email \\
+\hline
+Actor chính & Sinh viên \\
+\hline
+Tiền điều kiện & Đã đăng ký tài khoản (UC-01) và nhận được email chứa liên kết xác thực. \\
+\hline
+Luồng chính & 1. Sinh viên mở liên kết xác thực trong email. \newline 2. Hệ thống kiểm tra tính hợp lệ của liên kết. \newline 3. Hệ thống kích hoạt tài khoản và chuyển tới trang đăng nhập. \\
+\hline
+Luồng thay thế & 2a. Liên kết hết hạn hoặc không hợp lệ: hệ thống thông báo và cho phép gửi lại email xác thực. \\
+\hline
+Hậu điều kiện & Tài khoản được kích hoạt và có thể đăng nhập. \\
+\hline
+\end{longtable}
+
+\begin{longtable}{|L{3.5cm}|L{10cm}|}
+\caption{Đặc tả Use Case UC-04: Đặt lại mật khẩu.}
+\label{tab:uc04} \\
+\hline
+\textbf{Trường} & \textbf{Nội dung} \\
+\hline
+\endfirsthead
+\hline
+\textbf{Trường} & \textbf{Nội dung} \\
+\hline
+\endhead
+Mã & UC-04 \\
+\hline
+Tên & Đặt lại mật khẩu \\
+\hline
+Actor chính & Sinh viên \\
+\hline
+Tiền điều kiện & Đã có tài khoản gắn với một địa chỉ email hợp lệ. \\
+\hline
+Luồng chính & 1. Sinh viên chọn ``Quên mật khẩu'' và nhập email đã đăng ký. \newline 2. Hệ thống gửi email chứa liên kết đặt lại mật khẩu. \newline 3. Sinh viên mở liên kết và nhập mật khẩu mới. \newline 4. Hệ thống cập nhật mật khẩu và xác nhận thành công. \\
+\hline
+Luồng thay thế & 1a. Email không tồn tại: hệ thống vẫn hiển thị thông báo trung tính nhằm tránh lộ thông tin tài khoản. \newline 3a. Liên kết hết hạn: hệ thống yêu cầu thực hiện lại quy trình. \\
+\hline
+Hậu điều kiện & Mật khẩu được cập nhật; sinh viên đăng nhập bằng mật khẩu mới. \\
+\hline
+\end{longtable}
+
+\begin{longtable}{|L{3.5cm}|L{10cm}|}
+\caption{Đặc tả Use Case UC-05: Hoàn tất onboarding.}
+\label{tab:uc05} \\
+\hline
+\textbf{Trường} & \textbf{Nội dung} \\
+\hline
+\endfirsthead
+\hline
+\textbf{Trường} & \textbf{Nội dung} \\
+\hline
+\endhead
+Mã & UC-05 \\
+\hline
+Tên & Hoàn tất onboarding \\
+\hline
+Actor chính & Sinh viên \\
+\hline
+Tiền điều kiện & Đã đăng nhập lần đầu và chưa hoàn tất onboarding. \\
+\hline
+Luồng chính & 1. Hệ thống hiển thị luồng onboarding. \newline 2. Sinh viên khai báo thông tin năng lực và định hướng nghề nghiệp ban đầu (nhóm nghề mục tiêu, kỹ năng hiện có). \newline 3. Hệ thống lưu thông tin và thiết lập nhóm nghề mặc định cho các phân tích về sau. \newline 4. Hệ thống chuyển tới trang chính. \\
+\hline
+Luồng thay thế & 2a. Sinh viên bỏ qua một số mục không bắt buộc: hệ thống vẫn hoàn tất với thông tin tối thiểu và cho phép bổ sung sau tại hồ sơ. \\
+\hline
+Hậu điều kiện & Hồ sơ ban đầu được thiết lập, phục vụ gợi ý và so khớp cá nhân hóa. \\
+\hline
+\end{longtable}
+
+\begin{longtable}{|L{3.5cm}|L{10cm}|}
+\caption{Đặc tả Use Case UC-06: Cập nhật hồ sơ cá nhân.}
+\label{tab:uc06} \\
+\hline
+\textbf{Trường} & \textbf{Nội dung} \\
+\hline
+\endfirsthead
+\hline
+\textbf{Trường} & \textbf{Nội dung} \\
+\hline
+\endhead
+Mã & UC-06 \\
+\hline
+Tên & Cập nhật hồ sơ cá nhân \\
+\hline
+Actor chính & Sinh viên \\
+\hline
+Tiền điều kiện & Đã đăng nhập. \\
+\hline
+Luồng chính & 1. Sinh viên mở trang hồ sơ cá nhân. \newline 2. Sinh viên chỉnh sửa họ tên, ảnh đại diện và thông tin nghề nghiệp. \newline 3. Hệ thống kiểm tra và lưu các thay đổi. \newline 4. Hệ thống hiển thị hồ sơ đã cập nhật. \\
+\hline
+Luồng thay thế & 3a. Dữ liệu không hợp lệ (ví dụ ảnh sai định dạng): hệ thống báo lỗi và giữ nguyên giá trị cũ. \\
+\hline
+Hậu điều kiện & Hồ sơ cá nhân được cập nhật. \\
+\hline
+\end{longtable}
+
+\begin{longtable}{|L{3.5cm}|L{10cm}|}
+\caption{Đặc tả Use Case UC-07: Cài đặt tài khoản.}
+\label{tab:uc07} \\
+\hline
+\textbf{Trường} & \textbf{Nội dung} \\
+\hline
+\endfirsthead
+\hline
+\textbf{Trường} & \textbf{Nội dung} \\
+\hline
+\endhead
+Mã & UC-07 \\
+\hline
+Tên & Cài đặt tài khoản \\
+\hline
+Actor chính & Sinh viên \\
+\hline
+Tiền điều kiện & Đã đăng nhập. \\
+\hline
+Luồng chính & 1. Sinh viên mở trang cài đặt. \newline 2. Sinh viên thay đổi giao diện sáng/tối và tùy chọn thông báo. \newline 3. Hệ thống áp dụng và lưu các tùy chọn. \\
+\hline
+Luồng thay thế & 3a. Sinh viên chọn xóa tài khoản: hệ thống yêu cầu xác nhận, sau đó vô hiệu hóa/xóa tài khoản và đăng xuất. \\
+\hline
+Hậu điều kiện & Tùy chọn được lưu; nếu xóa tài khoản, dữ liệu cá nhân được gỡ theo quy định. \\
+\hline
+\end{longtable}
+
+\begin{longtable}{|L{3.5cm}|L{10cm}|}
+\caption{Đặc tả Use Case UC-08: Tải lên và quản lý CV.}
+\label{tab:uc08} \\
+\hline
+\textbf{Trường} & \textbf{Nội dung} \\
+\hline
+\endfirsthead
+\hline
+\textbf{Trường} & \textbf{Nội dung} \\
+\hline
+\endhead
+Mã & UC-08 \\
+\hline
+Tên & Tải lên và quản lý CV \\
+\hline
+Actor chính & Sinh viên \\
+\hline
+Tiền điều kiện & Đã đăng nhập. \\
+\hline
+Luồng chính & 1. Sinh viên mở trang quản lý CV và tải lên tệp CV. \newline 2. Hệ thống kiểm tra định dạng, dung lượng và lưu CV vào danh sách. \newline 3. Sinh viên có thể đặt một CV làm mặc định hoặc xóa CV đã lưu. \newline 4. Hệ thống cập nhật danh sách và CV mặc định. \\
+\hline
+Luồng thay thế & 2a. Tệp sai định dạng hoặc vượt dung lượng cho phép: hệ thống từ chối và báo lỗi. \\
+\hline
+Hậu điều kiện & CV được lưu; CV mặc định dùng cho các phân tích so khớp (UC-09). \\
+\hline
+\end{longtable}
+
+\begin{longtable}{|L{3.5cm}|L{10cm}|}
+\caption{Đặc tả Use Case UC-10: Xem biểu đồ Radar năng lực.}
+\label{tab:uc10} \\
+\hline
+\textbf{Trường} & \textbf{Nội dung} \\
+\hline
+\endfirsthead
+\hline
+\textbf{Trường} & \textbf{Nội dung} \\
+\hline
+\endhead
+Mã & UC-10 \\
+\hline
+Tên & Xem biểu đồ Radar năng lực \\
+\hline
+Actor chính & Sinh viên \\
+\hline
+Tiền điều kiện & Đã có kết quả so khớp CV (UC-09). \\
+\hline
+Luồng chính & 1. Sinh viên mở kết quả so khớp gần nhất. \newline 2. Hệ thống hiển thị biểu đồ Radar so sánh điểm kỹ năng của sinh viên với mức yêu cầu của thị trường theo từng nhóm kỹ năng. \newline 3. Sinh viên quan sát trực quan điểm mạnh và điểm yếu theo từng trục. \\
+\hline
+Luồng thay thế & 1a. Chưa có kết quả so khớp: hệ thống gợi ý thực hiện so khớp CV (UC-09) trước. \\
+\hline
+Hậu điều kiện & Sinh viên nắm được tương quan năng lực bản thân so với yêu cầu thị trường. \\
+\hline
+\end{longtable}
+
+\begin{longtable}{|L{3.5cm}|L{10cm}|}
+\caption{Đặc tả Use Case UC-12: Tìm kiếm và lọc việc làm.}
+\label{tab:uc12} \\
+\hline
+\textbf{Trường} & \textbf{Nội dung} \\
+\hline
+\endfirsthead
+\hline
+\textbf{Trường} & \textbf{Nội dung} \\
+\hline
+\endhead
+Mã & UC-12 \\
+\hline
+Tên & Tìm kiếm và lọc việc làm \\
+\hline
+Actor chính & Sinh viên \\
+\hline
+Tiền điều kiện & Hệ thống đã có dữ liệu tuyển dụng. \\
+\hline
+Luồng chính & 1. Sinh viên nhập từ khóa và/hoặc thiết lập bộ lọc (địa điểm, cấp độ kinh nghiệm, thời gian). \newline 2. Hệ thống truy vấn và trả về danh sách tin tuyển dụng phù hợp. \newline 3. Sinh viên sắp xếp kết quả theo thời gian đăng, mức lương hoặc mức độ phù hợp. \\
+\hline
+Luồng thay thế & 2a. Không có tin phù hợp: hệ thống hiển thị thông báo không có kết quả. \\
+\hline
+Hậu điều kiện & Sinh viên có được danh sách tin tuyển dụng theo tiêu chí tìm kiếm. \\
+\hline
+\end{longtable}
+
+\begin{longtable}{|L{3.5cm}|L{10cm}|}
+\caption{Đặc tả Use Case UC-13: Xem chi tiết tin tuyển dụng.}
+\label{tab:uc13} \\
+\hline
+\textbf{Trường} & \textbf{Nội dung} \\
+\hline
+\endfirsthead
+\hline
+\textbf{Trường} & \textbf{Nội dung} \\
+\hline
+\endhead
+Mã & UC-13 \\
+\hline
+Tên & Xem chi tiết tin tuyển dụng \\
+\hline
+Actor chính & Sinh viên \\
+\hline
+Tiền điều kiện & Đã có danh sách tin (UC-12) hoặc liên kết tới một tin cụ thể. \\
+\hline
+Luồng chính & 1. Sinh viên chọn một tin tuyển dụng. \newline 2. Hệ thống hiển thị chi tiết gồm mô tả công việc, yêu cầu kỹ năng, thông tin công ty và mức lương (nếu có). \newline 3. Sinh viên có thể lưu tin (UC-14) hoặc so khớp CV với tin. \\
+\hline
+Luồng thay thế & 2a. Tin không còn tồn tại: hệ thống thông báo tin đã bị gỡ. \\
+\hline
+Hậu điều kiện & Sinh viên nắm được chi tiết của tin tuyển dụng. \\
+\hline
+\end{longtable}
+
+\begin{longtable}{|L{3.5cm}|L{10cm}|}
+\caption{Đặc tả Use Case UC-14: Lưu tin tuyển dụng.}
+\label{tab:uc14} \\
+\hline
+\textbf{Trường} & \textbf{Nội dung} \\
+\hline
+\endfirsthead
+\hline
+\textbf{Trường} & \textbf{Nội dung} \\
+\hline
+\endhead
+Mã & UC-14 \\
+\hline
+Tên & Lưu tin tuyển dụng \\
+\hline
+Actor chính & Sinh viên \\
+\hline
+Tiền điều kiện & Đã đăng nhập và đang xem một tin tuyển dụng. \\
+\hline
+Luồng chính & 1. Sinh viên bấm lưu tin. \newline 2. Hệ thống thêm tin vào danh sách ``đã lưu'' của tài khoản. \newline 3. Sinh viên có thể xem lại hoặc hủy lưu trong danh sách cá nhân. \\
+\hline
+Luồng thay thế & 3a. Hủy lưu: hệ thống gỡ tin khỏi danh sách đã lưu. \\
+\hline
+Hậu điều kiện & Danh sách tin đã lưu được cập nhật theo tài khoản. \\
+\hline
+\end{longtable}
+
+\begin{longtable}{|L{3.5cm}|L{10cm}|}
+\caption{Đặc tả Use Case UC-15: Xem việc làm được đề xuất.}
+\label{tab:uc15} \\
+\hline
+\textbf{Trường} & \textbf{Nội dung} \\
+\hline
+\endfirsthead
+\hline
+\textbf{Trường} & \textbf{Nội dung} \\
+\hline
+\endhead
+Mã & UC-15 \\
+\hline
+Tên & Xem việc làm được đề xuất \\
+\hline
+Actor chính & Sinh viên \\
+\hline
+Tiền điều kiện & Đã đăng nhập và có hồ sơ/CV làm cơ sở đề xuất. \\
+\hline
+Luồng chính & 1. Sinh viên mở mục việc làm được đề xuất. \newline 2. Hệ thống dựa trên hồ sơ năng lực để đưa ra danh sách tin tuyển dụng phù hợp. \newline 3. Sinh viên xem, mở chi tiết hoặc lưu các tin được đề xuất. \\
+\hline
+Luồng thay thế & 2a. Chưa đủ dữ liệu hồ sơ: hệ thống gợi ý hoàn thiện hồ sơ hoặc tải CV để cải thiện chất lượng đề xuất. \\
+\hline
+Hậu điều kiện & Sinh viên nhận được danh sách việc làm phù hợp với năng lực cá nhân. \\
+\hline
+\end{longtable}
+
+\begin{longtable}{|L{3.5cm}|L{10cm}|}
+\caption{Đặc tả Use Case UC-17: Xem Dashboard cá nhân.}
+\label{tab:uc17} \\
+\hline
+\textbf{Trường} & \textbf{Nội dung} \\
+\hline
+\endfirsthead
+\hline
+\textbf{Trường} & \textbf{Nội dung} \\
+\hline
+\endhead
+Mã & UC-17 \\
+\hline
+Tên & Xem Dashboard cá nhân \\
+\hline
+Actor chính & Sinh viên \\
+\hline
+Tiền điều kiện & Đã đăng nhập. \\
+\hline
+Luồng chính & 1. Sinh viên mở Dashboard cá nhân. \newline 2. Hệ thống tổng hợp và hiển thị tình trạng năng lực, độ hoàn thiện hồ sơ, kết quả so khớp gần nhất và tiến độ cải thiện kỹ năng. \newline 3. Sinh viên điều hướng nhanh tới các chức năng liên quan (so khớp, khoảng cách kỹ năng, lộ trình học tập). \\
+\hline
+Luồng thay thế & 2a. Chưa có dữ liệu so khớp: hệ thống hiển thị trạng thái trống kèm gợi ý bắt đầu. \\
+\hline
+Hậu điều kiện & Sinh viên nắm được tổng quan tình trạng năng lực và tiến độ của bản thân. \\
+\hline
+\end{longtable}
+
+\begin{longtable}{|L{3.5cm}|L{10cm}|}
+\caption{Đặc tả Use Case UC-18: Xem lộ trình học tập đề xuất.}
+\label{tab:uc18} \\
+\hline
+\textbf{Trường} & \textbf{Nội dung} \\
+\hline
+\endfirsthead
+\hline
+\textbf{Trường} & \textbf{Nội dung} \\
+\hline
+\endhead
+Mã & UC-18 \\
+\hline
+Tên & Xem lộ trình học tập đề xuất \\
+\hline
+Actor chính & Sinh viên \\
+\hline
+Tiền điều kiện & Đã có báo cáo khoảng cách kỹ năng (UC-11). \\
+\hline
+Luồng chính & 1. Sinh viên mở mục lộ trình học tập. \newline 2. Hệ thống dựa trên các kỹ năng còn thiếu để đề xuất lộ trình cùng các khóa học tương ứng, sắp xếp theo thứ tự ưu tiên. \newline 3. Sinh viên xem chi tiết từng bước và liên kết tới khóa học. \\
+\hline
+Luồng thay thế & 1a. Chưa có khoảng cách kỹ năng: hệ thống gợi ý thực hiện so khớp CV (UC-09) trước. \\
+\hline
+Hậu điều kiện & Sinh viên có được lộ trình học tập cá nhân hóa nhằm lấp đầy khoảng cách kỹ năng. \\
+\hline
+\end{longtable}
+
+\begin{longtable}{|L{3.5cm}|L{10cm}|}
+\caption{Đặc tả Use Case UC-19: Thu thập dữ liệu tuyển dụng (tự động).}
+\label{tab:uc19} \\
+\hline
+\textbf{Trường} & \textbf{Nội dung} \\
+\hline
+\endfirsthead
+\hline
+\textbf{Trường} & \textbf{Nội dung} \\
+\hline
+\endhead
+Mã & UC-19 \\
+\hline
+Tên & Thu thập dữ liệu tuyển dụng (tự động) \\
+\hline
+Actor chính & Hệ thống ETL \\
+\hline
+Tiền điều kiện & Cấu hình nguồn thu thập và lịch chạy đã được thiết lập. \\
+\hline
+Luồng chính & 1. Hệ thống ETL được kích hoạt theo lịch. \newline 2. Hệ thống thu thập tin tuyển dụng từ các nền tảng ITViec, VietnamWorks, CareerViet và LinkedIn. \newline 3. Hệ thống lưu dữ liệu thô để xử lý ở bước chuẩn hóa (UC-20). \\
+\hline
+Luồng thay thế & 2a. Nguồn chặn truy cập tự động: hệ thống chuyển sang cơ chế thu thập dự phòng để bảo đảm tính liên tục. \\
+\hline
+Hậu điều kiện & Dữ liệu tuyển dụng thô được thu thập và sẵn sàng cho bước chuẩn hóa. \\
+\hline
+\end{longtable}
+
+\begin{longtable}{|L{3.5cm}|L{10cm}|}
+\caption{Đặc tả Use Case UC-20: Chuẩn hóa và nạp dữ liệu (tự động).}
+\label{tab:uc20} \\
+\hline
+\textbf{Trường} & \textbf{Nội dung} \\
+\hline
+\endfirsthead
+\hline
+\textbf{Trường} & \textbf{Nội dung} \\
+\hline
+\endhead
+Mã & UC-20 \\
+\hline
+Tên & Chuẩn hóa và nạp dữ liệu (tự động) \\
+\hline
+Actor chính & Hệ thống ETL \\
+\hline
+Tiền điều kiện & Đã có dữ liệu tuyển dụng thô từ UC-19. \\
+\hline
+Luồng chính & 1. Hệ thống làm sạch và chuẩn hóa dữ liệu tuyển dụng. \newline 2. Hệ thống trích xuất thực thể kỹ năng và chuẩn hóa về từ điển kỹ năng thống nhất. \newline 3. Hệ thống nạp dữ liệu đã chuẩn hóa vào cơ sở dữ liệu phục vụ tìm kiếm, so khớp và trực quan hóa. \\
+\hline
+Luồng thay thế & 2a. Thực thể kỹ năng không có căn cứ trong văn bản gốc: hệ thống loại bỏ để tránh dữ liệu sai lệch. \\
+\hline
+Hậu điều kiện & Kho dữ liệu tuyển dụng được cập nhật, chuẩn hóa và sẵn sàng sử dụng. \\
+\hline
+\end{longtable}
