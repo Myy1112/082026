@@ -21,7 +21,7 @@ Trong các nghiên cứu và ứng dụng thực tiễn, hệ thống ATS truy�
 
 \section{Giải pháp đề xuất và cách tiếp cận}
 
-Để giải quyết các hạn chế trên, đề tài đề xuất hệ thống \textit{CareerNova}, áp dụng mô hình lai giữa khả năng hiểu ngữ cảnh của Generative AI và tốc độ của mô hình biểu diễn ngữ nghĩa cục bộ. Ở tầng ETL, hệ thống thu thập tin tuyển dụng, dùng Gemini API với Pydantic Schema và \textit{Structured Outputs} để chuyển dữ liệu thô thành JSON có cấu trúc, rồi hậu kiểm từng thực thể kỹ năng bằng bằng chứng xuất hiện trong văn bản gốc. Ở tầng Matching Engine, các kỹ năng đã chuẩn hóa được mã hóa bằng Sentence-BERT cục bộ (\texttt{all-MiniLM-L6-v2}), lập chỉ mục bằng FAISS và so khớp bằng Cosine Similarity có trọng số TF-IDF động tính từ dữ liệu thị trường Việt Nam.
+Để giải quyết các hạn chế trên, đề tài đề xuất hệ thống \textit{CareerNova}, áp dụng mô hình lai giữa khả năng hiểu ngữ cảnh của Generative AI và tốc độ của mô hình biểu diễn ngữ nghĩa cục bộ. Ở tầng ETL, hệ thống thu thập tin tuyển dụng, dùng Gemini API với Pydantic Schema và \textit{Structured Outputs} để chuyển dữ liệu thô thành JSON có cấu trúc, rồi hậu kiểm từng thực thể kỹ năng dựa trên bằng chứng xuất hiện trong văn bản gốc. Ở tầng Matching Engine, các kỹ năng đã chuẩn hóa được mã hóa bằng Sentence-BERT cục bộ (\texttt{all-MiniLM-L6-v2}), lập chỉ mục bằng FAISS và so khớp bằng Cosine Similarity có trọng số TF-IDF động tính từ dữ liệu thị trường Việt Nam.
 
 \section{Mục tiêu và đối tượng nghiên cứu}
 

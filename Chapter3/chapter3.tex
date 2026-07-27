@@ -93,6 +93,101 @@ UC-20 & Hệ thống ETL & Chuẩn hóa, trích xuất thực thể kỹ năng v
 \end{longtable}
 
 % ----------------------------------------------------------------
+\subsection{Sơ đồ Use Case tổng quát}
+
+Trước khi xem đặc tả từng chức năng, Hình~\ref{fig:usecase_diagram} khái quát các tương tác giữa hai Actor, gồm Sinh viên và Hệ thống ETL, với CareerNova; sơ đồ cũng thể hiện các quan hệ \texttt{include} và \texttt{extend}. Ba bảng tiếp theo đi sâu vào các Use Case tiêu biểu.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{usecase_diagram}
+    \caption{Sơ đồ Use Case tổng quát của hệ thống CareerNova.}
+    \label{fig:usecase_diagram}
+\end{figure}
+
+Bảng~\ref{tab:uc09}, Bảng~\ref{tab:uc11} và Bảng~\ref{tab:uc16} trình bày đặc tả chi tiết cho ba Use Case quan trọng nhất của hệ thống.
+
+\begin{longtable}{|L{3.5cm}|L{10cm}|}
+\caption{Đặc tả Use Case UC-09: Tải lên CV và So khớp kỹ năng.}
+\label{tab:uc09} \\
+\hline
+\textbf{Trường} & \textbf{Nội dung} \\
+\hline
+\endfirsthead
+\hline
+\textbf{Trường} & \textbf{Nội dung} \\
+\hline
+\endhead
+Mã & UC-09 \\
+\hline
+Tên & Tải lên CV và So khớp kỹ năng với thị trường \\
+\hline
+Actor chính & Sinh viên \\
+\hline
+Tiền điều kiện & Sinh viên đã đăng nhập và hoàn tất onboarding; tài khoản đang hoạt động. \\
+\hline
+Luồng chính & 1. Sinh viên chọn tệp CV và tin tuyển dụng mục tiêu, sau đó yêu cầu so khớp. \newline 2. Hệ thống kiểm tra định dạng và tiếp nhận tệp CV. \newline 3. Hệ thống trích xuất danh sách kỹ năng từ nội dung CV. \newline 4. Hệ thống so sánh kỹ năng của sinh viên với yêu cầu kỹ năng của tin tuyển dụng và tính mức độ phù hợp. \newline 5. Hệ thống hiển thị kết quả so khớp, gồm biểu đồ Radar năng lực và báo cáo khoảng cách kỹ năng (Gap Report). \\
+\hline
+Luồng thay thế & 2a. Nếu tệp không đúng định dạng cho phép: hệ thống thông báo lỗi và yêu cầu sinh viên chọn lại. \newline 3a. Nếu không trích xuất được kỹ năng từ CV: hệ thống thông báo và đề nghị sinh viên tải lên CV khác. \\
+\hline
+Hậu điều kiện & Kết quả so khớp được lưu lại để xem về sau; sinh viên xem được mức độ phù hợp, biểu đồ Radar và danh sách kỹ năng còn thiếu. \\
+\hline
+\end{longtable}
+
+\begin{longtable}{|L{3.5cm}|L{10cm}|}
+\caption{Đặc tả Use Case UC-11: Xem Gap Report và báo cáo khoảng cách kỹ năng.}
+\label{tab:uc11} \\
+\hline
+\textbf{Trường} & \textbf{Nội dung} \\
+\hline
+\endfirsthead
+\hline
+\textbf{Trường} & \textbf{Nội dung} \\
+\hline
+\endhead
+Mã & UC-11 \\
+\hline
+Tên & Xem Gap Report và báo cáo khoảng cách kỹ năng \\
+\hline
+Actor chính & Sinh viên \\
+\hline
+Tiền điều kiện & Sinh viên đã thực hiện so khớp CV (UC-09) và đã có kết quả khoảng cách kỹ năng. \\
+\hline
+Luồng chính & 1. Sinh viên mở chức năng phân tích khoảng cách kỹ năng. \newline 2. Hệ thống hiển thị kết quả so khớp gần nhất, phân loại kỹ năng thành ba nhóm: Đạt yêu cầu, Đạt một phần và Còn thiếu. \newline 3. Hệ thống trình bày biểu đồ trực quan và danh sách kỹ năng chi tiết theo từng nhóm. \newline 4. Sinh viên mở rộng từng nhóm để xem mức độ đáp ứng của bản thân so với yêu cầu thị trường cho mỗi kỹ năng. \\
+\hline
+Luồng thay thế & 1a. Nếu chưa có kết quả so khớp nào: hệ thống hướng dẫn sinh viên thực hiện so khớp CV (UC-09) trước. \\
+\hline
+Hậu điều kiện & Sinh viên nắm được danh sách kỹ năng cụ thể cần bổ sung và có thể điều hướng sang UC-18 để xem lộ trình học tập đề xuất. \\
+\hline
+\end{longtable}
+
+\begin{longtable}{|L{3.5cm}|L{10cm}|}
+\caption{Đặc tả Use Case UC-16: Xem Dashboard thống kê thị trường việc làm.}
+\label{tab:uc16} \\
+\hline
+\textbf{Trường} & \textbf{Nội dung} \\
+\hline
+\endfirsthead
+\hline
+\textbf{Trường} & \textbf{Nội dung} \\
+\hline
+\endhead
+Mã & UC-16 \\
+\hline
+Tên & Xem Dashboard thống kê thị trường việc làm \\
+\hline
+Actor chính & Sinh viên \\
+\hline
+Tiền điều kiện & Sinh viên đã đăng nhập; hệ thống đã có dữ liệu tuyển dụng thu thập từ thị trường. \\
+\hline
+Luồng chính & 1. Sinh viên mở trang Dashboard thị trường việc làm. \newline 2. Hệ thống tổng hợp và hiển thị các nhóm thông tin: thống kê tổng quan, xu hướng tuyển dụng theo thời gian, phân bổ theo ngành, các vị trí nổi bật, các kỹ năng được yêu cầu nhiều và các kỹ năng đang tăng trưởng. \newline 3. Hệ thống trình bày các thông tin trên dưới dạng biểu đồ và bảng thống kê trực quan. \newline 4. Sinh viên lọc theo khoảng thời gian (tháng/năm); hệ thống cập nhật lại nội dung hiển thị tương ứng. \\
+\hline
+Luồng thay thế & 2a. Nếu chưa có dữ liệu tuyển dụng: hệ thống hiển thị thông báo dữ liệu chưa sẵn sàng. \\
+\hline
+Hậu điều kiện & Sinh viên nắm được xu hướng tuyển dụng, các ngành đang có nhu cầu cao, các vị trí hot và nhóm kỹ năng nổi bật trên thị trường. \\
+\hline
+\end{longtable}
+
+% ----------------------------------------------------------------
 \subsection{Yêu cầu phi chức năng}
 
 Các yêu cầu phi chức năng thiết lập các ràng buộc về mặt kiến trúc, đảm bảo hệ thống vận hành ổn định, an toàn và dễ bảo trì. Các yêu cầu này được phân loại và trình bày trong Bảng~\ref{tab:nonfunctional_requirements}.
@@ -137,33 +232,6 @@ NFR-13 & Bảo trì & Tầng Xử lý nghiệp vụ phải được tổ chức 
 NFR-14 & Bảo trì & Hệ thống ưu tiên sử dụng các ngôn ngữ lập trình có kiểu dữ liệu tĩnh và tường minh, giúp phát hiện lỗi tại thời điểm biên dịch, giảm thiểu lỗi runtime và hỗ trợ tái cấu trúc mã nguồn an toàn. \\
 \hline
 \end{longtable}
-
-\subsection{Ma trận truy vết yêu cầu đến kiểm thử}
-
-Để bảo đảm các yêu cầu không chỉ dừng lại ở mức đặc tả, các chức năng cốt lõi được liên kết với thành phần thiết kế, vị trí hiện thực và ca kiểm thử tương ứng. Ma trận trong Bảng~\ref{tab:traceability_matrix} cho phép đối chiếu theo chiều dọc từ nhu cầu người dùng đến bằng chứng đánh giá ở Chương~5. Phạm vi kiểm thử được công bố tại Chương~5 gồm 11 ca cho các luồng cốt lõi; các chức năng như Google OAuth, onboarding, cài đặt tài khoản, Dashboard cá nhân, gợi ý việc làm và lộ trình học tập không thuộc tập 11 ca này.
-
-\begin{table}[H]
-\caption{Ma trận truy vết một số yêu cầu cốt lõi từ thiết kế đến kiểm thử}
-\label{tab:traceability_matrix}
-\begin{center}
-\begin{tabular}{|L{2.0cm}|L{3.6cm}|L{4.3cm}|L{3.7cm}|}
-\hline
-\textbf{Yêu cầu} & \textbf{Thành phần thiết kế} & \textbf{Hiện thực / dữ liệu chính} & \textbf{Bằng chứng kiểm thử} \\
-\hline
-UC-01--UC-04 (luồng email/mật khẩu) & Use Case tổng quát; luồng xác thực tại Core API & Phân hệ Auth; bảng \texttt{users} và liên kết nhà cung cấp xác thực & TC-01 đến TC-04; chưa bao gồm Google OAuth, Bảng~\ref{tab:test_results} \\
-\hline
-UC-08--UC-11 & Sơ đồ tuần tự tải CV và so khớp; sơ đồ lớp miền nghiệp vụ & \texttt{user\_cvs}, \texttt{user\_\allowbreak cv\_\allowbreak skills}, \texttt{cv\_\allowbreak job\_\allowbreak matches} và Data Processing Engine & TC-05 đến TC-08; Hình~\ref{fig:ui_cv_matching} \\
-\hline
-UC-12--UC-14 & Use Case khám phá việc làm; thiết kế giao diện danh sách việc làm & \texttt{jobs}, \texttt{job\_skills}, \texttt{saved\_jobs} và phân hệ Job & TC-10 và TC-11, Bảng~\ref{tab:test_results} \\
-\hline
-UC-16 & Sơ đồ tuần tự Dashboard; thiết kế Dashboard thị trường & Dữ liệu \texttt{jobs}, \texttt{companies}, \texttt{skills} và API tổng hợp thị trường & TC-09; Hình~\ref{fig:ui_market_dashboard}; Mục~5.3 \\
-\hline
-UC-19--UC-20 & Kiến trúc Data Processing Engine & Pipeline crawl, chuẩn hóa, trích xuất kỹ năng và nạp PostgreSQL & Số liệu dữ liệu thực tế và đánh giá đầu ra thuật toán, Mục~5.3--5.4 \\
-\hline
-\end{tabular}
-\end{center}
-\end{table}
-
 % ================================================================
 \section{Thiết kế hệ thống}
 
@@ -188,101 +256,6 @@ Matching Engine tại dịch vụ \texttt{JobVisualization\_\allowbreak BE} th�
 \textbf{Tầng Dữ Liệu (Data Layer)} sử dụng hệ quản trị cơ sở dữ liệu quan hệ (RDBMS), lưu trữ toàn bộ dữ liệu hệ thống: thông tin người dùng và CV, kho dữ liệu tuyển dụng, và kết quả phân tích so khớp. Việc lưu trữ trước kết quả tính toán dưới dạng văn bản có cấu trúc (JSON) giúp tối ưu hóa hiệu năng truy vấn thời gian thực tại tầng trình bày mà không cần lặp lại các phép toán tốn kém.
 
 \textbf{Tầng Dịch Vụ Ngoài (External Services Layer)} bao gồm ba thành phần: \textbf{Dịch vụ Mô hình ngôn ngữ lớn (LLM)} thực hiện trích xuất thực thể có cấu trúc từ văn bản tự do; \textbf{Mô hình nhúng ngữ nghĩa (Embedding Model)} mã hóa câu thành vector và xây dựng chỉ mục tìm kiếm; và \textbf{Các nền tảng nguồn} cung cấp dữ liệu tin tuyển dụng thô cho Pipeline xử lý.
-
-% ----------------------------------------------------------------
-\subsection{Sơ đồ Use Case tổng quát}
-
-Trước khi xem đặc tả từng chức năng, Hình~\ref{fig:usecase_diagram} khái quát các tương tác giữa hai Actor, gồm Sinh viên và Hệ thống ETL, với CareerNova; sơ đồ cũng thể hiện các quan hệ \texttt{include} và \texttt{extend}. Ba bảng tiếp theo đi sâu vào các Use Case tiêu biểu.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.95\textwidth]{usecase_diagram}
-    \caption{Sơ đồ Use Case tổng quát của hệ thống CareerNova.}
-    \label{fig:usecase_diagram}
-\end{figure}
-
-Bảng~\ref{tab:uc09}, Bảng~\ref{tab:uc11} và Bảng~\ref{tab:uc16} trình bày đặc tả chi tiết cho ba Use Case quan trọng nhất của hệ thống.
-
-\begin{longtable}{|L{3.5cm}|L{10cm}|}
-\caption{Đặc tả Use Case UC-09: Tải lên CV và So khớp kỹ năng.}
-\label{tab:uc09} \\
-\hline
-\textbf{Trường} & \textbf{Nội dung} \\
-\hline
-\endfirsthead
-\hline
-\textbf{Trường} & \textbf{Nội dung} \\
-\hline
-\endhead
-Mã & UC-09 \\
-\hline
-Tên & Tải lên CV và So khớp kỹ năng với thị trường \\
-\hline
-Actor chính & Sinh viên \\
-\hline
-Tiền điều kiện & Sinh viên đã đăng nhập và hoàn tất onboarding; tài khoản đang active. \\
-\hline
-Luồng chính & 1. Sinh viên truy cập trang CV Matching, chọn tệp CV (PDF/JPG/JPEG/PNG) và tin tuyển dụng mục tiêu. \newline 2. Hệ thống xác thực định dạng tệp, tải lên Core API. \newline 3. Hệ thống lưu metadata CV vào \texttt{user\_cvs}, chuyển tiếp sang Data Processing Engine. \newline 4. Data Engine trích xuất văn bản CV (OCR nếu là ảnh quét), gọi LLM API bóc tách danh sách kỹ năng. \newline 5. Hệ thống mã hóa kỹ năng thành vector Mô hình nhúng (Embedding), tính Match Score = $\sum(\text{weight} \times \text{cosine}) \div \sum(\text{weight})$. \newline 6. Kết quả \texttt{radar\_data} và \texttt{gap\_report} JSONB được lưu vào bảng \texttt{cv\_\allowbreak job\_\allowbreak matches}. \newline 7. Giao diện người dùng (Frontend) truy vấn và hiển thị biểu đồ Radar và Gap Report. \\
-\hline
-Luồng thay thế & 4a. Nếu CV là ảnh quét: hệ thống thực hiện OCR (pdf2image + Pytesseract) trước khi trích xuất. \newline 4b. Nếu kỹ năng được Gemini trả về không có \texttt{evidence\_\allowbreak text} khớp trong văn bản gốc: thực thể bị loại bỏ (anti-hallucination). \\
-\hline
-Hậu điều kiện & Kết quả so khớp được lưu vào cơ sở dữ liệu; sinh viên xem được biểu đồ Radar và danh sách kỹ năng còn thiếu. \\
-\hline
-\end{longtable}
-
-\begin{longtable}{|L{3.5cm}|L{10cm}|}
-\caption{Đặc tả Use Case UC-11: Xem Gap Report và báo cáo khoảng cách kỹ năng.}
-\label{tab:uc11} \\
-\hline
-\textbf{Trường} & \textbf{Nội dung} \\
-\hline
-\endfirsthead
-\hline
-\textbf{Trường} & \textbf{Nội dung} \\
-\hline
-\endhead
-Mã & UC-11 \\
-\hline
-Tên & Xem Gap Report và báo cáo khoảng cách kỹ năng \\
-\hline
-Actor chính & Sinh viên \\
-\hline
-Tiền điều kiện & Sinh viên đã thực hiện so khớp CV (UC-09); trường \texttt{gap\_report} JSONB đã được lưu vào \texttt{cv\_\allowbreak job\_\allowbreak matches}. \\
-\hline
-Luồng chính & 1. Sinh viên truy cập trang Skill Gap Analysis. \newline 2. Giao diện người dùng (Frontend) gọi API lấy dữ liệu từ \texttt{cv\_job\_matches.gap\_report}. \newline 3. Hệ thống phân loại kỹ năng thành ba nhóm: Đạt yêu cầu (xanh lá), Đạt một phần (vàng), Thiếu hụt (đỏ). \newline 4. Giao diện người dùng (Frontend) hiển thị biểu đồ cột ngang phân kỳ và danh sách kỹ năng chi tiết. \newline 5. Sinh viên mở rộng từng danh mục kỹ năng để xem điểm \texttt{user\_rate} và \texttt{market\_rate}. \\
-\hline
-Luồng thay thế & 2a. Nếu chưa có kết quả so khớp: hệ thống hiển thị gợi ý thực hiện UC-09 trước. \\
-\hline
-Hậu điều kiện & Sinh viên nắm được danh sách kỹ năng cụ thể cần bổ sung và có thể điều hướng sang UC-18 để xem lộ trình học tập đề xuất. \\
-\hline
-\end{longtable}
-
-\begin{longtable}{|L{3.5cm}|L{10cm}|}
-\caption{Đặc tả Use Case UC-16: Xem Dashboard thống kê thị trường việc làm.}
-\label{tab:uc16} \\
-\hline
-\textbf{Trường} & \textbf{Nội dung} \\
-\hline
-\endfirsthead
-\hline
-\textbf{Trường} & \textbf{Nội dung} \\
-\hline
-\endhead
-Mã & UC-16 \\
-\hline
-Tên & Xem Dashboard thống kê thị trường việc làm \\
-\hline
-Actor chính & Sinh viên \\
-\hline
-Tiền điều kiện & Sinh viên đã đăng nhập; cơ sở dữ liệu đã có dữ liệu tuyển dụng từ ETL Pipeline. \\
-\hline
-Luồng chính & 1. Sinh viên truy cập trang Market Dashboard. \newline 2. Giao diện người dùng (Frontend) khởi tạo fetchDashboardData() và gửi đồng thời (Promise.all) sáu yêu cầu API: thống kê tổng quan, xu hướng tuyển dụng, phân bổ thị trường, top vị trí hot, top kỹ năng được yêu cầu và kỹ năng tăng trưởng. \newline 3. Core API truy vấn cơ sở dữ liệu và trả về JSON tương ứng cho từng thành phần trực quan hóa. \newline 4. Giao diện người dùng (Frontend) kết xuất AreaChart (xu hướng), Treemap (phân bổ thị trường), BarChart (xếp hạng kỹ năng/chỉ báo) và các khối thống kê bằng thư viện biểu đồ trực quan. \newline 5. Sinh viên lọc theo khoảng thời gian (tháng/năm) để xem xu hướng tương ứng. \\
-\hline
-Luồng thay thế & 3a. Nếu không có dữ liệu trong cơ sở dữ liệu (ETL chưa chạy): hiển thị thông báo dữ liệu chưa sẵn sàng. \\
-\hline
-Hậu điều kiện & Sinh viên nắm được xu hướng tuyển dụng, các ngành đang có nhu cầu cao, các vị trí hot và nhóm kỹ năng nổi bật trên thị trường. \\
-\hline
-\end{longtable}
 
 % ----------------------------------------------------------------
 \subsection{Sơ đồ tuần tự cho các chức năng chính}
@@ -407,7 +380,7 @@ Bảng này lưu trữ thông tin tài khoản người dùng, bao gồm sinh vi
 \hline
 \texttt{default\_\allowbreak cv\_\allowbreak id} & uuid & FK -> user\_cvs(cv\_id) & ID của tệp CV mặc định của sinh viên. \\
 \hline
-\texttt{default\_\allowbreak match\_\allowbreak id} & uuid & FK -> cv\_job\_matches(match\_id) & ID kết quả so khớp mặc định. \\
+\texttt{default\_\allowbreak match\_\allowbreak id} & uuid & FK -> cv\_\allowbreak job\_\allowbreak matches(match\_\allowbreak id) & ID kết quả so khớp mặc định. \\
 \hline
 \texttt{allow\_\allowbreak default\_\allowbreak cv\_\allowbreak matching} & boolean & DEFAULT false & Cho phép hệ thống tự động chạy đối soát CV mặc định. \\
 \hline

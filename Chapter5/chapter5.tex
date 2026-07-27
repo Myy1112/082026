@@ -59,92 +59,81 @@ Phản hồi đủ nhanh & Đo trường \textit{Duration} trong Chrome DevTools
 
 \section{Kiểm thử chức năng hệ thống}
 
-\subsection{Ma trận kịch bản kiểm thử (Test Matrix)}
+\subsection{Ma trận truy vết yêu cầu đến kiểm thử}
 
-Hệ thống được kiểm thử thông qua các kịch bản kiểm thử hộp đen (Black-box Testing) để đảm bảo các tính năng hoạt động đúng đặc tả yêu cầu. Các kịch bản được xây dựng theo hành trình sử dụng thực tế của vai trò người dùng sinh viên/ứng viên, từ lúc tạo tài khoản, quản lý hồ sơ CV, phân tích đối soát đến khai thác dữ liệu thị trường, và bám sát các chức năng đang có trên hệ thống. Bảng~\ref{tab:test_cases} liệt kê 11 ca kiểm thử cùng dữ liệu đầu vào và kết quả mong đợi tương ứng.
+Để bảo đảm các yêu cầu không chỉ dừng lại ở mức đặc tả, các chức năng cốt lõi được liên kết với thành phần thiết kế, vị trí hiện thực và ca kiểm thử tương ứng. Ma trận trong Bảng~\ref{tab:traceability_matrix} cho phép đối chiếu theo chiều dọc từ nhu cầu người dùng đến bằng chứng đánh giá được trình bày trong chương này. Phạm vi kiểm thử gồm 11 ca cho các luồng cốt lõi; các chức năng như Google OAuth, onboarding, cài đặt tài khoản, Dashboard cá nhân, gợi ý việc làm và lộ trình học tập không thuộc tập 11 ca này.
 
-\begin{longtable}{|c|L{3.0cm}|L{3.5cm}|L{3.5cm}|C{1.5cm}|}
-\caption{Kịch bản kiểm thử chức năng hệ thống}
-\label{tab:test_cases} \\
+\begin{table}[H]
+\caption{Ma trận truy vết một số yêu cầu cốt lõi từ thiết kế đến kiểm thử}
+\label{tab:traceability_matrix}
+\begin{center}
+\begin{tabular}{|L{2.0cm}|L{3.6cm}|L{4.3cm}|L{3.7cm}|}
 \hline
-\textbf{ID} & \textbf{Chức năng} & \textbf{Dữ liệu đầu vào / Điều kiện} & \textbf{Kết quả mong đợi} & \textbf{Trạng thái} \\
+\textbf{Yêu cầu} & \textbf{Thành phần thiết kế} & \textbf{Hiện thực / dữ liệu chính} & \textbf{Bằng chứng kiểm thử} \\
+\hline
+UC-01--UC-04 (luồng email/mật khẩu) & Use Case tổng quát; luồng xác thực tại Core API & Phân hệ Auth; bảng \texttt{users} và liên kết nhà cung cấp xác thực & TC-01 đến TC-04; chưa bao gồm Google OAuth, Bảng~\ref{tab:test_results} \\
+\hline
+UC-08--UC-11 & Sơ đồ tuần tự tải CV và so khớp; sơ đồ lớp miền nghiệp vụ & \texttt{user\_cvs}, \texttt{user\_\allowbreak cv\_\allowbreak skills}, \texttt{cv\_\allowbreak job\_\allowbreak matches} và Data Processing Engine & TC-05 đến TC-08; Hình~\ref{fig:ui_cv_matching} \\
+\hline
+UC-12--UC-14 & Use Case khám phá việc làm; thiết kế giao diện danh sách việc làm & \texttt{jobs}, \texttt{job\_skills}, \texttt{saved\_jobs} và phân hệ Job & TC-10 và TC-11, Bảng~\ref{tab:test_results} \\
+\hline
+UC-16 & Sơ đồ tuần tự Dashboard; thiết kế Dashboard thị trường & Dữ liệu \texttt{jobs}, \texttt{companies}, \texttt{skills} và API tổng hợp thị trường & TC-09; Hình~\ref{fig:ui_market_dashboard}; Mục~5.3 \\
+\hline
+UC-19--UC-20 & Kiến trúc Data Processing Engine & Pipeline crawl, chuẩn hóa, trích xuất kỹ năng và nạp PostgreSQL & Số liệu dữ liệu thực tế và đánh giá đầu ra thuật toán, Mục~5.3--5.4 \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+\subsection{Kịch bản và kết quả kiểm thử chức năng}
+
+Hệ thống được kiểm thử thông qua các kịch bản kiểm thử hộp đen (Black-box Testing) để đảm bảo các tính năng hoạt động đúng đặc tả yêu cầu. Các kịch bản được xây dựng theo hành trình sử dụng thực tế của vai trò người dùng sinh viên/ứng viên, từ lúc tạo tài khoản, quản lý hồ sơ CV, phân tích đối soát đến khai thác dữ liệu thị trường, và bám sát các chức năng đang có trên hệ thống. Toàn bộ kịch bản được thực thi trên môi trường chạy thật tại \texttt{career-nova.online}; Bảng~\ref{tab:test_cases} tổng hợp 11 ca kiểm thử cùng dữ liệu đầu vào, kết quả mong đợi và trạng thái thực tế khi chạy tương ứng.
+
+{\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{longtable}{|C{0.8cm}|L{2.6cm}|L{3.1cm}|L{3.2cm}|L{2.9cm}|C{1.0cm}|}
+\caption{Kịch bản và kết quả thực thi kiểm thử chức năng hệ thống}
+\label{tab:test_cases}\label{tab:test_results} \\
+\hline
+\textbf{ID} & \textbf{Chức năng} & \textbf{Dữ liệu đầu vào / Điều kiện} & \textbf{Kết quả mong đợi} & \textbf{Trạng thái thực tế} & \textbf{KQ} \\
 \hline
 \endfirsthead
-\multicolumn{5}{c}%
-{{ \tablename\ \thetable{} -- tiếp tục từ trang trước}} \\
+\multicolumn{6}{c}%
+{{\tablename\ \thetable{} -- tiếp tục từ trang trước}} \\
 \hline
-\textbf{ID} & \textbf{Chức năng} & \textbf{Dữ liệu đầu vào / Điều kiện} & \textbf{Kết quả mong đợi} & \textbf{Trạng thái} \\
+\textbf{ID} & \textbf{Chức năng} & \textbf{Dữ liệu đầu vào / Điều kiện} & \textbf{Kết quả mong đợi} & \textbf{Trạng thái thực tế} & \textbf{KQ} \\
 \hline
 \endhead
-\hline \multicolumn{5}{|r|}{{Tiếp tục ở trang sau}} \\ \hline
+\hline \multicolumn{6}{|r|}{{Tiếp tục ở trang sau}} \\ \hline
 \endfoot
 \hline
 \endlastfoot
-TC-01 & Đăng ký tài khoản mới & Điền đúng Email, Tên, Mật khẩu có độ dài $\ge$ 6 ký tự & Tạo tài khoản thành công, lưu thông tin vào PostgreSQL & ĐẠT \\
+TC-01 & Đăng ký tài khoản mới & Điền đúng Email, Tên, Mật khẩu có độ dài $\ge$ 6 ký tự & Tạo tài khoản thành công, lưu thông tin vào PostgreSQL & Hoạt động bình thường & ĐẠT \\
 \hline
-TC-02 & Đăng nhập hệ thống & Nhập đúng Email và Mật khẩu & Nhận JWT Token, chuyển hướng tới trang Dashboard & ĐẠT \\
+TC-02 & Đăng nhập hệ thống & Nhập đúng Email và Mật khẩu & Nhận JWT Token, chuyển hướng tới trang Dashboard & Đăng nhập và lưu token thành công & ĐẠT \\
 \hline
-TC-03 & Quên mật khẩu & Nhập đúng email đã đăng ký & Gửi email đặt lại mật khẩu và chuyển tới trang xác nhận & ĐẠT \\
+TC-03 & Quên mật khẩu & Nhập đúng email đã đăng ký & Gửi email đặt lại mật khẩu và chuyển tới trang xác nhận & Email đặt lại mật khẩu được gửi và truy cập đúng trang xác nhận & ĐẠT \\
 \hline
-TC-04 & Xác thực email & Mở liên kết xác thực từ email & Tài khoản được xác thực và chuyển hướng đăng nhập thành công & ĐẠT \\
+TC-04 & Xác thực email & Mở liên kết xác thực từ email & Tài khoản được xác thực và chuyển hướng đăng nhập thành công & Liên kết xác thực hoạt động đúng và tài khoản được kích hoạt & ĐẠT \\
 \hline
-TC-05 & Tải lên CV hợp lệ & File CV định dạng PDF/JPG/JPEG/PNG, dung lượng $\le$ 5 MB & Tải lên thành công và xuất hiện trong danh sách CV của người dùng & ĐẠT \\
+TC-05 & Tải lên CV hợp lệ & File CV định dạng PDF/\allowbreak JPG/\allowbreak JPEG/\allowbreak PNG, dung lượng $\le$ 5 MB & Tải lên thành công và xuất hiện trong danh sách CV của người dùng & File được upload thành công và xuất hiện trong danh sách & ĐẠT \\
 \hline
-TC-06 & Từ chối file sai định dạng hoặc quá dung lượng & File DOCX/TXT hoặc file ảnh vượt quá 5 MB & Hệ thống trả về lỗi hợp lệ và không lưu file & ĐẠT \\
+TC-06 & Từ chối file sai định dạng hoặc quá dung lượng & File DOCX/TXT hoặc file ảnh vượt quá 5 MB & Hệ thống trả về lỗi hợp lệ và không lưu file & Hệ thống trả lỗi đúng quy định và không nhận file & ĐẠT \\
 \hline
-TC-07 & Quản lý CV mặc định và xóa CV & Chọn một CV khác làm mặc định hoặc xóa một CV đã lưu & CV mặc định được cập nhật hoặc CV bị xóa khỏi danh sách & ĐẠT \\
+TC-07 & Quản lý CV mặc định và xóa CV & Chọn một CV khác làm mặc định hoặc xóa một CV đã lưu & CV mặc định được cập nhật hoặc CV bị xóa khỏi danh sách & Đặt CV mặc định mới và xóa CV cũ thành công & ĐẠT \\
 \hline
-TC-08 & Đối soát CV và tính Skill Gap & Chọn CV và nhấn đối soát với nhóm nghề & Hiển thị phần trăm tương thích, radar kỹ năng và danh sách kỹ năng thiếu & ĐẠT \\
+TC-08 & Đối soát CV và tính Skill Gap & Chọn CV và nhấn đối soát với nhóm nghề & Hiển thị phần trăm tương thích, radar kỹ năng và danh sách kỹ năng thiếu & Trả về điểm tương thích và gợi ý kỹ năng hợp lý & ĐẠT \\
 \hline
-TC-09 & Xem Dashboard thống kê thị trường việc làm & Truy cập trang Dashboard và chọn bộ lọc khu vực/thời gian/loại hình & Hiển thị đúng xu hướng, phân bổ thị trường và chỉ số tổng quan theo bộ lọc & ĐẠT \\
+TC-09 & Xem Dashboard thống kê thị trường việc làm & Truy cập trang Dashboard và chọn bộ lọc khu vực/thời gian/loại hình & Hiển thị đúng xu hướng, phân bổ thị trường và chỉ số tổng quan theo bộ lọc & Biểu đồ và bộ lọc hiển thị đúng theo dữ liệu hiện có & ĐẠT \\
 \hline
-TC-10 & Tìm kiếm việc làm & Nhập từ khóa và bộ lọc cấp độ kinh nghiệm/thời gian phù hợp & Trả về danh sách việc làm đúng tiêu chí tìm kiếm & ĐẠT \\
+TC-10 & Tìm kiếm việc làm & Nhập từ khóa và bộ lọc cấp độ kinh nghiệm/thời gian phù hợp & Trả về danh sách việc làm đúng tiêu chí tìm kiếm & Kết quả tìm kiếm đúng với từ khóa và bộ lọc & ĐẠT \\
 \hline
-TC-11 & Lưu và hủy lưu việc làm & Bấm lưu trên một tin tuyển dụng và sau đó hủy lưu & Công việc được thêm vào và xóa khỏi danh sách đã lưu tương ứng & ĐẠT \\
+TC-11 & Lưu và hủy lưu việc làm & Bấm lưu trên một tin tuyển dụng và sau đó hủy lưu & Công việc được thêm vào và xóa khỏi danh sách đã lưu tương ứng & Danh sách đã lưu cập nhật đúng khi thêm/xóa & ĐẠT \\
 \hline
 \end{longtable}
+}
 
 Mười một kịch bản trong Bảng~\ref{tab:test_cases} bao phủ bốn nhóm chức năng theo trình tự trải nghiệm người dùng: nhóm xác thực tài khoản (TC-01 đến TC-04), nhóm quản lý hồ sơ CV (TC-05 đến TC-07), nhóm phân tích đối soát năng lực (TC-08) và nhóm khai thác dữ liệu thị trường (TC-09 đến TC-11). Trong đó, TC-06 được thiết kế riêng để kiểm tra biên từ chối dữ liệu không hợp lệ (định dạng và dung lượng tệp), còn TC-08 là kịch bản phức tạp nhất vì đi xuyên qua toàn bộ chuỗi xử lý AI của hệ thống.
-
-\clearpage
-\subsection{Kết quả thực thi kiểm thử}
-
-Toàn bộ các kịch bản kiểm thử trên đã được thực thi trên môi trường chạy thật tại địa chỉ \texttt{career-nova.online}. Kết quả từng ca được tổng hợp trong Bảng~\ref{tab:test_results} theo dạng đạt/không đạt để phản ánh nhanh mức độ hoàn thành chức năng:
-
-\begin{longtable}{|C{1.8cm}|L{6.0cm}|L{4.2cm}|C{2.0cm}|}
-\caption{Kết quả thực thi kiểm thử chức năng}\label{tab:test_results} \\
-\hline
-\textbf{Mã KB} & \textbf{Chức năng kiểm thử} & \textbf{Trạng thái thực tế} & \textbf{Kết quả} \\
-\hline
-\endfirsthead
-\multicolumn{4}{c}{\tablename~\thetable\ -- tiếp tục từ trang trước} \\
-\hline
-\textbf{Mã KB} & \textbf{Chức năng kiểm thử} & \textbf{Trạng thái thực tế} & \textbf{Kết quả} \\
-\hline
-\endhead
-TC-01 & Đăng ký tài khoản mới & Hoạt động bình thường & ĐẠT \\
-\hline
-TC-02 & Đăng nhập hệ thống & Đăng nhập và lưu token thành công & ĐẠT \\
-\hline
-TC-03 & Quên mật khẩu & Email đặt lại mật khẩu được gửi và truy cập đúng trang xác nhận & ĐẠT \\
-\hline
-TC-04 & Xác thực email & Liên kết xác thực hoạt động đúng và tài khoản được kích hoạt & ĐẠT \\
-\hline
-TC-05 & Tải lên CV hợp lệ & File được upload thành công và xuất hiện trong danh sách & ĐẠT \\
-\hline
-TC-06 & Từ chối file sai định dạng hoặc quá dung lượng & Hệ thống trả lỗi đúng quy định và không nhận file & ĐẠT \\
-\hline
-TC-07 & Quản lý CV mặc định và xóa CV & Đặt CV mặc định mới và xóa CV cũ thành công & ĐẠT \\
-\hline
-TC-08 & Đối soát CV và tính Skill Gap & Trả về điểm tương thích và gợi ý kỹ năng hợp lý & ĐẠT \\
-\hline
-TC-09 & Xem Dashboard thống kê thị trường việc làm & Biểu đồ và bộ lọc hiển thị đúng theo dữ liệu hiện có & ĐẠT \\
-\hline
-TC-10 & Tìm kiếm việc làm & Kết quả tìm kiếm đúng với từ khóa và bộ lọc & ĐẠT \\
-\hline
-TC-11 & Lưu và hủy lưu việc làm & Danh sách đã lưu cập nhật đúng khi thêm/xóa & ĐẠT \\
-\hline
-\end{longtable}
 
 Theo Bảng~\ref{tab:test_results}, toàn bộ \textbf{11/11 kịch bản đạt (100\%)}, xác nhận các chức năng cốt lõi vận hành đúng đặc tả trên môi trường triển khai thật. Đáng chú ý, hai ca có rủi ro cao nhất đều vượt qua: TC-06 chứng minh tầng kiểm tra dữ liệu đầu vào từ chối đúng các tệp sai định dạng hoặc vượt 5 MB mà không để lọt dữ liệu rác vào hệ thống lưu trữ, và TC-08 xác nhận chuỗi xử lý AI nhiều bước gồm trích xuất, chuẩn hóa và so khớp trả về kết quả nhất quán từ đầu đến cuối. Kiểm thử chức năng vì vậy chỉ trả lời câu hỏi ``hệ thống có chạy đúng hay không''; các khía cạnh định lượng về tốc độ và độ chính xác được đo riêng tại Mục 5.3 và 5.4.
 
@@ -513,6 +502,7 @@ Bảng \ref{tab:eval_norm_matching} thiết lập khung tiêu chí đánh giá c
 \caption{Kết quả đánh giá chất lượng chuẩn hóa kỹ năng và gộp nhóm doanh nghiệp}
 \label{tab:eval_norm_matching}
 \begin{center}
+\setlength{\tabcolsep}{3pt}
 \begin{tabular}{|L{5.0cm}|C{2.0cm}|C{2.0cm}|C{1.5cm}|C{1.5cm}|C{2.0cm}|}
 \hline
 \textbf{Chỉ số đánh giá (Metric)} & \textbf{Quy mô mẫu} & \textbf{Mục tiêu} & \textbf{JD} & \textbf{CV} & \textbf{Chung cuộc} \\
@@ -592,6 +582,7 @@ Bảng \ref{tab:eval_dedup} tổng hợp kết quả đánh giá hiệu năng th
 \caption{Kết quả đánh giá chất lượng thuật toán khử trùng lặp bài đăng}
 \label{tab:eval_dedup}
 \begin{center}
+\setlength{\tabcolsep}{3pt}
 \begin{tabular}{|L{6.0cm}|C{2.0cm}|C{2.0cm}|C{2.0cm}|C{2.0cm}|}
 \hline
 \textbf{Chỉ số đánh giá dữ liệu (Metric)} & \textbf{Mục tiêu} & \textbf{Cùng nguồn} & \textbf{Đa nguồn} & \textbf{Chung cuộc} \\
@@ -725,6 +716,7 @@ Bảng~\ref{tab:matching_case_study_tmy} trình bày kết quả đối soát ch
 \caption{Phân tích chi tiết kết quả so khớp kỹ năng --- Ứng viên Trần Thị Mỹ Ý (Information Security Consultant)}
 \label{tab:matching_case_study_tmy}
 \begin{center}
+\setlength{\tabcolsep}{3pt}
 \begin{tabular}{|L{4.5cm}|C{2.0cm}|C{2.0cm}|C{2.0cm}|L{3.5cm}|}
 \hline
 \textbf{Kỹ năng JD yêu cầu} & \textbf{Độ tương đồng} & \textbf{Hệ thống} & \textbf{Ground Truth} & \textbf{Phân tích} \\
@@ -840,9 +832,11 @@ Bên cạnh các phát biểu Likert, khảo sát còn yêu cầu người dùng
 
 \subsection{Điểm cần cải thiện và định hướng phát triển từ phản hồi người dùng}
 
-Giá trị lớn nhất của khảo sát định hình không nằm ở các điểm số cao mà ở việc chỉ ra chính xác điểm yếu cần ưu tiên khắc phục. Trong toàn bộ 12 phát biểu, \textbf{độ tin cậy của con số \% Matching} là hạng mục đạt điểm thấp nhất (3,89) và có tỷ lệ đồng ý thấp nhất (55,6\%). Đây không phải một kết quả bất ngờ mà \textbf{ăn khớp chặt chẽ với hạn chế đã được định lượng ở Mục~5.4}: do cơ chế lưu trữ hiện tại chỉ hỗ trợ phân lớp nhị phân (Matched/Missing) mà chưa có trạng thái ``khớp một phần'' (Partial), độ chính xác phân loại Skill Gap mới đạt 54,8\%. Người dùng cuối, dù không tiếp cận các chỉ số kỹ thuật này, vẫn cảm nhận được sự thiếu chắc chắn của điểm số --- cho thấy cảm nhận chủ quan và số đo khách quan hội tụ về cùng một điểm cần cải thiện. Một phản hồi ở câu hỏi mở cũng phản ánh trực tiếp trải nghiệm này (``Hệ thống đang còn bị lỗi chưa quét được CV''), xác nhận tính ổn định của luồng phân tích cần được củng cố thêm.
+Giá trị lớn nhất của khảo sát định hình không nằm ở các điểm số cao mà ở việc chỉ ra chính xác điểm yếu cần ưu tiên khắc phục. Trong toàn bộ 12 phát biểu, \textbf{độ tin cậy của con số \% Matching} là hạng mục đạt điểm thấp nhất (3,89) và có tỷ lệ đồng ý thấp nhất (55,6\%). Đây không phải một kết quả bất ngờ mà \textbf{ăn khớp chặt chẽ với hạn chế đã được định lượng ở Mục~5.4}: do cơ chế lưu trữ hiện tại chỉ hỗ trợ phân lớp nhị phân (Matched/Missing) mà chưa có trạng thái ``khớp một phần'' (Partial), độ chính xác phân loại Skill Gap mới đạt 54,8\%. Người dùng cuối, dù không tiếp cận các chỉ số kỹ thuật này, vẫn cảm nhận được sự thiếu chắc chắn của điểm số --- cho thấy cảm nhận chủ quan và số đo khách quan hội tụ về cùng một điểm cần cải thiện.
 
 Quan trọng hơn, khảo sát chỉ rõ \textit{người dùng cần gì để tin tưởng con số Matching hơn}: 71,4\% mong muốn hệ thống \textbf{giải thích tiêu chí chấm điểm} thay vì chỉ hiển thị một con số đơn lẻ. Đây là định hướng cải tiến có chi phí thấp nhưng tác động lớn --- bổ sung phần diễn giải cách tính điểm và danh sách kỹ năng còn thiếu sẽ trực tiếp nâng cao độ tin cậy cảm nhận, song song với việc nâng cấp mô hình lưu trữ ba trạng thái đã đề xuất ở Mục~6.2.
+
+Trên cơ sở phản hồi này, nhóm đã hiện thực hóa ngay định hướng ``giải thích cách chấm điểm'' trên phiên bản web mà không phải chờ đến các nâng cấp lớn hơn về thuật toán. Cụ thể, tại các vị trí hiển thị chỉ số quan trọng --- ``Điểm phù hợp'' ở trang So khớp CV và ``Độ tương đồng'' ở trang Phân tích kỹ năng --- hệ thống bổ sung biểu tượng trợ giúp (tooltip) kèm chú giải ngắn gọn về ý nghĩa và cách tính của từng con số, dựa trên một bộ thuật ngữ dùng chung toàn ứng dụng: điểm phù hợp được tính theo trọng số của từng kỹ năng; độ tương đồng đo theo ngữ nghĩa (embedding) chứ không phải trùng khớp từ khóa; và trọng số phân biệt kỹ năng ``Bắt buộc'' với ``Ưa thích''. Mỗi chỉ số còn được kèm một dòng chú thích ngữ cảnh ngay dưới giá trị hiển thị (ví dụ ``Tính theo trọng số từng kỹ năng''). Ngoài ra, nhóm bổ sung một trang \textbf{Hướng dẫn sử dụng} riêng gồm quy trình bốn bước, bảng thuật ngữ và mục Hỏi--Đáp giải đáp trực tiếp các thắc mắc thường gặp như ``Điểm phù hợp được tính thế nào?'' và ``Làm sao để tăng điểm phù hợp?''. Những thay đổi này thu hẹp khoảng cách giữa con số thuật toán và mức độ hiểu của người dùng --- đúng vào nguyên nhân gốc khiến hạng mục độ tin cậy \% Matching bị đánh giá thấp; việc nâng cấp mô hình lưu trữ ba trạng thái (Mục~6.2) sẽ tiếp tục củng cố độ chính xác của chính con số đó.
 
 Về nhu cầu mở rộng dữ liệu thị trường, Bảng~\ref{tab:ux_market_wishlist} tổng hợp các loại thông tin người dùng mong muốn được bổ sung (câu hỏi cho phép chọn tối đa hai phương án).
 

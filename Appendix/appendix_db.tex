@@ -133,7 +133,7 @@ Nhóm ba bảng phụ trợ \texttt{courses}, \texttt{learning\_\allowbreak path
 
 \begin{itemize}
     \item \textbf{\texttt{courses}}: Mỗi bản ghi lưu metadata một khóa học gồm tiêu đề, nhà cung cấp (Coursera, Udemy, v.v.), đường dẫn nguồn, thời lượng (giờ), đánh giá sao, giá và mảng thẻ kỹ năng (\texttt{skills\_tags[]}) để đối chiếu với kỹ năng thiếu hụt trong Gap Report.
-    \item \textbf{\texttt{learning\_\allowbreak paths}}: Mỗi lộ trình học tập được định nghĩa bởi một \texttt{skill\_key} (tên kỹ năng chuẩn), cấp độ (Beginner/Intermediate/Advanced), thời gian ước tính và một tập hợp các khóa học được sắp xếp tuần tự theo \texttt{sort\_order}.
+    \item \textbf{\texttt{learning\_\allowbreak paths}}: Mỗi lộ trình học tập được định nghĩa bởi một \texttt{skill\_key} (tên kỹ năng chuẩn), cấp độ (Beginner/\allowbreak Intermediate/\allowbreak Advanced), thời gian ước tính và một tập hợp các khóa học được sắp xếp tuần tự theo \texttt{sort\_order}.
     \item \textbf{\texttt{path\_\allowbreak courses}}: Bảng cầu nối N-N liên kết \texttt{learning\_\allowbreak paths} và \texttt{courses}, lưu thêm trường \texttt{sort\_order} để đảm bảo thứ tự học tập logic trong lộ trình.
 \end{itemize}
 
