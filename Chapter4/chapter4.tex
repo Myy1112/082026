@@ -140,7 +140,14 @@ Thuật toán phân tích khoảng cách năng lực đóng vai trò cốt lõi 
 
 \subsection{Cài đặt Matching Engine tính độ phù hợp và liệt kê các kỹ năng còn thiếu}
 
-Sau khi kỹ năng được chuẩn hóa, bộ máy so khớp (Matching Engine) nạp tập kỹ năng yêu cầu cùng trọng số $w_i$ từ bảng \texttt{job\_group\_skill\_weights} và tính điểm tương thích theo quy trình sau:
+Sau khi kỹ năng được chuẩn hóa, hệ thống thực hiện bước lọc kỹ năng dựa trên \textbf{Coverage Rate} (Độ phổ biến) -- tức tỷ lệ số tin tuyển dụng trong cùng nhóm công việc có yêu cầu kỹ năng đó. Chỉ những kỹ năng xuất hiện trong ít nhất 10\% số tin tuyển dụng của nhóm mới được giữ lại. Bộ lọc này phục vụ hai mục tiêu:
+
+\begin{itemize}
+    \item \textbf{Giảm nhiễu thống kê:} Các kỹ năng xuất hiện rất thưa thớt thường phản ánh yêu cầu đặc thù không đại diện cho xu hướng thị trường; đưa chúng vào tính TF-IDF sẽ tạo ra trọng số IDF giả tạo cao không có cơ sở thực tế.
+    \item \textbf{Ổn định vector trọng số:} Giới hạn tập kỹ năng về những kỹ năng có đủ mức độ xuất hiện giúp phân phối trọng số $w_i$ ổn định hơn khi dữ liệu thị trường biến động theo thời gian.
+\end{itemize}
+
+Nhờ đó, chỉ những kỹ năng đủ tiêu chuẩn về độ phổ biến mới được nạp vào bộ máy so khớp (Matching Engine) cùng trọng số $w_i$ từ bảng \texttt{job\_group\_skill\_weights} để tính điểm tương thích theo quy trình sau:
 
 \begin{figure}[H]
 \centering

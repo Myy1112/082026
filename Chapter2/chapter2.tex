@@ -162,11 +162,14 @@ Màu sắc trên giao diện được quy chuẩn có ngữ nghĩa cố định:
 
 \subsection{Xác định yêu cầu nghiệp vụ của bài toán so khớp hồ sơ}
 
-Đánh giá mức độ tương thích giữa CV sinh viên và yêu cầu JD đòi hỏi giải quyết hai vấn đề cốt lõi:
+Đánh giá mức độ tương thích giữa CV sinh viên và yêu cầu của vị trí công việc mục tiêu đòi hỏi giải quyết ba vấn đề cốt lõi:
 \begin{itemize}
-    \item \textbf{Đo lường tương đồng ngữ nghĩa:} So sánh ý nghĩa kỹ năng ngay cả khi được viết khác nhau (ví dụ: ``JS'' và ``JavaScript'').
-    \item \textbf{Phân biệt tầm quan trọng kỹ năng:} Đánh trọng số cao cho kỹ năng hiếm, chuyên sâu (PyTorch, Kubernetes) so với kỹ năng phổ biến (Git, HTML).
+    \item \textbf{Trích xuất đầy đủ và chuẩn hóa kỹ năng:} Bóc tách chính xác các kỹ năng từ CV và mô tả công việc (JD) bất kể cách diễn đạt, viết tắt hay biến thể ngôn ngữ (ví dụ: ``JS'' và ``JavaScript'', ``Kỹ năng lãnh đạo'' và ``Leadership''), đồng thời ánh xạ về một từ điển kỹ năng chuẩn để đảm bảo tính nhất quán khi so sánh.
+    \item \textbf{Xác định tầm quan trọng của kỹ năng theo vị trí mục tiêu:} Không phải mọi kỹ năng đều có giá trị như nhau đối với một vị trí công việc cụ thể. Hệ thống cần xác định những kỹ năng vừa \textit{đủ phổ biến} -- xuất hiện trong đủ nhiều tin tuyển dụng của nhóm để có căn cứ thống kê -- vừa \textit{đặc trưng riêng} cho nhóm vị trí đó, phân biệt với các kỹ năng nền tảng chung xuất hiện đồng đều ở mọi vị trí IT. Chỉ những kỹ năng thỏa mãn cả hai tiêu chí này mới thực sự đại diện cho yêu cầu của vị trí mục tiêu và được ưu tiên trong kết quả phân tích khoảng cách năng lực.
+    \item \textbf{So khớp mức độ tương đồng ngữ nghĩa giữa kỹ năng sinh viên và kỹ năng quan trọng của vị trí:} Sau khi xác định được tập kỹ năng đại diện cùng mức độ quan trọng của từng kỹ năng, hệ thống tính điểm tương đồng ngữ nghĩa giữa kỹ năng sinh viên sở hữu và từng kỹ năng yêu cầu, từ đó tổng hợp thành điểm tương thích có trọng số và phân loại rõ kỹ năng đã đáp ứng, cần bổ sung hoặc còn thiếu.
 \end{itemize}
+
+Ba vấn đề trên liên kết chặt chẽ thành một quy trình khép kín: kết quả trích xuất và chuẩn hóa quyết định chất lượng đầu vào; việc xác định tầm quan trọng kỹ năng theo vị trí đảm bảo kết quả so khớp phản ánh đúng yêu cầu thực tế của thị trường; và bước so khớp ngữ nghĩa mang lại điểm tương thích khách quan làm cơ sở cho gợi ý phát triển năng lực.
 
 \subsection{Lý thuyết không gian vector và kỹ thuật tạo vector nhúng}
 
@@ -205,6 +208,45 @@ Trong đó $d = 384$ là số chiều của vector nhúng \cite{minilmmodel}.
     \text{IDF}(s_i, \mathcal{D}) = \log\left(\frac{N}{|\{d \in \mathcal{D} : s_i \in S_d\}|}\right)
 \end{equation}
 Trong đó $N$ là tổng số tin tuyển dụng và $|\{d \in \mathcal{D} : s_i \in S_d\}|$ là số tin tuyển dụng chứa kỹ năng $s_i$. Kỹ năng xuất hiện tràn lan có trọng số tiến về 0, trong khi kỹ năng chuyên sâu có trọng số cao để tạo lực đẩy quyết định cho điểm so khớp \cite{manning2008}.
+
+Tuy nhiên, việc áp dụng IDF trực tiếp trên toàn kho tin tuyển dụng chỉ phản ánh độ hiếm toàn cục của kỹ năng mà chưa gắn với \textit{ngữ cảnh nhóm công việc cụ thể}. Trong bài toán phân tích khoảng cách năng lực hướng đến một vị trí mục tiêu, hệ thống CareerNova xét kỹ năng theo \textbf{hai chiều thuộc tính} bổ trợ nhau:
+
+\begin{itemize}
+    \item \textbf{Độ phổ biến} $\text{Coverage}(s, t)$: tỷ lệ tin tuyển dụng trong nhóm công việc $t$ có yêu cầu kỹ năng $s$:
+    \begin{equation}
+        \text{Coverage}(s, t) = \frac{|\{j \in \mathcal{J}_t : s \in \text{Skills}(j)\}|}{|\mathcal{J}_t|}
+    \end{equation}
+    Chỉ kỹ năng đạt $\text{Coverage}(s, t) \geq \tau$ (mặc định $\tau = 0{,}1$, tức xuất hiện trong ít nhất 10\% số tin của nhóm) mới được đưa vào tập tính toán. Bộ lọc này loại bỏ các kỹ năng nhiễu do dữ liệu thưa, đảm bảo mỗi kỹ năng được đề xuất đều có căn cứ thống kê đủ vững.
+
+    \item \textbf{Độ đặc trưng} $\text{Distinctiveness}(s, t)$: trọng số TF-IDF tính theo đơn vị nhóm công việc, phản ánh mức độ kỹ năng $s$ đặc trưng cho nhóm $t$ so với các nhóm còn lại trong hệ thống:
+    \begin{equation}
+        \text{Distinctiveness}(s, t) = \bigl(1 + \ln n(s,t)\bigr) \times \ln\!\left(\frac{|T|}{|\{t' \in T : \text{Coverage}(s,t') \geq \tau\}|}\right)
+    \end{equation}
+    Trong đó $n(s,t)$ là số tin trong nhóm $t$ yêu cầu kỹ năng $s$, và $|T|$ là tổng số nhóm công việc. Thành phần IDF phạt các kỹ năng xuất hiện đồng đều khắp mọi nhóm (như \textit{Git}, \textit{Communication}) và nâng cao trọng số của kỹ năng chuyên biệt cho nhóm mục tiêu (như \textit{React.js} cho nhóm Frontend, \textit{Spring Boot} cho nhóm Backend Java).
+\end{itemize}
+
+Bảng~\ref{tab:skill_two_dim} minh họa cách bốn nhóm kỹ năng điển hình phân bố trong ma trận hai chiều này, làm rõ kỹ năng nào thực sự được ưu tiên trong kết quả Skill Gap:
+
+\begin{table}[H]
+\centering
+\caption{Ma trận phân loại kỹ năng theo Độ phổ biến và Độ đặc trưng trong bài toán Skill Gap.}
+\label{tab:skill_two_dim}
+\begin{tabular}{|p{2.0cm}|p{5.0cm}|p{5.0cm}|}
+\hline
+ & \textbf{Độ đặc trưng THẤP} & \textbf{Độ đặc trưng CAO} \\
+\hline
+\textbf{Độ phổ biến CAO} &
+\textit{Kỹ năng nền tảng chung}: Git, Communication, Linux --- xuất hiện đồng đều ở mọi nhóm IT; trọng số $w_i$ thấp do IDF nhỏ. &
+\textit{Kỹ năng cốt lõi nhóm}: React.js (Frontend), Spring Boot (Backend Java) --- vừa phổ biến trong nhóm, vừa đặc trưng; \textbf{ưu tiên cao trong Skill Gap}. \\
+\hline
+\textbf{Độ phổ biến THẤP} &
+\textit{Kỹ năng nhiễu}: rải rác không có hệ thống; bị loại bởi bộ lọc $\text{Coverage} \geq \tau$. &
+\textit{Kỹ năng chuyên sâu hiếm}: Rust, FPGA --- bị loại bởi bộ lọc $\tau$ để tránh nhiễu thống kê, dù có tính đặc trưng cao. \\
+\hline
+\end{tabular}
+\end{table}
+
+Trọng số $\text{Distinctiveness}(s,t)$ sau khi chuẩn hóa thành phân phối xác suất ($\sum_i w_i = 1$) trở thành tham số $w(s_i, d_j)$ trong công thức Match Score dưới đây, đảm bảo điểm tổng phù hợp phản ánh đúng mức độ ưu tiên thực tế của từng kỹ năng trong nhóm công việc mục tiêu.
 
 Tổng điểm phù hợp (\textbf{Match Score}) giữa CV và JD $d_j$ được tính bằng trung bình có trọng số IDF của các độ tương đồng kỹ năng tốt nhất \cite{manning2008}:
 \begin{equation}
