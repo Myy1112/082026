@@ -26,7 +26,14 @@ Bài toán nghiệp vụ cốt lõi của hệ thống CareerNova được xác 
 % ----------------------------------------------------------------
 \subsection{Yêu cầu chức năng}
 
-Dựa trên bài toán nghiệp vụ, các yêu cầu chức năng của hệ thống được xác định và phân nhóm theo từng tác nhân (Actor) tham gia vào hệ thống như trong Bảng~\ref{tab:functional_requirements}.
+Dựa trên bài toán nghiệp vụ, các yêu cầu chức năng của hệ thống được xác định và phân nhóm theo từng tác nhân (Actor) tham gia vào hệ thống. Hình~\ref{fig:usecase_diagram} khái quát các tương tác giữa hai Actor --- Sinh viên và Hệ thống ETL --- với CareerNova, đồng thời thể hiện các quan hệ \texttt{include} và \texttt{extend}; Bảng~\ref{tab:functional_requirements} liệt kê chi tiết từng Use Case theo nhóm chức năng.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{usecase_diagram}
+    \caption{Sơ đồ Use Case tổng quát của hệ thống CareerNova.}
+    \label{fig:usecase_diagram}
+\end{figure}
 
 \begin{longtable}{|L{1.5cm}|L{2.8cm}|L{9.2cm}|}
 \caption{Danh sách yêu cầu chức năng của hệ thống CareerNova.}
@@ -93,18 +100,9 @@ UC-20 & Hệ thống ETL & Chuẩn hóa, trích xuất thực thể kỹ năng v
 \end{longtable}
 
 % ----------------------------------------------------------------
-\subsection{Sơ đồ Use Case tổng quát}
+\subsection{Đặc tả các Use Case tiêu biểu}
 
-Trước khi xem đặc tả từng chức năng, Hình~\ref{fig:usecase_diagram} khái quát các tương tác giữa hai Actor, gồm Sinh viên và Hệ thống ETL, với CareerNova; sơ đồ cũng thể hiện các quan hệ \texttt{include} và \texttt{extend}. Ba bảng tiếp theo đi sâu vào các Use Case tiêu biểu.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.95\textwidth]{usecase_diagram}
-    \caption{Sơ đồ Use Case tổng quát của hệ thống CareerNova.}
-    \label{fig:usecase_diagram}
-\end{figure}
-
-Bảng~\ref{tab:uc09}, Bảng~\ref{tab:uc11} và Bảng~\ref{tab:uc16} trình bày đặc tả chi tiết cho ba Use Case quan trọng nhất của hệ thống; đặc tả đầy đủ cho các Use Case còn lại được trình bày trong Phụ lục~\ref{Appendix:usecase}.
+Trên cơ sở sơ đồ Use Case tổng quát ở Hình~\ref{fig:usecase_diagram}, Bảng~\ref{tab:uc09}, Bảng~\ref{tab:uc11} và Bảng~\ref{tab:uc16} trình bày đặc tả chi tiết cho ba Use Case quan trọng nhất của hệ thống; đặc tả đầy đủ cho các Use Case còn lại được trình bày trong Phụ lục~\ref{Appendix:usecase}.
 
 \begin{longtable}{|L{3.5cm}|L{10cm}|}
 \caption{Đặc tả Use Case UC-09: Tải lên CV và So khớp kỹ năng.}
