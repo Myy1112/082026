@@ -1,0 +1,81 @@
+\chapter{Trích đoạn mã nguồn minh họa}
+\label{Appendix:code}
+
+Phụ lục này tập hợp các trích đoạn mã nguồn và cấu trúc dữ liệu thực tế tương ứng với phần mã giả đã trình bày ở Chương~\ref{Chapter4}. Mã nguồn được giữ nguyên như trong hệ thống triển khai nhằm phục vụ đối chiếu chi tiết; phần thân luận văn chỉ trình bày mã giả để tập trung vào logic xử lý.
+
+\section{Giao diện Dashboard thị trường việc làm}
+
+\begin{lstlisting}[caption=Khởi tạo sáu truy vấn API song song trong MarketDashboard.tsx, label=lst:code_dashboard_promise]
+const [resStats, resTrends, resIndustries,
+       resHotJobs, resInDemand, resRising] = await Promise.all([
+  MarketDashboardApi.getStats(payload),
+  MarketDashboardApi.getTrends(payload),
+  MarketDashboardApi.getIndustryBreakdown(payload),
+  MarketDashboardApi.getHotJobs(payload),
+  MarketDashboardApi.getInDemandSkills(payload),
+  MarketDashboardApi.getRisingSkills(payload),
+]);
+\end{lstlisting}
+
+\begin{lstlisting}[caption=Kết xuất AreaChart xu hướng tuyển dụng bằng Recharts (trích MarketDashboard.tsx), label=lst:code_dashboard_areachart]
+<AreaChart data={trends.data}>
+  <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
+  <XAxis dataKey="label" tick={{ fontSize: 11 }} />
+  <YAxis tick={{ fontSize: 11 }} />
+  <Tooltip content={<CustomTooltip />} />
+  <Area type="monotone" dataKey="total_postings"
+        name="Tong tin tuyen dung" stroke="#3b82f6"
+        strokeWidth={2.5} fill="url(#gradPost)" />
+  <Area type="monotone" dataKey="remote_jobs"
+        name="Viec tu xa" stroke="#10b981"
+        strokeWidth={2.5} fill="url(#gradRemote)" />
+</AreaChart>
+\end{lstlisting}
+
+\section{Thuật toán phân tích khoảng cách năng lực}
+
+\begin{lstlisting}[caption=Ví dụ đầu ra JSON của bước trích xuất kỹ năng (Structured Output), label=lst:code_extract_json]
+[
+  {
+    "skill": "React.js",
+    "evidence": "Experienced in building frontend interfaces using React.js and Redux",
+    "confidence": 0.95
+  }
+]
+\end{lstlisting}
+
+\begin{lstlisting}[caption=Ví dụ cấu trúc JSON kết quả so khớp (radar\_data và gap\_report), label=lst:code_match_json]
+{
+  "match_score": 0.7852,
+  "radar_data": {
+    "matched_skills": [
+      {
+        "skill_id": 102,
+        "skill_name": "PostgreSQL",
+        "weight": 0.15,
+        "similarity": 1.0,
+        "matched_via": "PostgreSQL"
+      }
+    ]
+  },
+  "gap_report": {
+    "partially_matched_skills": [
+      {
+        "skill_id": 204,
+        "skill_name": "Docker",
+        "weight": 0.10,
+        "similarity": 0.65,
+        "matched_via": "Kubernetes"
+      }
+    ],
+    "missing_skills": [
+      {
+        "skill_id": 305,
+        "skill_name": "Go (Programming Language)",
+        "weight": 0.20,
+        "similarity": 0.12
+      }
+    ]
+  }
+}
+\end{lstlisting}

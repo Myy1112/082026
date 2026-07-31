@@ -75,34 +75,35 @@ Trong kịch bản sử dụng, sinh viên đăng ký hoặc đăng nhập, xác
 
 Giao diện MarketDashboard khởi tạo sáu truy vấn API song song (\texttt{Promise.all}) tương ứng với sáu endpoint của module \texttt{market-dashboard} phía Backend: \texttt{/stats} (thống kê tổng quan), \texttt{/trends} (xu hướng tuyển dụng), \texttt{/industries} (phân bổ thị trường), \texttt{/hot-jobs} (top vị trí được tuyển nhiều nhất), \texttt{/skills/in-demand} (top kỹ năng được yêu cầu) và \texttt{/skills/rising} (kỹ năng tăng trưởng nhanh). Cả sáu truy vấn dùng chung một đối tượng bộ lọc (khu vực, khoảng thời gian, loại hình công việc), đảm bảo mọi thành phần trực quan hóa luôn nhất quán theo cùng một lát cắt dữ liệu. Kết quả được kết xuất đồng thời bằng thư viện Recharts. Để hiện thực hóa luồng truy xuất này, hệ thống áp dụng cơ chế xử lý bất đồng bộ (Promise.all) nhằm giảm thiểu thời gian chờ tải trang:
 
-\begin{lstlisting}[caption=Khởi tạo sáu truy vấn API song song trong MarketDashboard.tsx]
-const [resStats, resTrends, resIndustries,
-       resHotJobs, resInDemand, resRising] = await Promise.all([
-  MarketDashboardApi.getStats(payload),
-  MarketDashboardApi.getTrends(payload),
-  MarketDashboardApi.getIndustryBreakdown(payload),
-  MarketDashboardApi.getHotJobs(payload),
-  MarketDashboardApi.getInDemandSkills(payload),
-  MarketDashboardApi.getRisingSkills(payload),
-]);
-\end{lstlisting}
+\vspace{1mm}
+\noindent\textbf{Mã giả --- khởi tạo sáu truy vấn API song song:}
+\begin{flushleft}
+\small\setlength{\parindent}{0pt}
+\texttt{payload} $\leftarrow$ bộ lọc \{khu vực, khoảng thời gian, loại hình\} \\
+\textbf{song song}, chờ tất cả hoàn tất: \\
+\hspace*{1.5em}\texttt{resStats} $\leftarrow$ \texttt{API.getStats(payload)} \\
+\hspace*{1.5em}\texttt{resTrends} $\leftarrow$ \texttt{API.getTrends(payload)} \\
+\hspace*{1.5em}\texttt{resIndustries} $\leftarrow$ \texttt{API.getIndustryBreakdown(payload)} \\
+\hspace*{1.5em}\texttt{resHotJobs} $\leftarrow$ \texttt{API.getHotJobs(payload)} \\
+\hspace*{1.5em}\texttt{resInDemand} $\leftarrow$ \texttt{API.getInDemandSkills(payload)} \\
+\hspace*{1.5em}\texttt{resRising} $\leftarrow$ \texttt{API.getRisingSkills(payload)} \\
+kết xuất đồng thời các thành phần trực quan hóa từ sáu kết quả.
+\end{flushleft}
+\noindent Mã nguồn đầy đủ: Phụ lục~\ref{Appendix:code} (Mã nguồn~\ref{lst:code_dashboard_promise}).
 
 Dựa trên thiết kế trực quan ở Chương 3, biểu đồ xu hướng được hiện thực hóa bằng thư viện Recharts với hai lớp vùng chồng nhau: tổng số tin tuyển dụng (xanh dương) và số vị trí làm việc từ xa (xanh lá), sử dụng gradient trong suốt để hai vùng không che khuất lẫn nhau:
 
-\begin{lstlisting}[caption=Kết xuất AreaChart xu hướng tuyển dụng bằng Recharts (trích MarketDashboard.tsx)]
-<AreaChart data={trends.data}>
-  <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
-  <XAxis dataKey="label" tick={{ fontSize: 11 }} />
-  <YAxis tick={{ fontSize: 11 }} />
-  <Tooltip content={<CustomTooltip />} />
-  <Area type="monotone" dataKey="total_postings"
-        name="Tong tin tuyen dung" stroke="#3b82f6"
-        strokeWidth={2.5} fill="url(#gradPost)" />
-  <Area type="monotone" dataKey="remote_jobs"
-        name="Viec tu xa" stroke="#10b981"
-        strokeWidth={2.5} fill="url(#gradRemote)" />
-</AreaChart>
-\end{lstlisting}
+\vspace{1mm}
+\noindent\textbf{Mã giả --- kết xuất biểu đồ vùng (AreaChart) xu hướng tuyển dụng:}
+\begin{flushleft}
+\small\setlength{\parindent}{0pt}
+vẽ \texttt{AreaChart} với dữ liệu \texttt{trends.data}: \\
+\hspace*{1.5em}trục hoành $\leftarrow$ nhãn thời gian (\texttt{label}) \\
+\hspace*{1.5em}vùng 1 $\leftarrow$ \texttt{total\_postings} --- tổng tin tuyển dụng (màu xanh dương, tô gradient) \\
+\hspace*{1.5em}vùng 2 $\leftarrow$ \texttt{remote\_jobs} --- số việc làm từ xa (màu xanh lá, tô gradient) \\
+\hspace*{1.5em}gắn \textit{tooltip} tùy biến hiển thị chi tiết khi di chuột.
+\end{flushleft}
+\noindent Mã nguồn đầy đủ: Phụ lục~\ref{Appendix:code} (Mã nguồn~\ref{lst:code_dashboard_areachart}).
 
 Kết quả hiển thị được đối chiếu với màn hình Dashboard tại Hình~\ref{fig:ui_market_dashboard}. Theo kịch bản sử dụng, sinh viên chọn bộ lọc khu vực, khoảng thời gian và loại hình công việc; giao diện cập nhật các thẻ tổng quan, xu hướng tuyển dụng, nhóm kỹ năng được yêu cầu và kỹ năng tăng trưởng để hỗ trợ quyết định học tập hoặc ứng tuyển.
 
@@ -125,16 +126,7 @@ Thuật toán phân tích khoảng cách năng lực đóng vai trò cốt lõi 
 \vspace{2mm}
 
 \vspace{2mm}
-Đọc văn bản thô từ CV hoặc JD và trích xuất danh sách kỹ năng theo đúng cấu trúc JSON sau. Mỗi kỹ năng phải đi kèm cụm từ bằng chứng được trích nguyên văn từ văn bản gốc:
-\begin{lstlisting}
-[
-  {
-    "skill": "React.js",
-    "evidence": "Experienced in building frontend interfaces using React.js and Redux",
-    "confidence": 0.95
-  }
-]
-\end{lstlisting}
+Đọc văn bản thô từ CV hoặc JD và trích xuất danh sách kỹ năng theo một cấu trúc JSON thống nhất. Kết quả là một mảng các đối tượng kỹ năng, mỗi đối tượng gồm ba trường: \texttt{skill} (tên kỹ năng), \texttt{evidence} (cụm từ bằng chứng được trích nguyên văn từ văn bản gốc) và \texttt{confidence} (độ tin cậy trong khoảng $[0,1]$). Một ví dụ JSON đầy đủ được trình bày ở Phụ lục~\ref{Appendix:code} (Mã nguồn~\ref{lst:code_extract_json}).
 \vspace{2mm}
 
 
@@ -233,42 +225,7 @@ Nhờ đó, chỉ những kỹ năng đủ tiêu chuẩn về độ phổ biến
         \end{equation}
     \end{itemize}
     \item \textbf{Cấu trúc đầu ra (JSON kết quả)}:
-    Kỹ năng được phân loại theo các ngưỡng giá trị $\text{MaxSim}(J_i)$ và lưu vào bảng \texttt{public.cv\_job\_matches} dưới dạng JSONB gồm hai trường \texttt{radar\_data} và \texttt{gap\_report}:
-\begin{lstlisting}
-{
-  "match_score": 0.7852,
-  "radar_data": {
-    "matched_skills": [
-      {
-        "skill_id": 102,
-        "skill_name": "PostgreSQL",
-        "weight": 0.15,
-        "similarity": 1.0,
-        "matched_via": "PostgreSQL"
-      }
-    ]
-  },
-  "gap_report": {
-    "partially_matched_skills": [
-      {
-        "skill_id": 204,
-        "skill_name": "Docker",
-        "weight": 0.10,
-        "similarity": 0.65,
-        "matched_via": "Kubernetes"
-      }
-    ],
-    "missing_skills": [
-      {
-        "skill_id": 305,
-        "skill_name": "Go (Programming Language)",
-        "weight": 0.20,
-        "similarity": 0.12
-      }
-    ]
-  }
-}
-\end{lstlisting}
+    Kỹ năng được phân loại theo các ngưỡng giá trị $\text{MaxSim}(J_i)$ và lưu vào bảng \texttt{public.cv\_job\_matches} dưới dạng JSONB gồm hai trường \texttt{radar\_data} và \texttt{gap\_report}. Cấu trúc kết quả gồm: \texttt{match\_score} (điểm phù hợp tổng thể trong $[0,1]$); \texttt{radar\_data.\allowbreak matched\_skills} (nhóm kỹ năng đạt); \texttt{gap\_report.\allowbreak partially\_matched\_skills} (nhóm kỹ năng đạt một phần); và \texttt{gap\_report.\allowbreak missing\_skills} (nhóm kỹ năng còn thiếu) --- mỗi kỹ năng kèm các trường \texttt{skill\_id}, \texttt{skill\_name}, \texttt{weight}, \texttt{similarity} (và \texttt{matched\_via} với kỹ năng đã khớp). Một ví dụ JSON đầy đủ được trình bày ở Phụ lục~\ref{Appendix:code} (Mã nguồn~\ref{lst:code_match_json}).
 \end{itemize}
 \vspace{2mm}
 
