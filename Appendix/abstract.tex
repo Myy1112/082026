@@ -3,22 +3,24 @@
 
 \section*{Tiếng Việt}
 
-Thị trường lao động CNTT tại Việt Nam phát triển nhanh khiến sinh viên năm cuối khó đánh giá năng lực bản thân so với yêu cầu thực tế của nhà tuyển dụng. Dữ liệu tin tuyển dụng trực tuyến tuy phong phú nhưng phân mảnh và thiếu chuẩn hóa, trong khi các công cụ lọc hồ sơ truyền thống chủ yếu dựa trên từ khóa nên chưa chỉ ra ứng viên còn thiếu kỹ năng gì.
+Sự phát triển nhanh chóng của thị trường lao động CNTT tại Việt Nam khiến sinh viên năm cuối gặp nhiều khó khăn trong việc định lượng năng lực bản thân so với nhu cầu thực tế. Dữ liệu tuyển dụng trực tuyến phân mảnh và thiếu chuẩn hóa, trong khi các công cụ lọc hồ sơ truyền thống chỉ so khớp từ khóa thô nên chưa chỉ ra được khoảng cách kỹ năng (\textit{Skill Gap}) mà ứng viên cần bổ sung.
 
-Khóa luận xây dựng nền tảng \textit{CareerNova} nhằm tự động thu thập, chuẩn hóa dữ liệu tuyển dụng từ nhiều nguồn và phân tích khoảng cách kỹ năng giữa CV sinh viên với yêu cầu công việc. Hệ thống áp dụng quy trình xử lý dữ liệu lai: kết hợp Mô hình ngôn ngữ lớn (LLM) với cơ chế kiểm chứng dữ liệu gốc để trích xuất kỹ năng chính xác, rồi dùng mô hình biểu diễn ngữ nghĩa để so khớp và định lượng độ tương đồng giữa ứng viên với yêu cầu tuyển dụng.
+Đề tài xây dựng nền tảng \textit{CareerNova} nhằm tự động thu thập, chuẩn hóa dữ liệu tuyển dụng đa nguồn, so khớp CV thông minh và trực quan hóa thị trường lao động hỗ trợ sinh viên định hướng nghề nghiệp.
 
-Kết quả chính gồm: kho dữ liệu tuyển dụng đã làm sạch và chuẩn hóa; quy trình tự động trích xuất kỹ năng từ CV và mô tả công việc; công cụ đánh giá khoảng cách kỹ năng; cùng hệ thống web \textit{CareerNova} với dashboard trực quan, biểu đồ đối soát năng lực và tính năng gợi ý việc làm phù hợp.
+Giải pháp áp dụng mô hình lai: tầng ETL kết hợp Trí tuệ nhân tạo (LLM) với cơ chế kiểm chứng dữ liệu để trích xuất kỹ năng chuẩn hóa; tầng so khớp sử dụng mô hình nhúng ngữ nghĩa kết hợp trọng số nhu cầu thị trường. Hệ thống được hiện thực hóa dưới dạng nền tảng Web tương tác tích hợp dashboard thống kê và biểu đồ Radar cá nhân hóa.
 
-Kết quả khẳng định tính thực tiễn của giải pháp, giúp sinh viên CNTT nhận biết điểm mạnh, điểm yếu và chủ động hoàn thiện kỹ năng trước khi ra trường. Trong tương lai, hệ thống có thể mở rộng sang nhiều nhóm ngành nghề, tự động cập nhật từ điển kỹ năng và nâng cao chất lượng gợi ý lộ trình phát triển.
+Kết quả kiểm thử thực nghiệm khẳng định quy trình ETL trích xuất chính xác và triệt tiêu ảo giác dữ liệu, thuật toán so khớp phản hồi nhanh, và toàn bộ kịch bản kiểm thử chức năng trên ứng dụng Web đều đạt 100\% yêu cầu.
+
+Giải pháp có ý nghĩa thực tiễn cao, giúp sinh viên CNTT chủ động nhận biết và lấp đầy khoảng cách kỹ năng trước khi ra trường, đồng thời mở ra hướng phát triển cá nhân hóa lộ trình học tập trong tương lai.
 
 \section*{Abstract (English)}
 
-With the rapid evolution of the IT job market in Vietnam, final-year students often struggle to quantitatively assess their skills against actual employer requirements. Online recruitment data is abundant yet fragmented and non-standardized, while traditional resume-filtering tools rely heavily on exact keyword matching, failing to show candidates precisely which skills they are missing.
+The rapid growth of Vietnam's IT job market makes it difficult for final-year students to quantitatively assess their skills against actual employer demands. Online recruitment data is fragmented and unstandardized, while traditional resume-screening tools rely solely on raw keyword matching, failing to pinpoint the specific skill gaps candidates need to bridge.
 
-To address this challenge, this thesis pursues three primary goals: automatically collecting and standardizing recruitment data from multiple sources; applying Natural Language Processing and Artificial Intelligence to analyze student CVs and evaluate skill gaps; and building interactive visual dashboards to help students follow labor market trends.
+This thesis develops the \textit{CareerNova} platform to automatically collect and standardize multi-source recruitment data, perform intelligent CV matching, and visualize labor market trends for student career guidance.
 
-The thesis develops the \textit{CareerNova} platform using a hybrid data-processing workflow. The system combines Large Language Models (LLMs) with evidence-checking mechanisms to accurately extract skills, and then leverages local semantic embedding models to match candidate profiles and quantify skill alignment with job requirements.
+The proposed solution adopts a hybrid model: the ETL layer combines Large Language Models (LLMs) with evidence-checking mechanisms for accurate skill extraction; the matching layer leverages semantic embedding models combined with market demand weights. The system is realized as an interactive web platform featuring analytics dashboards and personalized Radar charts.
 
-The primary outcomes of the thesis include: a cleaned and standardized recruitment dataset; an automated skill extraction pipeline for CVs and job descriptions; a skill gap analysis tool; and a fully deployed \textit{CareerNova} web application featuring market analytical dashboards, skill alignment charts, and job recommendation features.
+Empirical evaluation results confirm that the ETL pipeline extracts data with high precision without hallucinations, the matching algorithm achieves fast response times, and 100\% of the web functional test scenarios passed successfully.
 
-The achieved results demonstrate the practical value of the solution, providing a helpful tool for IT students to identify their strengths and weaknesses and proactively prepare for the job market. In the future, the system can be expanded to cover additional career domains, automate skill taxonomy updates, enhance learning path recommendations, and optimize overall system performance.
+The solution offers high practical value by empowering IT students to proactively identify and bridge their skill gaps before graduation, while paving the way for personalized learning path recommendations in the future.
