@@ -88,7 +88,25 @@ Từ Bảng~\ref{tab:related_platforms} và các nghiên cứu đã khảo sát,
 
 \subsection{Xác định yêu cầu nghiệp vụ thu thập dữ liệu tuyển dụng}
 
-Khi triển khai hệ thống thu thập thông tin tuyển dụng, việc lựa chọn phương pháp cào dữ liệu tĩnh dựa trên HTTP Requests hay cào dữ liệu động bằng trình duyệt không giao diện (Headless Browser) quyết định trực tiếp đến hiệu năng và độ ổn định của toàn hệ thống \cite{olston2010web}.
+Để xây dựng kho dữ liệu tuyển dụng phục vụ phân tích thị trường và đánh giá khoảng cách kỹ năng, hệ thống thu thập cần đáp ứng ba nhóm yêu cầu nghiệp vụ cốt lõi.
+
+Nhóm 1 — Tính đầy đủ và liên quan (Relevance \& Coverage): Dữ liệu thu thập phải phản ánh đúng thực trạng thị trường lao động CNTT tại Việt Nam. Điều này đặt ra ba yêu cầu cụ thể: (i) chỉ thu thập từ các nền tảng tuyển dụng uy tín, có lượng tin lớn và được nhà tuyển dụng thực sự sử dụng; (ii) bộ từ khóa đầu vào phải bao quát toàn bộ các nhóm vị trí phổ biến trong ngành CNTT và được cập nhật định kỳ theo thực tế thị trường, không dựa trên danh mục nghề nghiệp tĩnh có thể đã lỗi thời; (iii) mỗi tin tuyển dụng thu thập cần có đủ các trường thiết yếu phục vụ phân tích: chức danh công việc, mô tả yêu cầu kỹ năng, mức lương (nếu có), địa điểm, loại hình công việc và tên công ty.
+
+Nhóm 2 — Tính ổn định và bền vững (Robustness): Hệ thống phải hoạt động liên tục trong điều kiện môi trường thay đổi: (i) thích nghi được với cấu trúc HTML và cơ chế kết xuất khác nhau giữa các nền tảng, bao gồm cả trang tĩnh lẫn trang kết xuất bằng JavaScript; (ii) duy trì khả năng thu thập ổn định trong thời gian dài trước các cơ chế phát hiện và chặn bot mà các nền tảng tuyển dụng áp dụng.
+
+Nhóm 3 — Tính hiệu năng và vận hành (Performance \& Operability): Hệ thống được thiết kế để vận hành tự động hằng ngày trong phạm vi tài nguyên hợp lý: mỗi lần chạy hoàn thành trong 2–3 giờ, chỉ thu thập tin mới trong vòng 2–3 ngày gần nhất để tránh trùng lặp, và toàn bộ quy trình có thể lập lịch tự động mà không yêu cầu can thiệp thủ công trong điều kiện vận hành bình thường.
+
+Để đáp ứng đồng thời ba nhóm yêu cầu nêu trên, hệ thống ứng dụng các khái niệm và công nghệ sau:
+
+(1) Thu thập dữ liệu tĩnh (Static Scraping): Sử dụng thư viện Python Requests \cite{requestsdocs} gửi yêu cầu HTTP trực tiếp đến máy chủ để tải về mã nguồn HTML thô. Phương pháp này có tốc độ phản hồi nhanh và tiêu thụ tài nguyên thấp, phù hợp làm luồng ưu tiên cho các trang không dùng JavaScript động.
+
+(2) Thu thập dữ liệu động (Dynamic Scraping): Sử dụng Selenium \cite{webdriver} với Headless Browser để thực thi đầy đủ mã JavaScript và phân tích cây DOM hoàn chỉnh. Phương pháp này xử lý được các trang kết xuất phía máy khách (Client-Side Rendering) nhưng tiêu tốn tài nguyên hơn, do đó chỉ được kích hoạt khi luồng tĩnh không đáp ứng được.
+
+(3) Cơ chế dự phòng hai tầng (Two-tier Fallback Mechanism): Để cân bằng giữa hiệu năng và độ bền vững, hệ thống ưu tiên luồng tĩnh kết hợp thư viện \texttt{cloudscraper} \cite{cloudscraper} nhằm vượt các thử thách WAF Cloudflare dạng nhẹ; khi luồng tĩnh bị chặn, hệ thống tự động chuyển sang Selenium Headless Browser kèm Undetected ChromeDriver và cơ chế xoay vòng địa chỉ IP qua proxy \cite{webdriver}.
+
+(4) Luân phiên từ khóa theo thị trường thực tế (Dynamic Keyword Rotation): Thay vì dùng danh mục chức danh nghề nghiệp tĩnh, hệ thống duy trì và cập nhật định kỳ một bộ từ khóa IT tổng hợp từ các nền tảng tuyển dụng đang hoạt động, được luân phiên sử dụng theo thời gian để đảm bảo độ phủ đồng đều và tránh tập trung quá nhiều vào một nhóm vị trí.
+
+(5) Trích xuất trường thông tin có cấu trúc (Structured Field Extraction): Việc bóc tách các trường dữ liệu (chức danh, mô tả công việc, mức lương, địa điểm...) từ mã HTML thô được thực hiện thông qua kỹ thuật phân tích cây DOM kết hợp bộ chọn CSS/XPath, phổ biến với các thư viện như BeautifulSoup4 \cite{beautifulsoup}. Kỹ thuật này cho phép định vị chính xác vị trí từng trường dữ liệu trong cấu trúc trang, ngay cả khi HTML có nhiều lớp lồng nhau, đảm bảo yêu cầu về tính đầy đủ trường thông tin đã nêu ở Nhóm 1.
 
 \begin{figure}[H]
     \centering
@@ -97,20 +115,31 @@ Khi triển khai hệ thống thu thập thông tin tuyển dụng, việc lựa
     \label{fig:static_vs_dynamic}
 \end{figure}
 
-Phương pháp cào dữ liệu tĩnh sử dụng các thư viện như Python Requests gửi yêu cầu trực tiếp đến máy chủ nhằm tải về mã nguồn HTML thô \cite{requestsdocs}. Phương pháp này sở hữu ưu điểm vượt trội về tốc độ phản hồi nhanh và tiêu thụ tài nguyên cực kỳ thấp. Tuy nhiên, cào tĩnh bất lực trước các ứng dụng kết xuất phía máy khách (Client-Side Rendering) thông qua JavaScript \cite{webdriver}. Ngược lại, cào dữ liệu động bằng Selenium sử dụng Headless Browser cho phép thực thi đầy đủ mã JavaScript và phân tích cây DOM hoàn chỉnh, nhưng tiêu tốn bộ nhớ RAM lớn và tốc độ xử lý chậm hơn \cite{webdriver}.
+\subsection{Xác định yêu cầu xử lý và làm sạch dữ liệu tuyển dụng}
 
-Bên cạnh đó, các rào cản bảo mật từ nền tảng tuyển dụng như tường lửa ứng dụng Web (WAF Cloudflare) thường ngăn chặn bot bằng các thử thách JavaScript hoặc Rate Limiting \cite{cloudflarebots}. Để tối ưu hóa hiệu năng và bảo đảm tính bền vững, hệ thống thiết lập một \textbf{cơ chế dự phòng hai tầng (Two-tier Fallback Mechanism)}: ban đầu ưu tiên sử dụng luồng cào tĩnh qua Requests kết hợp thư viện \texttt{cloudscraper} để vượt thử thách WAF dạng nhẹ với tốc độ tối đa \cite{cloudscraper}; khi luồng tĩnh bị chặn, hệ thống sẽ tự động kích hoạt luồng dự phòng chuyển sang Selenium Headless Browser (kèm Undetected ChromeDriver) cùng cơ chế xoay vòng địa chỉ IP qua proxy \cite{webdriver}.
+Dữ liệu tuyển dụng thô thu thập từ nhiều nguồn (ITViec, VietnamWorks, CareerViet, LinkedIn...) thường ở dạng phi cấu trúc, chứa nhiều ký tự rác HTML/CSS và không nhất quán về định dạng. Để chuẩn hóa dữ liệu đầu vào cho các phân hệ phân tích và so khớp, hệ thống cần đáp ứng năm yêu cầu nghiệp vụ cốt lõi sau.
 
-\subsection{Xác định yêu cầu xử lý và tổ chức dữ liệu thu thập}
+Yêu cầu 1 — Làm sạch văn bản và loại bỏ rác giao diện: Dữ liệu cào về cần được loại bỏ hoàn toàn mã thẻ HTML, CSS, JavaScript và các lỗi mã hóa ký tự phát sinh khi thu thập từ nhiều nguồn khác nhau, trước khi đưa vào các bước xử lý tiếp theo.
 
-Dữ liệu tuyển dụng thô thu thập từ nhiều nguồn (ITViec, VietnamWorks, LinkedIn...) có định dạng HTML và cấu trúc không đồng nhất. Yêu cầu xử lý bao gồm:
-\begin{itemize}
-    \item Loại bỏ thẻ HTML rác, ký tự đặc biệt và khoảng trắng thừa.
-    \item Tự động phát hiện và loại bỏ các tin tuyển dụng trùng lặp.
-    \item Trích xuất các trường thông tin có cấu trúc (chức danh, kỹ năng, mức lương, địa điểm).
-    \item Chuẩn hóa các biến thể tên gọi kỹ năng về một từ điển thống nhất (ví dụ: ``ReactJS'', ``React.js'' đều quy về thực thể chuẩn).
-    \item Lưu trữ kết quả vào cơ sở dữ liệu quan hệ phục vụ truy vấn và trực quan hóa tức thời.
-\end{itemize}
+Yêu cầu 2 — Khử trùng lặp tin tuyển dụng: Hệ thống cần phát hiện và loại bỏ các tin tuyển dụng xuất hiện lặp lại trên cùng một nguồn hoặc giữa các nguồn tuyển dụng khác nhau, tránh làm sai lệch kết quả thống kê thị trường.
+
+Yêu cầu 3 — Cấu trúc hóa thông tin và trích xuất thực thể: Các trường thông tin quan trọng (chức danh, kỹ năng yêu cầu, loại hình công việc, kinh nghiệm, phúc lợi, địa điểm) cần được bóc tách chính xác từ văn bản mô tả công việc dạng tự do.
+
+Yêu cầu 4 — Chuẩn hóa dữ liệu số và thời gian: Các mức lương và thời gian đăng tin dạng tương đối cần được quy đổi về định dạng chuẩn thống nhất để phục vụ thống kê và truy vấn.
+
+Yêu cầu 5 — Kiểm định dữ liệu và xử lý ngoại lệ: Hệ thống cần lọc bỏ các tin rác, quá ngắn hoặc lỗi định dạng mà không làm gián đoạn quy trình xử lý tự động.
+
+Để đáp ứng đồng thời năm yêu cầu nêu trên, hệ thống ứng dụng các khái niệm và công nghệ sau:
+
+(1) Phân tích cú pháp HTML/DOM (HTML Parsing): Sử dụng kỹ thuật phân tích cây DOM kết hợp bộ chọn CSS/XPath, phổ biến với các thư viện như BeautifulSoup4 \cite{beautifulsoup}, để bóc tách nội dung và loại bỏ mã thẻ rác khỏi trang HTML thô, đáp ứng Yêu cầu 1.
+
+(2) Chuẩn hóa Unicode (Unicode Normalization): Áp dụng các thuật toán chuẩn hóa bảng mã ký tự theo chuẩn Unicode nhằm khắc phục lỗi hiển thị/mã hóa ký tự phát sinh khi cào dữ liệu từ nhiều nguồn khác nhau, đáp ứng Yêu cầu 1.
+
+(3) So khớp độ tương đồng văn bản (Text Similarity: Cosine/Jaccard): Các độ đo định lượng mức độ giống nhau giữa hai đoạn văn bản dựa trên biểu diễn vector hoặc tập từ \cite{reimers2019}, làm cơ sở lý thuyết cho bài toán phát hiện nội dung trùng lặp giữa các tin tuyển dụng, đáp ứng Yêu cầu 2.
+
+(4) Trích xuất thông tin có cấu trúc bằng mô hình ngôn ngữ lớn (LLM Structured Outputs): Sử dụng tính năng ép kiểu đầu ra theo JSON Schema của Gemini API \cite{geministructured}, cho phép bóc tách các thực thể kỹ năng, loại hình công việc, kinh nghiệm và phúc lợi từ văn bản tự do thành dữ liệu có cấu trúc, đáp ứng Yêu cầu 3.
+
+(5) Cơ sở dữ liệu quan hệ hỗ trợ dữ liệu bán cấu trúc (PostgreSQL + JSONB): Khả năng lưu trữ kết hợp dữ liệu quan hệ và dữ liệu dạng JSON linh hoạt trong cùng một hệ quản trị cơ sở dữ liệu \cite{kimballcaserta}, làm nền tảng lưu trữ cho dữ liệu đã được chuẩn hóa và các trường kết quả tính toán, phục vụ Yêu cầu 4 và Yêu cầu 5.
 
 \subsection{Quy trình trích xuất, biến đổi và lưu trữ dữ liệu (ETL Pipeline)}
 
