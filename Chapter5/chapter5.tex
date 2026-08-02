@@ -5,16 +5,16 @@ Chương này mô tả môi trường, phương pháp và các kịch bản ki�
 
 \section{Môi trường triển khai thử nghiệm hệ thống}
 
-Để tiến hành thử nghiệm và đánh giá hệ thống CareerNova, phiên bản thử nghiệm được triển khai trên một Droplet của DigitalOcean tại khu vực Singapore (SGP1). Môi trường được triển khai theo kiến trúc container hóa; các dịch vụ giao tiếp nội bộ trên mạng Docker riêng, còn lưu lượng HTTP/HTTPS từ Internet được tiếp nhận qua lớp proxy.
+Để tiến hành thử nghiệm và đánh giá hệ thống CareerNova, phiên bản thử nghiệm được triển khai trên một máy chủ ảo (VM) của Microsoft Azure tại khu vực Korea Central. Môi trường được triển khai theo kiến trúc container hóa; các dịch vụ giao tiếp nội bộ trên mạng Docker riêng, còn lưu lượng HTTP/HTTPS từ Internet được tiếp nhận qua lớp proxy.
 
 \begin{itemize}
     \item \textbf{Cấu hình phần cứng máy chủ (Server Cloud)}:
     \begin{itemize}
         \item Hệ điều hành: Ubuntu 22.04 LTS x64.
-        \item Máy chủ ảo: DigitalOcean Droplet \texttt{nova-vps} tại khu vực SGP1.
-        \item Vi xử lý: 2 vCPU (Intel).
-        \item Bộ nhớ RAM: 8 GB.
-        \item Ổ cứng: 160 GB.
+        \item Máy chủ ảo: Microsoft Azure VM \texttt{nove-vps} tại khu vực Korea Central (chuẩn Standard B2als v2).
+        \item Vi xử lý: 2 vCPU (x64).
+        \item Bộ nhớ RAM: 4 GB.
+        \item Ổ cứng: 30 GB (Standard SSD).
     \end{itemize}
     \item \textbf{Môi trường ảo hóa và container}:
     \begin{itemize}
@@ -31,11 +31,11 @@ Chương này mô tả môi trường, phương pháp và các kịch bản ki�
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.72\textwidth]{server_specs_terminal.png}
-    \caption{Bằng chứng thô của môi trường triển khai: kết quả các lệnh \texttt{lsb\_release}, \texttt{free -h}, \texttt{df -h} và \texttt{lscpu} thực thi trực tiếp trên máy chủ \texttt{nova-vps}}
+    \caption{Thông số cấu hình thực tế của máy chủ \texttt{nove-vps} trên Microsoft Azure Portal}
     \label{fig:server_specs}
 \end{figure}
 
-Hình~\ref{fig:server_specs} chứng minh cấu hình phần cứng và hệ điều hành nêu trên là thông số thực tế của máy chủ đang vận hành chứ không phải giá trị khai báo: hệ điều hành Ubuntu 22.04.5 LTS, 2 vCPU, 7,8~GiB RAM và ổ đĩa 155~GB (trên tổng dung lượng Droplet 160~GB). Đây là mốc cấu hình dùng để diễn giải mọi số liệu hiệu năng ở Mục 5.3, đặc biệt là chi phí tính vector nhúng khá cao do máy chủ chỉ có 2 nhân xử lý và không trang bị GPU.
+Hình~\ref{fig:server_specs} chứng minh cấu hình phần cứng và hệ điều hành nêu trên là thông số thực tế của máy chủ đang vận hành chứ không phải giá trị khai báo: hệ điều hành Ubuntu 22.04 LTS, 2 vCPU, 4~GiB RAM và ổ đĩa 30~GB. Đây là mốc cấu hình dùng để diễn giải mọi số liệu hiệu năng ở Mục 5.3, đặc biệt là chi phí tính vector nhúng khá cao do máy chủ chỉ có 2 nhân xử lý và không trang bị GPU.
 
 Việc đánh giá được tổ chức theo ba lớp độc lập để tránh suy diễn từ một loại bằng chứng sang loại kết luận khác. Kiểm thử chức năng trả lời hệ thống có thực hiện đúng hành vi đã đặc tả hay không; đo hiệu năng phản ánh độ trễ thực tế trên môi trường triển khai; còn đánh giá thuật toán xem xét chất lượng đầu ra so với nhãn chuẩn hoặc các trường hợp đối soát. Các số liệu đều được gắn với thời điểm đo và cấu hình ở Mục 5.1 để bảo đảm có thể lặp lại.
 
@@ -198,7 +198,7 @@ Sự chênh lệch giữa tổng số tin tích lũy (7.245) và số tin ngư�
 
 Với mỗi chức năng, các chỉ số tổng hợp gồm: số lần gọi, thời gian trung bình, P95, thời gian lớn nhất và tỷ lệ lỗi. Mỗi chức năng được đo 20 lượt để chỉ số P95 (bách phân vị thứ 95) có ý nghĩa đại diện; riêng phép đo cache hit cũng gồm 20 lượt phân tích lặp lại trên cùng một CV nhằm minh họa tác động của cơ chế cache. Do dịch vụ so khớp chạy trên máy chủ chỉ có 2 vCPU không GPU, các lượt đo cache miss được thực hiện tuần tự và có giãn cách hợp lý giữa các lần gọi để phản ánh đúng độ trễ của một phiên phân tích đơn lẻ, tránh hiện tượng nghẽn do gọi dồn đồng thời.
 
-Trước hết, sáu endpoint dữ liệu của Dashboard thị trường được đo trực tiếp trên môi trường triển khai thật (\texttt{career-nova.online}, máy chủ DigitalOcean SGP1) bằng 20 lượt gọi HTTPS liên tiếp cho mỗi endpoint với bộ lọc 30 ngày. Kết quả được trình bày trong Bảng~\ref{tab:api_performance_dashboard}.
+Trước hết, sáu endpoint dữ liệu của Dashboard thị trường được đo trực tiếp trên môi trường triển khai thật (\texttt{career-nova.online}, máy chủ Microsoft Azure Korea Central) bằng 20 lượt gọi HTTPS liên tiếp cho mỗi endpoint với bộ lọc 30 ngày. Kết quả được trình bày trong Bảng~\ref{tab:api_performance_dashboard}.
 
 \begin{table}[H]
 \caption{Thời gian phản hồi thực đo của sáu API Dashboard thị trường (tháng 07/2026)}
