@@ -109,7 +109,7 @@ Kết quả hiển thị được đối chiếu với màn hình Dashboard tạ
 
 \subsection{Hiện thực hóa chức năng tìm kiếm job, lưu job và quản lý danh sách CV}
 
-Sau khi xem Dashboard, sinh viên có thể tìm việc theo từ khóa, kỹ năng và địa điểm; PostgreSQL được truy vấn qua Prisma ORM, còn kết quả có thể sắp xếp theo thời gian đăng, mức lương hoặc mức độ phù hợp. Người dùng có thể lưu tin quan tâm để theo dõi, sau đó tải lên, đổi tên, xóa hoặc chọn một CV mặc định trong danh sách \texttt{user\_cvs}. Khi chọn CV và nhóm việc mục tiêu, yêu cầu được chuyển sang Matching Service để phân tích ngữ nghĩa, tách biệt với thao tác tìm kiếm danh sách việc làm. Chuỗi thao tác này tạo thành kịch bản sử dụng xuyên suốt từ khám phá thị trường, lựa chọn nhóm nghề đến nhận báo cáo đối soát năng lực.
+Sau khi xem Dashboard, sinh viên có thể tìm việc theo từ khóa, kỹ năng và địa điểm; PostgreSQL được truy vấn qua Prisma ORM, còn kết quả có thể sắp xếp theo thời gian đăng hoặc mức độ phù hợp. Người dùng có thể lưu tin quan tâm để theo dõi, sau đó tải lên, đổi tên, xóa hoặc chọn một CV mặc định trong danh sách \texttt{user\_cvs}. Khi chọn CV và nhóm việc mục tiêu, yêu cầu được chuyển sang Matching Service để phân tích ngữ nghĩa, tách biệt với thao tác tìm kiếm danh sách việc làm. Chuỗi thao tác này tạo thành kịch bản sử dụng xuyên suốt từ khám phá thị trường, lựa chọn nhóm nghề đến nhận báo cáo đối soát năng lực.
 
 \section{Xây dựng thuật toán phân tích khoảng cách năng lực}
 \label{sec:skill_algorithm}
