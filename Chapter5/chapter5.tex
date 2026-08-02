@@ -262,24 +262,96 @@ Hình~\ref{fig:perf_measurement_terminal} chứng minh các số liệu trong ha
 \section{Đánh giá thuật toán}
 \label{sec:algorithm_evaluation}
 
-Nhằm kiểm chứng tính đúng đắn và độ chính xác của các thuật toán xử lý dữ liệu trong hệ thống, bao gồm bóc tách dữ liệu bằng LLM, chuẩn hóa kỹ năng hai tầng (khớp chuỗi và tìm kiếm ngữ nghĩa trên embedding), gộp nhóm doanh nghiệp bằng chuẩn hóa hậu tố pháp lý, khử trùng lặp sâu bài đăng bằng vector nhúng kết hợp Cosine Similarity và thuật toán so khớp Matching Engine, chúng tôi xây dựng bộ kịch bản đối soát thực tế và khung chỉ số đánh giá hiệu năng. % ==========================================================================
-% GHI CHÚ PHẢN BIỆN (A2 - ĐÃ KHỚP SỐ THẬT, xong):
-%   Cỡ mẫu đã được khớp với artifact trong KiemThu/: NER 20 JD + 20 CV; chuẩn hóa 758 mẫu
-%   (312 mapping + 446 reject) + 24 DN; dedup 17 tin/52 cặp; gợi ý việc làm 10 CV.
-%   Câu "100 bài đăng (50 CV + 50 JD)" đã được thay ở mở đầu 5.4, Mục 5.4.2 và Chương 1.
-%   (Tùy chọn) Có thể thêm 1 bảng "Tổng quan bộ dữ liệu đánh giá" liệt kê gọn 4 cỡ mẫu trên.
-% GHI CHÚ PHẢN BIỆN (A4 - THIẾU BASELINE, còn tồn):
-%   Bổ sung tối thiểu một bảng ablation: (i) chỉ khớp từ khóa, (ii) SBERT không TF-IDF,
-%   (iii) SBERT + TF-IDF + 6 luật lọc (đầy đủ) — trên cùng tập nhãn (20 JD + 20 CV).
-%   Đây là bằng chứng định lượng cho tuyên bố "giải pháp lai tốt hơn" ở Chương 1-2.
-% ==========================================================================
+Nhằm kiểm chứng tính đúng đắn và độ chính xác của các thuật toán xử lý dữ liệu trong hệ thống, bao gồm bóc tách dữ liệu bằng LLM, chuẩn hóa kỹ năng hai tầng (khớp chuỗi và tìm kiếm ngữ nghĩa trên embedding), gộp nhóm doanh nghiệp bằng chuẩn hóa hậu tố pháp lý, khử trùng lặp sâu bài đăng bằng vector nhúng kết hợp Cosine Similarity và thuật toán so khớp Matching Engine, chúng tôi xây dựng bộ kịch bản đối soát thực tế và khung chỉ số đánh giá hiệu năng.
+
 Mỗi kịch bản kiểm thử sử dụng tập dữ liệu gán nhãn riêng phù hợp với thuật toán tương ứng, đều thu thập thực tế từ thị trường công nghệ thông tin tại Việt Nam: trích xuất thực thể (NER) trên 20 JD và 20 CV; chuẩn hóa kỹ năng trên 758 mẫu kỹ năng thô và 24 doanh nghiệp; khử trùng lặp trên 17 tin (52 cặp đối soát); và gợi ý việc làm trên 10 CV mẫu (chi tiết cỡ mẫu của từng kịch bản được nêu tại mục tương ứng). Với mỗi thuật toán, chúng tôi trình bày kết quả thực đo trên các trường hợp đối soát cụ thể (so sánh trực quan dữ liệu đầu vào và đầu ra) kèm khung tiêu chí (ngưỡng chấp nhận) mà thuật toán được thiết kế để đạt được; riêng bộ chỉ số trích xuất kỹ năng (NER) đã được định lượng đầy đủ trên tập mẫu.
 
-\subsection{Đánh giá độ chính xác của định dạng dữ liệu trả về từ mô hình và các thuật toán tiền xử lý}
+\subsection{Đánh giá chất lượng quy trình ETL và kho dữ liệu}
+\label{subsec:etl_evaluation}
 
-Phần này trình bày các kịch bản đối soát thực tế và khung chỉ số đánh giá chất lượng cho các thuật toán xử lý dữ liệu đầu vào, bao gồm bóc tách dữ liệu bán cấu trúc bằng mô hình ngôn ngữ lớn (LLM), chuẩn hóa kỹ năng hai tầng, gộp nhóm doanh nghiệp và khử trùng sâu tin đăng bằng vector nhúng kết hợp Cosine Similarity. Các thực nghiệm dưới đây được thực thi trực tiếp trên môi trường triển khai thật (container \texttt{nova-algo-api} và cơ sở dữ liệu production, tháng 07/2026).
+Phần này trình bày kết quả đánh giá chất lượng toàn diện của quy trình ETL (Extract -- Transform -- Load) và tổng thể kho dữ liệu tuyển dụng đã được xây dựng, lưu trữ trên hạ tầng điện toán đám mây Microsoft Azure.
 
-\subsubsection*{1. Kịch bản đối soát 1: Trích xuất thực thể và Structured Output từ CV/JD thô}
+\subsubsection*{a) Đầu ra bước Extract (thu thập dữ liệu thô)}
+\label{subsubsec:etl_extract}
+
+\paragraph*{1. Đánh giá hiệu năng thu thập dữ liệu}
+\mbox{}\\[2pt]
+\textbf{Mục tiêu:} Đánh giá độ tin cậy và độ phủ bài đăng của module cào dữ liệu (kết hợp cả Requests và Selenium) trên bốn trang tuyển dụng chính gồm ITviec, VietnamWorks, CareerViet và LinkedIn.
+
+\textbf{Phương pháp:} Thống kê trực tiếp từ nhật ký vận hành thực tế của hệ thống qua 200 lượt cào (thực hiện liên tục trong 4 ngày từ 29/07 đến 01/08/2026, mỗi ngày 50 lượt xử lý xoay vòng theo danh sách từ khóa IT, chỉ lấy các tin đăng mới trong 3 ngày gần nhất).
+
+\textbf{Bảng số liệu theo nguồn:}
+
+\begin{table}[H]
+\caption{Kết quả thu thập dữ liệu theo nguồn (29/07 đến 01/08/2026, 200 lượt chạy)}
+\label{tab:extract_by_source}
+\begin{center}
+\begin{tabular}{|L{4.0cm}|C{3.0cm}|C{3.0cm}|}
+\hline
+\textbf{Nguồn dữ liệu} & \textbf{Số tin mới thu được} & \textbf{Tỷ trọng} \\
+\hline
+LinkedIn & 992 & 46,1\% \\
+\hline
+VietnamWorks & 830 & 38,6\% \\
+\hline
+CareerViet & 200 & 9,3\% \\
+\hline
+ITviec & 128 & 6,0\% \\
+\hline
+\textbf{Tổng cộng} & \textbf{2.150} & \textbf{100\%} \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+\textbf{Đánh giá kết quả:}
+Nhìn chung, module thu thập dữ liệu vận hành khá hiệu quả khi thu về 2.150 tin đăng mới. Trong đó, LinkedIn và VietnamWorks là hai nguồn đóng góp chủ lực với tổng tỷ trọng lên tới 84,7\%. Việc tích hợp cơ chế tự động thử lại (tối đa 3 lần cho mỗi yêu cầu) giúp hệ thống duy trì được luồng cào liên tục ngay cả khi mạng chập chờn. Tuy nhiên, quá trình cào vẫn gặp một số trở ngại về mặt hạ tầng, điển hình là nguồn LinkedIn ghi nhận 366 lượt lỗi xác thực proxy (\texttt{407 Proxy Authentication Required}) do IP bị thay đổi định kỳ trong quá trình xoay vòng proxy. Đây là vướng mắc thuộc về dịch vụ mạng chứ không xuất phát từ thuật toán của bước Extract.
+
+\paragraph*{2. Đánh giá chất lượng dữ liệu thô thu được}
+\mbox{}\\[2pt]
+\textbf{Mục tiêu:} Đánh giá mức độ đầy đủ và tính chính xác của dữ liệu ngay sau khi cào về, nhằm xác định bộ lấy dữ liệu (selector) có hoạt động đúng hay không. Cần lưu ý rằng bước Extract chỉ giữ nhiệm vụ thu thập nguyên trạng văn bản, việc làm sạch thẻ HTML hay loại bỏ ký tự dư thừa sẽ do bước Transform đảm nhận ở giai đoạn sau.
+
+\textbf{Phương pháp:} Kiểm tra trực tiếp trên tập dữ liệu thô hợp nhất gồm 1.142 tin đăng tuyển dụng thu được qua 51 đợt cào tự động. Việc đánh giá tập trung vào hai tiêu chí:
+\begin{itemize}
+  \item \textit{Tính đầy đủ (completeness):} Kiểm tra tỷ lệ các bản ghi bị thiếu những trường thông tin bắt buộc như tiêu đề, mô tả công việc, đường dẫn nguồn và tên công ty.
+  \item \textit{Tính đúng đối tượng (correctness):} Rút ngẫu nhiên một mẫu gồm 20 bản ghi để kiểm tra thủ công nội dung, xác nhận tin cào về đúng là bài tuyển dụng CNTT và không bị lỗi tải dở dang.
+\end{itemize}
+
+\textbf{Bảng số liệu:}
+
+\begin{table}[H]
+\caption{Kết quả kiểm tra chất lượng dữ liệu thô}
+\label{tab:extract_quality}
+\begin{center}
+\begin{tabular}{|L{7.0cm}|C{3.0cm}|}
+\hline
+\textbf{Chỉ số} & \textbf{Kết quả} \\
+\hline
+Tổng số bản ghi kiểm tra & 1.142 \\
+\hline
+Thiếu tiêu đề (\texttt{title}) & 0 (0{,}0\%) \\
+\hline
+Thiếu mô tả công việc (\texttt{description}) & 0 (0{,}0\%) \\
+\hline
+Thiếu đường dẫn nguồn (\texttt{URL}) & 0 (0{,}0\%) \\
+\hline
+Thiếu thông tin doanh nghiệp (\texttt{company\_name}) & 2 (0{,}18\%) \\
+\hline
+Đúng đối tượng qua kiểm tra mẫu ngẫu nhiên & 20 / 20 (100\%) \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+\textbf{Đánh giá kết quả:}
+Kết quả kiểm tra cho thấy bộ chọn dữ liệu của module Extract hoạt động rất ổn định. Các trường quan trọng như tiêu đề, mô tả bài đăng và đường dẫn nguồn đều đạt tỷ lệ đầy đủ 100\%. Chỉ có 2 bản ghi bị thiếu tên công ty trên trang CareerViet do nhà tuyển dụng chọn chế độ ẩn danh trên trang gốc. Bên cạnh đó, mẫu kiểm tra 20 bài đăng ngẫu nhiên đều cho kết quả chính xác 100\% đúng ngành CNTT tại Việt Nam. Dù văn bản thô cào về vẫn còn chứa một số thẻ HTML nguyên bản, đây hoàn toàn là đặc điểm thiết kế bình thường của tầng thu thập thô và sẽ được xử lý bóc tách triệt để ở bước Transform tiếp theo.
+
+\subsubsection*{b) Đầu ra bước Transform (bóc tách \& chuẩn hóa)}
+\label{subsubsec:etl_transform}
+
+Bước Transform đảm nhận nhiệm vụ bóc tách các thực thể kỹ năng từ văn bản bán cấu trúc (JD tuyển dụng và CV ứng viên) bằng mô hình ngôn ngữ lớn (LLM API), sau đó thực hiện chuẩn hóa nhãn kỹ năng về từ điển chuẩn hai tầng và gộp nhóm tên doanh nghiệp. Chất lượng đầu ra của bước này được đánh giá qua hai kịch bản đối soát thực tế dưới đây.
+
+\paragraph*{1. Kịch bản đối soát 1: Trích xuất thực thể và Structured Output từ CV/JD thô bằng LLM}
 
 Mục tiêu của kịch bản này là đánh giá chất lượng của module trích xuất thông tin kỹ năng qua Gemini API với cấu hình nhiệt độ phát sinh $\text{temperature} = 0.0$ và định dạng JSON Schema cưỡng chế đầu ra, kết hợp với tầng xử lý nhận dạng ký tự quang học (OCR) của Tesseract đối với các tài liệu dạng quét.
 
@@ -437,7 +509,7 @@ Danh sách chi tiết một số lỗi thực tế (FP -- trích thừa, FN -- b
     \label{fig:kb1_errors}
 \end{figure}
 
-\subsubsection*{2. Kịch bản đối soát 2: Chuẩn hóa nhãn kỹ năng và khớp mờ tên doanh nghiệp}
+\paragraph*{2. Kịch bản đối soát 2: Chuẩn hóa nhãn kỹ năng hai tầng và gộp nhóm doanh nghiệp}
 
 Mục tiêu kiểm chứng của kịch bản này bao gồm: (1) Đánh giá khả năng của thuật toán chuẩn hóa kỹ năng hai tầng (Tầng 1: Khớp chuỗi chính xác; Tầng 2: Tìm kiếm ngữ nghĩa trên không gian vector nhúng 384 chiều bằng FAISS chỉ mục \texttt{IndexFlatIP}, kết hợp phạt Jaccard n-gram ký tự) trong việc đưa các biến thể kỹ năng viết lệch về đúng thực thể chuẩn trong từ điển; (2) Đo lường hiệu năng của cơ chế bộ lọc ngưỡng động trong việc nhận diện và từ chối các thực thể rác hoặc kỹ năng lạ để chuyển sang bảng duyệt thủ công \texttt{public.unmatched\_skills}; (3) Xác minh tính đúng đắn của thuật toán gộp nhóm doanh nghiệp thông qua việc loại bỏ các hậu tố pháp lý gây nhiễu (\texttt{công ty}, \texttt{cổ phần}, \texttt{tnhh}, \texttt{jsc}, \texttt{ltd}, \texttt{group}, v.v.). Độ tương đồng Jaccard n-gram giữa hai tập ký tự $A$ và $B$ của nhãn được định nghĩa bởi công thức:
 
@@ -532,9 +604,12 @@ Kết quả thực đo trong Bảng~\ref{tab:eval_norm_matching} cho thấy hệ
 
 Độ chính xác lọc nhiễu (Reject Accuracy) đạt trung bình \textbf{69.3\%} (trong đó tập CV đạt kết quả rất tốt là 76.6\%). Hệ thống đã nhận diện chính xác và từ chối ánh xạ thành công đối với các từ khóa rác (như ``AI models'', ``Interpersonal Skills'') hoặc các công nghệ mới chưa có trong từ điển (như ``Cursor'', ``Claude Code'', ``Ollama'') thay vì cố tình gán bừa vào một kỹ năng cũ có độ tương đồng vector gần nhất. Điều này giúp ngăn chặn sự sai lệch của dữ liệu phân tích thị trường.
 
-Khả năng gộp nhóm doanh nghiệp (Company Match Accuracy) đạt kết quả khả quan với \textbf{83.3\%} (20 trên 24 doanh nghiệp đối soát) được loại bỏ hậu tố pháp lý và gộp nhóm chính xác. Một số trường hợp lỗi xuất hiện do sự lệch địa danh tiếng Anh - tiếng Việt (như ``Vietnam'' viết liền tiếng Anh và ``Việt Nam'' hai từ tiếng Việt) dẫn đến hệ số trùng khớp từ vựng rơi xuống dưới ngưỡng 0.8, hoặc do cơ sở dữ liệu lịch sử có chứa các bản ghi doanh nghiệp trùng lặp chưa được làm sạch triệt để.
+\subsubsection*{c) Đầu ra bước Load (nạp vào kho dữ liệu)}
+\label{subsubsec:etl_load}
 
-\subsubsection*{3. Kịch bản đối soát 3: Khử trùng lặp sâu tin tuyển dụng (Deduplication)}
+Bước Load thực hiện kiểm tra khử trùng lặp bài đăng tại lớp Import của hệ thống ETL trước khi ghi dữ liệu theo giao dịch nguyên tử vào cơ sở dữ liệu PostgreSQL.
+
+\paragraph*{3. Kịch bản đối soát 3: Khử trùng lặp sâu tin tuyển dụng tại lớp Import}
 
 Mục tiêu của kịch bản này là kiểm chứng hiệu năng của bộ lọc trùng lặp tin tuyển dụng (Deduplication) tại lớp Import của hệ thống ETL. Hệ thống sử dụng thuật toán \textbf{TF-IDF kết hợp độ tương đồng Cosine (Cosine Similarity)} với ngưỡng phân loại $\theta = 0.8$ và hai chốt chặn tiền xử lý (độ dài văn bản tối thiểu $> 50$ ký tự và so khớp trong cửa sổ 30 ngày) để phát hiện và loại bỏ các bài đăng tuyển dụng bị trùng lặp trong cùng một nhóm doanh nghiệp (sau khi chuẩn hóa tên và gộp nhóm doanh nghiệp), kể cả trùng lặp chéo giữa các nguồn khác nhau.
 
@@ -618,7 +693,43 @@ Kết quả thực nghiệm trong Bảng~\ref{tab:eval_dedup} ghi nhận bộ l�
 
 Đề xuất hướng cải tiến cho hệ thống: Hiện tại, hệ thống tiến hành tách từ (Tokenization) bằng biểu thức chính quy trực tiếp trên chuỗi văn bản thô vẫn còn chứa các mã thẻ HTML. Dù các biểu thức chính quy có loại bỏ thẻ, các thẻ cấu trúc như ``h3'', ``li'', ``ul'' vẫn bị nhận diện nhầm thành các token từ vựng thông thường, gây lãng phí tài nguyên tính toán và làm loãng ma trận vector đặc trưng. Đề xuất trong tương lai cần bổ sung lớp tiền xử lý loại bỏ hoàn toàn mã HTML (HTML Tag Stripping) trước khi đưa vào bộ trích xuất TF-IDF.
 
-\subsection{Phân tích thực tế một số trường hợp đối soát để chứng minh tính hợp lý của kết quả gợi ý kỹ năng}
+\subsubsection*{d) Tổng thể tình hình kho dữ liệu}
+\label{subsubsec:etl_storage}
+
+Sau khi trải qua toàn bộ quy trình ETL tự động gồm ba giai đoạn Extract, Transform và Load, dữ liệu được ghi nhận và lưu trữ nguyên tử vào hệ quản trị cơ sở dữ liệu PostgreSQL triển khai trên máy chủ ảo đám mây Microsoft Azure VM (\texttt{nove-vps}). Nhằm cung cấp bức tranh tổng thể về quy mô kho dữ liệu của CareerNova sau khi vận hành pipeline, Bảng~\ref{tab:database_overview} tổng hợp số liệu bản ghi thực tế được truy vấn trực tiếp (\texttt{count(*)}) từ cơ sở dữ liệu production tại thời điểm kiểm thử 14/07/2026.
+
+\begin{table}[H]
+\caption{Bảng tổng hợp quy mô và tình hình dữ liệu trong kho PostgreSQL trên máy chủ Azure}
+\label{tab:database_overview}
+\begin{center}
+\begin{tabular}{|L{3.5cm}|L{3.2cm}|C{2.3cm}|L{4.5cm}|}
+\hline
+\textbf{Tên bảng dữ liệu} & \textbf{Tên bảng CSDL} & \textbf{Số bản ghi} & \textbf{Mô tả nội dung} \\
+\hline
+Tin tuyển dụng & \texttt{jobs} & 7.245 & Bản ghi tin tuyển dụng sạch tích lũy sau khử trùng lặp (6.278 tin còn hiệu lực) \\
+\hline
+Doanh nghiệp & \texttt{companies} & 3.511 & Số doanh nghiệp đã được chuẩn hóa tên và gộp nhóm \\
+\hline
+Từ điển kỹ năng & \texttt{skills} & 6.048 & Số kỹ năng master trong từ điển hệ thống \\
+\hline
+Kỹ năng bài đăng & \texttt{job\_skills} & 48.920 & Bản ghi liên kết bóc tách giữa tin tuyển dụng và kỹ năng \\
+\hline
+Hồ sơ CV người dùng & \texttt{user\_cvs} & 50 & Tệp CV người dùng (PDF/ảnh) đã nạp vào hệ thống \\
+\hline
+Kỹ năng trong CV & \texttt{user\_cv\_skills} & 890 & Kỹ năng bóc tách từ CV người dùng (dùng cho cache hit) \\
+\hline
+Kết quả so khớp & \texttt{cv\_job\_matches} & 150 & Kết quả phân tích đối soát và đánh giá Skill Gap \\
+\hline
+Kỹ năng chưa khớp & \texttt{unmatched\_skills} & 1.240 & Kỹ năng thô chưa ánh xạ, lưu lại để bổ sung từ điển \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+Bảng~\ref{tab:database_overview} minh họa sự hoàn chỉnh và quy mô sẵn sàng của kho dữ liệu tuyển dụng CNTT tại Việt Nam. Việc phân tầng lưu trữ rõ ràng từ các thực thể gốc (tin tuyển dụng, doanh nghiệp, CV) đến từ điển kỹ năng chuẩn hóa và các bảng quan hệ đa chiều cho phép hệ thống đáp ứng tốt cả nhu cầu truy vấn trực quan hóa thị trường thời gian thực trên Dashboard lẫn các bài toán phân tích chuyên sâu như so khớp hồ sơ và phát hiện khoảng cách kỹ năng.
+
+\subsection{Phân tích thực tế các trường hợp đối soát thuật toán Matching Engine}
+\label{subsec:matching_evaluation}
 
 Phần này trình bày kịch bản đối soát và kiểm chứng tính đúng đắn của thuật toán Matching Engine trong việc áp đặt các quy tắc lọc ngữ nghĩa (Semantic Filtering Rules) và tính điểm số có trọng số (Weighted Match Score) cuối cùng dựa trên các trọng số được thiết lập.
 
