@@ -38,6 +38,8 @@ Hệ thống đã được triển khai và kiểm thử trên môi trường th
 
     \item \textbf{Cơ chế Đề xuất khóa học (Course Recommendation) cơ bản}: Thuật toán hiện tại chủ yếu sử dụng phương pháp Lọc dựa trên Nội dung (Content-based Filtering) thông qua đối sánh thẻ kỹ năng (skill\_tags). Hệ thống chưa triển khai các thuật toán đề xuất nâng cao như Collaborative Filtering do chưa tích lũy đủ dữ liệu tương tác người dùng (Cold-start problem).
 
+    \item \textbf{Khả năng phát hiện trùng lặp tin tuyển dụng đa nguồn song ngữ (Bilingual / Cross-lingual Duplicates)}: Thuật toán TF-IDF + Cosine Similarity tại tầng 2 của khâu Import vận hành dựa trên tần suất từ vựng (Lexical matching). Do đó, khi cùng một vị trí tuyển dụng được đăng tải bằng hai ngôn ngữ khác nhau trên hai sàn khác nhau (như bài đăng Tiếng Anh trên ITViec/LinkedIn và bài đăng Tiếng Việt trên VietnamWorks/TopCV), hệ thống chưa thể nhận diện trùng lặp do tập từ vựng hai ngôn ngữ hoàn toàn rời rạc (điểm Cosine sụt giảm xuống dưới 0.30).
+
     \item \textbf{Quy trình thu thập dữ liệu (ETL)}: Việc crawl dữ liệu việc làm từ các nguồn công khai hiện chỉ phục vụ mục đích nghiên cứu học thuật, với tần suất lấy mẫu được giới hạn (rate-limit) để không ảnh hưởng đến máy chủ nguồn. Tuy nhiên, nếu triển khai thực tế trên quy mô thương mại, cần xây dựng các thỏa thuận chia sẻ dữ liệu (Data Sharing Agreements/API đối tác) để đảm bảo tính pháp lý và ổn định của luồng dữ liệu.
 \end{itemize}
 
@@ -65,6 +67,8 @@ Dựa trên nền tảng kỹ thuật và dữ liệu đã xây dựng, cùng v�
 
 \begin{enumerate}
     \item \textbf{Mở rộng đa ngành nghề}: Cập nhật cây phân loại (taxonomy) và huấn luyện thêm các mô hình nhúng để hỗ trợ phân tích dữ liệu tuyển dụng ở các lĩnh vực khác như Tài chính, Marketing, Y tế và Giáo dục, đồng thời mở rộng danh sách nguồn thu thập để tăng độ phủ thị trường.
+
+    \item \textbf{Nâng cấp thuật toán khử trùng lặp bằng mô hình nhúng ngữ nghĩa đa ngôn ngữ (Multilingual Dense Embeddings)}: Tích hợp các mô hình nhúng ngữ nghĩa đa ngôn ngữ như \texttt{multilingual-e5} hoặc \texttt{text-embedding-3-small} vào tầng 2 của thuật toán Deduplication tại lớp Import để biểu diễn văn bản Tiếng Anh và Tiếng Việt trong cùng một không gian vector nhúng đa chiều, giúp hệ thống phát hiện trùng lặp bài đăng đa nguồn bất kể rào cản ngôn ngữ với chi phí tính toán tối ưu.
 
     \item \textbf{Tự động hóa vòng lặp cải thiện từ điển kỹ năng}: Xây dựng quy trình bán tự động khai thác bảng \texttt{unmatched\_skills}, kết hợp tần suất xuất hiện, điểm tương đồng gần nhất và xác nhận của LLM để đề xuất bổ sung kỹ năng mới vào từ điển chuẩn hóa theo chu kỳ. Quy trình này giúp hệ thống tự thích nghi với các công nghệ mới nổi trên thị trường mà không cần can thiệp thủ công.
 
