@@ -156,3 +156,124 @@ Hai bảng phụ trợ phục vụ vận hành và cải thiện chất lượng
     \item \textbf{\texttt{unmatched\_\allowbreak skills}}: Ghi lại các cụm từ kỹ năng thô từ văn bản JD hoặc CV mà Pipeline không thể chuẩn hóa thành công vào từ điển \texttt{skills} (điểm tương đồng dưới ngưỡng). Bảng này là đầu vào quan trọng cho quy trình mở rộng từ điển định kỳ.
     \item \textbf{\texttt{search\_\allowbreak group\_\allowbreak keywords}}: Ánh xạ từ khóa tìm kiếm của người dùng hoặc tiêu đề tin tuyển dụng sang nhóm ngành chuẩn hóa (\texttt{group\_key}) tương ứng.
 \end{itemize}
+
+% --- Bảng 12-13: industries, company_industries ---
+\subsubsection*{12--13. Nhóm bảng Ngành nghề}
+
+Hai bảng \texttt{industries} và \texttt{company\_\allowbreak industries} lưu trữ danh mục ngành nghề chuẩn hóa và quan hệ nhiều-nhiều giữa doanh nghiệp và ngành nghề hoạt động.
+
+\begin{footnotesize}\begin{longtable}{|L{3.5cm}|L{2.0cm}|L{3.0cm}|L{5.5cm}|}
+\caption{Cấu trúc bảng \texttt{industries} (Danh mục ngành nghề).}
+\label{tab:industries} \\
+\hline
+\textbf{Tên trường} & \textbf{Kiểu dữ liệu} & \textbf{Ràng buộc} & \textbf{Ý nghĩa} \\
+\hline
+\endfirsthead
+\hline
+\textbf{Tên trường} & \textbf{Kiểu dữ liệu} & \textbf{Ràng buộc} & \textbf{Ý nghĩa} \\
+\hline
+\endhead
+\texttt{industry\_id} & serial & PK, tự tăng & Định danh duy nhất ngành nghề. \\
+\hline
+\texttt{industry\_name} & varchar(255) & NOT NULL, UNIQUE & Tên ngành nghề chuẩn hóa. \\
+\hline
+\end{longtable}
+\end{footnotesize}
+
+\begin{footnotesize}\begin{longtable}{|L{3.5cm}|L{2.0cm}|L{3.0cm}|L{5.5cm}|}
+\caption{Cấu trúc bảng \texttt{company\_\allowbreak industries} (Quan hệ doanh nghiệp--ngành nghề).}
+\label{tab:company_industries} \\
+\hline
+\textbf{Tên trường} & \textbf{Kiểu dữ liệu} & \textbf{Ràng buộc} & \textbf{Ý nghĩa} \\
+\hline
+\endfirsthead
+\hline
+\textbf{Tên trường} & \textbf{Kiểu dữ liệu} & \textbf{Ràng buộc} & \textbf{Ý nghĩa} \\
+\hline
+\endhead
+\texttt{company\_id} & bigint & PK, FK $\rightarrow$ companies ON DELETE CASCADE & ID doanh nghiệp. \\
+\hline
+\texttt{industry\_id} & integer & PK, FK $\rightarrow$ industries ON DELETE CASCADE & ID ngành nghề. \\
+\hline
+\end{longtable}
+\end{footnotesize}
+
+% --- Bảng 14-15: benefits, job_benefits ---
+\subsubsection*{14--15. Nhóm bảng Phúc lợi}
+
+Hai bảng \texttt{benefits} và \texttt{job\_\allowbreak benefits} lưu danh mục phúc lợi chuẩn hóa và quan hệ nhiều-nhiều giữa tin tuyển dụng và phúc lợi kèm cờ đánh dấu suy luận tự động.
+
+\begin{footnotesize}\begin{longtable}{|L{3.5cm}|L{2.0cm}|L{3.0cm}|L{5.5cm}|}
+\caption{Cấu trúc bảng \texttt{benefits} (Danh mục phúc lợi).}
+\label{tab:benefits} \\
+\hline
+\textbf{Tên trường} & \textbf{Kiểu dữ liệu} & \textbf{Ràng buộc} & \textbf{Ý nghĩa} \\
+\hline
+\endfirsthead
+\hline
+\textbf{Tên trường} & \textbf{Kiểu dữ liệu} & \textbf{Ràng buộc} & \textbf{Ý nghĩa} \\
+\hline
+\endhead
+\texttt{benefit\_id} & serial & PK, tự tăng & Định danh duy nhất phúc lợi. \\
+\hline
+\texttt{benefit\_name} & varchar(255) & NOT NULL, UNIQUE & Tên phúc lợi chuẩn hóa. \\
+\hline
+\texttt{category} & varchar(100) & NULL & Nhóm phân loại phúc lợi. \\
+\hline
+\texttt{created\_at} & timestamp & Tự động & Thời điểm tạo bản ghi. \\
+\hline
+\end{longtable}
+\end{footnotesize}
+
+\begin{footnotesize}\begin{longtable}{|L{3.5cm}|L{2.0cm}|L{3.0cm}|L{5.5cm}|}
+\caption{Cấu trúc bảng \texttt{job\_\allowbreak benefits} (Quan hệ tin tuyển dụng--phúc lợi).}
+\label{tab:job_benefits} \\
+\hline
+\textbf{Tên trường} & \textbf{Kiểu dữ liệu} & \textbf{Ràng buộc} & \textbf{Ý nghĩa} \\
+\hline
+\endfirsthead
+\hline
+\textbf{Tên trường} & \textbf{Kiểu dữ liệu} & \textbf{Ràng buộc} & \textbf{Ý nghĩa} \\
+\hline
+\endhead
+\texttt{job\_id} & bigint & PK, FK $\rightarrow$ jobs ON DELETE CASCADE & Tin tuyển dụng liên kết. \\
+\hline
+\texttt{benefit\_id} & integer & PK, FK $\rightarrow$ benefits ON DELETE CASCADE & Phúc lợi liên kết. \\
+\hline
+\texttt{is\_inferred} & boolean & DEFAULT false & Cờ đánh dấu phúc lợi do hệ thống tự suy luận (không trích dẫn trực tiếp từ JD). \\
+\hline
+\end{longtable}
+\end{footnotesize}
+
+% --- Bảng 16: unmatched_skill_sources ---
+\subsubsection*{16. Bảng \texttt{unmatched\_\allowbreak skill\_\allowbreak sources} (Nguồn gốc kỹ năng không khớp)}
+
+Bảng chi tiết hóa nguồn gốc của từng cụm từ kỹ năng không khớp được ghi nhận trong \texttt{unmatched\_skills}, cho biết kỹ năng đó xuất hiện từ tin tuyển dụng hay CV ứng viên nào, số lần xuất hiện và điểm tương đồng cao nhất đã tìm được.
+
+\begin{footnotesize}\begin{longtable}{|L{3.5cm}|L{2.0cm}|L{3.0cm}|L{5.5cm}|}
+\caption{Cấu trúc bảng \texttt{unmatched\_\allowbreak skill\_\allowbreak sources}.}
+\label{tab:unmatched_skill_sources} \\
+\hline
+\textbf{Tên trường} & \textbf{Kiểu dữ liệu} & \textbf{Ràng buộc} & \textbf{Ý nghĩa} \\
+\hline
+\endfirsthead
+\hline
+\textbf{Tên trường} & \textbf{Kiểu dữ liệu} & \textbf{Ràng buộc} & \textbf{Ý nghĩa} \\
+\hline
+\endhead
+\texttt{source\_id} & bigint & PK & ID của tài liệu nguồn (job\_id hoặc cv\_id). \\
+\hline
+\texttt{unmatched\_id} & integer & PK, FK $\rightarrow$ unmatched\_skills ON DELETE CASCADE & Kỹ năng không khớp tương ứng. \\
+\hline
+\texttt{source\_type} & varchar(50) & PK, NOT NULL & Loại nguồn: \texttt{'job'} hoặc \texttt{'cv'}. \\
+\hline
+\texttt{occurrence\_count} & integer & DEFAULT 1 & Số lần kỹ năng này xuất hiện từ nguồn đó. \\
+\hline
+\texttt{max\_similarity\_score} & numeric(4,3) & NULL & Điểm tương đồng cao nhất đã đạt được khi so khớp. \\
+\hline
+\texttt{first\_seen} & timestamp & Tự động & Lần đầu tiên ghi nhận. \\
+\hline
+\texttt{last\_seen} & timestamp & Tự động & Lần gần nhất ghi nhận. \\
+\hline
+\end{longtable}
+\end{footnotesize}

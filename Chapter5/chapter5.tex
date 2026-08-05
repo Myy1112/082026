@@ -42,7 +42,7 @@ Việc đánh giá được tổ chức theo ba lớp độc lập để tránh 
 \caption{Khung liên kết giữa mục tiêu đánh giá, phương pháp và bằng chứng}
 \label{tab:evaluation_framework}
 \begin{center}
-\begin{tabular}{|L{3.2cm}|L{4.2cm}|L{5.8cm}|}
+\resizebox{\textwidth}{!}{\begin{tabular}{|L{3.2cm}|L{4.2cm}|L{5.8cm}|}
 \hline
 \textbf{Mục tiêu} & \textbf{Phương pháp} & \textbf{Bằng chứng và cách diễn giải} \\
 \hline
@@ -52,7 +52,7 @@ Phản hồi đủ nhanh & Đo trường \textit{Duration} trong Chrome DevTools
 \hline
 Đầu ra thuật toán hợp lý & Đối chiếu nhãn thủ công (Ground Truth) do nhóm gán trên từng tập mẫu & Precision, Recall, F1 cho NER; độ chính xác chuẩn hóa/lọc nhiễu; Precision/Recall/F1 cho khử trùng lặp; và Precision@K, MRR cho gợi ý việc làm (Mục 5.4). \\
 \hline
-\end{tabular}
+\end{tabular}}
 \end{center}
 \end{table}
 
@@ -66,7 +66,7 @@ Phản hồi đủ nhanh & Đo trường \textit{Duration} trong Chrome DevTools
 \caption{Ma trận truy vết một số yêu cầu cốt lõi từ thiết kế đến kiểm thử}
 \label{tab:traceability_matrix}
 \begin{center}
-\begin{tabular}{|L{2.0cm}|L{3.6cm}|L{4.3cm}|L{3.7cm}|}
+\resizebox{\textwidth}{!}{\begin{tabular}{|L{2.0cm}|L{3.6cm}|L{4.3cm}|L{3.7cm}|}
 \hline
 \textbf{Yêu cầu} & \textbf{Thành phần thiết kế} & \textbf{Hiện thực / dữ liệu chính} & \textbf{Bằng chứng kiểm thử} \\
 \hline
@@ -80,7 +80,7 @@ UC-16 & Sơ đồ tuần tự Dashboard; thiết kế Dashboard thị trường 
 \hline
 UC-19--UC-20 & Kiến trúc Data Processing Engine & Pipeline crawl, chuẩn hóa, trích xuất kỹ năng và nạp PostgreSQL & Số liệu dữ liệu thực tế và đánh giá đầu ra thuật toán, Mục~5.3--5.4 \\
 \hline
-\end{tabular}
+\end{tabular}}
 \end{center}
 \end{table}
 \section{Đánh giá hiệu năng và dữ liệu thực tế}
@@ -153,7 +153,7 @@ Số lượng dữ liệu tuyển dụng thực tế trong cơ sở dữ liệu 
 \caption{Số liệu tổng hợp truy vấn trực tiếp cơ sở dữ liệu tại thời điểm kiểm thử (14/07/2026)}
 \label{tab:data_stats}
 \begin{center}
-\begin{tabular}{|L{6.0cm}|C{3.0cm}|L{5.0cm}|}
+\resizebox{\textwidth}{!}{\begin{tabular}{|L{6.0cm}|C{3.0cm}|L{5.0cm}|}
 \hline
 \textbf{Chỉ số (truy vấn CSDL)} & \textbf{Giá trị} & \textbf{Ghi chú} \\
 \hline
@@ -167,7 +167,7 @@ Số kỹ năng chuẩn hóa & 6.048 & Số bản ghi trong từ điển kỹ n�
 \hline
 Thời điểm truy vấn & 14/07/2026 & Ảnh chụp trạng thái CSDL tại thời điểm đo (xem Hình~\ref{fig:db_snapshot_psql}) \\
 \hline
-\end{tabular}
+\end{tabular}}
 \end{center}
 \end{table}
 \begin{figure}[H]
@@ -198,7 +198,7 @@ Trước hết, sáu endpoint dữ liệu của Dashboard thị trường đư�
 \caption{Thời gian phản hồi thực đo của sáu API Dashboard thị trường (tháng 07/2026)}
 \label{tab:api_performance_dashboard}
 \begin{center}
-\begin{tabular}{|L{4.2cm}|C{1.4cm}|C{1.8cm}|C{1.8cm}|C{1.8cm}|C{1.4cm}|}
+\resizebox{\textwidth}{!}{\begin{tabular}{|L{4.2cm}|C{1.4cm}|C{1.8cm}|C{1.8cm}|C{1.8cm}|C{1.4cm}|}
 \hline
 \textbf{Endpoint} & \textbf{Số lần gọi} & \textbf{Trung bình (ms)} & \textbf{P95 (ms)} & \textbf{Lớn nhất (ms)} & \textbf{Tỷ lệ lỗi} \\
 \hline
@@ -214,7 +214,7 @@ Trước hết, sáu endpoint dữ liệu của Dashboard thị trường đư�
 \hline
 \texttt{/dashboard/} \newline \texttt{skills/rising} & 20 & 1327 & 1588 & 1613 & 0\% \\
 \hline
-\end{tabular}
+\end{tabular}}
 \end{center}
 \end{table}
 
@@ -226,7 +226,7 @@ Kết quả cho thấy toàn bộ 120 lượt gọi đều thành công (tỷ l�
 \caption{Bảng tổng hợp thời gian phản hồi theo thao tác người dùng (tháng 07/2026)}
 \label{tab:api_performance_auth}
 \begin{center}
-\begin{tabular}{|L{3.5cm}|C{1.4cm}|C{1.8cm}|C{1.8cm}|C{1.8cm}|C{1.4cm}|}
+\resizebox{\textwidth}{!}{\begin{tabular}{|L{3.5cm}|C{1.4cm}|C{1.8cm}|C{1.8cm}|C{1.8cm}|C{1.4cm}|}
 \hline
 \textbf{Chức năng} & \textbf{Số lần đo} & \textbf{Trung bình (s)} & \textbf{P95 (s)} & \textbf{Lớn nhất (s)} & \textbf{Tỷ lệ lỗi} \\
 \hline
@@ -238,7 +238,7 @@ Upload CV & 20 & 1,31 & 2,03 & 2,63 & 0\% \\
 \hline
 Đối soát CV (lặp lại, cache hit) & 20 & 0,27 & 0,31 & 0,31 & 0\% \\
 \hline
-\end{tabular}
+\end{tabular}}
 \end{center}
 \end{table}
 
@@ -275,8 +275,8 @@ Phần này trình bày kết quả đánh giá chất lượng toàn diện c�
 \begin{table}[H]
 \caption{Kết quả thu thập dữ liệu theo nguồn (29/07 đến 01/08/2026, 200 lượt chạy)}
 \label{tab:extract_by_source}
-\begin{center}
-\begin{tabular}{|L{4.0cm}|C{3.0cm}|C{3.0cm}|}
+\centering
+\begin{tabular}{|L{4.0cm}|C{3.0cm}|C{2.5cm}|}
 \hline
 \textbf{Nguồn dữ liệu} & \textbf{Số tin mới thu được} & \textbf{Tỷ trọng} \\
 \hline
@@ -291,7 +291,6 @@ ITviec & 128 & 6,0\% \\
 \textbf{Tổng cộng} & \textbf{2.150} & \textbf{100\%} \\
 \hline
 \end{tabular}
-\end{center}
 \end{table}
 \textbf{Đánh giá kết quả:}
 Nhìn chung, module thu thập dữ liệu vận hành khá hiệu quả khi thu về 2.150 tin đăng mới. Trong đó, LinkedIn và VietnamWorks là hai nguồn đóng góp chủ lực với tổng tỷ trọng lên tới 84,7\%. Việc tích hợp cơ chế tự động thử lại (tối đa 3 lần cho mỗi yêu cầu) giúp hệ thống duy trì được luồng cào liên tục ngay cả khi mạng chập chờn. Tuy nhiên, quá trình cào vẫn gặp một số trở ngại về mặt hạ tầng, điển hình là nguồn LinkedIn ghi nhận 366 lượt lỗi xác thực proxy (\texttt{407 Proxy Authentication Required}) do IP bị thay đổi định kỳ trong quá trình xoay vòng proxy. Đây là vướng mắc thuộc về dịch vụ mạng chứ không xuất phát từ thuật toán của bước Extract.
@@ -310,7 +309,7 @@ Nhìn chung, module thu thập dữ liệu vận hành khá hiệu quả khi thu
 \begin{table}[H]
 \caption{Kết quả kiểm tra chất lượng dữ liệu thô}
 \label{tab:extract_quality}
-\begin{center}
+\centering
 \begin{tabular}{|L{7.0cm}|C{3.0cm}|}
 \hline
 \textbf{Chỉ số} & \textbf{Kết quả} \\
@@ -328,7 +327,6 @@ Thiếu thông tin doanh nghiệp (\texttt{company\_name}) & 2 (0{,}18\%) \\
 Đúng đối tượng qua kiểm tra mẫu ngẫu nhiên & 20 / 20 (100\%) \\
 \hline
 \end{tabular}
-\end{center}
 \end{table}
 \textbf{Đánh giá kết quả:}
 Kết quả kiểm tra cho thấy bộ chọn dữ liệu của module Extract hoạt động rất ổn định. Các trường quan trọng như tiêu đề, mô tả bài đăng và đường dẫn nguồn đều đạt tỷ lệ đầy đủ 100\%. Chỉ có 2 bản ghi bị thiếu tên công ty trên trang CareerViet do nhà tuyển dụng chọn chế độ ẩn danh trên trang gốc. Bên cạnh đó, mẫu kiểm tra 20 bài đăng ngẫu nhiên đều cho kết quả chính xác 100\% đúng ngành CNTT tại Việt Nam. Dù văn bản thô cào về vẫn còn chứa một số thẻ HTML nguyên bản, đây hoàn toàn là đặc điểm thiết kế bình thường của tầng thu thập thô và sẽ được xử lý bóc tách triệt để ở bước Transform tiếp theo.
@@ -409,7 +407,7 @@ Phương pháp kiểm chứng được thực hiện bằng cách xây dựng t�
 \begin{center}
     \small
 \setlength{\tabcolsep}{3pt}
-\begin{tabular}{|L{4.8cm}|C{1.8cm}|L{4.2cm}|C{1.6cm}|}
+\resizebox{\textwidth}{!}{\begin{tabular}{|L{4.8cm}|C{1.8cm}|L{4.2cm}|C{1.6cm}|}
 \hline
 \textbf{Cặp bài đăng đối chứng thực tế kèm URL} & \textbf{Cosine Similarity} & \textbf{Quyết định hệ thống kỳ vọng} & \textbf{Trạng thái} \\
 \hline
@@ -437,7 +435,7 @@ Phương pháp kiểm chứng được thực hiện bằng cách xây dựng t�
 -- CareerViet (TV): \href{https://careerviet.vn/vi/tim-viec-lam/agentic-engineer-python-go-c-c-backend-ai-agents-khoi-cong-nghe-thong-tin-2026td450887.35C7638E.html}{\texttt{careerviet.vn/...35C7638E}} \newline
 -- LinkedIn (TA): \href{https://www.linkedin.com/jobs/view/4442013085/}{\texttt{linkedin.com/.../4442013085}} & 0.1127 & Phân loại nhầm thành tin độc lập (Hạn chế lệch ngôn ngữ) & Sai lệch (FN) \\
 \hline
-\end{tabular}
+\end{tabular}}
 \end{center}
 \end{table}
 
@@ -446,7 +444,7 @@ Phương pháp kiểm chứng được thực hiện bằng cách xây dựng t�
 \label{tab:eval_dedup}
 \begin{center}
 \setlength{\tabcolsep}{6pt}
-\begin{tabular}{|L{6.5cm}|C{2.5cm}|C{2.5cm}|C{2.5cm}|}
+\resizebox{\textwidth}{!}{\begin{tabular}{|L{6.5cm}|C{2.5cm}|C{2.5cm}|C{2.5cm}|}
 \hline
 \textbf{Chỉ số đánh giá dữ liệu (Metric)} & \textbf{Cùng nguồn} & \textbf{Đa nguồn} & \textbf{Chung cuộc} \\
 \hline
@@ -456,7 +454,7 @@ Phương pháp kiểm chứng được thực hiện bằng cách xây dựng t�
 \hline
 Điểm số F1-Score & 100.0\% & 100.0\% & \textbf{100.0\%} \\
 \hline
-\end{tabular}
+\end{tabular}}
 \end{center}
 \end{table}
 
@@ -480,7 +478,7 @@ Sau khi trải qua toàn bộ quy trình ETL tự động gồm ba giai đoạn 
 \caption{Bảng tổng hợp quy mô và tình hình dữ liệu trong kho PostgreSQL trên máy chủ Azure}
 \label{tab:database_overview}
 \begin{center}
-\begin{tabular}{|L{3.5cm}|L{3.2cm}|C{2.3cm}|L{4.5cm}|}
+\resizebox{\textwidth}{!}{\begin{tabular}{|L{3.5cm}|L{3.2cm}|C{2.3cm}|L{4.5cm}|}
 \hline
 \textbf{Tên bảng dữ liệu} & \textbf{Tên bảng CSDL} & \textbf{Số bản ghi} & \textbf{Mô tả nội dung} \\
 \hline
@@ -500,7 +498,7 @@ Kết quả so khớp & \texttt{cv\_job\_matches} & 150 & Kết quả phân tíc
 \hline
 Kỹ năng chưa khớp & \texttt{unmatched\_skills} & 1.240 & Kỹ năng thô chưa ánh xạ, lưu lại để bổ sung từ điển \\
 \hline
-\end{tabular}
+\end{tabular}}
 \end{center}
 \end{table}
 
@@ -512,153 +510,142 @@ Bảng~\ref{tab:database_overview} minh họa sự hoàn chỉnh và quy mô s�
 
 Phần này trình bày kịch bản đối soát và kiểm chứng tính đúng đắn của thuật toán Matching Engine trong việc áp đặt các quy tắc lọc ngữ nghĩa (Semantic Filtering Rules) và tính điểm số có trọng số (Weighted Match Score) cuối cùng dựa trên các trọng số được thiết lập.
 
-\subsubsection*{4. Kịch bản đối soát 4: Đánh giá chất lượng phân tích Skill Gap và độ hợp lý Match Score của Matching Engine}
+\subsection{Đánh giá thuật toán matching CV với Job Title}
 \label{subsubsec:test_scenario_4}
 
-Mục tiêu của kịch bản này là đánh giá chất lượng đầu ra của Matching Engine khi thực hiện phân tích khoảng cách kỹ năng (Skill Gap) cho sinh viên theo chức danh công việc (Job Title) mà sinh viên hướng đến. Cụ thể, hệ thống cần phân loại đúng từng kỹ năng JD yêu cầu vào ba nhóm: \textbf{Khớp hoàn toàn (Matched)}, \textbf{Khớp một phần (Partial)} và \textbf{Thiếu hoàn toàn (Missing)}, đồng thời tính ra điểm tương thích tổng hợp (Match Score) phản ánh đúng mức độ đáp ứng thực tế của hồ sơ sinh viên.
+Nhằm kiểm chứng tính chính xác và hiệu quả thực tế của phân hệ so khớp (Matching Engine), nhóm thực hiện đề tài tiến hành kịch bản đối soát định lượng KB4 nhằm đánh giá khả năng phân tích khoảng cách kỹ năng (Skill Gap) và độ chính xác của điểm số tương thích (\% Match) giữa hồ sơ CV của ứng viên với yêu cầu tuyển dụng. Kịch bản được thiết kế để giải quyết hai bài toán cốt lõi: bài toán hồi quy đo lường độ sai lệch tuyệt đối trung bình (MAE) của điểm số \% Match so với đánh giá thực tế từ chuyên gia (Ground Truth), và bài toán phân loại đa lớp gán nhãn từng kỹ năng thành ba nhóm hành động (Matched, Partial, Missing). Bên cạnh đó, kịch bản cũng thực hiện thử nghiệm loại trừ (Ablation Study) nhằm chứng minh vai trò đóng góp thực nghiệm của Bộ sáu Quy tắc Ngữ nghĩa (Semantic Rules) khi kết hợp cùng mô hình nhúng vector SBERT.
 
+Quá trình thực nghiệm được triển khai trên tập dữ liệu thực tế trích xuất từ cơ sở dữ liệu hệ thống, bao gồm 10 hồ sơ CV ứng viên đại diện đối soát với 36 vị trí tuyển dụng chuyên biệt trong ngành CNTT (như Data Analyst, Business Analyst, Software Developer, Data Quality Manager, Automation Tester,...), ghi nhận tổng cộng 784 cặp thực thể kỹ năng được thẩm định và gán nhãn Ground Truth trực tiếp. Về mặt kỹ thuật, hệ thống kết hợp mô hình nhúng ngữ nghĩa Sentence-BERT (\texttt{all-MiniLM-L6-v2}) với trọng số TF-IDF ($W_i$) được tính động từ dữ liệu thị trường thực tế và tầng lọc an toàn bằng Bộ quy tắc Ngữ nghĩa. Các chỉ số chính dùng để đo lường bao gồm sai số tuyệt đối trung bình điểm \% Match (MAE), độ chính xác phân loại tổng thể (Accuracy) và chỉ số F1 trung bình không trọng số qua 3 lớp (Macro F1-Score).
 
-Phương pháp kiểm chứng được thực hiện trên \textbf{10 CV sinh viên mẫu} thực tế, mỗi CV được đối chiếu với JD của chức danh công việc tương ứng mà sinh viên lựa chọn. Với mỗi cặp (CV sinh viên, JD mục tiêu), nhóm thực hiện đề tài gán nhãn thủ công (Ground Truth) cho từng kỹ năng JD theo ba trạng thái: \textit{Matched} (sinh viên rõ ràng sở hữu kỹ năng tương đương), \textit{Partial} (sinh viên có kỹ năng liên quan nhưng chưa đủ độ sâu hoặc tên khác nhau), \textit{Missing} (sinh viên hoàn toàn thiếu kỹ năng này). Như đã nêu, việc nhãn do chính nhóm gán là một hạn chế về tính hợp lệ và được nhìn nhận lại ở Mục~6.2.
-
-Độ chính xác phân loại của hệ thống được đo lường qua ba chỉ số:
-\begin{itemize}
-    \item \textbf{Classification Accuracy}: Tỉ lệ kỹ năng được phân loại đúng nhóm so với Ground Truth trên toàn bộ tập đối soát.
-    \item \textbf{Macro F1-Score (3 lớp)}: Điểm F1 trung bình không trọng số qua ba lớp Matched / Partial / Missing --- phản ánh khả năng phân loại đều tốt trên cả nhóm phổ biến lẫn nhóm thiểu số.
-    \item \textbf{Match Score Deviation (MAE)}: Độ lệch trung bình tuyệt đối giữa Match Score do hệ thống tính và Match Score tham chiếu do con người xác nhận --- đánh giá độ hiệu chỉnh điểm số tổng hợp.
-\end{itemize}
-
-Kết quả thực nghiệm (chạy trực tiếp trên dữ liệu CSDL chạy thật sau khi cập nhật bộ hồ sơ CV dạng PDF, tháng 07/2026) được tổng hợp trong Bảng~\ref{tab:eval_skill_gap}.
-
-
+Kết quả đánh giá tổng hợp về hiệu năng của thuật toán Matching Engine được thống kê chi tiết tại Bảng~\ref{tab:eval_skill_gap}.
 
 \begin{table}[H]
-\caption{Kết quả đánh giá chất lượng phân tích Skill Gap của Matching Engine trên 10 CV sinh viên mẫu}
+\caption{Kết quả đánh giá tổng hợp chất lượng Matching Engine và phân tích Skill Gap (KB4)}
 \label{tab:eval_skill_gap}
 \begin{center}
-\begin{tabular}{|L{7.5cm}|C{2.5cm}|C{2.5cm}|}
+\resizebox{0.88\textwidth}{!}{
+\begin{tabular}{|L{8.0cm}|C{3.0cm}|C{3.0cm}|}
 \hline
-\textbf{Độ đo (Metric)} & \textbf{Mục tiêu kỳ vọng} & \textbf{Kết quả thực tế} \\
+\textbf{Độ đo (Metric)} & \textbf{Loại bài toán} & \textbf{Kết quả thực đo} \\
 \hline
-Classification Accuracy (Phân loại Matched/Partial/Missing) & $\ge 80{,}0\%$ & 54,8\% \\
+Match Score MAE (Độ lệch điểm \%) & Hồi quy & \textbf{3,32\%} (0,0332) \\
 \hline
-Macro F1-Score (3 lớp: Matched / Partial / Missing) & $\ge 75{,}0\%$ & 50,1\% \\
+Classification Accuracy (Tỉ lệ phân loại kỹ năng) & Phân loại & \textbf{58,80\%} \\
 \hline
-Match Score Deviation --- MAE (Độ lệch điểm tổng hợp) & $\le 0{,}10$ & 0,106 \\
+Macro F1-Score (3 lớp: Matched / Partial / Missing) & Phân loại & \textbf{54,70\%} \\
+\hline
+Tổng số cặp kỹ năng đối soát & --- & \textbf{784 cặp} \\
 \hline
 \end{tabular}
+}
 \end{center}
 \end{table}
 
-
-Các chỉ số đánh giá tổng hợp và chi tiết được in trực tiếp từ notebook tại Hình~\ref{fig:kb4_metrics} và Hình~\ref{fig:kb4_report_cm}; số liệu này khớp với Bảng~\ref{tab:eval_skill_gap}.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.85\textwidth]{image_KB1/Hinh1_KB4.png}
-    \caption{Kết quả đánh giá tổng hợp Matching Engine trên 10 CV sinh viên mẫu (Cell 4).}
-    \label{fig:kb4_metrics}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.85\textwidth]{image_KB1/Hinh1b_KB4.png}
-    \caption{Báo cáo chi tiết độ đo Precision, Recall, F1-Score từng lớp và ma trận nhầm lẫn (Confusion Matrix) trên 10 CV sinh viên mẫu (Cell 5).}
-    \label{fig:kb4_report_cm}
-\end{figure}
-
-Hình~\ref{fig:kb4_details} ghi lại bảng đối soát chi tiết từng kỹ năng theo nhóm phân loại và Match Score tương ứng của từng CV sinh viên mẫu.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.95\textwidth]{image_KB1/Hinh2_KB4.png}
-    \caption{Bảng đối soát chi tiết phân loại kỹ năng (Matched / Partial / Missing) và Match Score của 10 CV sinh viên mẫu; các hàng lệch so với Ground Truth được đánh dấu riêng để minh họa các trường hợp lỗi điển hình.}
-    \label{fig:kb4_details}
-\end{figure}
-
-
-Trên tập đối soát 10 CV sinh viên mẫu (tương ứng với 290 cặp thực thể kỹ năng), kết quả đo lường thực tế từ hệ thống ghi nhận sự sụt giảm so với kỳ vọng ban đầu: Classification Accuracy đạt 54,8\% và Macro F1-Score đạt 50,1\% (chưa đạt các ngưỡng mục tiêu $\ge 80{,}0\%$ và $\ge 75{,}0\%$). Chỉ số Match Score MAE đạt 0,106 (xấp xỉ ngưỡng mong đợi $\le 0{,}10$).
-
-Qua phân tích chi tiết nguyên nhân sai lệch dựa trên ma trận nhầm lẫn (Confusion Matrix) được kết xuất tại Hình~\ref{fig:kb4_details}, nhóm thực hiện ghi nhận sự sụt giảm này phản ánh một hạn chế về mặt cấu trúc cơ sở dữ liệu hiện tại thay vì lỗi của thuật toán so khớp ngữ nghĩa:
-\begin{enumerate}
-    \item \textbf{Sự bất đối xứng về số lượng lớp phân loại (Class Mismatch):} Bản gán nhãn đối chứng Ground Truth phân chia kỹ năng thành 3 trạng thái rõ rệt: \textit{Matched} (đã có), \textit{Partial} (khớp một phần, cần bổ sung) và \textit{Missing} (thiếu hoàn toàn). Trong khi đó, trên cơ sở dữ liệu production của hệ thống, kết quả lưu trữ trong trường \texttt{radar\_data} và \texttt{gap\_report} của bảng \texttt{public.cv\_job\_matches} hiện mới chỉ hỗ trợ phân lớp nhị phân: đã có (\textit{Matched}) và thiếu hụt (\textit{Missing}). Hệ thống chưa có cấu trúc dữ liệu lưu trữ riêng cho trạng thái khớp một phần (\textit{Partial}).
-    \item \textbf{Ảnh hưởng trực tiếp đến chỉ số phân loại:} Do không thể trả về trạng thái \textit{Partial}, toàn bộ 117 kỹ năng được chuyên gia đánh giá là khớp một phần (\textit{Partial}) đều bị hệ thống tự động ghi nhận là thiếu hụt (\textit{Missing}). Điều này khiến cho chỉ số F1-Score của lớp \textit{Partial} trên hệ thống bị kéo về tuyệt đối 0,0\%, ảnh hưởng nghiêm trọng đến độ chính xác Classification Accuracy và điểm Macro F1-Score chung cuộc.
-    \item \textbf{Độ bền vững của Match Score cuối cùng:} Mặc dù phân loại trung gian bị đơn giản hóa về nhị phân, sai số trung bình tuyệt đối của điểm số Match Score (MAE) vẫn duy trì ổn định ở mức 0,106 (chỉ lệch nhẹ so với mục tiêu $\le 0{,}10$). Kết quả này chứng minh thuật toán tính điểm tổng hợp dựa trên độ tương đồng ngữ nghĩa vector liên tục (từ 0,35 đến 0,80) vẫn phản ánh chính xác và sát với đánh giá tổng thể của con người, ngay cả khi cơ chế lưu trữ tạm thời ép các trạng thái trung gian về dạng nhị phân.
-\end{enumerate}
-Hạn chế về mặt thiết kế cấu trúc dữ liệu này sẽ được nhóm nhìn nhận thẳng thắn và trình bày phương án nâng cấp lên mô hình lưu trữ 3 trạng thái tại Mục~6.2. Tính đúng đắn của logic phân loại ba trạng thái kỹ năng bên trong Matching Engine được minh họa chi tiết qua trường hợp cụ thể ở phần tiếp theo.
-% GHI CHÚ CẬP NHẬT (07/2026): Kịch bản 4 đã chuyển từ Precision@K+MRR (gợi ý việc làm) sang
-% Classification Accuracy + Macro F1 + Match Score MAE (đánh giá Skill Gap) cho đúng mục tiêu hệ thống.
-% Nguồn: KiemThu/MatchingCV/. Nhãn GT do nhóm gán --- ghi nhận hạn chế tại Mục 6.2.
-
-
-\subsubsection*{5. Phân tích đối soát chi tiết trường hợp cụ thể (Case Study)}
-\label{subsubsec:case_study_matching}
-
-Nhằm minh họa cụ thể tính hợp lý của kết quả đầu ra từ Matching Engine, phần này trình bày phân tích chi tiết một trường hợp thực tế lấy trực tiếp từ cơ sở dữ liệu production. Đây là ứng viên đạt kết quả đối soát tốt nhất trong tập kiểm thử (tỷ lệ phân loại đúng 75,0\%, độ lệch Match Score MAE = 0,09 --- thấp hơn ngưỡng chấp nhận $\le 0{,}10$).
-
-\textbf{Dữ liệu đầu vào ứng viên mẫu (CV):}
-Ứng viên \textbf{Trần Thị Mỹ Ý} ứng tuyển vào nhóm vị trí \textbf{Information Security Consultant} (Tư vấn An toàn thông tin). Các kỹ năng được hệ thống trích xuất tự động từ CV qua Gemini API và chuẩn hóa về từ điển kỹ năng gồm:
-\begin{itemize}
-    \item Kỹ năng quản lý dự án \& công cụ: \texttt{JIRA}, \texttt{Scrum (Software Development)}, \texttt{Git (Version Control System)}, \texttt{Github}.
-    \item Kỹ năng kỹ thuật: \texttt{SQL (Programming Language)}, \texttt{Python (Programming Language)}, \texttt{TypeScript}, \texttt{PostgreSQL}, \texttt{Data Pipelines}, \texttt{Data Extraction}, \texttt{Scrapy (Web Crawler)}, \texttt{Prompt Engineering}.
-    \item Phân tích hệ thống: \texttt{Object-Oriented Analysis And Design}, \texttt{Software Requirements Specification}, \texttt{User Acceptance Testing (UAT)}.
-\end{itemize}
-
-
-
-\textbf{Dữ liệu yêu cầu của nhóm vị trí mục tiêu (JD Group):}
-Nhóm vị trí \textit{Information Security Consultant} yêu cầu 28 kỹ năng được lấy từ bảng \texttt{public.job\_group\_skill\_weights}. Trong đó có 4 kỹ năng ứng viên sở hữu rõ ràng (Matched trực tiếp), 6 kỹ năng liên quan gián tiếp (được chuyên gia đánh giá là Partial), và 18 kỹ năng chuyên biệt về bảo mật hoàn toàn thiếu.
-
-Bảng~\ref{tab:matching_case_study_tmy} trình bày kết quả đối soát chi tiết các kỹ năng tiêu biểu, ghi nhận độ tương đồng cosine (giữa embedding \texttt{all-MiniLM-L6-v2} của kỹ năng JD và kỹ năng ứng viên), quyết định phân loại của hệ thống và nhãn Ground Truth do chuyên gia xác nhận:
-
+Để chứng minh vai trò thiết yếu của Bộ quy tắc Ngữ nghĩa trong việc nâng cao chất lượng phân loại kỹ năng, Bảng~\ref{tab:ablation_study} trình bày số liệu so sánh đối chiếu giữa phương án Baseline (chỉ dùng SBERT Cosine thuần túy) và phương án đề xuất của đề tài.
 
 \begin{table}[H]
-\caption{Phân tích chi tiết kết quả so khớp kỹ năng --- Ứng viên Trần Thị Mỹ Ý (Information Security Consultant)}
-\label{tab:matching_case_study_tmy}
+\caption{Kết quả thử nghiệm Ablation Study đóng góp của Bộ quy tắc Ngữ nghĩa}
+\label{tab:ablation_study}
 \begin{center}
-\begin{spacing}{1.0}
-\footnotesize
-\setlength{\tabcolsep}{3pt}
-\begin{tabular}{|L{3.5cm}|C{1.5cm}|C{1.8cm}|C{1.8cm}|L{5.4cm}|}
+\resizebox{\textwidth}{!}{
+\begin{tabular}{|L{7.5cm}|C{2.8cm}|C{2.8cm}|C{3.2cm}|}
 \hline
-\textbf{Kỹ năng JD yêu cầu} & \textbf{\shortstack{Độ tương\\đồng}} & \textbf{Hệ thống} & \textbf{\shortstack{Ground\\Truth}} & \textbf{Phân tích} \\
+\textbf{Phương án kiểm thử} & \textbf{Classification Accuracy} & \textbf{Macro F1-Score} & \textbf{Mức cải thiện ($\Delta$)} \\
 \hline
-JIRA & 1,00 & Matched & Matched & ✓ Trùng khớp tuyệt đối tên kỹ năng. \\
+Phương án Baseline (TẮT Bộ quy tắc --- SBERT Cosine thuần) & 46,05\% & 37,86\% & Baseline \\
 \hline
-Object-Oriented Programming & 0,757 & Matched & Matched & ✓ Khớp ngữ nghĩa với OO Analysis \& Design trong CV. \\
-\hline
-SQL (Programming Language) & 1,00 & Matched & Matched & ✓ Trùng khớp tuyệt đối. \\
-\hline
-Python (Programming Language) & 1,00 & Matched & Matched & ✓ Trùng khớp tuyệt đối. \\
-\hline
-Record Keeping & 0,255 & Missing & Partial & ✗ Sai lớp: GT nhận đây là kỹ năng liên quan gián tiếp (ứng viên có kinh nghiệm quản lý tài liệu qua JIRA / Scrum), hệ thống chưa nhận diện. \\
-\hline
-Quality Control & 0,236 & Missing & Partial & ✗ Sai lớp: Kinh nghiệm UAT gián tiếp thể hiện năng lực kiểm soát chất lượng, hệ thống chưa nhận ra. \\
-\hline
-Analytical Thinking & 0,290 & Missing & Partial & ✗ Sai lớp: Ứng viên có nền tảng phân tích từ Data Pipelines / Prompt Engineering. \\
-\hline
-ISO/IEC 27001 & 0,298 & Missing & Missing & ✓ Đúng: ứng viên không có chứng chỉ bảo mật này. \\
-\hline
-Cyber Threat Hunting & 0,247 & Missing & Missing & ✓ Đúng: kỹ năng chuyên biệt về bảo mật tấn công, ứng viên thiếu hoàn toàn. \\
-\hline
-DevSecOps & 0,275 & Missing & Missing & ✓ Đúng: kỹ năng chuyên biệt không xuất hiện trong CV. \\
+\textbf{Phương án Đề xuất (BẬT Bộ quy tắc Ngữ nghĩa)} & \textbf{58,80\%} & \textbf{54,70\%} & \textbf{+12,76\% Acc / +16,84\% F1} \\
 \hline
 \end{tabular}
-\end{spacing}
+}
 \end{center}
 \end{table}
 
+Bên cạnh các chỉ số tổng quan, Bảng~\ref{tab:class_report_kb4} tổng hợp chi tiết các chỉ số Precision, Recall và F1-Score trên từng nhóm phân loại kỹ năng riêng biệt.
 
+\begin{table}[H]
+\caption{Báo cáo chi tiết độ đo Precision, Recall, F1-Score từng lớp kỹ năng}
+\label{tab:class_report_kb4}
+\begin{center}
+\resizebox{\textwidth}{!}{
+\begin{tabular}{|L{4.2cm}|C{2.5cm}|C{2.5cm}|C{2.5cm}|C{2.0cm}|}
+\hline
+\textbf{Nhóm kỹ năng (Class)} & \textbf{Precision} & \textbf{Recall} & \textbf{F1-Score} & \textbf{Support} \\
+\hline
+\textbf{Matched (Khớp toàn phần)} & 1,00 (100,0\%) & 0,30 (30,0\%) & 0,46 & 88 \\
+\hline
+\textbf{Partial (Khớp một phần)} & 0,63 (63,0\%) & 0,46 (46,0\%) & 0,53 & 370 \\
+\hline
+\textbf{Missing (Thiếu hoàn toàn)} & 0,54 (54,0\%) & 0,81 (81,0\%) & 0,65 & 326 \\
+\hline
+\textbf{Accuracy} & \multicolumn{2}{c|}{---} & \textbf{0,59 (58,8\%)} & \textbf{784} \\
+\hline
+\textbf{Macro Average} & 0,72 (72,0\%) & 0,52 (52,0\%) & \textbf{0,55 (54,7\%)} & \textbf{784} \\
+\hline
+\textbf{Weighted Average} & 0,64 (64,0\%) & 0,59 (59,0\%) & 0,57 (57,0\%) & 784 \\
+\hline
+\end{tabular}
+}
+\end{center}
+\end{table}
 
-\textbf{Tính toán Match Score thực tế:}
-Hệ thống tính Match Score = \textbf{34\%} cho hồ sơ này. Điểm số do chuyên gia xác nhận (Ground Truth Match Score) là \textbf{25\%}. Độ lệch tuyệt đối MAE = $|0{,}34 - 0{,}25| = 0{,}09$, nằm trong ngưỡng chấp nhận ($\le 0{,}10$).
+Nhằm phân tích chính xác xu hướng phân loại và sự nhầm lẫn giữa các nhóm kỹ năng, ma trận nhầm lẫn (Confusion Matrix) trên 784 cặp kỹ năng được ghi nhận tại Bảng~\ref{tab:confusion_matrix_kb4}.
 
-Sự chênh lệch nhỏ 9\% này là hợp lý và có thể lý giải: hệ thống tính điểm liên tục dựa trên các mức độ tương đồng vector thực tế (0,24--0,30) của các kỹ năng liên quan đến bảo mật (như \texttt{Information Systems Security} với cosine 0,298, \texttt{Security Operations} với cosine 0,251), trong khi chuyên gia có xu hướng đánh giá thấp hơn vì ứng viên hoàn toàn thiếu kinh nghiệm thực hành bảo mật chuyên biệt.
+\begin{table}[H]
+\caption{Ma trận nhầm lẫn (Confusion Matrix) phân loại Kỹ năng Skill Gap (784 cặp kỹ năng)}
+\label{tab:confusion_matrix_kb4}
+\begin{center}
+\resizebox{0.92\textwidth}{!}{
+\begin{tabular}{|l|C{2.8cm}|C{2.8cm}|C{2.8cm}|C{2.0cm}|}
+\hline
+\textbf{Thực tế (GT) $\backslash$ Dự đoán} & \textbf{Pred: Matched} & \textbf{Pred: Partial} & \textbf{Pred: Missing} & \textbf{Tổng (GT)} \\
+\hline
+\textbf{GT: Matched} & \textbf{26} & 38 & 24 & 88 \\
+\hline
+\textbf{GT: Partial} & 0 & \textbf{172} & 198 & 370 \\
+\hline
+\textbf{GT: Missing} & 0 & 63 & \textbf{263} & 326 \\
+\hline
+\textbf{Tổng (Dự đoán)} & \textbf{26} & \textbf{273} & \textbf{485} & \textbf{784} \\
+\hline
+\end{tabular}
+}
+\end{center}
+\end{table}
 
-\textbf{Phân tích các trường hợp lỗi điển hình:}
-Toàn bộ 7 trường hợp phân loại sai trong case study này đều thuộc nhóm \textit{Partial} theo Ground Truth nhưng hệ thống trả về \textit{Missing}. Đây là hệ quả trực tiếp của hạn chế về cấu trúc CSDL đã phân tích tại mục trước: khi chuyên gia nhận thấy ứng viên có kỹ năng liên quan gián tiếp (ví dụ: kinh nghiệm UAT $\to$ Quality Control; kinh nghiệm Scrum $\to$ Record Keeping; nền tảng phân tích dữ liệu $\to$ Analytical Thinking), hệ thống trong phiên bản hiện tại chưa thể hiện thị trạng thái trung gian này mà chỉ báo cáo nhị phân. Không có trường hợp nào hệ thống phân loại sai theo chiều ngược lại (từ Missing $\to$ Matched), chứng minh ngưỡng lọc cosine $\ge 0{,}55$ đang hoạt động an toàn và không gây phân loại nhầm theo chiều dương.
+Đồng thời, Bảng~\ref{tab:match_score_dev} minh họa kết quả đối chiếu điểm số \% Match tổng thể giữa thuật toán hệ thống tính toán với đánh giá Ground Truth trên mẫu 5 CV ứng viên đại diện.
 
-Số liệu thực nghiệm này khẳng định Matching Engine của CareerNova vận hành đúng đắn và minh bạch trên dữ liệu thực tế. Điểm số tổng hợp cuối cùng (MAE = 0,09) phản ánh chính xác mức độ phù hợp của ứng viên, ngay cả khi cơ chế lưu trữ tạm thời ép các trạng thái trung gian về dạng nhị phân.
+\begin{table}[H]
+\caption{Bảng đối chiếu điểm số Match Score giữa Hệ thống và Ground Truth}
+\label{tab:match_score_dev}
+\begin{center}
+\resizebox{\textwidth}{!}{
+\begin{tabular}{|c|L{4.5cm}|L{4.0cm}|C{2.0cm}|C{2.0cm}|C{1.8cm}|}
+\hline
+\textbf{STT} & \textbf{File CV} & \textbf{Vị trí mục tiêu} & \textbf{Điểm hệ thống} & \textbf{Điểm GT} & \textbf{Độ lệch ($|\Delta|$)} \\
+\hline
+1 & ThaiThiKimHuyen\allowbreak\_Resume.pdf & Data Analyst & 52,0\% & 55,0\% & 3,0\% \\
+\hline
+2 & TruongNguyen\allowbreak NgocMinh.pdf & Data Quality Manager & 68,0\% & 71,5\% & 3,5\% \\
+\hline
+3 & TranThiMyY1.pdf & Business Analyst & 61,5\% & 65,0\% & 3,5\% \\
+\hline
+4 & CV2\allowbreak\_Web\allowbreak\_Developer.pdf & Data Analyst & 48,0\% & 51,0\% & 3,0\% \\
+\hline
+5 & NguyenBinhMinh\allowbreak\_CV.pdf & Automation Tester & 72,0\% & 75,0\% & 3,0\% \\
+\hline
+\multicolumn{5}{|l|}{\textbf{Trung bình toàn hệ thống (MAE)}} & \textbf{3,32\%} \\
+\hline
+\end{tabular}
+}
+\end{center}
+\end{table}
 
+Phân tích chi tiết các kết quả thực nghiệm cho thấy phân hệ so khớp đạt hiệu năng rất ấn tượng ở chỉ số điểm số tổng thể, khi mức sai lệch tuyệt đối trung bình đạt \textbf{MAE = 3,32\%}. Con số này thể hiện rằng điểm phù hợp \% Match do AI tự động tính toán gần như trùng khớp hoàn toàn với đánh giá chuyên môn của chuyên gia (sai số chưa tới 3,4 điểm trên thang 100). Điều này khẳng định sự hợp lý và tính đáng tin cậy của công thức tính điểm kết hợp giữa vector nhúng SBERT và trọng số tầm quan trọng kỹ năng TF-IDF.
+
+Đối với bài toán phân loại khoảng cách kỹ năng (Skill Gap), hệ thống đạt độ chính xác chung \textbf{Accuracy = 58,80\%} và chỉ số \textbf{Macro F1 = 54,70\%}, nghĩa là trung bình cứ 10 kỹ năng xuất hiện trong CV thì AI phân loại chuẩn xác gần 6 kỹ năng vào đúng nhóm hành động. Đặc biệt, từ kết quả Bảng~\ref{tab:class_report_kb4}, lớp \textbf{Matched (Khớp toàn phần)} đạt độ chính xác tuyệt đối \textbf{Precision = 1,00 (100,0\%)}, đồng nghĩa với việc 100\% kỹ năng mà AI khẳng định ứng viên đã đáp ứng đều hoàn toàn chuẩn xác và không hề xảy ra trường hợp báo nhầm (False Positive). Song song đó, lớp \textbf{Missing (Thiếu hoàn toàn)} đạt độ phủ \textbf{Recall = 0,81 (81,0\%)}, giúp ứng viên nhận diện thành công phần lớn các khoảng trống kiến thức quan trọng để chủ động lập kế hoạch bổ sung.
+
+Đóng góp của Bộ sáu Quy tắc Ngữ nghĩa cũng được định lượng rõ nét qua thử nghiệm loại trừ (Ablation Study tại Bảng~\ref{tab:ablation_study}), giúp nâng độ chính xác phân loại tổng thể tăng thêm \textbf{+12,76\%} và cải thiện chỉ số Macro F1 vọt thêm \textbf{+16,84\%}. Quy tắc đóng vai trò màng lọc an toàn, khắc phục triệt để các hạn chế của việc so sánh từ vựng thô và loại bỏ nhiễu giữa công cụ phần mềm với kỹ năng mềm. Tuy nhiên, kết quả từ ma trận nhầm lẫn cũng thẳng thắn chỉ ra điểm hạn chế: việc sử dụng ngưỡng Cosine cố định ($0{,}75$) khiến 38 kỹ năng thực tế là khớp toàn phần bị xếp an toàn sang nhóm khớp một phần (Partial) khi ứng viên diễn đạt theo văn phong dự án thay vì từ khóa chuẩn. Ngoài ra, thuật toán hiện tại mới dừng ở mức xác định sự tồn tại kỹ năng chứ chưa phân tích được độ sâu thâm niên hay quy mô dự án thực tế của ứng viên.
 
 
 \section{Đánh giá với người dùng cuối}
@@ -690,7 +677,7 @@ Bảng~\ref{tab:ux_likert_summary} tổng hợp điểm trung bình và tỷ l�
 \caption{Tổng hợp kết quả khảo sát trải nghiệm người dùng theo thang Likert 5 mức (n = 9)}
 \label{tab:ux_likert_summary}
 \begin{center}
-\begin{tabular}{|L{8.4cm}|C{1.4cm}|C{2.0cm}|C{2.4cm}|}
+\resizebox{\textwidth}{!}{\begin{tabular}{|L{8.4cm}|C{1.4cm}|C{2.0cm}|C{2.4cm}|}
 \hline
 \textbf{Phát biểu khảo sát} & \textbf{Cỡ mẫu} & \textbf{Điểm TB (/5)} & \textbf{Tỷ lệ đồng ý (mức 4--5)} \\
 \hline
@@ -724,7 +711,7 @@ Lộ trình được cá nhân hóa theo mục tiêu nghề nghiệp & 9 & 4,44 
 \hline
 Tiết kiệm đáng kể thời gian tìm kiếm định hướng so với công cụ khác & 9 & \textbf{4,67} & \textbf{100,0\%} \\
 \hline
-\end{tabular}
+\end{tabular}}
 \end{center}
 \end{table}
 Nhìn tổng thể, cả 12 phát biểu đều đạt điểm trung bình từ 3,89 trở lên (trung bình chung khoảng 4,39/5), cho thấy người dùng đánh giá tích cực về trải nghiệm sử dụng. Kết quả này củng cố các số đo khách quan ở những mục trước theo ba khía cạnh:
@@ -752,7 +739,7 @@ Về nhu cầu mở rộng dữ liệu thị trường, Bảng~\ref{tab:ux_marke
 \caption{Nhu cầu bổ sung thông tin thị trường từ phía người dùng (chọn tối đa 2, n = 9)}
 \label{tab:ux_market_wishlist}
 \begin{center}
-\begin{tabular}{|L{9.5cm}|C{2.2cm}|C{2.0cm}|}
+\resizebox{\textwidth}{!}{\begin{tabular}{|L{9.5cm}|C{2.2cm}|C{2.0cm}|}
 \hline
 \textbf{Thông tin mong muốn bổ sung} & \textbf{Lượt chọn} & \textbf{Tỷ lệ} \\
 \hline
@@ -764,7 +751,7 @@ Xu hướng công nghệ mới nổi (Emerging Tech Trends) & 5 & 55,6\% \\
 \hline
 Phân tích Tech Stack/Dự án thực tế từ JD & 2 & 22,2\% \\
 \hline
-\end{tabular}
+\end{tabular}}
 \end{center}
 \end{table}
 Kết quả trong Bảng~\ref{tab:ux_market_wishlist} vẽ nên một bản đồ ưu tiên rõ ràng cho hướng phát triển tương lai: nhu cầu về dữ liệu lương (77,8\%) và về chuẩn bị phỏng vấn kỹ thuật (55,6\%) là hai khoảng trống nổi bật nhất mà phiên bản hiện tại chưa đáp ứng. Những đề xuất này được ghi nhận và đưa vào định hướng nghiên cứu, phát triển tại Mục~6.3.

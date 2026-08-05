@@ -340,13 +340,13 @@ Bảng này lưu trữ thông tin tài khoản người dùng, bao gồm sinh vi
 \hline
 \texttt{full\_name} & varchar(255) & NULL & Họ và tên đầy đủ. \\
 \hline
-\texttt{email} & varchar(255) & UNIQUE, NOT NULL & Địa chỉ email đăng ký tài khoản. \\
+\texttt{email} & varchar(255) & UNIQUE, NULL & Địa chỉ email đăng ký tài khoản (nullable khi đăng nhập qua OAuth). \\
 \hline
 \texttt{password\_\allowbreak hash} & text & NULL (nếu đăng nhập mạng xã hội) & Mật khẩu tài khoản đã băm an toàn. \\
 \hline
 \texttt{avatar\_url} & text & NULL & Đường dẫn ảnh đại diện. \\
 \hline
-\texttt{role} & varchar(50) & DEFAULT 'student', CHECK (role IN ('student')) & Vai trò tài khoản (Sinh viên). \\
+\texttt{role} & varchar(50) & DEFAULT 'student' & Vai trò tài khoản (Sinh viên). \\
 \hline
 \texttt{created\_at} & timestamp & Tự động & Thời điểm tạo tài khoản. \\
 \hline
@@ -450,6 +450,8 @@ Lưu trữ danh mục kỹ năng chuẩn hóa dựa trên phân loại hệ th�
 \hline
 \texttt{created\_at} & timestamp & Tự động & Ngày tạo bản ghi kỹ năng. \\
 \hline
+\texttt{updated\_at} & timestamp & Tự động & Thời điểm cập nhật bản ghi kỹ năng cuối cùng. \\
+\hline
 \end{longtable}
 \end{footnotesize}
 
@@ -547,9 +549,9 @@ Lưu thông tin chi tiết các bản tin tuyển dụng việc làm thu thập 
 \hline
 \texttt{description} & text & NULL & Mô tả chi tiết nhiệm vụ công việc. \\
 \hline
-\texttt{formatted\_\allowbreak experience\_\allowbreak level} & varchar(100) & NULL, INDEX & Cấp bậc kinh nghiệm yêu cầu. \\
+\texttt{formatted\_\allowbreak experience\_\allowbreak level} & text & NULL, INDEX & Cấp bậc kinh nghiệm yêu cầu. \\
 \hline
-\texttt{work\_type} & varchar(100) & NULL & Hình thức làm việc (Full-time/Part-time). \\
+\texttt{work\_type} & text & NULL & Hình thức làm việc (Full-time/Part-time). \\
 \hline
 \texttt{location} & varchar(255) & NULL & Địa điểm làm việc. \\
 \hline
@@ -569,9 +571,9 @@ Lưu thông tin chi tiết các bản tin tuyển dụng việc làm thu thập 
 \hline
 \texttt{fingerprint} & varchar(32) & UNIQUE & Mã MD5 hash nhận diện chống trùng lặp. \\
 \hline
-\texttt{job\_\allowbreak category} & varchar(100) & NULL & Phân mục nghề nghiệp tổng quan. \\
+\texttt{job\_\allowbreak category} & text & NULL & Phân mục nghề nghiệp tổng quan. \\
 \hline
-\texttt{search\_\allowbreak group} & varchar(100) & NULL & Nhóm ngành công việc tiêu chuẩn liên kết. \\
+\texttt{search\_\allowbreak group} & text & NULL & Nhóm ngành công việc tiêu chuẩn liên kết. \\
 \hline
 \texttt{source\_name} & varchar(50) & NULL & Nguồn thu thập (LinkedIn, VietnamWorks...). \\
 \hline
@@ -639,15 +641,15 @@ Lưu trữ kết quả tính toán độ tương thích giữa CV của sinh vi�
 \hline
 \texttt{job\_id} & bigint & FK -> jobs(job\_id) ON DELETE SET NULL, NULL & ID Job cụ thể tham gia so khớp (nếu có). \\
 \hline
-\texttt{match\_type} & varchar(50) & CHECK (match\_type IN ('search\_group', 'existing\_job', 'url\_job')) & Phân loại kiểu so khớp. \\
+\texttt{match\_type} & varchar(50) & NOT NULL & Phân loại kiểu so khớp (search\_group / existing\_job / url\_job), kiểm soát tại tầng ứng dụng. \\
 \hline
 \texttt{search\_\allowbreak group} & varchar(100) & NULL & Tên nhóm ngành chuẩn hóa được so khớp. \\
 \hline
-\texttt{match\_score} & numeric(5,2) & CHECK (match\_score >= 0 AND match\_score <= 100) & Điểm số phần trăm tương thích tổng thể. \\
+\texttt{match\_score} & numeric(5,2) & NULL & Điểm số phần trăm tương thích tổng thể (0--100), kiểm soát tại tầng ứng dụng. \\
 \hline
-\texttt{radar\_data} & jsonb & NOT NULL & Cấu trúc JSON biểu diễn phân bố kỹ năng (vẽ biểu đồ Radar). \\
+\texttt{radar\_data} & jsonb & NULL & Cấu trúc JSON biểu diễn phân bố kỹ năng (vẽ biểu đồ Radar). \\
 \hline
-\texttt{gap\_report} & jsonb & NOT NULL & Chi tiết báo cáo khoảng cách kỹ năng. \\
+\texttt{gap\_report} & jsonb & NULL & Chi tiết báo cáo khoảng cách kỹ năng. \\
 \hline
 \texttt{model\_\allowbreak version} & varchar(100) & NULL & Phiên bản thuật toán đối sánh. \\
 \hline
@@ -769,7 +771,7 @@ Sau khi trích xuất văn bản thô, hệ thống thực hiện chuẩn hóa k
 \textbf{Bước 3: Trích xuất kỹ năng bằng Generative AI (Skill Extraction).}
 Trong trường hợp Cache Miss, hệ thống sử dụng mô hình ngôn ngữ lớn Gemini thông qua API để trích xuất các kỹ năng xuất hiện trên CV. Prompt gửi đi yêu cầu mô hình trả về cấu trúc dữ liệu JSON chứa: tên kỹ năng, dẫn chứng ngữ cảnh xuất hiện (evidence) và mức độ tin cậy (confidence score $\geq 0.85$).
 
-\textit{Cơ chế chống ảo giác (Anti-Hallucination Validation):} Do LLM đôi khi sinh ra các kỹ năng không có thực trong CV, hệ thống thực hiện kiểm tra chéo: mọi kỹ năng trích xuất phải có tên hoặc dẫn chứng xuất hiện trực tiếp dưới dạng chuỗi con (substring) trong văn bản CV gốc. Nếu không thỏa mãn, kỹ năng đó sẽ bị hủy bỏ.
+\textit{Cơ chế chống ảo giác (Anti-Hallucination Validation):} Do LLM đôi khi sinh ra các kỹ năng không có thực trong CV, hệ thống thực hiện kiểm tra chéo: mọi kỹ năng trích xuất phải có tên hoặc dẫn chứng xuất hiện trực tiếp dưới dạng chuỗi con (substring) trong văn bản CV gốc (bao gồm cả khớp một phần từ để xử lý viết tắt). Nếu không tìm thấy bằng chứng trong văn bản, kỹ năng đó sẽ bị hủy bỏ, trừ khi mức độ tin cậy (confidence) đạt $\geq 0.80$, trường hợp này hệ thống vẫn giữ lại nhằm xử lý các thuật ngữ tiếng Anh mà LLM dịch từ nội dung CV viết bằng tiếng Việt.
 
 \textit{Luồng xử lý dự phòng (Fallback):} Nếu kết nối LLM gặp sự cố hoặc cạn kiệt hạn ngạch (quota limit), hệ thống tự động kích hoạt bộ đối sánh từ khóa thô (Keyword Match Fallback) trực tiếp với toàn bộ từ điển trong bảng \texttt{public.skills} bằng các biểu thức chính quy (Regex) thiết lập ranh giới từ để trích xuất kỹ năng tạm thời.
 

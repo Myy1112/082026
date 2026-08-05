@@ -12,7 +12,7 @@ Luận văn này đã nghiên cứu, phân tích và hiện thực hóa thành c
 
     \item \textbf{Ứng dụng công nghệ AI vào bài toán trích xuất kỹ năng}: Áp dụng mô hình ngôn ngữ lớn Gemini để trích xuất thông tin kỹ năng và vị trí công việc từ văn bản phi cấu trúc thông qua Structured Outputs kết hợp JSON Schema và cơ chế hậu kiểm dựa trên bằng chứng. Các số liệu đánh giá độ chính xác của mô-đun được trình bày tại Mục 5.4 theo tập dữ liệu đối soát và quy trình đánh giá tương ứng.
 
-    \item \textbf{Đề xuất giải thuật đối soát và phân tích khoảng cách kỹ năng}: Kết hợp so khớp ngữ nghĩa bằng vector nhúng SBERT cục bộ (\texttt{all-MiniLM-L6-v2}) với trọng số TF-IDF được tính động từ dữ liệu thị trường thực tế và bộ sáu quy tắc lọc ngữ nghĩa theo metadata phân loại kỹ năng. Kết quả giúp định lượng mức độ tương thích giữa hồ sơ CV của ứng viên và yêu cầu tuyển dụng, đồng thời phân loại kỹ năng thành ba nhóm hành động được (đã có, cần bổ sung, thiếu hoàn toàn).
+    \item \textbf{Đề xuất giải thuật đối soát và phân tích khoảng cách kỹ năng}: Kết hợp so khớp ngữ nghĩa bằng vector nhúng SBERT cục bộ (\texttt{all-MiniLM-L6-v2}) với trọng số TF-IDF được tính động từ dữ liệu thị trường thực tế và bộ sáu quy tắc lọc ngữ nghĩa theo metadata phân loại kỹ năng. Kết quả giúp định lượng mức độ tương thích giữa hồ sơ CV của ứng viên và yêu cầu tuyển dụng, đồng thời phân loại kỹ năng thành ba nhóm hành động (đã có, cần bổ sung, thiếu hoàn toàn).
 
     \item \textbf{Hiện thực hóa và triển khai ứng dụng Web hoàn chỉnh}: Triển khai hệ thống thực tế tại địa chỉ \texttt{career-nova.online} trên hạ tầng đám mây, cung cấp đầy đủ các phân hệ: xác thực người dùng (email và Google SSO), Dashboard trực quan hóa xu hướng thị trường lao động, quản lý CV, tìm kiếm và lưu việc làm, phân tích đối soát CV với biểu đồ Radar, báo cáo khoảng cách kỹ năng và gợi ý lộ trình học tập cá nhân hóa theo kỹ năng thiếu hụt. Kết quả kiểm thử chức năng và số liệu hiệu năng được tổng hợp tại Chương 5.
 \end{enumerate}
@@ -23,38 +23,38 @@ Về mặt học thuật, đề tài đóng góp vào kho tri thức về ứng 
 
 \section{Hạn chế còn tồn tại của đề tài}
 
-Hệ thống đã được triển khai và kiểm thử trên môi trường thực tế; tuy nhiên, kết quả thử nghiệm cũng cho thấy một số hạn chế cần được nhìn nhận khách quan:
+Hệ thống đã được triển khai và kiểm thử trên môi trường thực tế; tuy nhiên, kết quả thử nghiệm thực đo tại Chương 5 cũng cho thấy một số hạn chế cần được nhìn nhận khách quan:
 
+\subsection*{1. Hạn chế về thuật toán so khớp Matching Engine \& Skill Gap}
 \begin{itemize}
-    \item \textbf{Phạm vi dữ liệu}: Thử nghiệm thực tế mới chỉ tập trung chủ yếu vào nhóm ngành Công nghệ Thông tin (IT) và Khoa học Dữ liệu tại thị trường Việt Nam, chưa mở rộng sang các lĩnh vực ngành nghề phi kỹ thuật khác. Quy mô dữ liệu tích lũy đủ phục vụ phân tích xu hướng ngắn hạn trong phạm vi triển khai, nhưng chưa đủ dày để phân tích chu kỳ tuyển dụng theo mùa qua nhiều năm.
+    \item \textbf{Ngưỡng phân loại cố định trong thuật toán so khớp}: Việc phân loại kỹ năng thành 3 nhóm (\textit{Matched}, \textit{Partial}, \textit{Missing}) hiện sử dụng các ngưỡng Cosine Similarity cố định ($0{,}75$ cho \textit{Matched} và $0{,}50$ cho \textit{Partial}). Trong thực tế, khi ứng viên viết kỹ năng trong CV theo văn phong dự án thực tế thay vì dùng đúng từ khóa từ điển chuẩn, điểm nhúng ngữ nghĩa SBERT chỉ đạt $0{,}65 - 0{,}72$, khiến hệ thống phân loại an toàn về nhóm \textit{Partial} (dẫn đến 38 mẫu \textit{Matched} bị xếp sang \textit{Partial} trong ma trận nhầm lẫn KB4).
+    \item \textbf{Chưa đo lường được độ sâu thâm niên kinh nghiệm (Evidence Depth / Seniority Level)}: Matching Engine hiện mới dừng lại ở bài toán xác định sự tồn tại kỹ năng (\textit{Skill Presence}). Hệ thống chưa phân tích được độ sâu kinh nghiệm dựa trên số năm làm việc hay quy mô dự án thực tế ghi trong CV, dẫn đến ứng viên làm bài tập môn học 1 tháng và ứng viên làm dự án thực tế 1 năm có cùng thẻ kỹ năng vẫn được tính điểm tương đồng như nhau.
+\end{itemize}
 
-    \item \textbf{Hiệu năng lần đối soát đầu tiên và khả năng chịu tải}: Khi cache miss, thời gian đối soát CV thực đo trung bình là 41,9 giây và lớn nhất là 55,1 giây (đạt mục tiêu dưới 60 giây của NFR-02). Tuy nhiên, con số này vẫn tương đối cao ở góc độ trải nghiệm người dùng. Nguyên nhân chủ yếu là độ trễ của Gemini API bên ngoài và chi phí tính vector trên máy chủ 2 vCPU không GPU. Quan trọng hơn, toàn bộ số liệu hiệu năng được đo ở chế độ \textit{đơn phiên} (một người dùng, gọi tuần tự); đề tài \textbf{chưa thực hiện kiểm thử tải (load/stress test)} nên chưa đánh giá được hành vi khi nhiều người dùng đối soát đồng thời. Với hạ tầng 2 vCPU không GPU, khi tải đồng thời tăng, thời gian đối soát lần đầu có nguy cơ vượt ngưỡng 60 giây; đánh giá khả năng mở rộng theo chiều ngang và xử lý bất đồng bộ qua hàng đợi là hướng cần bổ sung. Ngoài ra, hai endpoint thống kê kỹ năng của Dashboard (\texttt{in-demand}, \texttt{rising}) cũng chậm hơn các endpoint còn lại do truy vấn tổng hợp trên bảng liên kết lớn, cần tối ưu bằng chỉ mục bổ sung hoặc materialized view.
+\subsection*{2. Hạn chế về quy trình ETL \& Thu thập dữ liệu thị trường}
+\begin{itemize}
+    \item \textbf{Khử trùng lặp đa nguồn song ngữ (Bilingual / Cross-lingual Duplicates)}: Thuật toán TF-IDF + Cosine Similarity tại tầng 2 của khâu Import vận hành dựa trên tần suất từ vựng (Lexical matching). Do đó, khi cùng một vị trí tuyển dụng được đăng tải bằng hai ngôn ngữ khác nhau trên hai sàn khác nhau (bài đăng Tiếng Anh trên ITViec/LinkedIn và bài đăng Tiếng Việt trên VietnamWorks/CareerViet), hệ thống chưa thể nhận diện trùng lặp tự động do tập từ vựng hai ngôn ngữ hoàn toàn rời rạc (điểm Cosine sụt giảm xuống dưới 0.30).
+    \item \textbf{Tiền xử lý thẻ cấu trúc HTML thô}: Tầng Tokenization regex hiện tại chưa loại bỏ triệt để các thẻ HTML cấu trúc (\texttt{<h3>}, \texttt{<li>}, \texttt{<ul>}), gây lãng phí dung lượng vector đặc trưng và ảnh hưởng nhẹ đến ma trận tần suất TF-IDF.
+    \item \textbf{Quy trình thu thập dữ liệu (ETL)}: Việc crawl dữ liệu việc làm từ các nguồn công khai hiện chỉ phục vụ mục đích nghiên cứu học thuật với tần suất lấy mẫu được giới hạn (rate-limit) để không ảnh hưởng đến máy chủ nguồn. Để triển khai quy mô thương mại, cần xây dựng các thỏa thuận chia sẻ dữ liệu (Data Sharing Agreements/API đối tác).
+\end{itemize}
 
-    \item \textbf{Sự phụ thuộc vào chất lượng dữ liệu thô}: Kết quả trích xuất kỹ năng có thể bị ảnh hưởng nếu tệp CV của ứng viên được trình bày quá cẩu thả, ảnh quét có độ phân giải kém hoặc sử dụng các định dạng thiết kế cột phức tạp mà tầng OCR không đọc đúng thứ tự dòng.
-
+\subsection*{3. Hạn chế về Quản lý Từ điển Kỹ năng}
+\begin{itemize}
     \item \textbf{Từ điển kỹ năng cần bảo trì định kỳ}: Các kỹ năng mới xuất hiện trên thị trường chưa có trong từ điển chuẩn hóa được đẩy vào bảng \texttt{unmatched\_skills} và hiện vẫn cần con người phê duyệt thủ công trước khi bổ sung vào từ điển, chưa có quy trình tự động hóa hoàn chỉnh.
-
-    \item \textbf{Tính phụ thuộc vào LLM (Vấn đề Ảo giác - Hallucination)}: Quá trình trích xuất kỹ năng phụ thuộc hoàn toàn vào Gemini API. Dù đã áp dụng Prompt Engineering khắt khe ép LLM trả về JSON, vẫn có rủi ro LLM "tưởng tượng" ra kỹ năng không có trong CV gốc nếu CV được viết quá phức tạp. Hiện tại, giải pháp tạm thời là cho phép người dùng tự review và chỉnh sửa kỹ năng (Human-in-the-loop) trước khi đối soát.
-
-    \item \textbf{Cơ chế Đề xuất khóa học (Course Recommendation) cơ bản}: Thuật toán hiện tại chủ yếu sử dụng phương pháp Lọc dựa trên Nội dung (Content-based Filtering) thông qua đối sánh thẻ kỹ năng (skill\_tags). Hệ thống chưa triển khai các thuật toán đề xuất nâng cao như Collaborative Filtering do chưa tích lũy đủ dữ liệu tương tác người dùng (Cold-start problem).
-
-    \item \textbf{Khả năng phát hiện trùng lặp tin tuyển dụng đa nguồn song ngữ (Bilingual / Cross-lingual Duplicates)}: Thuật toán TF-IDF + Cosine Similarity tại tầng 2 của khâu Import vận hành dựa trên tần suất từ vựng (Lexical matching). Do đó, khi cùng một vị trí tuyển dụng được đăng tải bằng hai ngôn ngữ khác nhau trên hai sàn khác nhau (như bài đăng Tiếng Anh trên ITViec/LinkedIn và bài đăng Tiếng Việt trên VietnamWorks/TopCV), hệ thống chưa thể nhận diện trùng lặp do tập từ vựng hai ngôn ngữ hoàn toàn rời rạc (điểm Cosine sụt giảm xuống dưới 0.30).
-
-    \item \textbf{Quy trình thu thập dữ liệu (ETL)}: Việc crawl dữ liệu việc làm từ các nguồn công khai hiện chỉ phục vụ mục đích nghiên cứu học thuật, với tần suất lấy mẫu được giới hạn (rate-limit) để không ảnh hưởng đến máy chủ nguồn. Tuy nhiên, nếu triển khai thực tế trên quy mô thương mại, cần xây dựng các thỏa thuận chia sẻ dữ liệu (Data Sharing Agreements/API đối tác) để đảm bảo tính pháp lý và ổn định của luồng dữ liệu.
 \end{itemize}
 
 %==========================================================================
 
 \section*{Bài học kinh nghiệm và kỹ năng tích lũy}
 
-Trải qua toàn bộ vòng đời phát triển của dự án từ khâu khảo sát nghiệp vụ, phân tích thiết kế, đến triển khai mã nguồn và kiểm thử vận hành, nhóm thực hiện đề tài đã tích lũy được những bài học kinh nghiệm và kỹ năng thực tiễn quý giá, làm hành trang vững chắc cho con đường kỹ sư phần mềm chuyên nghiệp:
+Trải qua toàn bộ vòng đời phát triển của dự án từ khâu khảo sát nghiệp vụ, phân tích thiết kế, đến triển khai mã nguồn và kiểm thử vận hành, nhóm thực hiện đề tài đã tích lũy được những bài học kinh nghiệm và kỹ năng thực tiễn quý giá:
 
 \begin{enumerate}
-    \item \textbf{Tư duy thiết kế hệ thống phân tán (System Architecture)}: Nhóm học được cách phá vỡ một ứng dụng nguyên khối khổng lồ thành các dịch vụ độc lập (Frontend Web, Backend Core API, ETL Data Pipeline). Việc áp dụng container hóa bằng Docker và Docker Compose ngay từ đầu giúp nhóm thấu hiểu nguyên lý triển khai nhất quán giữa môi trường phát triển (dev) và môi trường sản phẩm (production), giảm thiểu triệt để lỗi "chạy được trên máy tôi nhưng lỗi trên server".
+    \item \textbf{Tư duy thiết kế hệ thống phân tán (System Architecture)}: Nhóm học được cách phá vỡ một ứng dụng nguyên khối thành các dịch vụ độc lập (Frontend Web, Backend Core API, ETL Data Pipeline). Việc áp dụng container hóa bằng Docker và Docker Compose ngay từ đầu giúp nhóm thấu hiểu nguyên lý triển khai nhất quán giữa môi trường phát triển (dev) và môi trường sản phẩm (production).
 
     \item \textbf{Làm chủ chu trình xử lý dữ liệu (Data Engineering)}: Thông qua việc xây dựng ETL Pipeline, nhóm nắm vững kỹ thuật thu thập dữ liệu tự động, cơ chế dự phòng hai tầng (request tĩnh kết hợp Selenium headless), cũng như các kỹ thuật làm sạch, chuẩn hóa và tối ưu truy vấn trên cơ sở dữ liệu quan hệ kết hợp trường JSONB.
 
-    \item \textbf{Tích hợp AI vào sản phẩm thực tế (Applied AI \& LLMOps)}: Nhóm nhận ra rằng việc ứng dụng AI trong thực tế phức tạp hơn nhiều so với lý thuyết. Bài học lớn nhất là cách "kìm cương" mô hình ngôn ngữ lớn (LLM) thông qua kỹ thuật \textit{Structured Outputs} và cơ chế kiểm chứng chéo (Anti-Hallucination) để ép AI sinh dữ liệu có cấu trúc ổn định thay vì trả lời tự do. Nhóm cũng thấu hiểu sự cân bằng giữa hiệu năng và chi phí khi kết hợp LLM (nhạy bén nhưng chậm, tốn phí) với Vector Search/SBERT cục bộ (nhanh, miễn phí, thuần tính toán).
+    \item \textbf{Tích hợp AI vào sản phẩm thực tế (Applied AI \& LLMOps)}: Nhóm nhận ra rằng việc ứng dụng AI trong thực tế phức tạp hơn nhiều so với lý thuyết. Bài học lớn nhất là cách Structured Outputs kết hợp Vector Search/SBERT và bộ sáu quy tắc lọc ngữ nghĩa để cân bằng giữa chất lượng và chi phí tính toán.
 
     \item \textbf{Tư duy kiểm thử và tư duy định lượng (QA \& Quantitative Mindset)}: Trong giai đoạn đánh giá hệ thống, nhóm rèn luyện được thói quen làm việc với các số liệu thực đo. Việc ghi nhận trường \textit{Duration} trong tab \textit{Network} của trình duyệt cho các API đại diện giúp nhóm nhận diện rõ điểm nghẽn của kiến trúc, đặc biệt là độ trễ ở lần đối soát CV đầu tiên, từ đó định hướng các bước tối ưu hóa tiếp theo.
 \end{enumerate}
@@ -66,15 +66,19 @@ Trải qua toàn bộ vòng đời phát triển của dự án từ khâu khả
 Dựa trên nền tảng kỹ thuật và dữ liệu đã xây dựng, cùng với việc nhìn nhận các hạn chế hiện tại, các hướng nghiên cứu và phát triển có giá trị cao trong tương lai bao gồm:
 
 \begin{enumerate}
-    \item \textbf{Mở rộng đa ngành nghề}: Cập nhật cây phân loại (taxonomy) và huấn luyện thêm các mô hình nhúng để hỗ trợ phân tích dữ liệu tuyển dụng ở các lĩnh vực khác như Tài chính, Marketing, Y tế và Giáo dục, đồng thời mở rộng danh sách nguồn thu thập để tăng độ phủ thị trường.
+    \item \textbf{Nâng cấp Matching Engine bằng cơ chế Ngưỡng động (Dynamic Thresholding)}: Nghiên cứu cơ chế tự động điều chỉnh ngưỡng phân loại linh hoạt dựa trên đặc thù từ vựng và độ chi tiết kỹ năng của từng nhóm vị trí tuyển dụng chuyên biệt (\texttt{search\_group}), khắc phục hạn chế của ngưỡng cố định $0{,}75$ nhằm tăng hơn nữa độ chính xác phân loại giữa \textit{Matched} và \textit{Partial}.
+
+    \item \textbf{Phát triển mô hình đánh giá độ sâu thâm niên kinh nghiệm (Seniority Depth Analysis)}: Mở rộng tầng trích xuất LLM để phân tích ngữ cảnh thực tế (thời gian làm việc, vai trò, quy mô dự án) nhằm gán trọng số thâm niên cho từng kỹ năng, giúp phân biệt rõ nét giữa ứng viên cấp độ Junior và Senior.
 
     \item \textbf{Nâng cấp thuật toán khử trùng lặp bằng mô hình nhúng ngữ nghĩa đa ngôn ngữ (Multilingual Dense Embeddings)}: Tích hợp các mô hình nhúng ngữ nghĩa đa ngôn ngữ như \texttt{multilingual-e5} hoặc \texttt{text-embedding-3-small} vào tầng 2 của thuật toán Deduplication tại lớp Import để biểu diễn văn bản Tiếng Anh và Tiếng Việt trong cùng một không gian vector nhúng đa chiều, giúp hệ thống phát hiện trùng lặp bài đăng đa nguồn bất kể rào cản ngôn ngữ với chi phí tính toán tối ưu.
 
-    \item \textbf{Tự động hóa vòng lặp cải thiện từ điển kỹ năng}: Xây dựng quy trình bán tự động khai thác bảng \texttt{unmatched\_skills}, kết hợp tần suất xuất hiện, điểm tương đồng gần nhất và xác nhận của LLM để đề xuất bổ sung kỹ năng mới vào từ điển chuẩn hóa theo chu kỳ. Quy trình này giúp hệ thống tự thích nghi với các công nghệ mới nổi trên thị trường mà không cần can thiệp thủ công.
+    \item \textbf{Bổ sung tiền xử lý bóc tách mã HTML thô tại ETL}: Xây dựng bộ lọc loại bỏ hoàn toàn thẻ cấu trúc HTML (HTML Tag Stripping) trước khi đưa văn bản mô tả vào bộ trích xuất TF-IDF, giúp làm sạch ma trận đặc trưng từ vựng và tối ưu tài nguyên tính toán.
 
-    \item \textbf{Nâng cao chất lượng gợi ý lộ trình học tập}: Mở rộng kho khóa học liên kết với Gap Report bằng cách tự động đồng bộ metadata từ các nền tảng học trực tuyến (Coursera, Udemy, edX), bổ sung cơ chế xếp hạng khóa học theo phản hồi người dùng và theo dõi tiến độ học tập để đo lường mức độ thu hẹp khoảng cách kỹ năng theo thời gian.
+    \item \textbf{Tự động hóa vòng lặp cải thiện từ điển kỹ năng}: Xây dựng quy trình bán tự động khai thác bảng \texttt{unmatched\_skills}, kết hợp tần suất xuất hiện, điểm tương đồng gần nhất và xác nhận của LLM để đề xuất bổ sung kỹ năng mới vào từ điển chuẩn hóa theo chu kỳ mà không cần can thiệp thủ công.
 
-    \item \textbf{Tối ưu hóa hiệu năng và triển khai mô hình nội bộ (On-premise LLMs)}: Nghiên cứu tinh chỉnh (Fine-tuning) và triển khai các mô hình ngôn ngữ lớn mã nguồn mở có kích thước nhỏ (như LLaMA-3-8B hoặc Qwen-2.5) trực tiếp trên máy chủ hệ thống để tự chủ công nghệ, tăng tính bảo mật dữ liệu và giảm tối đa thời gian trễ của khâu trích xuất kỹ năng khi cache miss.
+    \item \textbf{Mở rộng đa ngành nghề}: Cập nhật cây phân loại (taxonomy) và huấn luyện thêm các mô hình nhúng để hỗ trợ phân tích dữ liệu tuyển dụng ở các lĩnh vực khác như Tài chính, Marketing, Y tế và Giáo dục, đồng thời mở rộng danh sách nguồn thu thập để tăng độ phủ thị trường.
+
+    \item \textbf{Tối ưu hóa hiệu năng và tích hợp LLM nội bộ (On-premise / Local LLMs)}: Nghiên cứu tinh chỉnh (Fine-tuning) và triển khai các mô hình ngôn ngữ lớn mã nguồn mở có kích thước nhỏ (như LLaMA-3-8B hoặc Qwen-2.5) trực tiếp trên máy chủ hệ thống để tự chủ công nghệ, tăng bảo mật dữ liệu và tối ưu hiệu năng vận hành lâu dài.
 \end{enumerate}
 
 Nhìn chung, hệ thống CareerNova đã xây dựng được một nền tảng dữ liệu và kỹ thuật vững chắc, có khả năng mở rộng sang các hướng ứng dụng thực tiễn rộng lớn hơn trong lĩnh vực hỗ trợ quyết định nghề nghiệp và phân tích thị trường lao động bằng trí tuệ nhân tạo. Đề tài khẳng định tính khả thi của việc kết hợp các mô hình ngôn ngữ lớn thế hệ mới với kỹ thuật biểu diễn vector ngữ nghĩa truyền thống để giải quyết bài toán thực tiễn có ý nghĩa giáo dục và xã hội sâu sắc: thu hẹp khoảng cách thông tin giữa sinh viên và thị trường lao động, trao quyền cho thế hệ trẻ chủ động định hướng con đường nghề nghiệp của bản thân dựa trên dữ liệu.
