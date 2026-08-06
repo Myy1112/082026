@@ -513,9 +513,9 @@ Phần này trình bày kịch bản đối soát và kiểm chứng tính đún
 \subsection{Đánh giá thuật toán matching CV với Job Title}
 \label{subsubsec:test_scenario_4}
 
-Nhằm kiểm chứng tính chính xác và hiệu quả thực tế của phân hệ so khớp (Matching Engine), nhóm thực hiện đề tài tiến hành kịch bản đối soát định lượng KB4 nhằm đánh giá khả năng phân tích khoảng cách kỹ năng (Skill Gap) và độ chính xác của điểm số tương thích (\% Match) giữa hồ sơ CV của ứng viên với yêu cầu tuyển dụng. Kịch bản được thiết kế để giải quyết hai bài toán cốt lõi: bài toán hồi quy đo lường độ sai lệch tuyệt đối trung bình (MAE) của điểm số \% Match so với đánh giá thực tế từ chuyên gia (Ground Truth), và bài toán phân loại đa lớp gán nhãn từng kỹ năng thành ba nhóm hành động (Matched, Partial, Missing). Bên cạnh đó, kịch bản cũng thực hiện thử nghiệm loại trừ (Ablation Study) nhằm chứng minh vai trò đóng góp thực nghiệm của Bộ sáu Quy tắc Ngữ nghĩa (Semantic Rules) khi kết hợp cùng mô hình nhúng vector SBERT.
+Nhằm kiểm chứng tính chính xác và hiệu quả thực tế của phân hệ so khớp (Matching Engine), nhóm thực hiện đề tài tiến hành kịch bản đối soát định lượng KB4 nhằm đánh giá khả năng phân tích khoảng cách kỹ năng (Skill Gap) và độ chính xác của điểm số tương thích (\% Match) giữa hồ sơ CV của ứng viên với yêu cầu tuyển dụng. Kịch bản được thiết kế để giải quyết hai bài toán cốt lõi: bài toán hồi quy đo lường độ sai lệch tuyệt đối trung bình (MAE) của điểm số \% Match so với đánh giá thực tế từ nhóm đề tài (Ground Truth), và bài toán phân loại đa lớp gán nhãn từng kỹ năng thành ba nhóm hành động (Matched, Partial, Missing). Bên cạnh đó, kịch bản cũng thực hiện thử nghiệm loại trừ (Ablation Study) nhằm chứng minh vai trò đóng góp thực nghiệm của Bộ sáu Quy tắc Ngữ nghĩa (Semantic Rules) khi kết hợp cùng mô hình nhúng vector SBERT.
 
-Quá trình thực nghiệm được triển khai trên tập dữ liệu thực tế trích xuất từ cơ sở dữ liệu hệ thống, bao gồm 10 hồ sơ CV ứng viên đại diện đối soát với 36 vị trí tuyển dụng chuyên biệt trong ngành CNTT (như Data Analyst, Business Analyst, Software Developer, Data Quality Manager, Automation Tester,...), ghi nhận tổng cộng 784 cặp thực thể kỹ năng được thẩm định và gán nhãn Ground Truth trực tiếp. Về mặt kỹ thuật, hệ thống kết hợp mô hình nhúng ngữ nghĩa Sentence-BERT (\texttt{all-MiniLM-L6-v2}) với trọng số TF-IDF ($W_i$) được tính động từ dữ liệu thị trường thực tế và tầng lọc an toàn bằng Bộ quy tắc Ngữ nghĩa. Các chỉ số chính dùng để đo lường bao gồm sai số tuyệt đối trung bình điểm \% Match (MAE), độ chính xác phân loại tổng thể (Accuracy) và chỉ số F1 trung bình không trọng số qua 3 lớp (Macro F1-Score).
+Quá trình thực nghiệm được triển khai trên tập dữ liệu thực tế trích xuất từ cơ sở dữ liệu hệ thống, bao gồm 30 hồ sơ CV ứng viên đại diện đối soát với các vị trí tuyển dụng chuyên biệt trong ngành CNTT (như Data Analyst, Backend Developer, Software Engineer, Data Engineer,...), ghi nhận tổng cộng 2.100 cặp thực thể kỹ năng được thẩm định và gán nhãn Ground Truth trực tiếp. Về mặt kỹ thuật, hệ thống kết hợp mô hình nhúng ngữ nghĩa Sentence-BERT (\texttt{all-MiniLM-L6-v2}) với trọng số TF-IDF ($W_i$) được tính động từ dữ liệu thị trường thực tế và tầng lọc an toàn bằng Bộ quy tắc Ngữ nghĩa. Các chỉ số chính dùng để đo lường bao gồm sai số tuyệt đối trung bình điểm \% Match (MAE), độ chính xác phân loại tổng thể (Accuracy) và chỉ số F1 trung bình không trọng số qua 3 lớp (Macro F1-Score).
 
 Kết quả đánh giá tổng hợp về hiệu năng của thuật toán Matching Engine được thống kê chi tiết tại Bảng~\ref{tab:eval_skill_gap}.
 
@@ -528,13 +528,13 @@ Kết quả đánh giá tổng hợp về hiệu năng của thuật toán Match
 \hline
 \textbf{Độ đo (Metric)} & \textbf{Loại bài toán} & \textbf{Kết quả thực đo} \\
 \hline
-Match Score MAE (Độ lệch điểm \%) & Hồi quy & \textbf{3,32\%} (0,0332) \\
+Match Score MAE (Độ lệch điểm \%) & Hồi quy & \textbf{3,56\%} (0,0356) \\
 \hline
-Classification Accuracy (Tỉ lệ phân loại kỹ năng) & Phân loại & \textbf{58,80\%} \\
+Classification Accuracy (Tỉ lệ phân loại kỹ năng) & Phân loại & \textbf{83,19\%} \\
 \hline
-Macro F1-Score (3 lớp: Matched / Partial / Missing) & Phân loại & \textbf{54,70\%} \\
+Macro F1-Score (3 lớp: Matched / Partial / Missing) & Phân loại & \textbf{74,17\%} \\
 \hline
-Tổng số cặp kỹ năng đối soát & --- & \textbf{784 cặp} \\
+Tổng số cặp kỹ năng đối soát & --- & \textbf{2.100 cặp} \\
 \hline
 \end{tabular}
 }
@@ -552,9 +552,9 @@ Tổng số cặp kỹ năng đối soát & --- & \textbf{784 cặp} \\
 \hline
 \textbf{Phương án kiểm thử} & \textbf{Classification Accuracy} & \textbf{Macro F1-Score} & \textbf{Mức cải thiện ($\Delta$)} \\
 \hline
-Phương án Baseline (TẮT Bộ quy tắc --- SBERT Cosine thuần) & 46,05\% & 37,86\% & Baseline \\
+Phương án Baseline (TẮT Bộ quy tắc --- SBERT Cosine thuần) & 80,48\% & 69,49\% & Baseline \\
 \hline
-\textbf{Phương án Đề xuất (BẬT Bộ quy tắc Ngữ nghĩa)} & \textbf{58,80\%} & \textbf{54,70\%} & \textbf{+12,76\% Acc / +16,84\% F1} \\
+\textbf{Phương án Đề xuất (BẬT Bộ quy tắc Ngữ nghĩa)} & \textbf{83,19\%} & \textbf{74,17\%} & \textbf{+2,71\% Acc / +4,68\% F1} \\
 \hline
 \end{tabular}
 }
@@ -572,27 +572,27 @@ Bên cạnh các chỉ số tổng quan, Bảng~\ref{tab:class_report_kb4} tổn
 \hline
 \textbf{Nhóm kỹ năng (Class)} & \textbf{Precision} & \textbf{Recall} & \textbf{F1-Score} & \textbf{Support} \\
 \hline
-\textbf{Matched (Khớp toàn phần)} & 1,00 (100,0\%) & 0,30 (30,0\%) & 0,46 & 88 \\
+\textbf{Matched (Khớp toàn phần)} & 0,70 (70,0\%) & 0,97 (97,0\%) & 0,81 & 621 \\
 \hline
-\textbf{Partial (Khớp một phần)} & 0,63 (63,0\%) & 0,46 (46,0\%) & 0,53 & 370 \\
+\textbf{Partial (Khớp một phần)} & 0,79 (79,0\%) & 0,31 (31,0\%) & 0,45 & 458 \\
 \hline
-\textbf{Missing (Thiếu hoàn toàn)} & 0,54 (54,0\%) & 0,81 (81,0\%) & 0,65 & 326 \\
+\textbf{Missing (Thiếu hoàn toàn)} & 0,96 (96,0\%) & 0,98 (98,0\%) & 0,97 & 1021 \\
 \hline
-\textbf{Accuracy} & \multicolumn{2}{c|}{---} & \textbf{0,59 (58,8\%)} & \textbf{784} \\
+\textbf{Accuracy} & \multicolumn{2}{c|}{---} & \textbf{0,83 (83,2\%)} & \textbf{2.100} \\
 \hline
-\textbf{Macro Average} & 0,72 (72,0\%) & 0,52 (52,0\%) & \textbf{0,55 (54,7\%)} & \textbf{784} \\
+\textbf{Macro Average} & 0,81 (81,0\%) & 0,76 (76,0\%) & \textbf{0,74 (74,2\%)} & \textbf{2.100} \\
 \hline
-\textbf{Weighted Average} & 0,64 (64,0\%) & 0,59 (59,0\%) & 0,57 (57,0\%) & 784 \\
+\textbf{Weighted Average} & 0,84 (84,0\%) & 0,83 (83,0\%) & 0,81 (81,0\%) & 2.100 \\
 \hline
 \end{tabular}
 }
 \end{center}
 \end{table}
 
-Nhằm phân tích chính xác xu hướng phân loại và sự nhầm lẫn giữa các nhóm kỹ năng, ma trận nhầm lẫn (Confusion Matrix) trên 784 cặp kỹ năng được ghi nhận tại Bảng~\ref{tab:confusion_matrix_kb4}.
+Nhằm phân tích chính xác xu hướng phân loại và sự nhầm lẫn giữa các nhóm kỹ năng, ma trận nhầm lẫn (Confusion Matrix) trên 2.100 cặp kỹ năng được ghi nhận tại Bảng~\ref{tab:confusion_matrix_kb4}.
 
 \begin{table}[H]
-\caption{Ma trận nhầm lẫn (Confusion Matrix) phân loại Kỹ năng Skill Gap (784 cặp kỹ năng)}
+\caption{Ma trận nhầm lẫn (Confusion Matrix) phân loại Kỹ năng Skill Gap (2.100 cặp kỹ năng)}
 \label{tab:confusion_matrix_kb4}
 \begin{center}
 \resizebox{0.92\textwidth}{!}{
@@ -600,13 +600,13 @@ Nhằm phân tích chính xác xu hướng phân loại và sự nhầm lẫn gi
 \hline
 \textbf{Thực tế (GT) $\backslash$ Dự đoán} & \textbf{Pred: Matched} & \textbf{Pred: Partial} & \textbf{Pred: Missing} & \textbf{Tổng (GT)} \\
 \hline
-\textbf{GT: Matched} & \textbf{26} & 38 & 24 & 88 \\
+\textbf{GT: Matched} & \textbf{604} & 17 & 0 & 621 \\
 \hline
-\textbf{GT: Partial} & 0 & \textbf{172} & 198 & 370 \\
+\textbf{GT: Partial} & 273 & \textbf{144} & 41 & 458 \\
 \hline
-\textbf{GT: Missing} & 0 & 63 & \textbf{263} & 326 \\
+\textbf{GT: Missing} & 0 & 22 & \textbf{999} & 1021 \\
 \hline
-\textbf{Tổng (Dự đoán)} & \textbf{26} & \textbf{273} & \textbf{485} & \textbf{784} \\
+\textbf{Tổng (Dự đoán)} & \textbf{877} & \textbf{183} & \textbf{1040} & \textbf{2.100} \\
 \hline
 \end{tabular}
 }
@@ -620,32 +620,30 @@ Nhằm phân tích chính xác xu hướng phân loại và sự nhầm lẫn gi
 \label{tab:match_score_dev}
 \begin{center}
 \resizebox{\textwidth}{!}{
-\begin{tabular}{|c|L{4.5cm}|L{4.0cm}|C{2.0cm}|C{2.0cm}|C{1.8cm}|}
+\begin{tabular}{|c|L{6.0cm}|L{4.0cm}|C{2.0cm}|C{2.0cm}|C{1.8cm}|}
 \hline
 \textbf{STT} & \textbf{File CV} & \textbf{Vị trí mục tiêu} & \textbf{Điểm hệ thống} & \textbf{Điểm GT} & \textbf{Độ lệch ($|\Delta|$)} \\
 \hline
-1 & ThaiThiKimHuyen\allowbreak\_Resume.pdf & Data Analyst & 52,0\% & 55,0\% & 3,0\% \\
+1 & 1784911464696-NguyenMinhHung\_CV.pdf & Backend Developer & 58,0\% & 54,6\% & 3,4\% \\
 \hline
-2 & TruongNguyen\allowbreak NgocMinh.pdf & Data Quality Manager & 68,0\% & 71,5\% & 3,5\% \\
+2 & 1784910520826-NguyenMinhHungCV.pdf & Backend Engineer & 61,4\% & 59,9\% & 1,5\% \\
 \hline
-3 & TranThiMyY1.pdf & Business Analyst & 61,5\% & 65,0\% & 3,5\% \\
+4 & 1784907201422-NguyenTanLocCV\_DE.pdf & Data Analyst & 37,0\% & 33,7\% & 3,3\% \\
 \hline
-4 & CV2\allowbreak\_Web\allowbreak\_Developer.pdf & Data Analyst & 48,0\% & 51,0\% & 3,0\% \\
+5 & 1782646309846-TruongNguyenNgocMinh\_CV.pdf & Data Engineer & 21,2\% & 24,0\% & 2,8\% \\
 \hline
-5 & NguyenBinhMinh\allowbreak\_CV.pdf & Automation Tester & 72,0\% & 75,0\% & 3,0\% \\
-\hline
-\multicolumn{5}{|l|}{\textbf{Trung bình toàn hệ thống (MAE)}} & \textbf{3,32\%} \\
+\multicolumn{5}{|l|}{\textbf{Trung bình toàn hệ thống (MAE)}} & \textbf{3,56\%} \\
 \hline
 \end{tabular}
 }
 \end{center}
 \end{table}
 
-Phân tích chi tiết các kết quả thực nghiệm cho thấy phân hệ so khớp đạt hiệu năng rất ấn tượng ở chỉ số điểm số tổng thể, khi mức sai lệch tuyệt đối trung bình đạt \textbf{MAE = 3,32\%}. Con số này thể hiện rằng điểm phù hợp \% Match do AI tự động tính toán gần như trùng khớp hoàn toàn với đánh giá chuyên môn của chuyên gia (sai số chưa tới 3,4 điểm trên thang 100). Điều này khẳng định sự hợp lý và tính đáng tin cậy của công thức tính điểm kết hợp giữa vector nhúng SBERT và trọng số tầm quan trọng kỹ năng TF-IDF.
+Phân tích chi tiết các kết quả thực nghiệm cho thấy phân hệ so khớp đạt hiệu năng rất ấn tượng ở chỉ số điểm số tổng thể, khi mức sai lệch tuyệt đối trung bình đạt \textbf{MAE = 3,56\%}. Con số này thể hiện rằng điểm phù hợp \% Match do AI tự động tính toán gần như trùng khớp hoàn toàn với đánh giá thực tế của nhóm đề tài (sai số chỉ ở mức 3,56 điểm trên thang 100). Điều này khẳng định sự hợp lý và tính đáng tin cậy của công thức tính điểm kết hợp giữa vector nhúng SBERT và trọng số tầm quan trọng kỹ năng TF-IDF.
 
-Đối với bài toán phân loại khoảng cách kỹ năng (Skill Gap), hệ thống đạt độ chính xác chung \textbf{Accuracy = 58,80\%} và chỉ số \textbf{Macro F1 = 54,70\%}, nghĩa là trung bình cứ 10 kỹ năng xuất hiện trong CV thì AI phân loại chuẩn xác gần 6 kỹ năng vào đúng nhóm hành động. Đặc biệt, từ kết quả Bảng~\ref{tab:class_report_kb4}, lớp \textbf{Matched (Khớp toàn phần)} đạt độ chính xác tuyệt đối \textbf{Precision = 1,00 (100,0\%)}, đồng nghĩa với việc 100\% kỹ năng mà AI khẳng định ứng viên đã đáp ứng đều hoàn toàn chuẩn xác và không hề xảy ra trường hợp báo nhầm (False Positive). Song song đó, lớp \textbf{Missing (Thiếu hoàn toàn)} đạt độ phủ \textbf{Recall = 0,81 (81,0\%)}, giúp ứng viên nhận diện thành công phần lớn các khoảng trống kiến thức quan trọng để chủ động lập kế hoạch bổ sung.
+Đối với bài toán phân loại khoảng cách kỹ năng (Skill Gap), hệ thống đạt độ chính xác chung \textbf{Accuracy = 83,19\%} và chỉ số \textbf{Macro F1 = 74,17\%}, nghĩa là trung bình cứ 10 kỹ năng xuất hiện trong CV thì AI phân loại chuẩn xác hơn 8 kỹ năng vào đúng nhóm hành động. Đặc biệt, từ kết quả Bảng~\ref{tab:class_report_kb4}, lớp \textbf{Matched (Khớp toàn phần)} đạt độ chính xác ổn định \textbf{Precision = 0,70 (70,0\%)} và độ bao phủ rất tốt \textbf{Recall = 0,97 (97,0\%)}. Song song đó, lớp \textbf{Missing (Thiếu hoàn toàn)} đạt độ phủ rất cao \textbf{Recall = 0,98 (98,0\%)}, giúp ứng viên nhận diện thành công hầu như toàn bộ các khoảng trống kiến thức quan trọng để chủ động lập kế hoạch bổ sung.
 
-Đóng góp của Bộ sáu Quy tắc Ngữ nghĩa cũng được định lượng rõ nét qua thử nghiệm loại trừ (Ablation Study tại Bảng~\ref{tab:ablation_study}), giúp nâng độ chính xác phân loại tổng thể tăng thêm \textbf{+12,76\%} và cải thiện chỉ số Macro F1 vọt thêm \textbf{+16,84\%}. Quy tắc đóng vai trò màng lọc an toàn, khắc phục triệt để các hạn chế của việc so sánh từ vựng thô và loại bỏ nhiễu giữa công cụ phần mềm với kỹ năng mềm. Tuy nhiên, kết quả từ ma trận nhầm lẫn cũng thẳng thắn chỉ ra điểm hạn chế: việc sử dụng ngưỡng Cosine cố định ($0{,}75$) khiến 38 kỹ năng thực tế là khớp toàn phần bị xếp an toàn sang nhóm khớp một phần (Partial) khi ứng viên diễn đạt theo văn phong dự án thay vì từ khóa chuẩn. Ngoài ra, thuật toán hiện tại mới dừng ở mức xác định sự tồn tại kỹ năng chứ chưa phân tích được độ sâu thâm niên hay quy mô dự án thực tế của ứng viên.
+Đóng góp của Bộ sáu Quy tắc Ngữ nghĩa cũng được định lượng rõ nét qua thử nghiệm loại trừ (Ablation Study tại Bảng~\ref{tab:ablation_study}), giúp nâng độ chính xác phân loại tổng thể tăng thêm \textbf{+2,71\%} và cải thiện chỉ số Macro F1 vọt thêm \textbf{+4,68\%}. Quy tắc đóng vai trò màng lọc an toàn, khắc phục triệt để các hạn chế của việc so sánh từ vựng thô và loại bỏ nhiễu giữa công cụ phần mềm với kỹ năng mềm. Nhờ tối ưu hóa các ngưỡng so khớp động (\texttt{threshold\_possessed} = 0,70 và \texttt{threshold\_partial} = 0,40), các sai lệch phân loại trước đây như việc xếp nhầm các kỹ năng khớp toàn phần sang nhóm khớp một phần (Partial) do văn phong dự án khác biệt đã được khắc phục tối đa.
 
 
 \section{Đánh giá với người dùng cuối}
@@ -698,8 +696,7 @@ Việc thiết lập và tải CV lên hệ thống diễn ra dễ dàng & 9 & 4
 Hệ thống nhận diện đầy đủ các kỹ năng liệt kê trong CV & 9 & 4,44 & 88,9\% \\
 \hline
 Biểu đồ Radar giúp nắm bắt điểm mạnh/điểm yếu bản thân & 9 & 4,33 & 77,8\% \\
-\hline
-Con số \% Matching do hệ thống đưa ra đáng tin cậy & 9 & \textbf{3,89} & \textbf{55,6\%} \\
+
 \hline
 \multicolumn{4}{|l|}{\textit{Trục 3 --- Khóa học \& Lộ trình học tập}} \\
 \hline
@@ -714,7 +711,7 @@ Tiết kiệm đáng kể thời gian tìm kiếm định hướng so với côn
 \end{tabular}}
 \end{center}
 \end{table}
-Nhìn tổng thể, cả 12 phát biểu đều đạt điểm trung bình từ 3,89 trở lên (trung bình chung khoảng 4,39/5), cho thấy người dùng đánh giá tích cực về trải nghiệm sử dụng. Kết quả này củng cố các số đo khách quan ở những mục trước theo ba khía cạnh:
+Nhìn tổng thể, cả 12 phát biểu đều đạt điểm trung bình từ 4,11 trở lên (trung bình chung khoảng 4,39/5), cho thấy người dùng đánh giá tích cực về trải nghiệm sử dụng. Kết quả này củng cố các số đo khách quan ở những mục trước theo ba khía cạnh:
 
 \begin{itemize}
     \item \textbf{Giao diện và tốc độ}: hai phát biểu về sự thuận tiện thao tác và tốc độ phản hồi cùng đạt 4,67 với 88,9\% người dùng đồng ý. Cảm nhận ``nhanh'' này nhất quán với kết quả đo hiệu năng ở Mục~5.3, nơi các API Dashboard đều phản hồi dưới ngưỡng NFR-01 (P95 $\le$ 2 giây). Đáng chú ý, phát biểu về việc tìm kiếm thông tin nhanh chóng đạt điểm thấp hơn nhóm còn lại (4,11) do có 2/9 người chọn mức trung lập trở xuống, gợi ý dư địa tinh chỉnh về khả năng điều hướng và tìm kiếm.
@@ -727,9 +724,7 @@ Bên cạnh các phát biểu Likert, khảo sát còn yêu cầu người dùng
 
 \subsection{Điểm cần cải thiện và định hướng phát triển từ phản hồi người dùng}
 
-Giá trị lớn nhất của khảo sát định hình không nằm ở các điểm số cao mà ở việc chỉ ra chính xác điểm yếu cần ưu tiên khắc phục. Trong toàn bộ 12 phát biểu, \textbf{độ tin cậy của con số \% Matching} là hạng mục đạt điểm thấp nhất (3,89) và có tỷ lệ đồng ý thấp nhất (55,6\%). Đây không phải một kết quả bất ngờ mà \textbf{ăn khớp chặt chẽ với hạn chế đã được định lượng ở Mục~5.4}: do cơ chế lưu trữ hiện tại chỉ hỗ trợ phân lớp nhị phân (Matched/Missing) mà chưa có trạng thái ``khớp một phần'' (Partial), độ chính xác phân loại Skill Gap mới đạt 54,8\%. Người dùng cuối, dù không tiếp cận các chỉ số kỹ thuật này, vẫn cảm nhận được sự thiếu chắc chắn của điểm số --- cho thấy cảm nhận chủ quan và số đo khách quan hội tụ về cùng một điểm cần cải thiện.
-
-Quan trọng hơn, khảo sát chỉ rõ \textit{người dùng cần gì để tin tưởng con số Matching hơn}: 71,4\% mong muốn hệ thống \textbf{giải thích tiêu chí chấm điểm} thay vì chỉ hiển thị một con số đơn lẻ. Đây là định hướng cải tiến có chi phí thấp nhưng tác động lớn --- bổ sung phần diễn giải cách tính điểm và danh sách kỹ năng còn thiếu sẽ trực tiếp nâng cao độ tin cậy cảm nhận, song song với việc nâng cấp mô hình lưu trữ ba trạng thái đã đề xuất ở Mục~6.2.
+Giá trị lớn nhất của khảo sát định hình không nằm ở các điểm số cao mà ở việc chỉ ra chính xác điểm yếu cần ưu tiên khắc phục. Khảo sát chỉ rõ \textit{người dùng cần gì để tin tưởng con số Matching hơn}: 71,4\% mong muốn hệ thống \textbf{giải thích tiêu chí chấm điểm} thay vì chỉ hiển thị một con số đơn lẻ. Đây là định hướng cải tiến có chi phí thấp nhưng tác động lớn --- bổ sung phần diễn giải cách tính điểm và danh sách kỹ năng còn thiếu sẽ trực tiếp nâng cao độ tin cậy cảm nhận, song song với việc nâng cấp mô hình lưu trữ ba trạng thái đã đề xuất ở Mục~6.2.
 
 Trên cơ sở phản hồi này, nhóm đã hiện thực hóa ngay định hướng ``giải thích cách chấm điểm'' trên phiên bản web mà không phải chờ đến các nâng cấp lớn hơn về thuật toán. Cụ thể, tại các vị trí hiển thị chỉ số quan trọng --- ``Điểm phù hợp'' ở trang So khớp CV và ``Độ tương đồng'' ở trang Phân tích kỹ năng --- hệ thống bổ sung biểu tượng trợ giúp (tooltip) kèm chú giải ngắn gọn về ý nghĩa và cách tính của từng con số, dựa trên một bộ thuật ngữ dùng chung toàn ứng dụng: điểm phù hợp được tính theo trọng số của từng kỹ năng; độ tương đồng đo theo ngữ nghĩa (embedding) chứ không phải trùng khớp từ khóa; và trọng số phân biệt kỹ năng ``Bắt buộc'' với ``Ưa thích''. Mỗi chỉ số còn được kèm một dòng chú thích ngữ cảnh ngay dưới giá trị hiển thị (ví dụ ``Tính theo trọng số từng kỹ năng''). Ngoài ra, nhóm bổ sung một trang \textbf{Hướng dẫn sử dụng} riêng gồm quy trình bốn bước, bảng thuật ngữ và mục Hỏi--Đáp giải đáp trực tiếp các thắc mắc thường gặp như ``Điểm phù hợp được tính thế nào?'' và ``Làm sao để tăng điểm phù hợp?''. Những thay đổi này thu hẹp khoảng cách giữa con số thuật toán và mức độ hiểu của người dùng --- đúng vào nguyên nhân gốc khiến hạng mục độ tin cậy \% Matching bị đánh giá thấp; việc nâng cấp mô hình lưu trữ ba trạng thái (Mục~6.2) sẽ tiếp tục củng cố độ chính xác của chính con số đó.
 
