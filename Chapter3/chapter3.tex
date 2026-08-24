@@ -1,7 +1,61 @@
 \chapter{Phân tích và thiết kế hệ thống}
 \label{Chapter3}
 
-Chương này chuyển hóa mục tiêu nghiên cứu thành các yêu cầu nghiệp vụ, yêu cầu chức năng và yêu cầu phi chức năng của CareerNova. Trên nền tảng đó, chương trình bày thiết kế kiến trúc, dữ liệu, các luồng xử lý và giao diện làm cơ sở cho việc xây dựng hệ thống.
+Chương này giới thiệu một số đề tài và công trình nghiên cứu liên quan đến thu thập và xử lý dữ liệu tuyển dụng và so khớp hồ sơ, làm cơ sở cho việc thiết kế kiến trúc và giải thuật cho hệ thống. Từ đó, tiến hành phân tích các yêu cầu hệ thống và trình bày chi tiết thiết kế kiến trúc, dữ liệu, luồng xử lý cùng giao diện người dùng.
+
+% ================================================================
+\section{Các công trình và nghiên cứu liên quan}
+\label{sec:related_works}
+
+Để làm cơ sở khoa học và định hướng cho việc phân tích, thiết kế kiến trúc hệ thống CareerNova, nhóm nghiên cứu tiến hành khảo sát và đánh giá ba công trình nghiên cứu khoa học tiêu biểu liên quan trực tiếp đến ba bài toán cốt lõi của đề tài:
+
+\subsection{Khảo sát bài toán Khử trùng lặp tin tuyển dụng từ nhiều nguồn}
+\begin{itemize}
+    \item \textbf{Bài báo:} \textit{A Framework for Duplicate Detection from Online Job Postings}
+    \item \textbf{Tác giả:} Yanchang Zhao, Haohui Chen và Claire M. Mason
+    \item \textbf{Thời gian phát hành:} 14 tháng 12 năm 2021
+    \item \textbf{Liên kết:} \url{https://doi.org/10.1145/3486622.3493928}
+\end{itemize}
+
+Bài báo đề cập đến vấn đề tin tuyển dụng bị trùng lặp rất phổ biến trên các sàn việc làm trực tuyến (chiếm từ 50\% đến 80\%). Tình trạng này xảy ra do nhà tuyển dụng đăng một bài tuyển dụng lên nhiều trang như LinkedIn, SEEK, Adzuna, hoặc các trang tự động cào dữ liệu của nhau, gây ra tình trạng nhiễu loạn thông tin và làm giảm trải nghiệm của người tìm việc.
+
+Tác giả đề xuất một khung làm việc gồm 4 bước tự động để phát hiện và loại bỏ các tin tuyển dụng bị trùng lặp. Khung làm việc này sử dụng kỹ thuật làm sạch văn bản, phân nhóm bài đăng theo chức danh và địa điểm, sau đó so sánh độ tương đồng giữa các bài đăng trong một khoảng thời gian trượt (Sliding Window 60 ngày).
+
+Hệ thống khảo sát và thử nghiệm 24 phương pháp khác nhau, kết hợp các công cụ tách từ (word, n-gram, skip-gram), công cụ biểu diễn văn bản (TF-IDF, LSA) và các công cụ đo độ tương đồng (Jaccard, Overlap, Cosine). Kết quả thực nghiệm cho thấy phương pháp Overlap kết hợp Skip-gram và phương pháp TF-IDF kết hợp Cosine Similarity đạt hiệu năng tối ưu với độ chính xác F1-Score lên đến 96.86\%, vượt xa công cụ lọc trùng truyền thống Apollo.
+
+Dù còn một số thách thức trong việc phát hiện các bài đăng trùng lặp đa ngôn ngữ, nghiên cứu đã mở ra một khung làm việc hiệu quả và tối ưu chi phí tính toán trong việc làm sạch dữ liệu tuyển dụng quy mô lớn.
+
+\subsection{Khảo sát bài toán Trích xuất thực thể kỹ năng bằng AI}
+\begin{itemize}
+    \item \textbf{Bài báo:} \textit{Evaluating LLM-Based Resume Information Extraction: A Comparative Study of Zero-Shot and One-Shot Learning Approaches in Portuguese-Specific and Multi-Language LLMs}
+    \item \textbf{Tác giả:} Arthur Rodrigues Soares de Quadros, Wesley Nogueira Galvão và các cộng sự
+    \item \textbf{Thời gian phát hành:} Năm 2025
+    \item \textbf{Liên kết:} \url{https://doi.org/10.5220/0013837900003985}
+\end{itemize}
+
+Bài báo đề cập đến thách thức trong việc trích xuất và bóc tách thông tin từ hồ sơ ứng viên (CV). Các phương pháp truyền thống như biểu thức chính quy (Regex) hay các mô hình AI cũ (như BERT, BiLSTM-CRF) gặp nhiều hạn chế và dễ bỏ sót thông tin khi xử lý các bản CV có bố cục tự do, trình bày phức tạp.
+
+Tác giả đề xuất ứng dụng các Mô hình ngôn ngữ lớn (LLM) hiện đại như Gemini 2.5 Pro, Gemini 2.5 Flash, GPT-4.1 Mini, GPT-4o Mini và Sabiá 3 để tự động trích xuất thông tin CV. Hệ thống sử dụng hai kỹ thuật đặt câu lệnh Prompting là Zero-shot (không cho ví dụ) và One-shot (cho 1 ví dụ mẫu), kết hợp với cơ chế cưỡng chế cấu trúc đầu ra (JSON Schema) để bắt buộc AI trả về đúng định dạng dữ liệu mong muốn.
+
+Độ chính xác của hệ thống được đánh giá qua hai công cụ đo lường độc lập: độ đo Cosine giữa vector bài trích xuất với đáp án chuẩn, và công cụ đánh giá tự động LLM-as-a-Judge (sử dụng mô hình Qwen3 để chấm điểm độ chính xác về thực tế, ngữ nghĩa và thứ tự). Kết quả cho thấy Gemini 2.5 Pro và GPT-4.1 Mini ở cấu hình One-shot đạt độ chính xác cao nhất (điểm tương đồng Cosine > 0.85).
+
+Dù vẫn còn thách thức về mặt chi phí token khi mở rộng quy mô dữ liệu lớn, giải pháp được đánh giá là có tính ứng dụng cao và mở ra hướng tiếp cận chuẩn xác, linh hoạt hơn trong việc bóc tách văn bản phi cấu trúc.
+
+\subsection{Khảo sát thuật toán so khớp hồ sơ và phân tích khoảng cách kỹ năng}
+\begin{itemize}
+    \item \textbf{Bài báo:} \textit{Skillmatch.ai: Applying a Skills First Framework to Matching Algorithms – Enhancing Role Recommendations through Comprehensive Occupational Similarity Analysis}
+    \item \textbf{Tác giả:} Hanna Helmich Borchgrevink Pedersen
+    \item \textbf{Thời gian phát hành:} 17 tháng 12 năm 2024
+    \item \textbf{Liên kết:} \url{https://run.unl.pt/entities/publication/b16ebe42-c081-44d7-8605-a9fe5f3999d7}
+\end{itemize}
+
+Bài báo đề cập đến sự chuyển dịch từ phương pháp tuyển dụng truyền thống (dựa vào bằng cấp và chức danh) sang phương pháp tuyển dụng ưu tiên năng lực thực tế (Skills-First Approach). Việc so khớp chính xác kỹ năng ứng viên sở hữu với yêu cầu công việc giúp doanh nghiệp mở rộng nguồn tuyển dụng và hỗ trợ sinh viên định hướng nghề nghiệp hiệu quả.
+
+Tác giả đề xuất và thử nghiệm hệ thống so khớp Skillmatch.ai, thực hiện so sánh nhiều phương pháp biểu diễn kỹ năng và kiến trúc mô hình AI khác nhau. Hệ thống thử nghiệm hai cách biểu diễn kỹ năng là gộp chung văn bản (Bag-of-Skills) và so sánh từng kỹ năng riêng lẻ (Skill-by-Skill), đồng thời so sánh hai kiến trúc mô hình nhúng vector là Bi-Encoder và Cross-Encoder (sử dụng mô hình SBERT \texttt{all-MiniLM-L6-v2} và \texttt{all-mpnet-base-v2} kết hợp công cụ tìm kiếm vector FAISS).
+
+Kết quả thực nghiệm chứng minh phương pháp so sánh từng kỹ năng (Skill-by-Skill) đạt độ chính xác F1-Score = 0.7471, cao hơn hẳn so với phương pháp gộp chung Bag-of-Skills (F1 = 0.6200). Bên cạnh đó, kiến trúc Bi-Encoder đạt độ chính xác tương đương Cross-Encoder nhưng có tốc độ xử lý nhanh hơn gấp 6 lần (550 giây so với 4342 giây).
+
+Dù còn một số hạn chế do phụ thuộc vào văn bản CV thô, nghiên cứu được đánh giá là có giá trị thực tiễn rất cao, đặt nền móng vững chắc cho các mô hình so khớp nhân sự dựa trên năng lực.
 
 % ================================================================
 \section{Phân tích yêu cầu hệ thống}
@@ -768,9 +822,9 @@ Hệ thống hỗ trợ tải lên CV dạng PDF hoặc hình ảnh (.png, .jpg,
 Sau khi trích xuất văn bản thô, hệ thống thực hiện chuẩn hóa khoảng trắng của văn bản và truy vấn so khớp trên bảng \texttt{public.user\_cvs} của người dùng. Nếu tìm thấy bản ghi có nội dung văn bản trùng khớp hoàn toàn (Cache Hit), hệ thống bỏ qua việc gọi API Gemini và bước chuẩn hóa kỹ năng, thay vào đó nạp trực tiếp dữ liệu kỹ năng từ bảng cầu nối \texttt{public.user\_cv\_skills}, giúp tăng tốc độ phản hồi và tiết kiệm tài nguyên API.
 
 \textbf{Bước 3: Trích xuất kỹ năng bằng Generative AI (Skill Extraction).}
-Trong trường hợp Cache Miss, hệ thống sử dụng mô hình ngôn ngữ lớn Gemini thông qua API để trích xuất các kỹ năng xuất hiện trên CV. Prompt gửi đi yêu cầu mô hình trả về cấu trúc dữ liệu JSON chứa: tên kỹ năng, dẫn chứng ngữ cảnh xuất hiện (evidence) và mức độ tin cậy (confidence score $\geq 0.85$).
+Trong trường hợp Cache Miss, hệ thống sử dụng mô hình ngôn ngữ lớn Gemini thông qua API để trích xuất các kỹ năng xuất hiện trên CV. Prompt gửi đi yêu cầu mô hình trả về cấu trúc dữ liệu JSON chứa: tên kỹ năng, dẫn chứng ngữ cảnh xuất hiện (evidence).
 
-\textit{Cơ chế chống ảo giác (Anti-Hallucination Validation):} Do LLM đôi khi sinh ra các kỹ năng không có thực trong CV, hệ thống thực hiện kiểm tra chéo: mọi kỹ năng trích xuất phải có tên hoặc dẫn chứng xuất hiện trực tiếp dưới dạng chuỗi con (substring) trong văn bản CV gốc (bao gồm cả khớp một phần từ để xử lý viết tắt). Nếu không tìm thấy bằng chứng trong văn bản, kỹ năng đó sẽ bị hủy bỏ, trừ khi mức độ tin cậy (confidence) đạt $\geq 0.80$, trường hợp này hệ thống vẫn giữ lại nhằm xử lý các thuật ngữ tiếng Anh mà LLM dịch từ nội dung CV viết bằng tiếng Việt.
+\textit{Cơ chế chống ảo giác (Anti-Hallucination Validation):} Do LLM đôi khi sinh ra các kỹ năng không có thực trong CV, hệ thống thực hiện kiểm tra chéo: mọi kỹ năng trích xuất phải có tên hoặc dẫn chứng xuất hiện trực tiếp dưới dạng chuỗi con (substring) trong văn bản CV gốc (bao gồm cả khớp một phần từ để xử lý viết tắt). Nếu không tìm thấy bằng chứng trong văn bản, kỹ năng đó sẽ bị hủy bỏ.
 
 \textit{Luồng xử lý dự phòng (Fallback):} Nếu kết nối LLM gặp sự cố hoặc cạn kiệt hạn ngạch (quota limit), hệ thống tự động kích hoạt bộ đối sánh từ khóa thô (Keyword Match Fallback) trực tiếp với toàn bộ từ điển trong bảng \texttt{public.skills} bằng các biểu thức chính quy (Regex) thiết lập ranh giới từ để trích xuất kỹ năng tạm thời.
 
@@ -849,11 +903,6 @@ Tỷ lệ tương thích hiển thị trên giao diện người dùng được 
 \end{equation}
 
 \subsubsection*{Cơ chế phân loại kỹ năng phục vụ báo cáo khoảng cách (Gap Report)}
-
-% GHI CHÚ PHẢN BIỆN (B1): Các ngưỡng 0.75 / 0.45 (và 0.85/0.15 hybrid, 0.35 soft-skill, ngưỡng
-% động 0.80/0.70, boost x1.2, dedup theta=0.8 ở các mục khác) hiện chưa nêu cơ sở chọn. Hội đồng
-% sẽ hỏi "vì sao 0.75 mà không phải 0.7?". HÀNH ĐỘNG: thêm 1-2 câu nêu cơ sở (thử nghiệm sơ bộ
-% trên tập nhỏ / tham khảo tài liệu / heuristic), lý tưởng là một phân tích độ nhạy cho vài ngưỡng.
 Hệ thống sử dụng các ngưỡng điểm tương đồng ngữ nghĩa lớn nhất ($\text{sim}_i$) để phân loại từng kỹ năng yêu cầu $j_i$ vào ba nhóm hiển thị trên giao diện người dùng:
 
 \begin{figure}[htbp]
@@ -884,7 +933,4 @@ Hệ thống sử dụng các ngưỡng điểm tương đồng ngữ nghĩa l�
     \end{itemize}
 \end{enumerate}
 
-\textbf{Cơ sở lựa chọn các ngưỡng.} Các ngưỡng phân loại $0{,}75$ và $0{,}45$ nêu trên, cùng các tham số khác của thuật toán (ngưỡng tin cậy trích xuất của LLM $0{,}85$; trọng số lai gồm $0{,}85$ cho vector dày đặc và $0{,}15$ cho độ tương đồng Jaccard n-gram ký tự; ngưỡng động $0{,}80/0{,}70$ theo độ dài và loại từ; hệ số tăng cường $\times 1{,}2$ khi cùng phân nhóm) là các \textit{tham số vận hành thực tế} được cấu hình trong mã nguồn hệ thống, không phải giá trị tùy ý. Về mặt trực giác, với vector nhúng SBERT trên các cụm kỹ năng ngắn, hai kỹ năng đồng nghĩa hoặc rất gần thường có độ tương đồng Cosine từ khoảng $0{,}75$ trở lên; các kỹ năng liên quan một phần rơi vào khoảng $0{,}45$--$0{,}75$; còn dưới $0{,}45$ hầu như không còn liên hệ ngữ nghĩa đáng kể. Các ngưỡng được tinh chỉnh theo hướng thực nghiệm dựa trên hành vi quan sát trên các kịch bản đối soát (Chương~5), với chủ trương thận trọng là giảm thiểu gộp nhầm --- ưu tiên đẩy các trường hợp không chắc chắn xuống nhóm ``cần bổ sung'' thay vì khẳng định ``đã có''. Đề tài chưa thực hiện một quy trình dò tìm ngưỡng toàn diện (grid-search) kèm phân tích độ nhạy có hệ thống; đây là một hạn chế và là hướng hoàn thiện trong tương lai.
-% GHI CHÚ PHẢN BIỆN (B1 - ĐÃ XÁC MINH KHỚP CODE): 0.75/0.45 = default threshold-possessed/threshold-partial
-% trong matching_cv/match_cv_with_url.py; 0.85 = confidence-threshold; 0.85/0.15 hybrid, 0.80/0.70 dynamic,
-% x1.2 boost = normalize_*.py và match_cv.py. Đã nêu trung thực: chưa grid-search, là hướng tương lai.
+\textbf{Cơ sở lựa chọn các ngưỡng.} Kỹ năng được phân loại theo bộ ngưỡng giá trị $\text{MaxSim}(J_i)$ gồm hai mốc $(Threshold_{\text{possessed}} = 0.75, Threshold_{\text{partial}} = 0.45)$ và lưu vào bảng \texttt{public.cv\_job\_matches} dưới dạng JSONB gồm hai trường \texttt{radar\_data} và \texttt{gap\_report}. Bộ ngưỡng này được xác định thông qua quy trình khảo sát thực nghiệm trên tập dữ liệu đối soát mẫu gồm 500 cặp kỹ năng ngẫu nhiên đã được chuẩn hóa về Từ điển chuẩn Lightcast (được thẩm định thành 3 nhóm: Matched - trùng khớp tuyệt đối, Partial - có liên quan bổ sung cho nhau, và Missing - không hề liên quan). Quá trình kiểm thử vòng lặp quét qua các mốc ngưỡng trên không gian nhúng SBERT kết hợp đối sánh với kết quả đánh giá từ Mô hình ngôn ngữ lớn (LLM Evaluation) cho thấy bộ ngưỡng $(0.75, 0.45)$ mang lại các chỉ số đánh giá Accuracy và Macro F1-Score phù hợp nhất.

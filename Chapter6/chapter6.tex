@@ -12,7 +12,7 @@ Luận văn này đã nghiên cứu, phân tích và hiện thực hóa thành c
 
     \item \textbf{Ứng dụng công nghệ AI vào bài toán trích xuất kỹ năng}: Áp dụng mô hình ngôn ngữ lớn Gemini để trích xuất thông tin kỹ năng và vị trí công việc từ văn bản phi cấu trúc thông qua Structured Outputs kết hợp JSON Schema và cơ chế hậu kiểm dựa trên bằng chứng. Các số liệu đánh giá độ chính xác của mô-đun được trình bày tại Mục 5.4 theo tập dữ liệu đối soát và quy trình đánh giá tương ứng.
 
-    \item \textbf{Đề xuất giải thuật đối soát và phân tích khoảng cách kỹ năng}: Kết hợp so khớp ngữ nghĩa bằng vector nhúng SBERT cục bộ (\texttt{all-MiniLM-L6-v2}) với trọng số TF-IDF được tính động từ dữ liệu thị trường thực tế và bộ sáu quy tắc lọc ngữ nghĩa theo metadata phân loại kỹ năng. Kết quả giúp định lượng mức độ tương thích giữa hồ sơ CV của ứng viên và yêu cầu tuyển dụng, đồng thời phân loại kỹ năng thành ba nhóm hành động (đã có, cần bổ sung, thiếu hoàn toàn).
+    \item \textbf{Đề xuất giải thuật đối soát và phân tích khoảng cách kỹ năng}: Kết hợp so khớp ngữ nghĩa bằng vector nhúng SBERT cục bộ (\texttt{all-MiniLM-L6-v2}) với trọng số TF-IDF được tính động từ dữ liệu thị trường thực tế và bộ bốn quy tắc lọc ngữ nghĩa theo metadata phân loại kỹ năng. Kết quả giúp định lượng mức độ tương thích giữa hồ sơ CV của ứng viên và yêu cầu tuyển dụng, đồng thời phân loại kỹ năng thành ba nhóm hành động (đã có, cần bổ sung, thiếu hoàn toàn).
 
     \item \textbf{Hiện thực hóa và triển khai ứng dụng Web hoàn chỉnh}: Triển khai hệ thống thực tế tại địa chỉ \texttt{career-nova.online} trên hạ tầng đám mây, cung cấp đầy đủ các phân hệ: xác thực người dùng (email và Google SSO), Dashboard trực quan hóa xu hướng thị trường lao động, quản lý CV, tìm kiếm và lưu việc làm, phân tích đối soát CV với biểu đồ Radar, báo cáo khoảng cách kỹ năng và gợi ý lộ trình học tập cá nhân hóa theo kỹ năng thiếu hụt. Kết quả kiểm thử chức năng và số liệu hiệu năng được tổng hợp tại Chương 5.
 \end{enumerate}
@@ -53,7 +53,7 @@ Trải qua toàn bộ vòng đời phát triển của dự án từ khâu khả
 
     \item \textbf{Làm chủ chu trình xử lý dữ liệu (Data Engineering)}: Thông qua việc xây dựng ETL Pipeline, nhóm nắm vững kỹ thuật thu thập dữ liệu tự động, cơ chế dự phòng hai tầng (request tĩnh kết hợp Selenium headless), cũng như các kỹ thuật làm sạch, chuẩn hóa và tối ưu truy vấn trên cơ sở dữ liệu quan hệ kết hợp trường JSONB.
 
-    \item \textbf{Tích hợp AI vào sản phẩm thực tế (Applied AI \& LLMOps)}: Nhóm nhận ra rằng việc ứng dụng AI trong thực tế phức tạp hơn nhiều so với lý thuyết. Bài học lớn nhất là cách Structured Outputs kết hợp Vector Search/SBERT và bộ sáu quy tắc lọc ngữ nghĩa để cân bằng giữa chất lượng và chi phí tính toán.
+    \item \textbf{Tích hợp AI vào sản phẩm thực tế (Applied AI \& LLMOps)}: Nhóm nhận ra rằng việc ứng dụng AI trong thực tế phức tạp hơn nhiều so với lý thuyết. Bài học lớn nhất là cách Structured Outputs kết hợp Vector Search/SBERT và bộ bốn quy tắc lọc ngữ nghĩa để cân bằng giữa chất lượng và chi phí tính toán.
 
     \item \textbf{Tư duy kiểm thử và tư duy định lượng (QA \& Quantitative Mindset)}: Trong giai đoạn đánh giá hệ thống, nhóm rèn luyện được thói quen làm việc với các số liệu thực đo. Việc ghi nhận trường \textit{Duration} trong tab \textit{Network} của trình duyệt cho các API đại diện giúp nhóm nhận diện rõ điểm nghẽn của kiến trúc, đặc biệt là độ trễ ở lần đối soát CV đầu tiên, từ đó định hướng các bước tối ưu hóa tiếp theo.
 \end{enumerate}
