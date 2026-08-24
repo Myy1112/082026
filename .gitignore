@@ -47,3 +47,7 @@ data_evaluation/~$ner_evaluation.xlsx
 data_evaluation/
 main.pdf
 scratch/
+
+# Claude scratch (image crop task - paused)
+images/_crop_preview/
+images/_orig_backup/

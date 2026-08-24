@@ -95,6 +95,16 @@
 \usepackage{array}
 \usepackage{longtable}
 \usepackage{pdflscape}
+\usepackage{rotating} % sidewaysfigure: xoay ngang nhưng vẫn "trôi" như float, không ép ngắt trang gây trống
+
+% --- Tinh chỉnh float để lấp đầy trang, giảm khoảng trắng thừa ---
+\renewcommand{\topfraction}{0.9}
+\renewcommand{\bottomfraction}{0.75}
+\renewcommand{\textfraction}{0.08}
+\renewcommand{\floatpagefraction}{0.75}
+\setcounter{topnumber}{3}
+\setcounter{bottomnumber}{2}
+\setcounter{totalnumber}{5}
 \newcolumntype{L}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
 \newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
 \newcolumntype{R}[1]{>{\raggedleft\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
@@ -114,6 +124,9 @@
 \titleformat{\chapter}[display]
   {\LARGE\bfseries}
   {\chaptertitlename\ \thechapter}{18pt}{\huge}
+% Bỏ khoảng trống thừa phía trên tiêu đề chương: bắt đầu ngay ở lề trên 3cm
+% (before=0pt, after=30pt khoảng cách xuống phần thân)
+\titlespacing*{\chapter}{0pt}{-24pt}{28pt}
 
 
 % Dãn dòng 1.5
@@ -123,13 +136,14 @@
 % Thụt vào đầu dòng
 \usepackage{indentfirst}
 
-% Canh lề (Theo quy định: trên 3cm, dưới 3.5cm, trái 3.5cm, phải 2cm)
+% Canh lề (Chương trình Đề án - Khoa CNTT HCMUS: trên 3cm, dưới 3.5cm, trái 3.5cm, phải 2cm)
+% Không dùng includefoot: lề 3.5cm áp cho VĂN BẢN (chữ điền tới 3.5cm), số trang nằm trong vùng lề dưới.
 \usepackage[
   top=30mm,
   bottom=35mm,
   left=35mm,
   right=20mm,
-  includefoot]{geometry}
+  footskip=12mm]{geometry}
 
 % Chống tràn dòng (Overfull hbox)
 \emergencystretch=3em           % Cho phép giãn thêm tối đa 3em khi cần
@@ -245,5 +259,6 @@
 \include{Appendix/appendix_usecase}
 \include{Appendix/appendix_db}
 \include{Appendix/appendix_code}
+\include{Appendix/appendix_survey}
 
 \end{document}

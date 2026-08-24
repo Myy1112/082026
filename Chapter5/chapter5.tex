@@ -28,7 +28,7 @@ Chương này mô tả môi trường, phương pháp và các kịch bản ki�
     \end{itemize}
 \end{itemize}
 
-\begin{figure}[H]
+\begin{figure}[htbp]
     \centering
     \includegraphics[width=0.72\textwidth]{server_specs_terminal.png}
     \caption{Thông số cấu hình thực tế của máy chủ \texttt{nove-vps} trên Microsoft Azure Portal}
@@ -83,10 +83,37 @@ UC-19--UC-20 & Kiến trúc Data Processing Engine & Pipeline crawl, chuẩn hó
 \end{tabular}}
 \end{center}
 \end{table}
-\section{Đánh giá hiệu năng và dữ liệu thực tế}
-\subsection{Kịch bản và kết quả kiểm thử chức năng}
 
-Hệ thống được kiểm thử thông qua các kịch bản kiểm thử hộp đen (Black-box Testing) để đảm bảo các tính năng hoạt động đúng đặc tả yêu cầu. Các kịch bản được xây dựng theo hành trình sử dụng thực tế của vai trò người dùng sinh viên/ứng viên, từ lúc tạo tài khoản, quản lý hồ sơ CV, phân tích đối soát đến khai thác dữ liệu thị trường, và bám sát các chức năng đang có trên hệ thống. Toàn bộ kịch bản được thực thi trên môi trường chạy thật tại \texttt{career-nova.online}; Bảng~\ref{tab:test_cases} tổng hợp 11 ca kiểm thử cùng dữ liệu đầu vào, kết quả mong đợi và trạng thái thực tế khi chạy tương ứng.
+\subsection{Kiểm thử đơn vị (Unit Testing)}
+\label{subsec:unit_test}
+
+Bên cạnh kiểm thử tích hợp ở mức hệ thống (Bảng~\ref{tab:test_cases}), các đoạn logic nghiệp vụ trọng yếu còn được \textbf{kiểm thử đơn vị (Unit Testing)} một cách độc lập nhằm khẳng định tính đúng đắn của thuật toán tổng hợp dữ liệu mà không phụ thuộc vào cơ sở dữ liệu hay môi trường mạng. Kiểm thử đơn vị được hiện thực bằng khung Jest; lớp truy vấn \texttt{PrismaService} được thay bằng đối tượng giả lập (mock) trả về dữ liệu cố định, nhờ đó cô lập hoàn toàn hàm cần kiểm thử khỏi hạ tầng bên ngoài.
+
+Đối tượng kiểm thử tiêu biểu là hàm \texttt{MarketDashboardService.\allowbreak getSalaryRanges} --- hàm tổng hợp phân bố mức lương theo nhóm kỹ năng phục vụ biểu đồ trên Dashboard thị trường. Đây là điểm dễ phát sinh lỗi logic vì phải chuẩn hóa nhiều đơn vị lương, khử trùng lặp công việc và giới hạn số nhóm kết xuất, nên được ưu tiên kiểm thử ở mức đơn vị.
+
+\begin{table}[H]
+\caption{Các ca kiểm thử đơn vị cho hàm tổng hợp mức lương theo nhóm kỹ năng}
+\label{tab:unit_tests}
+\begin{center}
+\begin{tabular}{|C{1.1cm}|L{5.3cm}|L{5.3cm}|C{1.0cm}|}
+\hline
+\textbf{ID} & \textbf{Mục tiêu kiểm chứng} & \textbf{Kết quả mong đợi} & \textbf{KQ} \\
+\hline
+UT-01 & Gom mức lương theo nhóm kỹ năng, quy đổi lương tháng về năm và mỗi công việc chỉ được tính một lần trong mỗi nhóm & Nhóm ``Backend'' (1000--2000 USD/tháng) quy đổi đúng thành 12.000--24.000 USD/năm; công việc lặp lại chỉ tính một lần; bản ghi khác đơn vị tiền tệ và nhóm rỗng bị loại; kết quả sắp theo mức lương giảm dần & ĐẠT \\
+\hline
+UT-02 & Giới hạn số nhóm kỹ năng hiển thị nhiều nhất & Với 8 nhóm đầu vào, chỉ trả về 7 nhóm có mức lương cao nhất và sắp theo thứ tự giảm dần & ĐẠT \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
+Cả hai ca kiểm thử đều \textbf{ĐẠT}, xác nhận hàm tổng hợp xử lý đúng các tình huống biên: khử trùng lặp công việc, quy đổi đồng nhất đơn vị lương, loại bỏ dữ liệu không hợp lệ và giới hạn số nhóm kết xuất. Kiểm thử đơn vị bổ trợ cho kiểm thử tích hợp: trong khi kiểm thử tích hợp xác nhận toàn bộ luồng chạy thông suốt trên môi trường thật, kiểm thử đơn vị bảo đảm từng khối tính toán cốt lõi cho kết quả chính xác ngay cả với các trường hợp dữ liệu hiếm gặp.
+
+\section{Đánh giá hiệu năng và dữ liệu thực tế}
+\subsection{Kiểm thử tích hợp: kịch bản và kết quả (Integration Testing)}
+\label{subsec:integration_test}
+
+Hệ thống được kiểm thử thông qua các kịch bản \textbf{kiểm thử tích hợp ở mức hệ thống} theo phương pháp hộp đen (Black-box Testing) để đảm bảo các tính năng hoạt động đúng đặc tả yêu cầu. Các kịch bản được xây dựng theo hành trình sử dụng thực tế của vai trò người dùng sinh viên/ứng viên, từ lúc tạo tài khoản, quản lý hồ sơ CV, phân tích đối soát đến khai thác dữ liệu thị trường, và bám sát các chức năng đang có trên hệ thống. Toàn bộ kịch bản được thực thi trên môi trường chạy thật tại \texttt{career-nova.online}; Bảng~\ref{tab:test_cases} tổng hợp 11 ca kiểm thử cùng dữ liệu đầu vào, kết quả mong đợi và trạng thái thực tế khi chạy tương ứng.
 
 {\footnotesize
 \setlength{\tabcolsep}{3pt}
@@ -170,7 +197,7 @@ Thời điểm truy vấn & 14/07/2026 & Ảnh chụp trạng thái CSDL tại t
 \end{tabular}}
 \end{center}
 \end{table}
-\begin{figure}[H]
+\begin{figure}[htbp]
     \centering
     \includegraphics[width=0.95\textwidth]{db_snapshot_psql.png}
     \caption{Bằng chứng thô cho Bảng~\ref{tab:data_stats}: kết quả truy vấn \texttt{count(*)} trực tiếp trên cơ sở dữ liệu production (\texttt{nova-postgres}) tại thời điểm 14/07/2026}
@@ -243,7 +270,7 @@ Upload CV & 20 & 1,31 & 2,03 & 2,63 & 0\% \\
 \end{table}
 
 Kết quả đo cho thấy sự phân hóa rõ rệt giữa hai chế độ hoạt động của chức năng Đối soát CV. Ở lượt phân tích lần đầu (cache miss), toàn bộ pipeline được thực thi tuần tự: tải văn bản CV, gọi Gemini API trích xuất kỹ năng, chuẩn hóa qua FAISS trên CPU và tính điểm so khớp, dẫn đến thời gian trung bình \textbf{41,9 giây} (P95 49,3 giây, lớn nhất 55,1 giây), \textbf{đạt ngưỡng yêu cầu 60 giây của NFR-02}. Đồng thời, toàn bộ 20 lượt đều trả về kết quả thành công và điểm số ổn định (khoảng 0,57). Nguyên nhân chính khiến lượt gọi đầu mất thời gian là độ trễ của Gemini API bên ngoài cộng với chi phí tính vector nhúng trên máy chủ chỉ có 2 vCPU không GPU. Ngược lại, các lượt phân tích lặp lại trên cùng CV (cache hit) chỉ mất trung bình \textbf{0,27 giây}, nhanh hơn khoảng 155 lần do kỹ năng đã trích xuất được tái sử dụng từ bảng \texttt{user\_cv\_skills}. Như vậy NFR-02 đã được thỏa mãn cho cả hai chế độ. Cần nhấn mạnh rằng toàn bộ số liệu hiệu năng ở mục này được đo theo chế độ \textit{đơn phiên} (một người dùng, các lượt gọi tuần tự và có giãn cách hợp lý), nên chỉ phản ánh độ trễ của một phiên phân tích riêng lẻ, \textbf{chưa phản ánh hành vi khi nhiều người dùng truy cập đồng thời}. Với hạ tầng chỉ 2 vCPU không GPU, khi số phiên đối soát đồng thời tăng lên, thời gian đối soát lần đầu (cache miss) có nguy cơ vượt ngưỡng 60 giây của NFR-02 do tranh chấp tài nguyên CPU khi tính vector nhúng. Do đó, kiểm thử tải (load/stress test) và đánh giá khả năng mở rộng theo chiều ngang chưa được thực hiện trong phạm vi đề tài và được nhìn nhận là một hạn chế ở Mục~6.2. Dù vậy, ngay cả ở chế độ đơn phiên, trải nghiệm lần phân tích đầu tiên vẫn có thể được nâng cao thông qua các giải pháp như: trích xuất kỹ năng bất đồng bộ ngay sau khi upload CV (thay vì chờ đến lúc người dùng bấm phân tích), hiển thị tiến trình từng bước trên giao diện, hoặc nâng cấp hạ tầng suy luận vector nhúng.
-\begin{figure}[H]
+\begin{figure}[htbp]
     \centering
     \includegraphics[width=0.95\textwidth]{perf_measurement_terminal.png}
     \caption{Bằng chứng thô của phép đo hiệu năng: nhật ký terminal ghi lại trường \textit{Duration} (thời gian phản hồi) của từng lượt gọi API trên môi trường triển khai thật, là dữ liệu nguồn để tổng hợp Bảng~\ref{tab:api_performance_dashboard} và Bảng~\ref{tab:api_performance_auth}}
@@ -355,7 +382,7 @@ Trong đó:
     \item $\text{FP}$ (False Positives): Số kỹ năng bị trích xuất sai hoặc không xuất hiện trong văn bản gốc (ảo giác dữ liệu).
     \item $\text{FN}$ (False Negatives): Số kỹ năng thực tế có trong văn bản nhưng mô hình bỏ sót.
 \end{itemize}
-\begin{figure}[H]
+\begin{figure}[htbp]
     \centering
     \includegraphics[width=0.98\textwidth]{images/image_KB1/ner_evaluation_df_summary.png}
     \caption{Bảng tổng hợp kết quả đánh giá thực nghiệm mô hình trích xuất kỹ năng (NER) xuất trực tiếp từ giao diện Jupyter Notebook.}
@@ -375,7 +402,7 @@ Kịch bản đối soát 2 được thiết lập nhằm kiểm chứng hiệu 
 
 Phương pháp kiểm chứng được thực hiện bằng cách đối chiếu trực tiếp kết quả xử lý tự động của hệ thống với nhãn chuẩn (Ground Truth) được nhóm đề tài thẩm định và gán nhãn thủ công. Chất lượng hệ thống được đo lường thông qua ba chỉ số định lượng chính bao gồm Độ chính xác chuẩn hóa (Mapping Accuracy), Độ chính xác lọc nhiễu (Reject Accuracy) và Độ chính xác gộp nhóm doanh nghiệp (Company Match Accuracy). Quá trình chuẩn bị tập nhãn chuẩn được thực hiện thông qua phương pháp lấy mẫu phân tầng đại diện nhằm xây dựng bộ dữ liệu rút gọn gồm \textbf{373 mẫu kỹ năng thô} trích xuất từ hai nguồn chính, đảm bảo tập trung trọng tâm vào các Kỹ năng Chuyên môn và Kỹ năng Cứng cốt lõi bên cạnh Kỹ năng Mềm và Chứng chỉ. Trong đó, tập dữ liệu nguồn Tin tuyển dụng JD đóng góp \textbf{187 mẫu} (bao gồm \textbf{100 mẫu kỹ năng thực tế} có trong cơ sở dữ liệu từ điển và \textbf{87 mẫu cần lọc từ chối} gồm công nghệ mới chưa có trong từ điển như \textit{``Cursor''}, \textit{``Ollama''}, \textit{``Claude Code''} cùng các cụm từ phi kỹ thuật mơ hồ); tập dữ liệu nguồn Hồ sơ CV ứng viên đóng góp \textbf{186 mẫu} (bao gồm \textbf{85 mẫu kỹ năng thực tế} có trong từ điển và \textbf{101 mẫu cần lọc từ chối}). Tổng cộng toàn bộ tập nhãn chuẩn đối soát bao gồm \textbf{185 mẫu kỹ năng thực tế} dùng để đo Mapping Accuracy và \textbf{188 mẫu cần lọc từ chối} dùng để đo Reject Accuracy, bên cạnh \textbf{24 tên doanh nghiệp} chứa các biến thể hậu tố pháp lý. Kết quả thực nghiệm định lượng chi tiết được tổng hợp tại Hình~\ref{fig:kb2_eval_summary}.
 
-\begin{figure}[H]
+\begin{figure}[htbp]
     \centering
     \includegraphics[width=0.98\textwidth]{images/image_KB2/norm_matching_eval_summary.png}
     \caption{Bảng tổng hợp kết quả đánh giá chất lượng chuẩn hóa nhãn kỹ năng và gộp nhóm doanh nghiệp xuất trực tiếp từ Jupyter Notebook.}
@@ -383,7 +410,7 @@ Phương pháp kiểm chứng được thực hiện bằng cách đối chiếu
 \end{figure}
 
 
-\begin{figure}[H]
+\begin{figure}[htbp]
     \centering
     \includegraphics[width=0.98\textwidth]{images/image_KB2/norm_matching_detailed_examples.png}
         \caption{Bảng đối soát minh họa chi tiết các trường hợp hệ thống xử lý thành công (TP Map OK, TP Reject OK) và các trường hợp chưa xử lý được (FN Composite Skill, FN Short Abbr) xuất từ Jupyter Notebook.}
@@ -653,7 +680,7 @@ Ba mục trước đánh giá hệ thống theo hướng khách quan: chức nă
 
 \subsection{Phương pháp khảo sát và đặc điểm mẫu người dùng}
 
-Khảo sát được thực hiện bằng bảng hỏi trực tuyến (Google Biểu mẫu) sau khi người tham gia đã trực tiếp trải nghiệm hệ thống chạy thật tại \texttt{career-nova.online}. Bảng hỏi gồm bốn phần: (i) thông tin phân loại người dùng, (ii) giao diện và tốc độ, (iii) biểu đồ thị trường và chức năng so khớp CV, (iv) khóa học và lộ trình học tập, khép lại bằng một câu hỏi tổng kết mức độ thiện cảm với sản phẩm. Phần lớn phát biểu được đo trên thang Likert 5 mức (1 --- Hoàn toàn không đồng ý đến 5 --- Hoàn toàn đồng ý), bên cạnh một số câu hỏi phân loại, câu hỏi nhiều lựa chọn và câu hỏi mở.
+Khảo sát được thực hiện bằng bảng hỏi trực tuyến (Google Biểu mẫu) sau khi người tham gia đã trực tiếp trải nghiệm hệ thống chạy thật tại \texttt{career-nova.online}. Bảng hỏi gồm bốn phần: (i) thông tin phân loại người dùng, (ii) giao diện và tốc độ, (iii) biểu đồ thị trường và chức năng so khớp CV, (iv) khóa học và lộ trình học tập, khép lại bằng một câu hỏi tổng kết mức độ thiện cảm với sản phẩm. Phần lớn phát biểu được đo trên thang Likert 5 mức (1 --- Hoàn toàn không đồng ý đến 5 --- Hoàn toàn đồng ý), bên cạnh một số câu hỏi phân loại, câu hỏi nhiều lựa chọn và câu hỏi mở. Nội dung đầy đủ của bộ câu hỏi được trình bày trong Phụ lục~\ref{Appendix:survey}.
 
 Khảo sát thu về 9 phản hồi. Về đặc điểm mẫu, nhóm người dùng tham gia có tính đồng nhất cao và bám sát đúng chân dung người dùng mục tiêu của CareerNova:
 

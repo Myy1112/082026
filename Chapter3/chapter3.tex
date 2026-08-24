@@ -28,7 +28,7 @@ Bài toán nghiệp vụ cốt lõi của hệ thống CareerNova được xác 
 
 Dựa trên bài toán nghiệp vụ, các yêu cầu chức năng của hệ thống được xác định và phân nhóm theo từng tác nhân (Actor) tham gia vào hệ thống. Hình~\ref{fig:usecase_diagram} khái quát các tương tác giữa hai Actor --- Sinh viên và Hệ thống ETL --- với CareerNova, đồng thời thể hiện các quan hệ \texttt{include} và \texttt{extend}; Bảng~\ref{tab:functional_requirements} liệt kê chi tiết từng Use Case theo nhóm chức năng.
 
-\begin{figure}[H]
+\begin{figure}[htbp]
     \centering
     \includegraphics[width=0.95\textwidth]{usecase_diagram}
     \caption{Sơ đồ Use Case tổng quát của hệ thống CareerNova.}
@@ -238,12 +238,14 @@ NFR-14 & Bảo trì & Hệ thống ưu tiên sử dụng các ngôn ngữ lập 
 
 Hệ thống CareerNova được xây dựng theo kiến trúc đa tầng (multi-tier architecture) với bốn tầng chức năng độc lập. Hình~\ref{fig:system_architecture} cung cấp góc nhìn tổng quan về các tầng và đường đi của dữ liệu, từ nguồn tuyển dụng đến giao diện người dùng; phần sau hình lần lượt làm rõ trách nhiệm của từng tầng.
 
-\begin{figure}[H]
+\begin{sidewaysfigure}
     \centering
-    \includegraphics[width=0.95\textwidth]{system_architecture_algorithm}
+    \begin{adjustbox}{max width=225mm, max totalheight=138mm, center} % Xoay ngang + phóng to để đọc rõ chữ
+        \includegraphics[keepaspectratio]{system_architecture_algorithm}
+    \end{adjustbox}
     \caption{Sơ đồ kiến trúc tổng thể hệ thống CareerNova.}
     \label{fig:system_architecture}
-\end{figure}
+\end{sidewaysfigure}
 
 Matching Engine tại dịch vụ \texttt{JobVisualization\_\allowbreak BE} thực hiện đối sánh kỹ năng bằng cosine có trọng số kết hợp các luật lọc ngữ nghĩa trước khi trả kết quả cho hệ thống.
 
@@ -262,9 +264,9 @@ Matching Engine tại dịch vụ \texttt{JobVisualization\_\allowbreak BE} th�
 
 Để người đọc theo dõi thứ tự trao đổi giữa các thành phần trước khi đi vào chi tiết, Hình~\ref{fig:cv_upload_sequence} mô tả luồng tải lên CV và so khớp kỹ năng từ Giao diện người dùng (Frontend), qua Core API và Data Processing Engine, đến Cơ sở dữ liệu.
 
-\begin{figure}[H]
+\begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.95\textwidth,height=0.82\textheight,keepaspectratio]{cv_upload_sequence_search_group}
+    \includegraphics[width=\textwidth,height=0.88\textheight,keepaspectratio]{cv_upload_sequence_search_group}
     \caption{Sơ đồ tuần tự luồng tải lên CV và so khớp kỹ năng.}
     \label{fig:cv_upload_sequence}
 \end{figure}
@@ -275,9 +277,9 @@ Luồng xử lý bắt đầu khi người dùng gửi tệp CV từ Giao diện
 
 Hình~\ref{fig:dashboard_sequence} cho thấy các yêu cầu được khởi tạo song song khi sinh viên truy cập Dashboard thị trường; phần sau hình giải thích dữ liệu mà mỗi nhóm thao tác cung cấp cho giao diện.
 
-\begin{figure}[H]
+\begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.9\textwidth]{dashboard_sequence_current}
+    \includegraphics[width=\textwidth,height=0.88\textheight,keepaspectratio]{dashboard_sequence_current}
     \caption{Sơ đồ tuần tự luồng xem Dashboard thống kê thị trường việc làm.}
     \label{fig:dashboard_sequence}
 \end{figure}
@@ -292,29 +294,27 @@ Cơ sở dữ liệu của hệ thống được xây dựng trên hệ quản t
 
 Trước khi đi vào lược đồ dữ liệu vật lý, Hình~\ref{fig:class_diagram} giúp người đọc nhận diện các đối tượng nghiệp vụ và quan hệ chính của CareerNova. Sơ đồ rút gọn này tập trung vào chuỗi giá trị cốt lõi: người dùng quản lý CV; CV và tin tuyển dụng cùng liên kết với từ điển kỹ năng; từ đó hệ thống tạo kết quả đối soát và cho phép lưu tin tuyển dụng. Các bảng phụ trợ như khóa học, thông báo và nhật ký ETL được trình bày trong ERD đầy đủ ở mục kế tiếp.
 
-\begin{figure}[H]
+\begin{sidewaysfigure}
     \centering
-    \includegraphics[width=\textwidth]{class_diagram.png}
+    \begin{adjustbox}{max width=225mm, max totalheight=138mm, center} % Xoay ngang + phóng to để đọc rõ chữ
+        \includegraphics[keepaspectratio]{class_diagram.png}
+    \end{adjustbox}
     \caption{Sơ đồ lớp miền nghiệp vụ cốt lõi của CareerNova.}
     \label{fig:class_diagram}
-\end{figure}
+\end{sidewaysfigure}
 
 \subsection{Sơ đồ mối quan hệ thực thể (ERD)}
 
 Hình~\ref{fig:erd} trình bày sơ đồ mối quan hệ thực thể (ERD) đầy đủ của cơ sở dữ liệu hệ thống ở mức quan hệ. Sơ đồ này giúp nhận diện cấu trúc lưu trữ dữ liệu cốt lõi phục vụ các nghiệp vụ của CareerNova: thông tin người dùng, hồ sơ CV tải lên, tin tuyển dụng thu thập từ thị trường, từ điển kỹ năng chuẩn hóa và các kết quả so khớp gợi ý việc làm. Ý nghĩa chi tiết của từng bảng dữ liệu sẽ được giải thích cụ thể ở mục tiếp theo.
 
-\begin{landscape}
-\begin{figure}[p]
+\begin{sidewaysfigure}
     \centering
-    \vspace*{\fill}
-    \begin{adjustbox}{max width=1.08\textheight, center} % Cho phép tràn nhẹ ra lề 8% để nhìn rõ chữ
+    \begin{adjustbox}{max width=225mm, max totalheight=138mm, center} % Cho phép tràn nhẹ ra lề 8% để nhìn rõ chữ
         \includegraphics[keepaspectratio]{image3_1}
     \end{adjustbox}
     \caption{Sơ đồ mối quan hệ thực thể (ERD) của hệ thống.}
     \label{fig:erd}
-    \vspace*{\fill}
-\end{figure}
-\end{landscape}
+\end{sidewaysfigure}
 % ----------------------------------------------------------------
 \subsection{Đặc tả các bảng dữ liệu thực tế}
 
@@ -674,7 +674,7 @@ Hệ thống CareerNova có hai điểm vào chính: trang chủ (Landing Page) 
 
 \textbf{Trang chủ (Landing Page)} là giao diện đầu tiên người dùng tiếp cận khi truy cập hệ thống. Phần đầu trang (hero section) trình bày thông điệp giá trị cốt lõi của nền tảng cùng hai nút hành động chính: \textit{``Bắt đầu miễn phí''} (dẫn đến trang đăng ký) và \textit{``Xem Thông tin Thị trường''} (dẫn đến Dashboard). Tiếp theo, bốn tính năng chủ đạo được trình bày dưới dạng lưới (so khớp CV, đề xuất việc làm, phân tích kỹ năng, dashboard thị trường) kèm luồng sử dụng bốn bước trực quan để định hướng người dùng mới. Hình~\ref{fig:ui_landing} chỉ minh họa bố cục và vị trí của các thành phần vừa mô tả.
 
-\begin{figure}[H]
+\begin{figure}[htbp]
     \centering
     % Đã chụp từ career-nova.online ngày 12/07/2026
     \includegraphics[width=0.95\textwidth,height=0.82\textheight,keepaspectratio]{ui_landing}
@@ -691,7 +691,7 @@ Hệ thống CareerNova có hai điểm vào chính: trang chủ (Landing Page) 
 
 Phía dưới các biểu đồ, danh sách \textit{``Top 5 vị trí được tuyển nhiều nhất''} (Hot Jobs) và hai lưới kỹ năng (\textit{``Top 10 Kỹ năng được yêu cầu''} và \textit{``Kỹ năng tăng trưởng nhanh''}) cung cấp thông tin thị trường chi tiết theo từng vị trí và từng kỹ năng. Khi người dùng đổi bộ lọc, sáu API được gọi lại với tham số mới để cập nhật toàn bộ dữ liệu. Người dùng có thể chọn một thẻ chỉ số để mở danh sách việc làm theo bộ lọc tương ứng hoặc chọn một Hot Job để mở danh sách theo \texttt{search\_\allowbreak group}. Hình~\ref{fig:ui_dashboard_flow} khái quát luồng tương tác này.
 
-\begin{figure}[H]
+\begin{figure}[htbp]
     \centering
     \includegraphics[width=0.85\textwidth]{ui_dashboard_flow_current}
     \caption{Sơ đồ hoạt động luồng tương tác người dùng với Dashboard thị trường.}
@@ -700,7 +700,7 @@ Phía dưới các biểu đồ, danh sách \textit{``Top 5 vị trí được t
 
 Các chức năng và thành phần vừa mô tả được thể hiện trên giao diện thực tế ở Hình~\ref{fig:ui_market_dashboard}; hình này chỉ minh họa bố cục hiển thị của Dashboard.
 
-\begin{figure}[H]
+\begin{figure}[p]
     \centering
     % Đã chụp từ career-nova.online/dashboard ngày 12/07/2026
     \includegraphics[width=0.95\textwidth,height=0.82\textheight,keepaspectratio]{ui_market_dashboard}
@@ -718,7 +718,7 @@ Luồng phân tích năng lực của người dùng trong hệ thống CareerNo
 
 Sau khi hệ thống hoàn tất xử lý, kết quả được hiển thị ngay trên cùng trang với ba thành phần: vòng tròn điểm Match Score được tô màu theo ngưỡng (xanh lá $\geq$80\%, xanh dương $\geq$65\%, vàng $<$65\%); ba thẻ kỹ năng có thể mở rộng phân loại theo màu sắc tương phản (Matched màu xanh lá, Partial màu vàng, Missing màu đỏ); và biểu đồ Radar nhỏ so sánh trực tiếp kỹ năng CV với yêu cầu JD. Hình~\ref{fig:ui_cv_matching} chỉ minh họa bố cục và vị trí của các thành phần vừa mô tả.
 
-\begin{figure}[H]
+\begin{figure}[p]
     \centering
     \includegraphics[width=0.95\textwidth,height=0.82\textheight,keepaspectratio]{ui_cv_matching}
     \caption{Giao diện trang CV Matching: cột trái quản lý CV, cột phải vùng tải lên, kết quả so khớp với Match Score và phân loại kỹ năng.}
@@ -726,10 +726,9 @@ Sau khi hệ thống hoàn tất xử lý, kết quả được hiển thị nga
 \end{figure}
 
 
-\clearpage
 Trước khi quan sát giao diện kết quả, người đọc cần theo dõi chuỗi xử lý trong Hình~\ref{fig:ui_cv_flow}: tải CV, chọn nguồn so khớp, thực hiện phân tích và chuyển sang báo cáo Skill Gap Analysis.
 
-\begin{figure}[H]
+\begin{figure}[p]
     \centering
     \includegraphics[width=0.78\textwidth,height=0.70\textheight,keepaspectratio]{ui_cv_flow}
     \caption{Sơ đồ hoạt động mô tả luồng tương tác từ tải lên CV đến xem kết quả Skill Gap Analysis.}
@@ -740,7 +739,7 @@ Sơ đồ thể hiện rằng kết quả so khớp là đầu vào cho bước 
 
 \textbf{Trang Skill Gap Analysis} (route \texttt{/skill-gap}) là giao diện phân tích năng lực chuyên sâu, được tổ chức theo bốn tầng từ tổng quan đến chi tiết. Tầng đầu tiên là hai thẻ tóm tắt: \textit{``Mức độ phù hợp với thị trường''} (phần trăm tổng thể) và \textit{``Khoảng trống nghiêm trọng''} (số kỹ năng ưu tiên cần bổ sung). Tầng thứ hai trình bày biểu đồ Radar \textit{``Chi tiết kỹ năng''} với hai vùng tô chồng nhau: vùng xanh dương thể hiện điểm kỹ năng thực tế của người dùng (\texttt{user\_score}) và vùng xanh lá mờ thể hiện ngưỡng yêu cầu thị trường (\texttt{market\_\allowbreak score}); tooltip tương tác hiển thị giá trị phần trăm của từng kỹ năng khi di chuột. Tầng thứ ba là Gap Report theo danh mục kỹ năng, mỗi danh mục được trình bày với biểu tượng emoji đặc trưng, badge điểm khoảng cách và thanh tiến độ đôi so sánh \texttt{user\_rate} với \texttt{market\_rate}. Khi mở rộng từng danh mục, từng kỹ năng con hiển thị badge trạng thái ba màu (Matched/Partial/Missing) cùng điểm số chi tiết. Tầng thứ tư là phần Learning Paths, gợi ý các khóa học và lộ trình học tập có thể mở rộng để xem từng bước chi tiết. Hình~\ref{fig:ui_skill_gap} chỉ minh họa bố cục và vị trí của các thành phần này trên giao diện.
 
-\begin{figure}[H]
+\begin{figure}[p]
     \centering
     \includegraphics[width=0.95\textwidth,height=0.82\textheight,keepaspectratio]{ui_skill_gap}
     \caption{Giao diện trang Skill Gap Analysis: biểu đồ Radar so khớp kỹ năng và Gap Report phân loại kỹ năng theo danh mục.}
@@ -857,7 +856,7 @@ Tỷ lệ tương thích hiển thị trên giao diện người dùng được 
 % trên tập nhỏ / tham khảo tài liệu / heuristic), lý tưởng là một phân tích độ nhạy cho vài ngưỡng.
 Hệ thống sử dụng các ngưỡng điểm tương đồng ngữ nghĩa lớn nhất ($\text{sim}_i$) để phân loại từng kỹ năng yêu cầu $j_i$ vào ba nhóm hiển thị trên giao diện người dùng:
 
-\begin{figure}[H]
+\begin{figure}[htbp]
     \centering
     \includegraphics[width=0.95\textwidth]{image3_5_2}
     \caption{Quy tắc phân loại kỹ năng phục vụ báo cáo khoảng cách năng lực.}

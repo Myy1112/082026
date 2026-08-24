@@ -28,7 +28,6 @@ Hệ thống đã được triển khai và kiểm thử trên môi trường th
 \subsection*{1. Hạn chế về thuật toán so khớp Matching Engine \& Skill Gap}
 \begin{itemize}
     \item \textbf{Ngưỡng phân loại cố định trong thuật toán so khớp}: Việc phân loại kỹ năng thành 3 nhóm (\textit{Matched}, \textit{Partial}, \textit{Missing}) hiện sử dụng các ngưỡng Cosine Similarity cố định ($0{,}75$ cho \textit{Matched} và $0{,}50$ cho \textit{Partial}). Trong thực tế, khi ứng viên viết kỹ năng trong CV theo văn phong dự án thực tế thay vì dùng đúng từ khóa từ điển chuẩn, điểm nhúng ngữ nghĩa SBERT chỉ đạt $0{,}65 - 0{,}72$, khiến hệ thống phân loại an toàn về nhóm \textit{Partial} (dẫn đến 38 mẫu \textit{Matched} bị xếp sang \textit{Partial} trong ma trận nhầm lẫn KB4).
-    \item \textbf{Chưa đo lường được độ sâu thâm niên kinh nghiệm (Evidence Depth / Seniority Level)}: Matching Engine hiện mới dừng lại ở bài toán xác định sự tồn tại kỹ năng (\textit{Skill Presence}). Hệ thống chưa phân tích được độ sâu kinh nghiệm dựa trên số năm làm việc hay quy mô dự án thực tế ghi trong CV, dẫn đến ứng viên làm bài tập môn học 1 tháng và ứng viên làm dự án thực tế 1 năm có cùng thẻ kỹ năng vẫn được tính điểm tương đồng như nhau.
 \end{itemize}
 
 \subsection*{2. Hạn chế về quy trình ETL \& Thu thập dữ liệu thị trường}
@@ -67,8 +66,6 @@ Dựa trên nền tảng kỹ thuật và dữ liệu đã xây dựng, cùng v�
 
 \begin{enumerate}
     \item \textbf{Nâng cấp Matching Engine bằng cơ chế Ngưỡng động (Dynamic Thresholding)}: Nghiên cứu cơ chế tự động điều chỉnh ngưỡng phân loại linh hoạt dựa trên đặc thù từ vựng và độ chi tiết kỹ năng của từng nhóm vị trí tuyển dụng chuyên biệt (\texttt{search\_group}), khắc phục hạn chế của ngưỡng cố định $0{,}75$ nhằm tăng hơn nữa độ chính xác phân loại giữa \textit{Matched} và \textit{Partial}.
-
-    \item \textbf{Phát triển mô hình đánh giá độ sâu thâm niên kinh nghiệm (Seniority Depth Analysis)}: Mở rộng tầng trích xuất LLM để phân tích ngữ cảnh thực tế (thời gian làm việc, vai trò, quy mô dự án) nhằm gán trọng số thâm niên cho từng kỹ năng, giúp phân biệt rõ nét giữa ứng viên cấp độ Junior và Senior.
 
     \item \textbf{Nâng cấp thuật toán khử trùng lặp bằng mô hình nhúng ngữ nghĩa đa ngôn ngữ (Multilingual Dense Embeddings)}: Tích hợp các mô hình nhúng ngữ nghĩa đa ngôn ngữ như \texttt{multilingual-e5} hoặc \texttt{text-embedding-3-small} vào tầng 2 của thuật toán Deduplication tại lớp Import để biểu diễn văn bản Tiếng Anh và Tiếng Việt trong cùng một không gian vector nhúng đa chiều, giúp hệ thống phát hiện trùng lặp bài đăng đa nguồn bất kể rào cản ngôn ngữ với chi phí tính toán tối ưu.
 

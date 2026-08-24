@@ -14,12 +14,14 @@ Dữ liệu tuyển dụng ngành Công nghệ thông tin (CNTT) tại Việt Na
     \item \textbf{Thu thập dữ liệu động (Dynamic Scraping):} Giả lập trình duyệt (Headless Browser bằng Selenium) để chạy mã JavaScript và tải toàn bộ giao diện hoàn chỉnh \cite{webdriver}. Phương pháp này bóc tách được các trang web động phức tạp nhưng tốn tài nguyên máy chủ hơn.
 \end{itemize}
 
-\begin{figure}[H]
+\begin{sidewaysfigure}
     \centering
-    \includegraphics[width=0.85\textwidth]{image2_1}
+    \begin{adjustbox}{max width=225mm, max totalheight=138mm, center} % Xoay ngang + phóng to để đọc rõ chữ
+        \includegraphics[keepaspectratio]{image2_1}
+    \end{adjustbox}
     \caption{Phân biệt cơ chế hoạt động của kỹ thuật thu thập dữ liệu tĩnh (Static Scraping) và thu thập dữ liệu động (Dynamic Scraping).}
     \label{fig:static_vs_dynamic}
-\end{figure}
+\end{sidewaysfigure}
 
 Nhằm duy trì luồng thu thập liên tục và tránh bị máy chủ chặn bởi các cơ chế phát hiện truy cập tự động (Bot Management) \cite{cloudflarebots}, hệ thống áp dụng cơ chế dự phòng hai tầng: ưu tiên dùng luồng tĩnh tốc độ cao; nếu bị giới hạn sẽ tự động chuyển sang giả lập trình duyệt kèm xoay vòng địa chỉ IP qua proxy và vượt lớp kiểm tra chống bot \cite{cloudscraper}. Dữ liệu sau đó được bóc tách thành các trường thông tin (tên công việc, công ty, địa điểm, mức lương, mô tả công việc) nhờ bộ chọn CSS/XPath của thư viện BeautifulSoup \cite{beautifulsoup}.
 
@@ -27,9 +29,9 @@ Nhằm duy trì luồng thu thập liên tục và tránh bị máy chủ chặn
 
 Dữ liệu thô sau khi cào về thường chứa nhiều mã rác và trùng lặp. Hệ thống xử lý qua quy trình ETL (Trích xuất -- Biến đổi -- Nạp) \cite{kimballcaserta} gồm ba bước:
 
-\begin{figure}[H]
+\begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.90\textwidth]{image2_2}
+    \includegraphics[width=\textwidth]{image2_2}
     \caption{Quy trình tổng quát của tiến trình trích xuất, biến đổi và nạp dữ liệu (ETL Pipeline).}
     \label{fig:etl_pipeline}
 \end{figure}
@@ -54,12 +56,14 @@ Giao diện trực quan hóa của hệ thống được thiết kế theo nguy�
 
 Việc bố trí các thành phần trên bảng điều khiển (Dashboard) tuân thủ nguyên tắc trực quan cô đọng, tối đa hóa lượng thông tin truyền tải trên diện tích hiển thị \cite{tufte2001visual} và tổ chức dữ liệu theo mức độ ưu tiên nhằm hỗ trợ ra quyết định nhanh \cite{few2006dashboard}. Giao diện sử dụng hệ màu quy chuẩn dễ hiểu: màu xanh đại diện cho năng lực đạt tốt, màu vàng cho mức cần cải thiện, màu đỏ cho kỹ năng thiếu hụt và màu cam biểu thị kỹ năng tăng trưởng hot.
 
-\begin{figure}[H]
+\begin{sidewaysfigure}
     \centering
-    \includegraphics[width=0.9\textwidth]{visualization_theory}
+    \begin{adjustbox}{max width=225mm, max totalheight=138mm, center} % Xoay ngang + phóng to để đọc rõ chữ
+        \includegraphics[keepaspectratio]{visualization_theory}
+    \end{adjustbox}
     \caption{Luồng dữ liệu từ cơ sở dữ liệu đến các thành phần trực quan hóa trong hệ thống CareerNova.}
     \label{fig:visualization_theory}
-\end{figure}
+\end{sidewaysfigure}
 
 \section{Giải pháp so khớp hồ sơ}
 
@@ -69,9 +73,9 @@ Bài toán so khớp hồ sơ đòi hỏi chuyển đổi dữ liệu CV và JD 
 
 Mô hình Không gian Vector (Vector Space Model), khởi nguồn từ lĩnh vực truy hồi thông tin cổ điển \cite{salton1983}, biểu diễn câu văn và từ ngữ thành các dãy số (vector). Hai câu có nội dung tương đồng sẽ nằm gần nhau trong không gian này \cite{reimers2019}. Mô hình Sentence-BERT (SBERT) được sử dụng để chuyển đổi các cụm từ kỹ năng thành vector nhúng có độ dài cố định 384 chiều \cite{reimers2019}.
 
-\begin{figure}[H]
+\begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.75\textwidth]{image2_3}
+    \includegraphics[width=0.95\textwidth]{image2_3}
     \caption{Kiến trúc SBERT được sử dụng trong suy luận để tính điểm tương đồng ngữ nghĩa.}
     \label{fig:sbert_arch}
 \end{figure}
